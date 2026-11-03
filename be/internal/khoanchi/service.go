@@ -20,12 +20,20 @@ var ThemLoai = authz.Door{Code: "khoanchi/them_loai", Need: authz.NeedOwner}
 var Ghi = authz.Door{Code: "khoanchi/ghi", Need: authz.NeedOwner}
 var Sua = authz.Door{Code: "khoanchi/sua", Need: authz.NeedOwner}
 
+type KhoanCon struct {
+	ID         int64  `json:"expense_item_id"`
+	CategoryID int64  `json:"expense_category_id"`
+	Name       string `json:"name"`
+}
 type Loai struct {
-	ID           int64  `json:"expense_category_id"`
-	Name         string `json:"name"`
-	PaidFromTill bool   `json:"paid_from_till"`
+	Items        []KhoanCon `json:"items"`
+	ID           int64      `json:"expense_category_id"`
+	Name         string     `json:"name"`
+	PaidFromTill bool       `json:"paid_from_till"`
 }
 type Khoan struct {
+	ItemID       *int64    `json:"expense_item_id"`
+	ItemName     *string   `json:"item_name"`
 	ID           int64     `json:"expense_id"`
 	CategoryID   int64     `json:"expense_category_id"`
 	CategoryName string    `json:"category_name"`
@@ -37,6 +45,7 @@ type Khoan struct {
 	CreatedAt    time.Time `json:"created_at"`
 }
 type YeuCau struct {
+	ItemID     *int64 `json:"expense_item_id"`
 	CategoryID int64  `json:"expense_category_id"`
 	Amount     int64  `json:"amount_vnd"`
 	PaidDate   string `json:"paid_date"`
@@ -47,11 +56,22 @@ type BoLoc struct {
 	CategoryID   *int64
 	PaidFromTill *bool
 }
+type TongLoai struct {
+	CategoryID int64 `json:"expense_category_id"`
+	Total      int64 `json:"total_vnd"`
+}
+type TongCon struct {
+	ItemID   int64  `json:"expense_item_id"`
+	Total    int64  `json:"total_vnd"`
+	LastDate string `json:"last_paid_date"`
+}
 type DanhSach struct {
-	From     string  `json:"from"`
-	To       string  `json:"to"`
-	Expenses []Khoan `json:"expenses"`
-	Total    int64   `json:"total_vnd"`
+	CategoryTotals []TongLoai `json:"category_totals"`
+	ItemTotals     []TongCon  `json:"item_totals"`
+	From           string     `json:"from"`
+	To             string     `json:"to"`
+	Expenses       []Khoan    `json:"expenses"`
+	Total          int64      `json:"total_vnd"`
 }
 type Service struct{ pool *pgxpool.Pool }
 
@@ -144,7 +164,18 @@ func kiemKhoan(ctx context.Context, tx pgx.Tx, repo repository, p YeuCau) (bool,
 	if errors.Is(err, pgx.ErrNoRows) {
 		return false, apierr.Error{Code: apierr.CodeExpenseCategoryNotFound}
 	}
-	return ket, err
+	if err != nil {
+		return false, err
+	}
+	if p.ItemID != nil {
+		if err := repo.timKhoanCon(ctx, *p.ItemID, p.CategoryID); err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				return false, apierr.Error{Code: apierr.CodeExpenseItemNotFound}
+			}
+			return false, err
+		}
+	}
+	return ket, nil
 }
 
 // Khoá chung theo thứ tự ngày, bỏ ngày trùng; cửa ký dùng khoá riêng cùng ngày.
@@ -168,18 +199,39 @@ func khoaNgay(ctx context.Context, tx pgx.Tx, ngay []string) error {
 	return nil
 }
 func (s *Service) Doc(ctx context.Context, nguoi int64, loc BoLoc) (out DanhSach, err error) {
-	out = DanhSach{From: loc.From, To: loc.To}
+	out = DanhSach{From: loc.From, To: loc.To, CategoryTotals: []TongLoai{}, ItemTotals: []TongCon{}}
 	err = authz.Read(ctx, s.pool, nguoi, authz.NeedOwner, func(tx pgx.Tx) error {
 		var err error
 		out.Expenses, err = newRepository(tx).doc(ctx, loc)
 		if err != nil {
 			return err
 		}
+		ci := map[int64]int{}
+		ii := map[int64]int{}
 		for _, k := range out.Expenses {
 			if k.Amount > math.MaxInt64-out.Total {
 				return apierr.Error{Code: apierr.CodeInternalError}
 			}
 			out.Total += k.Amount
+			index, ok := ci[k.CategoryID]
+			if !ok {
+				index = len(out.CategoryTotals)
+				ci[k.CategoryID] = index
+				out.CategoryTotals = append(out.CategoryTotals, TongLoai{CategoryID: k.CategoryID})
+			}
+			out.CategoryTotals[index].Total += k.Amount
+			if k.ItemID != nil {
+				index, ok := ii[*k.ItemID]
+				if !ok {
+					index = len(out.ItemTotals)
+					ii[*k.ItemID] = index
+					out.ItemTotals = append(out.ItemTotals, TongCon{ItemID: *k.ItemID})
+				}
+				out.ItemTotals[index].Total += k.Amount
+				if k.PaidDate > out.ItemTotals[index].LastDate {
+					out.ItemTotals[index].LastDate = k.PaidDate
+				}
+			}
 		}
 		return nil
 	})

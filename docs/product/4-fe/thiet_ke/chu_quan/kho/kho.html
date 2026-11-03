@@ -77,6 +77,7 @@ Không nhắc
 <form id="add-ingredient-form" class="ingredient-form">
 <label class="field" for="ingredient-name">Tên nguyên liệu <input id="ingredient-name" name="name" type="text" placeholder="Ví dụ: Bột gạo" required autofocus></label>
 <label class="field" for="ingredient-unit">Đơn vị mua (tuỳ chọn)<input id="ingredient-unit" name="unit" type="text" placeholder="Ví dụ: kg, quả, lít"><small>Để trống nếu chưa có đơn vị mua.</small></label>
+<label class="field" for="ingredient-reminder-ratio">Tỉ lệ nhắc<input id="ingredient-reminder-ratio" name="reminderRatio" type="text" inputmode="decimal" placeholder="Ví dụ: 0.2" pattern="(?:0(?:\.[0-9]{1,6})?|1(?:\.0{1,6})?)" aria-describedby="ingredient-reminder-hint" title="Nhập số từ 0 đến 1, dùng dấu chấm, tối đa 6 chữ số lẻ."><small id="ingredient-reminder-hint">Tỉ phần của lần nhập gần nhất. Nhập số từ 0 đến 1, dùng dấu chấm, tối đa 6 chữ số lẻ; ví dụ 0.2.</small></label>
 <p class="prototype-note">Bản minh hoạ giao diện. Thông tin nhập tại đây chưa được lưu vào kho.</p>
 <p id="ingredient-feedback" class="prototype-feedback" role="status"></p>
 <div class="actions"><button type="button" id="cancel-add-ingredient">Huỷ</button><button type="submit" class="primary">Thêm nguyên liệu</button></div>

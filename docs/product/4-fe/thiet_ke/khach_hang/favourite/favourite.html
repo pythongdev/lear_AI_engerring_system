@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Yêu thích · Quán Bánh Cuốn</title><style>
+:root { color-scheme:dark; --bg:#000000; --card:#1F2937; --line:#2D3748; --muted:#9CA3AF; --accent:#FF7A1A; --field:#374151; --text:#F9FAFB; --page:#0a0a0a; --notch:#0f172a; --banner:#3a2310; --banner-ink:#7c4a23; --badge:#3a2a18}
+:root[data-theme=light] { color-scheme:light; --bg:#FFFFFF; --card:#F3F4F6; --line:#E5E7EB; --muted:#6B7280; --accent:#EA6A0C; --field:#E5E7EB; --text:#111827; --page:#F3F4F6; --notch:#E5E7EB; --banner:#FDE8D4; --banner-ink:#C2702F; --badge:#FDECDC}
+* { box-sizing:border-box}
+body { margin:0; background:var(--page); color:var(--text); font:12px/1.45 'Be Vietnam Pro',system-ui,sans-serif}
+button,input,textarea { font:inherit; color:inherit}
+button { cursor:pointer; border:1px solid var(--line); border-radius:7px; background:transparent; padding:6px 10px}
+button:hover { filter:brightness(1.15)}
+:focus-visible { outline:2px solid var(--accent); outline-offset:3px}
+h1,h2,h3,p { margin:0}
+h1 { font-size:20px; font-weight:600}
+h2,h3 { font-size:14px; font-weight:500}
+.muted { color:var(--muted)}
+.price { color:var(--accent); white-space:nowrap}
+.primary { background:var(--accent); border-color:var(--accent); color:#fff}
+.plain { border:0; padding:0}
+.row { display:flex; align-items:center; justify-content:space-between; gap:8px}
+.phone { max-width:472px; margin:24px auto; background:var(--bg); border:1px solid var(--notch); border-radius:24px; padding:0 15px 16px; overflow:clip}
+.status { height:30px; font-size:11px; position:relative}
+.status:after { content:''; width:150px; height:16px; border-radius:12px; background:var(--notch); position:absolute; top:5px; left:50%; transform:translateX(-50%)}
+.sticky { position:sticky; top:0; z-index:5; background:var(--bg)}
+.header { min-height:58px; border-bottom:1px solid var(--line)}
+.header small { font-size:11px; color:var(--muted)}
+.header-actions { display:flex; gap:6px}
+
+ a{color:inherit;text-decoration:none} .intro{padding:24px 0 18px}.intro p{margin-top:8px;color:var(--muted)}.eyebrow{color:var(--accent);font-size:11px;letter-spacing:2px;margin-bottom:8px}.tabs{display:flex;gap:8px;margin:8px 0 18px}.tabs button{flex:1;color:var(--muted)}.tabs button[aria-pressed=true]{background:var(--badge);border-color:var(--accent);color:var(--accent)}.item{display:flex;gap:12px;padding:16px 12px;border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:10px}.art{display:grid;place-items:center;width:68px;height:76px;flex-shrink:0;border-radius:10px;background:var(--banner);font-size:32px}.copy{flex:1;min-width:0}.copy small{color:var(--muted)}.copy h2{margin:3px 0 5px}.item .row{margin-top:12px}.heart{color:#f87171;padding:2px 6px;border:0;font-size:20px}.stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:7px}.stepper button{border:0}.stepper output{min-width:24px;text-align:center}.footer{position:sticky;bottom:0;background:var(--bg);padding:14px 0 0;border-top:1px solid var(--line);margin-top:24px}.footer .primary{width:100%;margin:12px 0;padding:13px}.bottom-nav{display:flex;justify-content:space-between;gap:8px;font-size:10px;padding:14px 0 4px;color:var(--muted)}.bottom-nav a[aria-current]{color:var(--accent)}.empty{text-align:center;padding:36px 10px;color:var(--muted)}.empty p{margin:10px}.empty a{color:var(--accent)}button:disabled{opacity:.4;cursor:default}dialog{color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:18px;width:calc(100% - 32px);max-width:430px;padding:22px}dialog::backdrop{background:#0009}dialog h2{font-size:20px;margin-bottom:14px}input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px;margin:8px 0 14px}.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}.set{border-bottom:1px solid var(--line);padding:16px 0}.set p{color:var(--muted);margin:8px 0}.notice{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);border-radius:10px;padding:12px 16px;z-index:20;width:max-content;max-width:90vw}.notice:empty{display:none}.demo{font-size:10px;color:var(--muted);text-align:center;margin-top:16px}@media(max-width:500px){.phone{margin:0;min-height:100dvh;border:0;border-radius:0}.status{display:none}}
+
+.customer-demo{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 0;color:var(--muted);font-size:11px}
+.customer-demo select{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;max-width:50%}
+.combo-create{border:1px solid var(--banner-ink);border-radius:16px;padding:18px;margin-bottom:24px;background:var(--banner)}
+.combo-create .eyebrow{letter-spacing:1px}.combo-create h2{font-size:18px;font-weight:600}.combo-create p{color:var(--muted);margin:8px 0 16px}.combo-create button{width:100%;min-height:44px;font-weight:600}
+.combo-heading{margin-bottom:12px}.combo-heading h2{font-weight:600}.own-combo{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:16px;margin-bottom:12px;overflow-wrap:anywhere}
+.own-combo h3{font-size:15px;font-weight:600}.own-combo p{color:var(--muted);margin:8px 0 14px}.combo-tag{display:inline-block;color:var(--accent);font-size:10px;background:var(--badge);padding:4px 8px;border-radius:20px;margin-bottom:8px}
+.own-combo .actions{flex-wrap:wrap;margin-top:14px}.own-combo button{min-height:44px}.combo-empty{border:1px dashed var(--line);border-radius:14px;padding:18px;color:var(--muted);margin-bottom:24px}
+#combo-dialog{max-height:calc(100dvh - 32px);overflow-y:auto}#combo-dialog h2{margin-bottom:8px}.combo-description{color:var(--muted);margin-bottom:18px}
+#combo-dialog fieldset{padding:0;border:0;margin:0;min-width:0}#combo-dialog legend{font-weight:600;margin-bottom:8px}.combo-choice{padding:12px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.combo-choice label{display:flex;align-items:center;gap:10px;flex:1;min-width:0;min-height:44px;cursor:pointer}.combo-choice input{width:18px;height:18px;flex-shrink:0;accent-color:var(--accent);margin:0}.choice-copy{min-width:0;overflow-wrap:anywhere}.choice-copy small{display:block;color:var(--muted);margin-top:3px}.combo-choice .stepper{flex-shrink:0}.combo-choice .stepper button{min-width:36px;min-height:44px}.combo-choice .stepper output{min-width:20px}
+.combo-summary{position:sticky;bottom:-22px;background:var(--bg);border-top:1px solid var(--line);padding:16px 0 8px;margin-top:16px}.combo-summary .actions{margin-top:14px}.combo-summary button{min-height:44px}.form-error{color:#f87171;min-height:18px;margin-top:8px}
+</style></head><body><main class="phone"><div class="status row"><span>9:41</span><span>📶 🔋</span></div><header class="header row" data-component="FavouritesTopNav"><a href="../menu/menu.html" aria-label="Quay lại menu">← Menu</a><strong>Yêu thích</strong><button id="theme" aria-label="Chuyển sáng tối">☀️</button></header><section class="intro"><div class="eyebrow">MÓN QUEN, LUÔN Ở ĐÂY</div><h1>Hôm nay ăn món mình thích ♥</h1><p>Lưu món ngon, chọn lại thật nhanh cho bữa sau.</p></section>
+<div class="customer-demo"><label for="customer">Hồ sơ khách minh hoạ</label><select id="customer"><option value="guest-01">Khách 01</option><option value="guest-02">Khách 02</option></select></div>
+<section class="combo-create" data-component="CreateFavouriteCombo"><div class="eyebrow">THEO KHẨU VỊ CỦA BẠN</div><h2>Một combo, đúng ý mình</h2><p>Tự chọn món quen, đặt tên riêng và lưu lại cho lần sau.</p><button class="primary" id="create-combo">＋ Tạo combo riêng</button></section>
+<section aria-labelledby="own-combos-title" data-component="PersonalFavouriteCombos"><div class="row combo-heading"><h2 id="own-combos-title">Combo của bạn</h2><span class="muted" id="own-combo-count"></span></div><div id="own-combos"></div></section>
+<div class="row"><span class="muted" id="count"></span><button id="show-sets">Bộ đã lưu <span id="set-count"></span></button></div><nav class="tabs" data-component="FavouriteFilterTabs" aria-label="Lọc món yêu thích"><button data-filter="all" aria-pressed="true">Tất cả</button><button data-filter="product" aria-pressed="false">Món lẻ</button><button data-filter="combo" aria-pressed="false">Combo</button></nav><section id="items" aria-label="Món yêu thích"></section><footer class="footer" data-component="FavouritesFooter"><div class="row"><span id="total-label"></span><strong class="price" id="total"></strong></div><button class="primary" id="add-all">Thêm tất cả vào giỏ</button><div class="row"><span class="muted">Giữ lại lựa chọn cho lần sau</span><button id="save">＋ Lưu thành bộ</button></div><nav class="bottom-nav" data-component="ClientBottomNav" aria-label="Điều hướng"><a href="../menu/menu.html">⌂ Menu</a><span>▤ Đơn</span><a href="favourite.html" aria-current="page">♥ Thích</a><span>◉ Theo dõi</span><span>⚙ Cài đặt</span></nav></footer><p class="demo">Bản thiết kế tương tác · Hai hồ sơ khách minh hoạ, lưu trên trình duyệt này</p></main><dialog id="combo-dialog" aria-labelledby="combo-title" aria-describedby="combo-description">
+<form id="combo-form"><h2 id="combo-title">Tạo combo riêng</h2><p class="combo-description" id="combo-description">Chọn món bạn thích và lưu thành combo của mình.</p>
+<label for="combo-name">Tên combo</label><input id="combo-name" required maxlength="60" placeholder="Ví dụ: Bữa sáng của mình" autocomplete="off">
+<fieldset><legend>Chọn món và số lượng</legend><div id="combo-choices"></div></fieldset>
+<p class="form-error" id="combo-error" role="status" aria-live="polite"></p>
+<div class="combo-summary"><div class="row"><span id="combo-selection-count">Chưa chọn món</span><strong class="price" id="combo-total">0đ</strong></div><p class="muted">Tổng giá minh hoạ của các món đã chọn.</p><div class="actions"><button type="button" data-close>Huỷ</button><button class="primary" id="save-combo">Lưu combo</button></div></div>
+</form></dialog><dialog id="save-dialog" aria-labelledby="save-title"><form id="save-form"><h2 id="save-title">Lưu bộ yêu thích</h2><label for="set-name">Tên bộ</label><input id="set-name" required maxlength="60" placeholder="Ví dụ: Bữa sáng cuối tuần"><div id="summary"></div><div class="actions"><button type="button" data-close>Huỷ</button><button class="primary">Lưu bộ</button></div></form></dialog><dialog id="sets-dialog" aria-labelledby="sets-title"><h2 id="sets-title">Bộ đã lưu</h2><div id="sets"></div><div class="actions"><button data-close>Đóng</button></div></dialog><dialog id="cart-dialog" aria-labelledby="cart-title"><h2 id="cart-title">Giỏ hàng minh hoạ</h2><div id="cart"></div><div class="actions"><button data-close>Tiếp tục chọn món</button></div></dialog><div class="notice" role="status" aria-live="polite"></div><script>
+const key='customer-favourite-design-v1';
+const defaults=[{name:'Suất Giò',type:'combo',price:21000,icon:'🍱',qty:1},{name:'Bánh Chay',type:'product',price:18000,icon:'🥟',qty:1},{name:'Combo Đầy Đặn',type:'combo',price:42000,icon:'🍱',qty:1}];
+let customer='guest-01';
+try{const savedCustomer=localStorage.getItem(key+'-active-customer');if(['guest-01','guest-02'].includes(savedCustomer))customer=savedCustomer;}catch{}
+function loadCustomer(){
+ const fresh={items:defaults.map(i=>({...i})),sets:[],combos:[]};
+ try{
+  const raw=localStorage.getItem(key+'-'+customer)??(customer==='guest-01'?localStorage.getItem(key):null);
+  const saved=JSON.parse(raw);
+  if(saved&&Array.isArray(saved.items)&&Array.isArray(saved.sets))return {...saved,combos:Array.isArray(saved.combos)?saved.combos:[]};
+ }catch{}
+ return fresh;
+}
+let state=loadCustomer(),filter='all',cart=[],draft=[],editingCombo=null;
+const customerCarts=new Map(),customerStates=new Map();
+const $=s=>document.querySelector(s),money=n=>new Intl.NumberFormat('vi-VN').format(n)+'đ';
+const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let timer;function notice(message){$('.notice').textContent=message;clearTimeout(timer);timer=setTimeout(()=>$('.notice').textContent='',2800)}
+function persist(){customerStates.set(customer,state);try{localStorage.setItem(key+'-'+customer,JSON.stringify(state));return true}catch{notice('Không thể lưu trên trình duyệt này. Thay đổi chỉ giữ trong phiên.');return false}}
+function sum(items){return items.reduce((n,i)=>n+i.price*i.qty,0)}
+function summary(items){return items.map(i=>`<div class="row set"><span>${escape(i.name)} ×${i.qty}</span><span class="price">${money(i.price*i.qty)}</span></div>`).join('')}
+function render(){
+ renderCombos();
+ $('#count').textContent=state.items.length+' món yêu thích';$('#set-count').textContent='('+state.sets.length+')';
+ document.querySelectorAll('[data-filter]').forEach(b=>{b.setAttribute('aria-pressed',b.dataset.filter===filter);const t=b.dataset.filter;b.textContent=({all:'Tất cả',product:'Món lẻ',combo:'Combo'}[t])+' ('+state.items.filter(i=>t==='all'||i.type===t).length+')'});
+ const items=state.items.filter(i=>filter==='all'||i.type===filter);
+ $('#items').innerHTML=items.length?items.map(i=>{const index=state.items.indexOf(i);return `<article class="item" data-component="FavouriteItemCard"><div class="art" aria-hidden="true">${escape(i.icon)}</div><div class="copy"><div class="row"><small>${i.type==='combo'?'COMBO':'MÓN LẺ'}</small><button class="heart" data-remove="${index}" aria-label="Bỏ yêu thích ${escape(i.name)}">♥</button></div><h2>${escape(i.name)}</h2><strong class="price">${money(i.price)}</strong><div class="row"><span class="stepper"><button data-qty="${index}" data-delta="-1" aria-label="Giảm ${escape(i.name)}" ${i.qty<=1?'disabled':''}>−</button><output>${i.qty}</output><button data-qty="${index}" data-delta="1" aria-label="Tăng ${escape(i.name)}">＋</button></span><button data-add="${index}">＋ Giỏ</button></div></div></article>`}).join(''):'<div class="empty"><span style="font-size:42px">♡</span><p>'+(state.items.length?'Chưa có món trong nhóm này.':'Chưa có món yêu thích. Nhấn ♥ trên menu để thêm món.')+'</p><a href="../menu/menu.html">Khám phá menu →</a></div>';
+ $('#total-label').textContent=state.items.reduce((n,i)=>n+i.qty,0)+' phần đã chọn';$('#total').textContent=money(sum(state.items));$('#save').disabled=$('#add-all').disabled=!state.items.length;
+}
+function renderSets(){$('#sets').innerHTML=state.sets.length?state.sets.map((s,index)=>`<article class="set" data-component="SetCard"><h3>${escape(s.name)}</h3><p>${s.items.map(i=>escape(i.name)+' ×'+i.qty).join(' · ')}</p><strong class="price">${money(sum(s.items))}</strong><div class="actions"><button data-delete="${index}">Xoá</button><button class="primary" data-set="${index}">Thêm vào giỏ</button></div></article>`).join(''):'<div class="empty">Chưa có bộ đã lưu. Lưu các món yêu thích thành bộ để dùng lại.</div>'}
+function add(items){for(const i of items){const found=cart.find(c=>c.name===i.name&&c.type===i.type);if(found)found.qty+=i.qty;else cart.push({...i})}$('#cart').innerHTML=summary(cart)+`<div class="row set"><strong>Tổng cộng</strong><strong class="price">${money(sum(cart))}</strong></div>`;document.querySelectorAll('dialog[open]').forEach(d=>d.close());$('#cart-dialog').showModal()}
+$('#add-all').onclick=()=>add(state.items);$('#show-sets').onclick=()=>{renderSets();$('#sets-dialog').showModal()};$('#save').onclick=()=>{$('#summary').innerHTML=summary(state.items);$('#save-dialog').showModal()};
+$('#save-form').onsubmit=e=>{e.preventDefault();const name=$('#set-name').value.trim();if(!name){$('#set-name').setCustomValidity('Vui lòng nhập tên bộ.');$('#set-name').reportValidity();return}state.sets.push({name,items:state.items.map(i=>({...i}))});persist();render();$('#save-dialog').close();$('#save-form').reset();renderSets();$('#sets-dialog').showModal()};$('#set-name').oninput=()=>$('#set-name').setCustomValidity('');
+ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-close'))b.closest('dialog').close();if(b.dataset.filter){filter=b.dataset.filter;render()}if(b.dataset.remove!==undefined){state.items.splice(Number(b.dataset.remove),1);persist();render();notice('Đã bỏ món khỏi yêu thích.')}if(b.dataset.qty!==undefined){const i=state.items[Number(b.dataset.qty)];i.qty=Math.max(1,i.qty+Number(b.dataset.delta));persist();render()}if(b.dataset.add!==undefined)add([state.items[Number(b.dataset.add)]]);if(b.dataset.set!==undefined)add(state.sets[Number(b.dataset.set)].items);if(b.dataset.delete!==undefined){state.sets.splice(Number(b.dataset.delete),1);persist();render();renderSets()}});
+
+function renderCombos(){
+ $('#own-combo-count').textContent=state.combos.length+' combo';
+ $('#own-combos').innerHTML=state.combos.length?state.combos.map((c,index)=>`<article class="own-combo" data-component="PersonalComboCard"><span class="combo-tag">♥ Combo riêng</span><h3>${escape(c.name)}</h3><p>${c.items.map(i=>escape(i.name)+' ×'+i.qty).join(' · ')}</p><div class="row"><span class="muted">${c.items.reduce((n,i)=>n+i.qty,0)} phần</span><strong class="price">${money(sum(c.items))}</strong></div><div class="actions"><button data-edit-combo="${index}" aria-label="Sửa combo ${escape(c.name)}">Sửa</button><button data-delete-combo="${index}" aria-label="Xoá combo ${escape(c.name)}">Xoá</button><button class="primary" data-add-combo="${index}">＋ Thêm vào giỏ</button></div></article>`).join(''):'<p class="combo-empty">Chưa có combo riêng. Tạo combo đầu tiên để lần sau chọn món nhanh hơn.</p>';
+}
+function openCombo(index=null){
+ editingCombo=index;
+ const existing=index===null?null:state.combos[index];
+ const choices=[...defaults,...state.items,...(existing?.items||[])];
+ draft=[];
+ for(const item of choices){
+  if(draft.some(i=>i.name===item.name&&i.type===item.type))continue;
+  const selected=existing?.items.find(i=>i.name===item.name&&i.type===item.type);
+  draft.push({...item,qty:selected?.qty||1,selected:!!selected});
+ }
+ $('#combo-form').reset();$('#combo-name').setCustomValidity('');$('#combo-error').textContent='';
+ $('#combo-name').value=existing?.name||'';$('#combo-title').textContent=existing?'Sửa combo riêng':'Tạo combo riêng';
+ $('#combo-choices').innerHTML=draft.map((i,index)=>`<div class="combo-choice"><label for="combo-choice-${index}"><input type="checkbox" id="combo-choice-${index}" data-combo-choice="${index}" ${i.selected?'checked':''}><span class="choice-copy">${escape(i.name)}<small>${money(i.price)} / phần</small></span></label><span class="stepper"><button type="button" data-combo-qty="${index}" data-delta="-1" aria-label="Giảm số lượng ${escape(i.name)}">−</button><output id="combo-qty-${index}">${i.qty}</output><button type="button" data-combo-qty="${index}" data-delta="1" aria-label="Tăng số lượng ${escape(i.name)}">＋</button></span></div>`).join('');
+ updateCombo();$('#combo-dialog').showModal();
+}
+function updateCombo(){
+ const selected=draft.filter(i=>i.selected);
+ $('#combo-selection-count').textContent=selected.length?selected.length+' món · '+selected.reduce((n,i)=>n+i.qty,0)+' phần':'Chưa chọn món';
+ $('#combo-total').textContent=money(sum(selected));$('#save-combo').disabled=!selected.length;
+ document.querySelectorAll('[data-combo-qty]').forEach(b=>{const i=draft[Number(b.dataset.comboQty)];b.disabled=!i.selected||(b.dataset.delta==='-1'&&i.qty<=1)});
+ draft.forEach((i,index)=>$('#combo-qty-'+index).textContent=i.qty);
+}
+$('#create-combo').onclick=()=>openCombo();
+$('#combo-name').oninput=()=>$('#combo-name').setCustomValidity('');
+$('#combo-choices').onchange=e=>{if(e.target.dataset.comboChoice===undefined)return;draft[Number(e.target.dataset.comboChoice)].selected=e.target.checked;$('#combo-error').textContent='';updateCombo()};
+$('#combo-choices').onclick=e=>{const b=e.target.closest('[data-combo-qty]');if(!b)return;const i=draft[Number(b.dataset.comboQty)];i.qty=Math.max(1,i.qty+Number(b.dataset.delta));updateCombo()};
+$('#combo-form').onsubmit=e=>{
+ e.preventDefault();const name=$('#combo-name').value.trim();
+ if(!name){$('#combo-name').setCustomValidity('Vui lòng nhập tên combo.');$('#combo-name').reportValidity();return}
+ const items=draft.filter(i=>i.selected).map(({selected,...i})=>({...i}));
+ if(!items.length){$('#combo-error').textContent='Vui lòng chọn ít nhất một món.';return}
+ const combo={name,items};if(editingCombo===null)state.combos.push(combo);else state.combos[editingCombo]=combo;
+ const saved=persist();renderCombos();$('#combo-dialog').close();if(saved)notice('Đã lưu combo riêng của bạn.');
+};
+$('#own-combos').onclick=e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.editCombo!==undefined)openCombo(Number(b.dataset.editCombo));
+ if(b.dataset.deleteCombo!==undefined){state.combos.splice(Number(b.dataset.deleteCombo),1);const saved=persist();renderCombos();if(saved)notice('Đã xoá combo riêng.')}
+ if(b.dataset.addCombo!==undefined)add(state.combos[Number(b.dataset.addCombo)].items);
+};
+$('#customer').value=customer;
+$('#customer').onchange=e=>{
+ document.querySelectorAll('dialog[open]').forEach(d=>d.close());customerCarts.set(customer,cart);customerStates.set(customer,state);
+ customer=e.target.value;state=customerStates.get(customer)||loadCustomer();cart=customerCarts.get(customer)||[];draft=[];editingCombo=null;filter='all';render();
+ try{localStorage.setItem(key+'-active-customer',customer)}catch{notice('Không thể nhớ hồ sơ minh hoạ trên trình duyệt này.')}
+};
+
+function theme(t){document.documentElement.dataset.theme=t;$('#theme').textContent=t==='light'?'🌙':'☀️'}try{theme(localStorage.getItem('menu-theme')||'dark')}catch{theme('dark')}$('#theme').onclick=()=>{const t=document.documentElement.dataset.theme==='light'?'dark':'light';theme(t);try{localStorage.setItem('menu-theme',t)}catch{}};render();
+</script></body></html>

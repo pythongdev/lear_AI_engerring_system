@@ -62,10 +62,11 @@ ngược từ dưới lên, **từng bước một**.
 | 34 | `20261019140000_an_lua_chon` | `T-210` | `menu_option.hidden_at` · `hidden_by_person_id` và ba ràng buộc ẩn — topping ẩn · bật lại (§8.9); lùi chặn khi còn lựa chọn đang ẩn, rỗng thì gỡ hai cột | 2 · 21 |
 | 35 | `20261022120000_huy_viec_khi_dong_phien` | `T-227` | `station_job.status` thêm cancelled · discarded; khoá hai chiều mục mẻ giữ cả discarded; trigger từ chối lùi mẻ có phần discarded. Lùi migration chặn khi có một trong hai trạng thái mới, nếu không thì trả miền cũ và khoá cũ (ADR-125) | 7 · 13 |
 | 36 | `20261024120000_han_giao_viec` | `T-246` | `assigned_task.due_at` ngày giờ có múi giờ, nullable cho lịch sử, quyền UPDATE đúng cột; lùi chặn khi có bất kỳ hạn nào đã nhập rồi gỡ quyền/cột (ADR-127) | 24 |
-| 37 | `20261027120000_tai_khoan_khach` | `T-263` | `account.phone`, email/username tuỳ chọn; bốn bảng khách tách người làm; liên kết đơn web bất biến sau tạo. Lùi từ chối nếu account thiếu email/username, có phone, hoặc customer_account có dòng; gỡ trigger/hàm/CHECK/FK/cột liên kết đơn trước, rồi bảng con trước bảng khách, trả account về hình cũ | 27 · 8 · 20 |
-| 38 | `20261028090000_vet_cua_khach` | `T-264` | `record_revision.person_id` được rỗng chỉ cho bốn bảng `customer_*` (ADR-131 sửa đổi 2026-10-28). Lùi từ chối nếu đã có vết người sửa rỗng | 37 |
-| 39 | `20261028120000_khach_google` | `T-267` | `customer_google_identity`, liên kết Google chỉ thêm; lùi khoá bảng và từ chối khi đã có dòng (`customer_google_identity_rollback_check`) | 39 |
-| 40 | `20261029120000_xac_nhan_gmail` | `T-270` | `customer_email_verification` và Gmail chờ; lùi khoá hai bảng, từ chối khi có mã hoặc pending_email; trả quyền và hai CHECK về bước trước | 40 |
+| 37 | `20261024140000_khoan_chi_chi_tiet` | `T-248` | Khoản con, FK ghép và dấu xoá có vết; lùi chặn khi có khoản con/liên kết/dấu xoá, giữ lịch sử | 28, 36 |
+| 38 | `20261027120000_tai_khoan_khach` | `T-263` | `account.phone`, email/username tuỳ chọn; bốn bảng khách tách người làm; liên kết đơn web bất biến sau tạo. Lùi từ chối nếu account thiếu email/username, có phone, hoặc customer_account có dòng; gỡ trigger/hàm/CHECK/FK/cột liên kết đơn trước, rồi bảng con trước bảng khách, trả account về hình cũ | 27 · 8 · 20 |
+| 39 | `20261028090000_vet_cua_khach` | `T-264` | `record_revision.person_id` được rỗng chỉ cho bốn bảng `customer_*` (ADR-131 sửa đổi 2026-10-28). Lùi từ chối nếu đã có vết người sửa rỗng | 38 |
+| 40 | `20261028120000_khach_google` | `T-267` | `customer_google_identity`, liên kết Google chỉ thêm; lùi khoá bảng và từ chối khi đã có dòng (`customer_google_identity_rollback_check`) | 39 |
+| 41 | `20261029120000_xac_nhan_gmail` | `T-270` | `customer_email_verification` và Gmail chờ; lùi khoá hai bảng, từ chối khi có mã hoặc pending_email; trả quyền và hai CHECK về bước trước | 40 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`

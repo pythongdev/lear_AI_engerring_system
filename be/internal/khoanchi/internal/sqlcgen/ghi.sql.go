@@ -7,21 +7,29 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const ghi = `-- name: Ghi :one
-INSERT INTO expense (expense_category_id, amount_vnd, paid_date)
-VALUES ($1, $2, $3::text::date) RETURNING id
+INSERT INTO expense (expense_category_id, amount_vnd, paid_date, expense_item_id)
+VALUES ($1, $2, $3::text::date, $4) RETURNING id
 `
 
 type GhiParams struct {
 	ExpenseCategoryID int64
 	AmountVnd         int64
 	Column3           string
+	ExpenseItemID     pgtype.Int8
 }
 
 func (q *Queries) Ghi(ctx context.Context, arg GhiParams) (int64, error) {
-	row := q.db.QueryRow(ctx, ghi, arg.ExpenseCategoryID, arg.AmountVnd, arg.Column3)
+	row := q.db.QueryRow(ctx, ghi,
+		arg.ExpenseCategoryID,
+		arg.AmountVnd,
+		arg.Column3,
+		arg.ExpenseItemID,
+	)
 	var id int64
 	err := row.Scan(&id)
 	return id, err

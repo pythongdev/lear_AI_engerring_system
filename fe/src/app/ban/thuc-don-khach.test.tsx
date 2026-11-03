@@ -48,7 +48,10 @@ it("thẻ món và combo: thêm dòng mặc định; bớt dòng cuối, bỏ �
   await mo(giaTheoDong);
   expect((screen.getByRole("button", { name: "Bớt Bánh cuốn" }) as HTMLButtonElement).disabled).toBe(true);
   expect(within(card("Thêm combo Đầy đặn")).getByText("72.000đ")).toBeTruthy();
-  expect(within(card("Thêm combo Đầy đặn")).getByText("×2")).toBeTruthy();
+  const thanhPhanNut = within(card("Thêm combo Đầy đặn")).getByRole("button", { name: "Thành phần" });
+  expect(thanhPhanNut.getAttribute("aria-expanded")).toBe("false");
+  fireEvent.click(thanhPhanNut);
+  expect(within(card("Thêm combo Đầy đặn")).getByText("×2 Bánh cuốn")).toBeTruthy();
   click("Thêm Bánh cuốn");
   click("Thêm combo Đầy đặn");
   click("Thêm Bánh cuốn");
@@ -125,21 +128,18 @@ it("ô số lượng xoá trống: thẻ và dải giỏ đếm 0, không hiện
 it("chọn nhân và lượng ngay trên thẻ; thêm giữ từng tổ hợp, tóm tắt chỉ đọc", async () => {
   const b = await mo(giaTheoDong);
   const mon = within(card("Thêm Bánh cuốn"));
-  expect(mon.getByRole("button", { name: "Nhân: Thịt" })).toBeTruthy();
-  expect(mon.getByRole("button", { name: "Lượng nhân: Vừa" })).toBeTruthy();
+  expect(mon.getByRole("button", { name: "Thịt · Vừa" })).toBeTruthy();
   expect(mon.queryByRole("radio")).toBeNull();
   click("Thêm Bánh cuốn");
-  fireEvent.click(mon.getByRole("button", { name: "Nhân: Thịt" }));
+  fireEvent.click(mon.getByRole("button", { name: "Thịt · Vừa" }));
   fireEvent.click(screen.getByRole("radio", { name: "Thịt + mộc nhĩ" }));
-  expect(mon.queryByRole("radio")).toBeNull();
-  fireEvent.click(mon.getByRole("button", { name: "Lượng nhân: Vừa" }));
+  expect(mon.getByRole("group", { name: "Lượng nhân:" })).toBeTruthy();
   fireEvent.click(screen.getByRole("radio", { name: "Nhiều" }));
-  expect(mon.queryByRole("radio")).toBeNull();
+  expect(mon.getByRole("radio", { name: "Nhiều" }).getAttribute("type")).toBe("radio");
   click("Thêm Bánh cuốn");
-  fireEvent.click(mon.getByRole("button", { name: "Nhân: Thịt + mộc nhĩ" }));
   fireEvent.click(screen.getByRole("radio", { name: "Chay" }));
-  expect(mon.queryByRole("radio")).toBeNull();
-  expect(mon.queryByRole("button", { name: /Lượng nhân/ })).toBeNull();
+  expect(mon.queryByRole("group", { name: "Lượng nhân:" })).toBeNull();
+  expect(mon.getByRole("button", { name: "Chay" }).getAttribute("aria-expanded")).toBe("true");
   click("Thêm Bánh cuốn");
   await waitFor(() => expect([cot(1, "Nhân"), cot(1, "Lượng nhân"), cot(1, "Giá")]).toEqual(["Thịt", "Vừa", "35.000đ"]));
   await waitFor(() => expect([cot(2, "Nhân"), cot(2, "Lượng nhân"), cot(2, "Giá")]).toEqual(["Thịt + mộc nhĩ", "Nhiều", "40.000đ"]));
@@ -155,19 +155,16 @@ it("chọn nhân và lượng ngay trên thẻ; thêm giữ từng tổ hợp, t
 it("combo chọn chung mọi suất, từng lần thêm giữ nhân riêng và chay bỏ lượng nhân", async () => {
   const b = await mo();
   const combo = within(card("Thêm combo Đầy đặn"));
-  expect(combo.getByRole("button", { name: "Nhân: Thịt" })).toBeTruthy();
-  expect(combo.getByRole("button", { name: "Lượng nhân: Vừa" })).toBeTruthy();
-  fireEvent.click(combo.getByRole("button", { name: "Nhân: Thịt" }));
+  expect(combo.getByRole("button", { name: "Thịt · Vừa" })).toBeTruthy();
+  fireEvent.click(combo.getByRole("button", { name: "Thịt · Vừa" }));
   fireEvent.click(screen.getByRole("radio", { name: "Thịt + mộc nhĩ" }));
-  expect(combo.queryByRole("radio")).toBeNull();
-  fireEvent.click(combo.getByRole("button", { name: "Lượng nhân: Vừa" }));
+  expect(combo.getByRole("group", { name: "Lượng nhân:" })).toBeTruthy();
   fireEvent.click(screen.getByRole("radio", { name: "Nhiều" }));
-  expect(combo.queryByRole("radio")).toBeNull();
+  expect(combo.getByRole("radio", { name: "Nhiều" }).getAttribute("type")).toBe("radio");
   click("Thêm combo Đầy đặn");
-  fireEvent.click(combo.getByRole("button", { name: "Nhân: Thịt + mộc nhĩ" }));
   fireEvent.click(screen.getByRole("radio", { name: "Chay" }));
-  expect(combo.queryByRole("radio")).toBeNull();
-  expect(combo.queryByRole("button", { name: /Lượng nhân/ })).toBeNull();
+  expect(combo.queryByRole("group", { name: "Lượng nhân:" })).toBeNull();
+  expect(combo.getByRole("button", { name: "Chay" }).getAttribute("aria-expanded")).toBe("true");
   click("Thêm combo Đầy đặn");
   expect([cot(1, "Nhân"), cot(1, "Lượng nhân")]).toEqual(["Thịt + mộc nhĩ", "Nhiều"]);
   expect([cot(2, "Nhân"), cot(2, "Lượng nhân")]).toEqual(["Chay", "—"]);
@@ -187,7 +184,7 @@ it("thêm cùng combo cùng lựa chọn thì gom một dòng cộng số lượ
   expect((dong(1).getByRole("spinbutton") as HTMLInputElement).value).toBe("2");
   expect(thanhPhan(1)).toEqual(["×4 Bánh cuốn"]);
   const combo = within(card("Thêm combo Đầy đặn"));
-  fireEvent.click(combo.getByRole("button", { name: "Nhân: Thịt" }));
+  fireEvent.click(combo.getByRole("button", { name: "Thịt · Vừa" }));
   fireEvent.click(screen.getByRole("radio", { name: "Chay" }));
   click("Thêm combo Đầy đặn");
   expect([cot(2, "Nhân"), cot(2, "Lượng nhân")]).toEqual(["Chay", "—"]);
@@ -200,21 +197,23 @@ it("ảnh thẻ dẫn đúng chi tiết combo/món và giữ mã bàn", async ()
   expect(within(card("Thêm Bánh cuốn")).getByRole("link", { name: "Xem chi tiết món Bánh cuốn" }).getAttribute("href")).toBe("/thuc-don/mon/1?ban=test-menu");
 });
 
-it("bấm nhóm thì danh sách lựa chọn mở ngay trong thẻ, đánh dấu hiện tại; bấm lại hoặc chọn lại thì thu, giữ lựa chọn", async () => {
+it("nút gộp mở mọi nhóm trong thẻ; chọn giữ mở, bấm lại thu và giữ lựa chọn", async () => {
   await mo();
   const mon = within(card("Thêm Bánh cuốn"));
-  const nut = mon.getByRole("button", { name: "Nhân: Thịt" });
+  const nut = mon.getByRole("button", { name: "Thịt · Vừa" });
   expect(nut.getAttribute("aria-expanded")).toBe("false");
+  expect(mon.queryByRole("radio")).toBeNull();
   fireEvent.click(nut);
   expect(nut.getAttribute("aria-expanded")).toBe("true");
   expect((mon.getByRole("radio", { name: /^Thịt$/ }) as HTMLInputElement).checked).toBe(true);
+  expect(mon.getByRole("group", { name: "Lượng nhân:" })).toBeTruthy();
+  fireEvent.click(mon.getByRole("radio", { name: "Nhiều" }));
+  expect(nut.getAttribute("aria-expanded")).toBe("true");
+  expect(nut.textContent).toBe("Thịt · Nhiều");
   fireEvent.click(nut);
-  expect(nut.getAttribute("aria-expanded")).toBe("false");
   expect(mon.queryByRole("radio")).toBeNull();
   fireEvent.click(nut);
-  fireEvent.click(mon.getByRole("radio", { name: /^Thịt$/ }));
-  expect(mon.queryByRole("radio")).toBeNull();
-  expect(mon.getByRole("button", { name: "Nhân: Thịt" })).toBeTruthy();
+  expect((mon.getByRole("radio", { name: "Nhiều" }) as HTMLInputElement).checked).toBe(true);
 });
 
 it("canh bánh cuốn nằm cuối món lẻ, nút Rau mặc định Ít rau và chọn được Nhiều rau (T-261)", async () => {
@@ -225,7 +224,7 @@ it("canh bánh cuốn nằm cuối món lẻ, nút Rau mặc định Ít rau và
   ], prices: [{ option_ids: [31], unit_price_vnd: 0 }, { option_ids: [32], unit_price_vnd: 0 }, { option_ids: [33], unit_price_vnd: 0 }] }));
   const list = screen.getByRole("heading", { name: "MÓN LẺ" }).closest("section")!;
   expect([...list.querySelectorAll("h3")].map((h) => h.textContent)).toEqual(["Bánh cuốn", "Canh", "Canh bánh cuốn"]);
-  const nut = within(card("Thêm Canh bánh cuốn")).getByRole("button", { name: /^Rau:/ });
+  const nut = within(card("Thêm Canh bánh cuốn")).getByRole("button", { name: "Ít rau" });
   expect(nut.textContent).toContain("Ít rau");
   fireEvent.click(nut);
   fireEvent.click(within(card("Thêm Canh bánh cuốn")).getByLabelText("Nhiều rau"));
@@ -278,4 +277,67 @@ it("nháp cũ gộp cùng tập lựa chọn dù đảo thứ tự; khác món h
   click("Thêm Bánh cuốn");
   expect((dong(1).getByRole("spinbutton") as HTMLInputElement).value).toBe("");
   expect((dong(5).getByRole("spinbutton") as HTMLInputElement).value).toBe("1");
+});
+
+it("thanh cam dùng giá dòng API và chờ báo giá, không nhân giá gốc combo", async () => {
+  const cho: ((v: TraLoi) => void)[] = [];
+  await mo(() => new Promise((resolve) => { cho.push(resolve); }));
+  click("Thêm combo Đầy đặn");
+  const combo = card("Thêm combo Đầy đặn");
+  expect(combo.querySelector(".menu-quantity-text")?.textContent).toBe("1 suất · Đang tính…");
+  await waitFor(() => expect(cho).toHaveLength(2));
+  await act(async () => cho.forEach((tra) => tra({ status: 200, body: { lines: [{ line_total_vnd: 98765 }], total_vnd: 98765 } })));
+  await waitFor(() => expect(combo.querySelector(".menu-quantity-text")?.textContent).toBe("1 suất · 98.765đ"));
+});
+
+it("thanh cam báo khi API lỗi và cộng đúng nhiều tổ hợp món lẻ", async () => {
+  await mo(giaTheoDong);
+  click("Thêm Bánh cuốn");
+  const mon = within(card("Thêm Bánh cuốn"));
+  fireEvent.click(mon.getByRole("button", { name: "Thịt · Vừa" }));
+  fireEvent.click(mon.getByRole("radio", { name: "Chay" }));
+  click("Thêm Bánh cuốn");
+  await waitFor(() => expect(card("Thêm Bánh cuốn").querySelector(".menu-quantity-text")?.textContent).toBe("2 món · 65.000đ"));
+  // Fixture mặc định của combo không có giá dòng: giữ lời lỗi, không tự suy giá.
+  click("Thêm combo Đầy đặn");
+  await waitFor(() => expect(card("Thêm combo Đầy đặn").querySelector(".menu-quantity-text")?.textContent).toBe("1 suất · Chưa tính được giá"));
+});
+
+
+it.each([2, 3])("hỗn hợp chia cả bánh trứng, giữ tỷ lệ mỗi combo khi tăng/bớt (%i bánh cuốn)", async (banh) => {
+  await mo(giaTheoDong, (menu) => {
+    const mon = menu.items[0];
+    mon.option_groups[0].options.push({ menu_option_id: 14, option_name: "Mộc nhĩ", is_default: false });
+    mon.option_groups[1].prerequisite_option_ids.push(14);
+    menu.combos[0].items = [
+      { ...mon, quantity: banh, surcharges: [] },
+      { ...mon, menu_item_id: 81, item_name: "Bánh trứng", quantity: 1, surcharges: [] },
+      { menu_item_id: 82, item_name: "Giò", quantity: 1, option_groups: [], surcharges: [] },
+    ];
+  });
+  const c = within(card("Thêm combo Đầy đặn"));
+  fireEvent.click(c.getByRole("button", { name: "Thịt · Vừa" }));
+  fireEvent.click(c.getByRole("radio", { name: "Mộc nhĩ và thịt" }));
+  expect((c.getByRole("radio", { name: "Thịt" }) as HTMLInputElement).checked).toBe(false);
+  fireEvent.click(c.getByRole("radio", { name: "Nhiều" }));
+  expect((c.getByRole("radio", { name: "Mộc nhĩ và thịt" }) as HTMLInputElement).checked).toBe(true);
+  const dem = (soCombo: number) => {
+    const d = Object.values(useNhapKhach.getState().gio)[0][0];
+    if (d.menu_combo_id === undefined) throw new Error("Cần dòng combo");
+    expect(d.quantity).toBe(soCombo);
+    expect(d.portions.filter((p) => p.option_ids.includes(11))).toHaveLength(Math.ceil((banh + 1) / 2) * soCombo);
+    expect(d.portions.filter((p) => p.option_ids.includes(14))).toHaveLength(Math.floor((banh + 1) / 2) * soCombo);
+    expect(d.portions.filter((p) => p.menu_item_id === 81).every((p) => p.option_ids.includes(14))).toBe(true);
+    expect(d.portions.filter((p) => p.menu_item_id !== 82).every((p) => p.option_ids.includes(22))).toBe(true);
+    expect(d.portions.filter((p) => p.menu_item_id === 82).every((p) => p.option_ids.length === 0)).toBe(true);
+  };
+  click("Thêm combo Đầy đặn"); dem(1);
+  click("Thêm combo Đầy đặn"); dem(2);
+  fireEvent.change(dong(1).getByRole("spinbutton"), { target: { value: "3" } }); dem(3);
+  click("Bớt Đầy đặn"); dem(2);
+  fireEvent.change(dong(1).getByRole("spinbutton"), { target: { value: "1" } }); dem(1);
+  fireEvent.click(c.getByRole("radio", { name: "Thịt" }));
+  expect((c.getByRole("radio", { name: "Mộc nhĩ và thịt" }) as HTMLInputElement).checked).toBe(false);
+  click("Thêm combo Đầy đặn");
+  expect(screen.getByRole("region", { name: "Dòng 2" })).toBeTruthy();
 });

@@ -209,6 +209,11 @@ sql:
       - internal/khoanchi/sql/them_loai
       - internal/khoanchi/sql/ghi
       - internal/khoanchi/sql/sua
+      - internal/khoanchi/sql/sua_loai
+      - internal/khoanchi/sql/xoa_danh_muc
+      - internal/khoanchi/sql/them_khoan_con
+      - internal/khoanchi/sql/sua_khoan_con
+      - internal/khoanchi/sql/xoa
     gen:
       go:
         package: sqlcgen

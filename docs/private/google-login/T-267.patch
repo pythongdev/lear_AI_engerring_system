@@ -1,0 +1,2063 @@
+diff --git a/Makefile b/Makefile
+index 11b3156..93e3c32 100644
+--- a/Makefile
++++ b/Makefile
+@@ -23,9 +23,9 @@ BANHCUON_ORIGIN ?= http://localhost:3000
+ BANHCUON_FILE_DIR ?= $(CURDIR)/.dev/files
+ BANHCUON_BE_URL ?= http://127.0.0.1:8080
+ export DB_PORT
+-BE_ENV = BANHCUON_DATABASE_URL="$(BANHCUON_DATABASE_URL)" BANHCUON_SHOP_TZ="$(BANHCUON_SHOP_TZ)" BANHCUON_ORIGIN="$(BANHCUON_ORIGIN)" BANHCUON_FILE_DIR="$(BANHCUON_FILE_DIR)"
++BE_ENV = BANHCUON_GOOGLE_CLIENT_ID="$(BANHCUON_GOOGLE_CLIENT_ID)" BANHCUON_DATABASE_URL="$(BANHCUON_DATABASE_URL)" BANHCUON_SHOP_TZ="$(BANHCUON_SHOP_TZ)" BANHCUON_ORIGIN="$(BANHCUON_ORIGIN)" BANHCUON_FILE_DIR="$(BANHCUON_FILE_DIR)"
+ BE_RUN = cd be && $(BE_ENV) go run ./cmd/server
+-FE_RUN = cd fe && BANHCUON_BE_URL="$(BANHCUON_BE_URL)" npm run dev
++FE_RUN = cd fe && NEXT_PUBLIC_GOOGLE_CLIENT_ID="$(NEXT_PUBLIC_GOOGLE_CLIENT_ID)" BANHCUON_BE_URL="$(BANHCUON_BE_URL)" npm run dev
+ 
+ # Bash 3.2: monitor mode tạo nhóm riêng; tắt monitor trong nhóm để con cùng nhóm.
+ # Bộ đọc log nằm trong nhóm đó. Theo dõi PID server, không chờ pipe log đóng.
+diff --git a/be/cmd/server/router.go b/be/cmd/server/router.go
+index 8a36062..8c77028 100644
+--- a/be/cmd/server/router.go
++++ b/be/cmd/server/router.go
+@@ -1,6 +1,7 @@
+ package main
+ 
+ import (
++	"banhcuon/be/internal/google"
+ 	"banhcuon/be/internal/khach"
+ 	"banhcuon/be/internal/taikhoan"
+ 	"banhcuon/be/internal/tongket"
+@@ -56,7 +57,8 @@ func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtim
+ 	phien.Routes(r, phien.NewService(pool))
+ 	nguoi.Routes(r, nguoi.NewService(pool))
+ 	taikhoan.Routes(r, taikhoan.NewService(pool, taikhoan.SMTPFromEnv()))
+-	khach.Routes(r, khach.NewService(pool, taikhoan.SMTPFromEnv()))
++	googleClientID := strings.TrimSpace(os.Getenv("BANHCUON_GOOGLE_CLIENT_ID"))
++	khach.Routes(r, khach.NewService(pool, taikhoan.SMTPFromEnv()).WithGoogle(googleClientID, google.New(googleClientID, google.Options{})))
+ 	tratruoc.Routes(r, tratruoc.NewService(pool))
+ 	hoadon.Routes(r, hoadon.NewService(pool))
+ 	ket.Routes(r, ket.NewService(pool))
+diff --git a/be/cmd/server/t267_google_test.go b/be/cmd/server/t267_google_test.go
+new file mode 100644
+index 0000000..51776c0
+--- /dev/null
++++ b/be/cmd/server/t267_google_test.go
+@@ -0,0 +1,94 @@
++package main
++
++import (
++	"context"
++	"encoding/json"
++	"errors"
++	"fmt"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
++	"time"
++
++	"banhcuon/be/internal/google"
++	"banhcuon/be/internal/khach"
++	"banhcuon/be/internal/platform/postgres"
++	"banhcuon/be/internal/testhelper"
++	"github.com/gin-gonic/gin"
++)
++
++type googleVerifierFake struct {
++	claims google.Claims
++	err    error
++	token  string
++}
++
++func (f *googleVerifierFake) Verify(_ context.Context, token string) (google.Claims, error) {
++	f.token = token
++	return f.claims, f.err
++}
++func googleRequest(r http.Handler, body string) *httptest.ResponseRecorder {
++	w := httptest.NewRecorder()
++	req := httptest.NewRequest(http.MethodPost, "/customer-sessions/google", strings.NewReader(body))
++	req.Header.Set("Content-Type", "application/json")
++	r.ServeHTTP(w, req)
++	return w
++}
++func TestI035_GoogleHandlerErrors(t *testing.T) {
++	for _, tc := range []struct {
++		name, client, code string
++		status             int
++	}{{"disabled", "", "google_login_disabled", 503}, {"invalid", "client", "google_token_invalid", 401}} {
++		t.Run(tc.name, func(t *testing.T) {
++			verifier := &googleVerifierFake{err: errors.New("invalid")}
++			r := gin.New()
++			khach.Routes(r, khach.NewService(nil, nil).WithGoogle(tc.client, verifier))
++			w := googleRequest(r, `{"credential":"signed-token"}`)
++			var out struct{ Code string }
++			_ = json.Unmarshal(w.Body.Bytes(), &out)
++			if w.Code != tc.status || out.Code != tc.code || w.Header().Get("Set-Cookie") != "" {
++				t.Fatalf("response: %d %s %v", w.Code, w.Body, w.Header())
++			}
++			if tc.client != "" && verifier.token != "signed-token" {
++				t.Fatal("wrong verifier input")
++			}
++		})
++	}
++}
++func TestI035_GoogleHandlerCookie(t *testing.T) {
++	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
++	defer cancel()
++	pool, err := postgres.Open(ctx, testhelper.AppDSN(t), testhelper.ShopTZ(t))
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer pool.Close()
++	suffix := fmt.Sprint(time.Now().UnixNano())
++	verifier := &googleVerifierFake{claims: google.Claims{Sub: "http-" + suffix, Email: "http." + suffix + "@gmail.com", Name: "Lan"}}
++	r := gin.New()
++	khach.Routes(r, khach.NewService(pool, nil).WithGoogle("client", verifier))
++	w := googleRequest(r, `{"credential":"signed-token"}`)
++	var profile khach.Profile
++	if err = json.Unmarshal(w.Body.Bytes(), &profile); err != nil {
++		t.Fatal(err)
++	}
++	if w.Code != 201 || profile.AccountID == 0 || profile.DisplayName != "Lan" || verifier.token != "signed-token" {
++		t.Fatalf("response: %d %s", w.Code, w.Body)
++	}
++	cookies := w.Result().Cookies()
++	if len(cookies) != 1 {
++		t.Fatal(cookies)
++	}
++	c := cookies[0]
++	if c.Name != "banhcuon_khach" || len(c.Value) != 43 || !c.HttpOnly || !c.Secure || c.SameSite != http.SameSiteStrictMode || c.Path != "/" || c.MaxAge != 604800 {
++		t.Fatalf("cookie: %+v", c)
++	}
++	current := httptest.NewRecorder()
++	req := httptest.NewRequest("GET", "/customer-sessions/current", nil)
++	req.AddCookie(c)
++	r.ServeHTTP(current, req)
++	if current.Code != 200 {
++		t.Fatalf("session unusable: %d %s", current.Code, current.Body)
++	}
++}
+diff --git a/be/internal/apierr/apierr.go b/be/internal/apierr/apierr.go
+index f28caa5..aaa0aab 100644
+--- a/be/internal/apierr/apierr.go
++++ b/be/internal/apierr/apierr.go
+@@ -15,6 +15,8 @@ import (
+ type Code string
+ 
+ const (
++	CodeGoogleLoginDisabled            Code = "google_login_disabled"
++	CodeGoogleTokenInvalid             Code = "google_token_invalid"
+ 	CodeIdentifierInvalid              Code = "identifier_invalid"
+ 	CodeContactRequired                Code = "contact_required"
+ 	CodePhoneTaken                     Code = "phone_taken"
+@@ -159,6 +161,8 @@ const (
+ 
+ // statusOf là x-http-status của ErrorCode.
+ var statusOf = map[Code]int{
++	CodeGoogleLoginDisabled:            503,
++	CodeGoogleTokenInvalid:             401,
+ 	CodeIdentifierInvalid:              400,
+ 	CodeContactRequired:                400,
+ 	CodePhoneTaken:                     409,
+diff --git a/be/internal/ban/internal/sqlcgen/models.go b/be/internal/ban/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/ban/internal/sqlcgen/models.go
++++ b/be/internal/ban/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/combo/internal/sqlcgen/models.go b/be/internal/combo/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/combo/internal/sqlcgen/models.go
++++ b/be/internal/combo/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/danhmuc/internal/sqlcgen/models.go b/be/internal/danhmuc/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/danhmuc/internal/sqlcgen/models.go
++++ b/be/internal/danhmuc/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/daotao/internal/sqlcgen/models.go b/be/internal/daotao/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/daotao/internal/sqlcgen/models.go
++++ b/be/internal/daotao/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/don/internal/sqlcgen/models.go b/be/internal/don/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/don/internal/sqlcgen/models.go
++++ b/be/internal/don/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/gia/internal/sqlcgen/models.go b/be/internal/gia/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/gia/internal/sqlcgen/models.go
++++ b/be/internal/gia/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/giaoviec/internal/sqlcgen/models.go b/be/internal/giaoviec/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/giaoviec/internal/sqlcgen/models.go
++++ b/be/internal/giaoviec/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/google/verifier.go b/be/internal/google/verifier.go
+new file mode 100644
+index 0000000..b6ca382
+--- /dev/null
++++ b/be/internal/google/verifier.go
+@@ -0,0 +1,171 @@
++// Package google verifies Google ID tokens without third-party JWT dependencies.
++package google
++
++import (
++	"context"
++	"crypto"
++	"crypto/rsa"
++	"crypto/sha256"
++	"encoding/base64"
++	"encoding/json"
++	"errors"
++	"io"
++	"math/big"
++	"net/http"
++	"strconv"
++	"strings"
++	"sync"
++	"time"
++)
++
++type Claims struct{ Sub, Email, Name string }
++type Verifier interface {
++	Verify(context.Context, string) (Claims, error)
++}
++
++var ErrInvalid = errors.New("invalid Google ID token")
++
++const CertsURL = "https://www.googleapis.com/oauth2/v3/certs"
++
++type Options struct {
++	JWKSURL string
++	Now     func() time.Time
++	Client  *http.Client
++}
++type verifier struct {
++	clientID, url string
++	now           func() time.Time
++	client        *http.Client
++	mu            sync.Mutex
++	keys          map[string]*rsa.PublicKey
++	expires       time.Time
++}
++
++func New(clientID string, opts Options) Verifier {
++	if opts.JWKSURL == "" {
++		opts.JWKSURL = CertsURL
++	}
++	if opts.Now == nil {
++		opts.Now = time.Now
++	}
++	if opts.Client == nil {
++		opts.Client = &http.Client{Timeout: 10 * time.Second}
++	}
++	return &verifier{clientID: clientID, url: opts.JWKSURL, now: opts.Now, client: opts.Client}
++}
++func (v *verifier) Verify(ctx context.Context, token string) (Claims, error) {
++	var out Claims
++	parts := strings.Split(token, ".")
++	if len(parts) != 3 || len(token) > 65536 || v.clientID == "" {
++		return out, ErrInvalid
++	}
++	var h struct{ Alg, Kid string }
++	if decode(parts[0], &h) != nil || h.Alg != "RS256" || h.Kid == "" {
++		return out, ErrInvalid
++	}
++	key, err := v.key(ctx, h.Kid)
++	if err != nil {
++		return out, ErrInvalid
++	}
++	signature, err := base64.RawURLEncoding.DecodeString(parts[2])
++	if err != nil {
++		return out, ErrInvalid
++	}
++	digest := sha256.Sum256([]byte(parts[0] + "." + parts[1]))
++	if rsa.VerifyPKCS1v15(key, crypto.SHA256, digest[:], signature) != nil {
++		return out, ErrInvalid
++	}
++	var p struct {
++		Sub, Email, Name, Iss, Aud string
++		Exp                        int64
++		EmailVerified              json.RawMessage `json:"email_verified"`
++	}
++	if decode(parts[1], &p) != nil || p.Aud != v.clientID ||
++		(p.Iss != "accounts.google.com" && p.Iss != "https://accounts.google.com") ||
++		p.Exp <= 0 || p.Exp <= v.now().Unix()-60 || strings.TrimSpace(p.Sub) == "" ||
++		(string(p.EmailVerified) != "true" && string(p.EmailVerified) != `"true"`) {
++		return out, ErrInvalid
++	}
++	return Claims{Sub: p.Sub, Email: p.Email, Name: p.Name}, nil
++}
++func decode(s string, dst any) error {
++	b, err := base64.RawURLEncoding.DecodeString(s)
++	if err != nil {
++		return err
++	}
++	return json.Unmarshal(b, dst)
++}
++func (v *verifier) key(ctx context.Context, kid string) (*rsa.PublicKey, error) {
++	v.mu.Lock()
++	defer v.mu.Unlock()
++	refreshed := false
++	if v.keys == nil || !v.now().Before(v.expires) {
++		if err := v.refresh(ctx); err != nil {
++			return nil, err
++		}
++		refreshed = true
++	}
++	if key := v.keys[kid]; key != nil {
++		return key, nil
++	}
++	// A fresh fetch already counts as the one refresh for an unknown kid.
++	if !refreshed {
++		if err := v.refresh(ctx); err != nil {
++			return nil, err
++		}
++	}
++	if key := v.keys[kid]; key != nil {
++		return key, nil
++	}
++	return nil, ErrInvalid
++}
++func (v *verifier) refresh(ctx context.Context) error {
++	req, err := http.NewRequestWithContext(ctx, http.MethodGet, v.url, nil)
++	if err != nil {
++		return err
++	}
++	resp, err := v.client.Do(req)
++	if err != nil {
++		return err
++	}
++	defer resp.Body.Close()
++	if resp.StatusCode != http.StatusOK {
++		return ErrInvalid
++	}
++	var jwks struct {
++		Keys []struct{ Kty, Kid, Alg, Use, N, E string }
++	}
++	if json.NewDecoder(io.LimitReader(resp.Body, 1<<20)).Decode(&jwks) != nil {
++		return ErrInvalid
++	}
++	keys := make(map[string]*rsa.PublicKey)
++	for _, k := range jwks.Keys {
++		if k.Kty != "RSA" || k.Kid == "" || (k.Alg != "" && k.Alg != "RS256") || (k.Use != "" && k.Use != "sig") {
++			continue
++		}
++		n, en := base64.RawURLEncoding.DecodeString(k.N)
++		e, ee := base64.RawURLEncoding.DecodeString(k.E)
++		if en != nil || ee != nil || len(n) < 256 || len(e) == 0 || len(e) > 4 {
++			continue
++		}
++		exponent := new(big.Int).SetBytes(e).Int64()
++		if exponent < 3 || exponent > 2147483647 || exponent%2 == 0 {
++			continue
++		}
++		keys[k.Kid] = &rsa.PublicKey{N: new(big.Int).SetBytes(n), E: int(exponent)}
++	}
++	if len(keys) == 0 {
++		return ErrInvalid
++	}
++	ttl := int64(0)
++	for _, d := range strings.Split(resp.Header.Get("Cache-Control"), ",") {
++		k, value, ok := strings.Cut(strings.TrimSpace(d), "=")
++		if ok && strings.EqualFold(k, "max-age") {
++			if n, e := strconv.ParseInt(strings.Trim(value, `"`), 10, 32); e == nil && n >= 0 {
++				ttl = n
++			}
++		}
++	}
++	v.keys, v.expires = keys, v.now().Add(time.Duration(ttl)*time.Second)
++	return nil
++}
+diff --git a/be/internal/google/verifier_test.go b/be/internal/google/verifier_test.go
+new file mode 100644
+index 0000000..9d3c516
+--- /dev/null
++++ b/be/internal/google/verifier_test.go
+@@ -0,0 +1,111 @@
++package google
++
++import (
++	"context"
++	"crypto"
++	"crypto/rand"
++	"crypto/rsa"
++	"crypto/sha256"
++	"encoding/base64"
++	"encoding/json"
++	"math/big"
++	"net/http"
++	"net/http/httptest"
++	"sync/atomic"
++	"testing"
++	"time"
++)
++
++func TestI035_GoogleVerify(t *testing.T) {
++	key, err := rsa.GenerateKey(rand.Reader, 2048)
++	if err != nil {
++		t.Fatal(err)
++	}
++	other, err := rsa.GenerateKey(rand.Reader, 2048)
++	if err != nil {
++		t.Fatal(err)
++	}
++	now := time.Unix(1800000000, 0)
++	var calls atomic.Int32
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		calls.Add(1)
++		w.Header().Set("Cache-Control", "public, max-age=3600")
++		_ = json.NewEncoder(w).Encode(map[string]any{"keys": []any{map[string]string{
++			"kty": "RSA", "kid": "known", "alg": "RS256", "use": "sig",
++			"n": base64.RawURLEncoding.EncodeToString(key.N.Bytes()), "e": base64.RawURLEncoding.EncodeToString(big.NewInt(int64(key.E)).Bytes()),
++		}}})
++	}))
++	defer server.Close()
++	v := New("client", Options{JWKSURL: server.URL, Now: func() time.Time { return now }})
++	sign := func(h, p map[string]any, k *rsa.PrivateKey) string {
++		t.Helper()
++		hb, _ := json.Marshal(h)
++		pb, _ := json.Marshal(p)
++		raw := base64.RawURLEncoding.EncodeToString(hb) + "." + base64.RawURLEncoding.EncodeToString(pb)
++		sum := sha256.Sum256([]byte(raw))
++		sig, err := rsa.SignPKCS1v15(rand.Reader, k, crypto.SHA256, sum[:])
++		if err != nil {
++			t.Fatal(err)
++		}
++		return raw + "." + base64.RawURLEncoding.EncodeToString(sig)
++	}
++	for _, tc := range []struct {
++		name     string
++		field    string
++		value    any
++		valid    bool
++		wrongKey bool
++	}{
++		{name: "valid", valid: true}, {name: "verified_string", field: "email_verified", value: "true", valid: true},
++		{name: "second_issuer", field: "iss", value: "accounts.google.com", valid: true},
++		{name: "clock_skew", field: "exp", value: now.Unix() - 59, valid: true},
++		{name: "bad_signature", wrongKey: true}, {name: "wrong_alg", field: "alg", value: "HS256"},
++		{name: "unknown_kid", field: "kid", value: "unknown"}, {name: "wrong_aud", field: "aud", value: "elsewhere"},
++		{name: "wrong_iss", field: "iss", value: "https://evil.test"}, {name: "expired", field: "exp", value: now.Unix() - 61},
++		{name: "expiry_boundary", field: "exp", value: now.Unix() - 60}, {name: "missing_exp", field: "exp", value: nil},
++		{name: "unverified", field: "email_verified", value: false}, {name: "empty_sub", field: "sub", value: ""},
++		{name: "blank_sub", field: "sub", value: "   "},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			h := map[string]any{"alg": "RS256", "kid": "known"}
++			p := map[string]any{"sub": "subject", "email": "guest@gmail.com", "name": "Guest", "iss": "https://accounts.google.com", "aud": "client", "exp": now.Unix() + 600, "email_verified": true}
++			if tc.field == "alg" || tc.field == "kid" {
++				h[tc.field] = tc.value
++			} else if tc.field != "" {
++				p[tc.field] = tc.value
++			}
++			signingKey := key
++			if tc.wrongKey {
++				signingKey = other
++			}
++			before := calls.Load()
++			got, err := v.Verify(context.Background(), sign(h, p, signingKey))
++			if tc.valid {
++				if err != nil || got != (Claims{"subject", "guest@gmail.com", "Guest"}) {
++					t.Fatalf("claims=%+v err=%v", got, err)
++				}
++			} else if err == nil {
++				t.Fatal("accepted invalid token")
++			}
++			if tc.name == "unknown_kid" && calls.Load()-before != 1 {
++				t.Fatalf("unknown kid fetched %d times", calls.Load()-before)
++			}
++			if tc.name == "verified_string" && calls.Load() != before {
++				t.Fatal("ignored max-age cache")
++			}
++		})
++	}
++	t.Run("cache_expired", func(t *testing.T) {
++		now = now.Add(2 * time.Hour)
++		before := calls.Load()
++		_, err := v.Verify(context.Background(), sign(map[string]any{"alg": "RS256", "kid": "known"}, map[string]any{"sub": "s", "aud": "client", "iss": "accounts.google.com", "exp": now.Unix() + 10, "email_verified": true}, key))
++		if err != nil || calls.Load()-before != 1 {
++			t.Fatalf("refresh: %v calls=%d", err, calls.Load()-before)
++		}
++	})
++	for _, token := range []string{"", "a.b", "e30.e30.???"} {
++		if _, err := v.Verify(context.Background(), token); err == nil {
++			t.Fatal("accepted malformed token")
++		}
++	}
++}
+diff --git a/be/internal/hoadon/internal/sqlcgen/models.go b/be/internal/hoadon/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/hoadon/internal/sqlcgen/models.go
++++ b/be/internal/hoadon/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/ket/internal/sqlcgen/models.go b/be/internal/ket/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/ket/internal/sqlcgen/models.go
++++ b/be/internal/ket/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/khach/doors.go b/be/internal/khach/doors.go
+index 08fc6de..88cf96a 100644
+--- a/be/internal/khach/doors.go
++++ b/be/internal/khach/doors.go
+@@ -3,6 +3,7 @@ package khach
+ import "banhcuon/be/internal/authz"
+ 
+ var (
++	GoogleLogin  = authz.Door{Code: "khach/google", Need: authz.NeedPublic}
+ 	DangKy       = authz.Door{Code: "khach/dang_ky", Need: authz.NeedPublic}
+ 	DangNhap     = authz.Door{Code: "khach/dang_nhap", Need: authz.NeedPublic}
+ 	DangXuat     = authz.Door{Code: "khach/dang_xuat", Need: authz.NeedCustomer}
+diff --git a/be/internal/khach/google.go b/be/internal/khach/google.go
+new file mode 100644
+index 0000000..2af5df1
+--- /dev/null
++++ b/be/internal/khach/google.go
+@@ -0,0 +1,100 @@
++package khach
++
++import (
++	"context"
++	"errors"
++	"strings"
++	"unicode/utf8"
++
++	"banhcuon/be/internal/apierr"
++	"banhcuon/be/internal/authz"
++	"banhcuon/be/internal/dinhdanh"
++	"banhcuon/be/internal/google"
++	"github.com/jackc/pgx/v5"
++	"github.com/jackc/pgx/v5/pgconn"
++)
++
++// WithGoogle configures the verifier before the service begins serving requests.
++func (s *Service) WithGoogle(clientID string, verifier google.Verifier) *Service {
++	s.googleClientID = strings.TrimSpace(clientID)
++	s.googleVerifier = verifier
++	return s
++}
++func (s *Service) loginGoogle(ctx context.Context, credential string) (Profile, string, error) {
++	if s.googleClientID == "" {
++		return Profile{}, "", fail(apierr.CodeGoogleLoginDisabled)
++	}
++	if s.googleVerifier == nil {
++		return Profile{}, "", fail(apierr.CodeGoogleTokenInvalid)
++	}
++	claims, err := s.googleVerifier.Verify(ctx, credential)
++	if err != nil || strings.TrimSpace(claims.Sub) == "" || utf8.RuneCountInString(claims.Sub) > 255 {
++		return Profile{}, "", fail(apierr.CodeGoogleTokenInvalid)
++	}
++	// Resolve an existing subject first: a later change of Google email cannot
++	// change the customer's account or force a new link.
++	attempt := func(create bool) (Profile, string, error) {
++		var out Profile
++		var token string
++		err := authz.Run(ctx, s.pool, 0, GoogleLogin, func(tx pgx.Tx) error {
++			r := repo(tx)
++			id, e := r.GoogleAccount(ctx, claims.Sub)
++			if errors.Is(e, pgx.ErrNoRows) && create {
++				kind, email, e := dinhdanh.ChuanHoa(claims.Email)
++				if e != nil || kind != dinhdanh.Thu {
++					return fail(apierr.CodeGoogleTokenInvalid)
++				}
++				_, e = r.DinhDanh(ctx, text(email))
++				if e == nil {
++					return fail(apierr.CodeEmailTaken)
++				}
++				if !errors.Is(e, pgx.ErrNoRows) {
++					return e
++				}
++				name := strings.TrimSpace(claims.Name)
++				if name == "" {
++					name, _, _ = strings.Cut(email, "@")
++				}
++				id, e = r.create(ctx, Registration{Email: email, DisplayName: name})
++				if e != nil {
++					return e
++				}
++				if e = r.linkGoogle(ctx, id, claims.Sub); e != nil {
++					return e
++				}
++			} else if e != nil {
++				return e
++			}
++			// Lock the account before opening a session, as with password login.
++			out, e = r.profile(ctx, id)
++			if e != nil {
++				return e
++			}
++			token, e = open(ctx, r, id)
++			return e
++		})
++		if err != nil {
++			return Profile{}, "", err
++		}
++		return out, token, nil
++	}
++	out, token, err := attempt(true)
++	var pg *pgconn.PgError
++	var public apierr.Error
++	collision := errors.As(err, &pg) && pg.Code == "23505" &&
++		(pg.ConstraintName == "customer_google_identity_sub_key" || pg.ConstraintName == "customer_account_email_key")
++	// The winner can also commit between our subject lookup and email lookup.
++	collision = collision || (errors.As(err, &public) && public.Code == apierr.CodeEmailTaken)
++	if collision {
++		// The losing transaction is rolled back in full before reading the winner.
++		// Email may collide first when both requests carry the same subject/email.
++		recovered, recoveredToken, retryErr := attempt(false)
++		if retryErr == nil {
++			return recovered, recoveredToken, nil
++		}
++		if !errors.Is(retryErr, pgx.ErrNoRows) {
++			return Profile{}, "", retryErr
++		}
++	}
++	return out, token, err
++}
+diff --git a/be/internal/khach/google_test.go b/be/internal/khach/google_test.go
+new file mode 100644
+index 0000000..b7dab2b
+--- /dev/null
++++ b/be/internal/khach/google_test.go
+@@ -0,0 +1,117 @@
++package khach
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"strings"
++	"sync"
++	"testing"
++	"time"
++
++	"banhcuon/be/internal/apierr"
++	"banhcuon/be/internal/google"
++)
++
++type fakeGoogle struct {
++	claims google.Claims
++	err    error
++}
++
++func (f fakeGoogle) Verify(context.Context, string) (google.Claims, error) { return f.claims, f.err }
++
++func TestI035_GoogleDisabledAndInvalid(t *testing.T) {
++	s := NewService(nil, nil)
++	_, _, err := s.loginGoogle(context.Background(), "token")
++	wantCode(t, err, apierr.CodeGoogleLoginDisabled)
++	s.WithGoogle("client", fakeGoogle{err: errors.New("bad signature")})
++	_, _, err = s.loginGoogle(context.Background(), "token")
++	wantCode(t, err, apierr.CodeGoogleTokenInvalid)
++}
++func TestI035_GoogleAccountSessionAndEmailCollision(t *testing.T) {
++	ctx, s, _ := testService(t)
++	suffix := fmt.Sprint(time.Now().UnixNano())
++	email := "google." + suffix + "@gmail.com"
++	sub := "google-" + suffix
++	s.WithGoogle("client", fakeGoogle{claims: google.Claims{Sub: sub, Email: strings.ToUpper(email), Name: "  Lan  "}})
++	a, token, err := s.loginGoogle(ctx, "credential")
++	if err != nil {
++		t.Fatal(err)
++	}
++	if a.DisplayName != "Lan" || a.Email == nil || *a.Email != email || a.Phone != nil || len(token) != 43 {
++		t.Fatalf("profile=%+v token=%q", a, token)
++	}
++	current, err := s.current(ctx, token)
++	if err != nil || current.AccountID != a.AccountID {
++		t.Fatalf("session: %+v %v", current, err)
++	}
++	var links, passwords, sessions int
++	if err = s.pool.QueryRow(ctx, `SELECT (SELECT count(*) FROM customer_google_identity WHERE customer_account_id=$1 AND google_sub_code=$2), (SELECT count(*) FROM customer_password WHERE customer_account_id=$1), (SELECT count(*) FROM customer_session WHERE customer_account_id=$1)`, a.AccountID, sub).Scan(&links, &passwords, &sessions); err != nil {
++		t.Fatal(err)
++	}
++	if links != 1 || passwords != 0 || sessions != 1 {
++		t.Fatalf("link/password/session: %d/%d/%d", links, passwords, sessions)
++	}
++	_, _, err = s.login(ctx, email, "mat-khau-khong-co")
++	wantCode(t, err, apierr.CodeLoginFailed)
++	// Subject wins even when Google later returns a different email/name.
++	s.WithGoogle("client", fakeGoogle{claims: google.Claims{Sub: sub, Email: "changed." + email, Name: "Khác"}})
++	b, second, err := s.loginGoogle(ctx, "credential")
++	if err != nil || b.AccountID != a.AccountID || *b.Email != email || second == token {
++		t.Fatalf("existing sub: %+v %v", b, err)
++	}
++	// An existing password account must never receive a Google link or session.
++	registered, _, err := s.register(ctx, Registration{Email: "password." + email, DisplayName: "Mật khẩu", Password: "mat-khau-123"})
++	if err != nil {
++		t.Fatal(err)
++	}
++	s.WithGoogle("client", fakeGoogle{claims: google.Claims{Sub: "new-" + sub, Email: "password." + email}})
++	_, _, err = s.loginGoogle(ctx, "credential")
++	wantCode(t, err, apierr.CodeEmailTaken)
++	var accounts int
++	if err = s.pool.QueryRow(ctx, `SELECT (SELECT count(*) FROM customer_account WHERE email=$1), (SELECT count(*) FROM customer_google_identity WHERE google_sub_code=$2 OR customer_account_id=$3), (SELECT count(*) FROM customer_session WHERE customer_account_id=$3)`, "password."+email, "new-"+sub, registered.AccountID).Scan(&accounts, &links, &sessions); err != nil {
++		t.Fatal(err)
++	}
++	if accounts != 1 || links != 0 || sessions != 1 {
++		t.Fatalf("collision wrote rows: %d/%d/%d", accounts, links, sessions)
++	}
++	s.WithGoogle("client", fakeGoogle{claims: google.Claims{Sub: "fallback-" + sub, Email: "fallback." + email, Name: "  "}})
++	fallback, _, err := s.loginGoogle(ctx, "credential")
++	if err != nil || fallback.DisplayName != "fallback.google."+suffix {
++		t.Fatalf("fallback: %+v %v", fallback, err)
++	}
++}
++func TestI035_GoogleConcurrentSubject(t *testing.T) {
++	ctx, s, _ := testService(t)
++	suffix := fmt.Sprint(time.Now().UnixNano())
++	sub := "race-" + suffix
++	s.WithGoogle("client", fakeGoogle{claims: google.Claims{Sub: sub, Email: "race." + suffix + "@gmail.com"}})
++	const n = 8
++	var wg sync.WaitGroup
++	start := make(chan struct{})
++	ids := make([]int64, n)
++	errs := make([]error, n)
++	for i := 0; i < n; i++ {
++		wg.Add(1)
++		go func(i int) {
++			defer wg.Done()
++			<-start
++			a, _, err := s.loginGoogle(ctx, "credential")
++			ids[i], errs[i] = a.AccountID, err
++		}(i)
++	}
++	close(start)
++	wg.Wait()
++	for i, err := range errs {
++		if err != nil || ids[i] != ids[0] || ids[i] == 0 {
++			t.Fatalf("request %d: id=%d error=%v", i, ids[i], err)
++		}
++	}
++	var accounts, links, sessions int
++	if err := s.pool.QueryRow(ctx, `SELECT (SELECT count(*) FROM customer_account WHERE email=$1), (SELECT count(*) FROM customer_google_identity WHERE google_sub_code=$2), (SELECT count(*) FROM customer_session WHERE customer_account_id=$3)`, "race."+suffix+"@gmail.com", sub, ids[0]).Scan(&accounts, &links, &sessions); err != nil {
++		t.Fatal(err)
++	}
++	if accounts != 1 || links != 1 || sessions != n {
++		t.Fatalf("race account/link/session: %d/%d/%d", accounts, links, sessions)
++	}
++}
+diff --git a/be/internal/khach/handler.go b/be/internal/khach/handler.go
+index a4cf010..00b3cf4 100644
+--- a/be/internal/khach/handler.go
++++ b/be/internal/khach/handler.go
+@@ -12,6 +12,7 @@ func Routes(r *gin.Engine, s *Service) {
+ 	h := handler{s}
+ 	r.POST("/customer-accounts", h.register)
+ 	r.POST("/customer-sessions", h.login)
++	r.POST("/customer-sessions/google", h.google)
+ 	r.GET("/customer-sessions/current", h.current)
+ 	r.POST("/customer-sessions/current/end", h.logout)
+ 	r.PUT("/customer-accounts/current/delivery-profile", h.delivery)
+@@ -146,3 +147,17 @@ func (h handler) history(c *gin.Context) {
+ 	out, e := h.s.history(c.Request.Context(), cookie(c), before, int32(limit))
+ 	result(c, 200, out, e)
+ }
++
++func (h handler) google(c *gin.Context) {
++	var in struct {
++		Credential string `json:"credential"`
++	}
++	if !apierr.ReadJSON(c.Writer, c.Request, &in) {
++		return
++	}
++	out, token, err := h.s.loginGoogle(c.Request.Context(), in.Credential)
++	if err == nil {
++		setCookie(c, token, 604800)
++	}
++	result(c, 201, out, err)
++}
+diff --git a/be/internal/khach/internal/sqlcgen/google_account.sql.go b/be/internal/khach/internal/sqlcgen/google_account.sql.go
+new file mode 100644
+index 0000000..a2a8cfe
+--- /dev/null
++++ b/be/internal/khach/internal/sqlcgen/google_account.sql.go
+@@ -0,0 +1,21 @@
++// Code generated by sqlc. DO NOT EDIT.
++// versions:
++//   sqlc v1.31.1
++// source: google_account.sql
++
++package sqlcgen
++
++import (
++	"context"
++)
++
++const googleAccount = `-- name: GoogleAccount :one
++SELECT customer_account_id FROM customer_google_identity WHERE google_sub_code = $1
++`
++
++func (q *Queries) GoogleAccount(ctx context.Context, googleSubCode string) (int64, error) {
++	row := q.db.QueryRow(ctx, googleAccount, googleSubCode)
++	var customer_account_id int64
++	err := row.Scan(&customer_account_id)
++	return customer_account_id, err
++}
+diff --git a/be/internal/khach/internal/sqlcgen/lien_ket_google.sql.go b/be/internal/khach/internal/sqlcgen/lien_ket_google.sql.go
+new file mode 100644
+index 0000000..5c35966
+--- /dev/null
++++ b/be/internal/khach/internal/sqlcgen/lien_ket_google.sql.go
+@@ -0,0 +1,24 @@
++// Code generated by sqlc. DO NOT EDIT.
++// versions:
++//   sqlc v1.31.1
++// source: lien_ket_google.sql
++
++package sqlcgen
++
++import (
++	"context"
++)
++
++const linkGoogle = `-- name: LinkGoogle :exec
++INSERT INTO customer_google_identity (customer_account_id, google_sub_code) VALUES ($1, $2)
++`
++
++type LinkGoogleParams struct {
++	CustomerAccountID int64
++	GoogleSubCode     string
++}
++
++func (q *Queries) LinkGoogle(ctx context.Context, arg LinkGoogleParams) error {
++	_, err := q.db.Exec(ctx, linkGoogle, arg.CustomerAccountID, arg.GoogleSubCode)
++	return err
++}
+diff --git a/be/internal/khach/internal/sqlcgen/models.go b/be/internal/khach/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/khach/internal/sqlcgen/models.go
++++ b/be/internal/khach/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/khach/repository.go b/be/internal/khach/repository.go
+index 7764e8b..1fb3f91 100644
+--- a/be/internal/khach/repository.go
++++ b/be/internal/khach/repository.go
+@@ -62,3 +62,7 @@ func (r repository) coVet(ctx context.Context, reason string, fn func() error) e
+ func (r repository) useReset(ctx context.Context, id int64) error {
+ 	return r.coVet(ctx, DatLai.Code, func() error { return r.DungMa(ctx, id) })
+ }
++
++func (r repository) linkGoogle(ctx context.Context, id int64, sub string) error {
++	return r.LinkGoogle(ctx, sqlcgen.LinkGoogleParams{CustomerAccountID: id, GoogleSubCode: sub})
++}
+diff --git a/be/internal/khach/service.go b/be/internal/khach/service.go
+index b5b1f32..8dd3341 100644
+--- a/be/internal/khach/service.go
++++ b/be/internal/khach/service.go
+@@ -7,6 +7,7 @@ import (
+ 	"banhcuon/be/internal/dinhdanh"
+ 	"banhcuon/be/internal/don"
+ 	"banhcuon/be/internal/gia"
++	"banhcuon/be/internal/google"
+ 	"banhcuon/be/internal/taikhoan"
+ 	"context"
+ 	"errors"
+@@ -55,10 +56,12 @@ type attempt struct {
+ 	until time.Time
+ }
+ type Service struct {
+-	pool     *pgxpool.Pool
+-	mail     taikhoan.Mailer
+-	mu       sync.Mutex
+-	attempts map[int64]attempt
++	googleClientID string
++	googleVerifier google.Verifier
++	pool           *pgxpool.Pool
++	mail           taikhoan.Mailer
++	mu             sync.Mutex
++	attempts       map[int64]attempt
+ }
+ 
+ func NewService(p *pgxpool.Pool, m taikhoan.Mailer) *Service {
+@@ -130,6 +133,9 @@ func (s *Service) login(ctx context.Context, identifier, password string) (Profi
+ 			return fail(apierr.CodeLoginTemporarilyBlocked)
+ 		}
+ 		hash, e := r.MatKhau(ctx, a.ID)
++		if errors.Is(e, pgx.ErrNoRows) {
++			return fail(apierr.CodeLoginFailed)
++		}
+ 		if e != nil {
+ 			return e
+ 		}
+diff --git a/be/internal/khach/sql/google/lien_ket_google.sql b/be/internal/khach/sql/google/lien_ket_google.sql
+new file mode 100644
+index 0000000..eeb50ba
+--- /dev/null
++++ b/be/internal/khach/sql/google/lien_ket_google.sql
+@@ -0,0 +1,2 @@
++-- name: LinkGoogle :exec
++INSERT INTO customer_google_identity (customer_account_id, google_sub_code) VALUES ($1, $2);
+diff --git a/be/internal/khach/sql/google_account.sql b/be/internal/khach/sql/google_account.sql
+new file mode 100644
+index 0000000..06e4a82
+--- /dev/null
++++ b/be/internal/khach/sql/google_account.sql
+@@ -0,0 +1,2 @@
++-- name: GoogleAccount :one
++SELECT customer_account_id FROM customer_google_identity WHERE google_sub_code = $1;
+diff --git a/be/internal/khoanchi/internal/sqlcgen/models.go b/be/internal/khoanchi/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/khoanchi/internal/sqlcgen/models.go
++++ b/be/internal/khoanchi/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/menu/internal/sqlcgen/models.go b/be/internal/menu/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/menu/internal/sqlcgen/models.go
++++ b/be/internal/menu/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/ngayban/internal/sqlcgen/models.go b/be/internal/ngayban/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/ngayban/internal/sqlcgen/models.go
++++ b/be/internal/ngayban/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/nguoi/internal/sqlcgen/models.go b/be/internal/nguoi/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/nguoi/internal/sqlcgen/models.go
++++ b/be/internal/nguoi/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/nguyenlieu/internal/sqlcgen/models.go b/be/internal/nguyenlieu/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/nguyenlieu/internal/sqlcgen/models.go
++++ b/be/internal/nguyenlieu/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/nhandon/internal/sqlcgen/models.go b/be/internal/nhandon/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/nhandon/internal/sqlcgen/models.go
++++ b/be/internal/nhandon/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/phien/internal/sqlcgen/models.go b/be/internal/phien/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/phien/internal/sqlcgen/models.go
++++ b/be/internal/phien/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/qr/internal/sqlcgen/models.go b/be/internal/qr/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/qr/internal/sqlcgen/models.go
++++ b/be/internal/qr/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/sanxuat/internal/sqlcgen/models.go b/be/internal/sanxuat/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/sanxuat/internal/sqlcgen/models.go
++++ b/be/internal/sanxuat/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/taikhoan/internal/sqlcgen/models.go b/be/internal/taikhoan/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/taikhoan/internal/sqlcgen/models.go
++++ b/be/internal/taikhoan/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/tongket/internal/sqlcgen/models.go b/be/internal/tongket/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/tongket/internal/sqlcgen/models.go
++++ b/be/internal/tongket/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/tongquan/internal/sqlcgen/models.go b/be/internal/tongquan/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/tongquan/internal/sqlcgen/models.go
++++ b/be/internal/tongquan/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/tratruoc/internal/sqlcgen/models.go b/be/internal/tratruoc/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/tratruoc/internal/sqlcgen/models.go
++++ b/be/internal/tratruoc/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/internal/vongdoi/internal/sqlcgen/models.go b/be/internal/vongdoi/internal/sqlcgen/models.go
+index d60d437..74b62a3 100644
+--- a/be/internal/vongdoi/internal/sqlcgen/models.go
++++ b/be/internal/vongdoi/internal/sqlcgen/models.go
+@@ -132,6 +132,13 @@ type CustomerAccount struct {
+ 	CreatedAt         pgtype.Timestamptz
+ }
+ 
++type CustomerGoogleIdentity struct {
++	ID                int64
++	CustomerAccountID int64
++	GoogleSubCode     string
++	CreatedAt         pgtype.Timestamptz
++}
++
+ type CustomerPassword struct {
+ 	ID                int64
+ 	CustomerAccountID int64
+diff --git a/be/sqlc.yaml b/be/sqlc.yaml
+index ef0513d..a60de40 100644
+--- a/be/sqlc.yaml
++++ b/be/sqlc.yaml
+@@ -311,6 +311,7 @@ sql:
+     schema: ../db/migrations
+     queries:
+       - internal/khach/sql
++      - internal/khach/sql/google
+       - internal/khach/sql/dang_ky
+       - internal/khach/sql/dang_nhap
+       - internal/khach/sql/dang_xuat
+diff --git a/db/migrations/20261028120000_khach_google.down.sql b/db/migrations/20261028120000_khach_google.down.sql
+new file mode 100644
+index 0000000..d12fdb9
+--- /dev/null
++++ b/db/migrations/20261028120000_khach_google.down.sql
+@@ -0,0 +1,10 @@
++-- T-267 — không gỡ liên kết Google đã ghi (ADR-132).
++LOCK TABLE customer_google_identity IN ACCESS EXCLUSIVE MODE;
++DO $$
++BEGIN
++  IF EXISTS (SELECT 1 FROM customer_google_identity) THEN
++    RAISE EXCEPTION 'đường lùi từ chối: customer_google_identity đang giữ dữ liệu'
++      USING ERRCODE = 'check_violation', CONSTRAINT = 'customer_google_identity_rollback_check';
++  END IF;
++END $$;
++DROP TABLE customer_google_identity;
+diff --git a/db/migrations/20261028120000_khach_google.up.sql b/db/migrations/20261028120000_khach_google.up.sql
+new file mode 100644
+index 0000000..e7683e2
+--- /dev/null
++++ b/db/migrations/20261028120000_khach_google.up.sql
+@@ -0,0 +1,15 @@
++-- T-267 — ADR-132, I-035; ý định: 24-luoc-do-khach-google.md.
++CREATE TABLE customer_google_identity (
++  id bigint GENERATED ALWAYS AS IDENTITY,
++  customer_account_id bigint NOT NULL,
++  google_sub_code text COLLATE "C" NOT NULL,
++  created_at timestamptz NOT NULL DEFAULT now(),
++  CONSTRAINT customer_google_identity_pkey PRIMARY KEY (id),
++  CONSTRAINT customer_google_identity_account_fkey FOREIGN KEY (customer_account_id) REFERENCES customer_account (id),
++  CONSTRAINT customer_google_identity_account_key UNIQUE (customer_account_id),
++  CONSTRAINT customer_google_identity_sub_key UNIQUE (google_sub_code),
++  CONSTRAINT customer_google_identity_sub_check CHECK (btrim(google_sub_code) <> '' AND length(google_sub_code) <= 255)
++);
++CREATE TRIGGER customer_google_identity_record_revision_trg AFTER UPDATE ON customer_google_identity
++  FOR EACH ROW EXECUTE FUNCTION record_revision_capture();
++REVOKE UPDATE ON customer_google_identity FROM shop_app;
+diff --git a/db/tests/i035_google_identity.sql b/db/tests/i035_google_identity.sql
+new file mode 100644
+index 0000000..29aaab5
+--- /dev/null
++++ b/db/tests/i035_google_identity.sql
+@@ -0,0 +1,69 @@
++-- I-035 (tầng 1), phần Google (ADR-132): tài khoản khách tạo bằng Google mang thư, không mật khẩu; mỗi `sub` Google nối
++-- đúng một tài khoản khách, mỗi tài khoản khách nối nhiều nhất một `sub`; dòng nối chỉ thêm, không trỏ tới người của quán.
++-- Viết trước lược đồ (T-267, Claude Code): đỏ cho tới khi migration `customer_google_identity` dựng.
++
++DO $$ BEGIN PERFORM set_config('shop.revision_reason', 'test-i035_google_identity', true); END $$;
++DO $$
++DECLARE k1 bigint; k2 bigint; n int;
++BEGIN
++  SET LOCAL ROLE shop_app;
++
++  -- Dương: khách tạo bằng Google — chỉ thư, không dòng mật khẩu — rồi nối `sub` và mở phiên bằng vai ghi.
++  INSERT INTO customer_account (email, display_name) VALUES ('test.google.mot@gmail.com', 'test-khách Google một') RETURNING id INTO k1;
++  INSERT INTO customer_google_identity (customer_account_id, google_sub_code) VALUES (k1, '110000000000000000001');
++  INSERT INTO customer_session (customer_account_id, token_hash, expires_at)
++  VALUES (k1, sha256('test-i035-google-phien-1'), now() + interval '7 days');
++  RAISE NOTICE 'I-035 dương: khách tạo bằng Google, không mật khẩu, nối sub và mở phiên';
++
++  INSERT INTO customer_account (email, display_name) VALUES ('test.google.hai@gmail.com', 'test-khách Google hai') RETURNING id INTO k2;
++
++  BEGIN
++    INSERT INTO customer_google_identity (customer_account_id, google_sub_code) VALUES (k2, '110000000000000000001');
++    RAISE EXCEPTION 'I-035: database KHÔNG từ chối một sub Google nối hai tài khoản khách';
++  EXCEPTION WHEN unique_violation THEN
++    RAISE NOTICE 'I-035 bị từ chối (một sub hai tài khoản): %', SQLERRM;
++  END;
++  BEGIN
++    INSERT INTO customer_google_identity (customer_account_id, google_sub_code) VALUES (k1, '110000000000000000002');
++    RAISE EXCEPTION 'I-035: database KHÔNG từ chối một tài khoản khách nối hai sub Google';
++  EXCEPTION WHEN unique_violation THEN
++    RAISE NOTICE 'I-035 bị từ chối (một tài khoản hai sub): %', SQLERRM;
++  END;
++  BEGIN
++    INSERT INTO customer_google_identity (customer_account_id, google_sub_code) VALUES (k2, '   ');
++    RAISE EXCEPTION 'I-035: database KHÔNG từ chối sub Google rỗng';
++  EXCEPTION WHEN check_violation THEN
++    RAISE NOTICE 'I-035 bị từ chối (sub rỗng): %', SQLERRM;
++  END;
++  BEGIN
++    INSERT INTO customer_google_identity (customer_account_id, google_sub_code) VALUES (k2, repeat('1', 256));
++    RAISE EXCEPTION 'I-035: database KHÔNG từ chối sub Google dài quá 255 ký tự';
++  EXCEPTION WHEN check_violation THEN
++    RAISE NOTICE 'I-035 bị từ chối (sub quá dài): %', SQLERRM;
++  END;
++  BEGIN
++    UPDATE customer_google_identity SET google_sub_code = '110000000000000000003' WHERE customer_account_id = k1;
++    RAISE EXCEPTION 'I-035: vai ghi sửa được dòng nối Google';
++  EXCEPTION WHEN insufficient_privilege THEN
++    RAISE NOTICE 'I-035 bị từ chối (vai ghi UPDATE dòng nối): %', SQLERRM;
++  END;
++  BEGIN
++    UPDATE customer_google_identity SET customer_account_id = k2 WHERE customer_account_id = k1;
++    RAISE EXCEPTION 'I-035: vai ghi chuyển được dòng nối Google sang tài khoản khác';
++  EXCEPTION WHEN insufficient_privilege THEN
++    RAISE NOTICE 'I-035 bị từ chối (vai ghi chuyển dòng nối): %', SQLERRM;
++  END;
++  RESET ROLE;
++
++  -- Kiểm ngược: bảng nối chỉ trỏ tới tài khoản khách.
++  SELECT count(*) INTO n
++  FROM information_schema.referential_constraints rc
++  JOIN information_schema.table_constraints src ON src.constraint_name = rc.constraint_name AND src.constraint_schema = rc.constraint_schema
++  JOIN information_schema.table_constraints dst ON dst.constraint_name = rc.unique_constraint_name AND dst.constraint_schema = rc.unique_constraint_schema
++  WHERE src.table_schema = 'shop' AND src.table_name = 'customer_google_identity'
++    AND dst.table_name <> 'customer_account';
++  IF n <> 0 THEN
++    RAISE EXCEPTION 'I-035: % khoá ngoại từ customer_google_identity trỏ ra ngoài tài khoản khách', n;
++  END IF;
++  RAISE NOTICE 'I-035 kiểm ngược: dòng nối Google chỉ trỏ tới tài khoản khách';
++END $$;
+diff --git a/docs/product/2-db/07-thu-tu-migration.md b/docs/product/2-db/07-thu-tu-migration.md
+index b8c7f74..43f3458 100644
+--- a/docs/product/2-db/07-thu-tu-migration.md
++++ b/docs/product/2-db/07-thu-tu-migration.md
+@@ -65,6 +65,7 @@ ngược từ dưới lên, **từng bước một**.
+ | 37 | `20261024140000_khoan_chi_chi_tiet` | `T-248` | Khoản con, FK ghép và dấu xoá có vết; lùi chặn khi có khoản con/liên kết/dấu xoá, giữ lịch sử | 28, 36 |
+ | 38 | `20261027120000_tai_khoan_khach` | `T-263` | `account.phone`, email/username tuỳ chọn; bốn bảng khách tách người làm; liên kết đơn web bất biến sau tạo. Lùi từ chối nếu account thiếu email/username, có phone, hoặc customer_account có dòng; gỡ trigger/hàm/CHECK/FK/cột liên kết đơn trước, rồi bảng con trước bảng khách, trả account về hình cũ | 27 · 8 · 20 |
+ | 39 | `20261028090000_vet_cua_khach` | `T-264` | `record_revision.person_id` được rỗng chỉ cho bốn bảng `customer_*` (ADR-131 sửa đổi 2026-10-28). Lùi từ chối nếu đã có vết người sửa rỗng | 38 |
++| 40 | `20261028120000_khach_google` | `T-267` | `customer_google_identity`, liên kết Google chỉ thêm; lùi khoá bảng và từ chối khi đã có dòng (`customer_google_identity_rollback_check`) | 39 |
+ 
+ **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
+ thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
+diff --git a/docs/product/2-db/09-doi-chieu-bat-bien.md b/docs/product/2-db/09-doi-chieu-bat-bien.md
+index c6fa062..a10b610 100644
+--- a/docs/product/2-db/09-doi-chieu-bat-bien.md
++++ b/docs/product/2-db/09-doi-chieu-bat-bien.md
+@@ -301,3 +301,7 @@ làm khác.
+ ## Giảm giá cả đơn (T-175, ADR-098)
+ 
+ Từ bước 23, `I-005/1`, `I-005/3` và `I-015/1` · `I-015/2` đọc số sau giảm (`due_vnd − discount_vnd`) để so với phần trả và nợ. `I-012` đọc số tiền sau giảm của thao tác. `I-002/2` và `I-007/2` vẫn dùng tổng dòng trước giảm; không trừ giảm khi so hoá đơn với dòng đơn. Phép trừ két vẫn đọc phần tiền mặt. `TestI021_NgayCoGiamGiaRa0dLech` chạy các câu tiền liên quan do `scripts/reconcile.sh --emit-queries` xuất trên ngày/hoá đơn đã giảm, đồng thời so phép trừ két và dấu ký qua HTTP.
++
++T-267 (2026-10-28, ADR-132): I-035/3 dùng mẫu customer_* nên đã phủ
++customer_google_identity; không thêm phép đối chiếu. Test i035_google_identity.sql
++kiểm liên kết duy nhất, chỉ thêm và không trỏ người của quán.
+diff --git a/docs/product/2-db/24-luoc-do-khach-google.md b/docs/product/2-db/24-luoc-do-khach-google.md
+new file mode 100644
+index 0000000..6c77cb5
+--- /dev/null
++++ b/docs/product/2-db/24-luoc-do-khach-google.md
+@@ -0,0 +1,32 @@
++# Lược đồ lát đăng nhập Google của khách
++
++T-267 · 2026-10-28 · Codex thi công phiếu Claude theo ADR-132.
++Tên, kiểu và ràng buộc thuộc
++[`db/migrations/20261028120000_khach_google.up.sql`](../../../db/migrations/20261028120000_khach_google.up.sql).
++
++## 1. Chỗ cất và lý do
++
++| Bảng | Ý định |
++|---|---|
++| `customer_google_identity` | Nối định danh Google ổn định với tài khoản khách; chỉ thêm, không nối bằng thư, không trỏ tới người của quán (I-035, ADR-132 điểm 4–5) |
++
++Mỗi tài khoản khách có nhiều nhất một liên kết; mỗi sub chỉ thuộc một tài khoản.
++Sub dùng collation C để so chính xác; CHECK từ chối chuỗi trống sau btrim hoặc dài quá 255 ký tự.
++Khoá ngoại chỉ tới customer_account. Không tạo customer_password khi đăng ký bằng Google.
++
++## 2. Quyền và vết
++
++SELECT/INSERT và sequence theo mặc định QC-03; thu hồi UPDATE của shop_app,
++không cấp DELETE/TRUNCATE. Trigger vết theo khuôn customer_password, không mở rộng
++record_revision_person_check: ứng dụng không được sửa liên kết này.
++
++## 3. Đối chiếu và đường lùi
++
++Test Claude viết trước: `db/tests/i035_google_identity.sql`; test nền:
++`db/tests/i035_customer_account_apart_from_staff.sql`. Không sửa hai test.
++Phép đối chiếu `db/reconcile/i035.sql` mục I-035/3 đã phủ mọi bảng customer_* nên
++phủ cả liên kết Google, không cần thêm câu hoặc lỗi cài.
++
++Đường lùi khoá bảng trước khi xét; customer_google_identity_rollback_check từ chối
++khi đã có dòng. Bảng rỗng mới gỡ; thứ tự và phép kiểm ở
++[07-thu-tu-migration.md](07-thu-tu-migration.md).
+diff --git a/docs/product/3-be/02-vai-va-quyen.md b/docs/product/3-be/02-vai-va-quyen.md
+index 94f4a1b..55e7cea 100644
+--- a/docs/product/3-be/02-vai-va-quyen.md
++++ b/docs/product/3-be/02-vai-va-quyen.md
+@@ -222,6 +222,7 @@ khi bấm rời, chỉ khoảng mở của chính người gọi được khép.
+ P3A-08 (2026-10-15, phiếu Claude): `GET /supply-stock` chỉ lớp `chu_quan`; cờ nhắc dành cho POS kiểm tra không tự cấp quyền đọc kho cho POS.
+ 
+ | `khach/dang_ky` | `cong_khai` | ADR-131; T-264 |
++| `khach/google` | `cong_khai` | ADR-132; T-267; kiểm ID token trước giao dịch, tái dùng cửa tạo tài khoản và mở phiên |
+ | `khach/dang_nhap` | `cong_khai` | ADR-131; T-264 |
+ | `khach/dang_xuat` | `khach` | ADR-131; T-264 |
+ | `khach/doi_mat_khau` | `khach` | ADR-131; T-264 |
+diff --git a/docs/product/3-be/openapi.yaml b/docs/product/3-be/openapi.yaml
+index 7e91052..2d3f097 100644
+--- a/docs/product/3-be/openapi.yaml
++++ b/docs/product/3-be/openapi.yaml
+@@ -6,7 +6,7 @@
+ openapi: 3.1.0
+ info:
+   title: Bánh cuốn Bà Thanh — API
+-  version: 0.52.0
++  version: 0.53.0
+   description: >-
+     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
+     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
+@@ -4044,6 +4044,35 @@ paths:
+             application/json:
+               schema:
+                 $ref: '#/components/schemas/Error'
++  /customer-sessions/google:
++    post:
++      operationId: loginCustomerGoogle
++      tags: [khach]
++      security: []
++      requestBody:
++        required: true
++        content:
++          application/json:
++            schema:
++              $ref: '#/components/schemas/GoogleCredential'
++      responses:
++        '201':
++          description: Tạo hoặc mở phiên khách theo ADR-132; không tự nối thư đã có tài khoản.
++          headers:
++            Set-Cookie:
++              description: banhcuon_khach; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=604800, xoá khi đăng xuất.
++              schema:
++                type: string
++          content:
++            application/json:
++              schema:
++                $ref: '#/components/schemas/CustomerProfile'
++        default:
++          description: Lỗi theo ErrorCode và x-http-status.
++          content:
++            application/json:
++              schema:
++                $ref: '#/components/schemas/Error'
+   /customer-sessions/current:
+     get:
+       operationId: currentCustomer
+@@ -4250,6 +4279,14 @@ components:
+         password:
+           type: string
+           minLength: 8
++    GoogleCredential:
++      type: object
++      additionalProperties: false
++      required: [credential]
++      properties:
++        credential:
++          type: string
++          minLength: 1
+     CustomerLogin:
+       type: object
+       required: [identifier, password]
+@@ -7422,6 +7459,8 @@ components:
+         - identifier_invalid
+         - contact_required
+         - phone_taken
++        - google_login_disabled
++        - google_token_invalid
+         - login_failed
+         - menu_combo_not_found
+         - menu_combo_hidden
+@@ -7548,6 +7587,8 @@ components:
+         identifier_invalid: 400
+         contact_required: 400
+         phone_taken: 409
++        google_login_disabled: 503
++        google_token_invalid: 401
+         login_failed: 401
+         menu_combo_not_found: 404
+         menu_combo_hidden: 409
+@@ -8639,3 +8680,9 @@ x-constraint-errors:
+   sales_order_customer_account_channel_check: internal
+   sales_order_customer_account_fkey: internal
+   sales_order_customer_account_immutable_check: internal
++
++  customer_google_identity_pkey: internal
++  customer_google_identity_account_fkey: unreviewed
++  customer_google_identity_account_key: unreviewed
++  customer_google_identity_sub_key: unreviewed
++  customer_google_identity_sub_check: unreviewed
+diff --git a/docs/product/4-fe/01-khung-fe.md b/docs/product/4-fe/01-khung-fe.md
+index 98d7bbc..825c5bb 100644
+--- a/docs/product/4-fe/01-khung-fe.md
++++ b/docs/product/4-fe/01-khung-fe.md
+@@ -228,7 +228,7 @@ có nơi dùng thứ hai (**ADR-102** điểm 8) và thêm một dòng ở đây
+ | `BoSoanMon` (tầng 2) | `fe/src/components/shared/bo-soan-mon.tsx` | món lẻ, radio mặc định, số lượng, mang về tuỳ màn; nhóm có điều kiện chỉ có mặt khi chọn ít nhất một mã trong tập điều kiện, vắng thì bỏ lựa chọn, có mặt lại thì chọn mặc định nếu có; món lẻ tra đúng tập `option_ids` trong `prices`; combo chọn riêng từng suất, gom suất cùng món và tổ hợp, lấy giá dòng từ `POST /price-quotes`, chưa có giá thì chưa gửi; không tính tiền ở FE (2026-10-21, theo phiếu Claude) | `/quay/goi-mon` · `/quay/dien-thoai`; dành để `P4-10` dùng lại | `P4-07` |
+ | `DongMonDaGhi` (tầng 2) | `fe/src/components/shared/dong-mon-da-ghi.tsx` | bày dòng món và định dạng tiền backend bằng `Intl.NumberFormat("vi-VN")` + `đ` | hàng chờ · đơn đang làm; hàm định dạng dùng cả bộ soạn | `P4-07` |
+ | `PhieuKhach` (tầng 3) · `loiKhach` | `fe/src/app/ban/_components/phieu-khach.tsx` · `loi-khach.ts` | dùng `ThucDonKhach` (2026-10-23, theo phiếu Claude, T-232), tính thử cả giỏ, gửi giữ dấu; lời từ chối theo phiếu; h1 màn QR có biểu tượng `QrCode` ẩn với trình đọc màn hình và chữ `Bàn {số}` khi nhãn chỉ gồm chữ số sau trim, nhãn khác giữ nguyên; màn `/dat-mon` giữ h1 `Đặt món` không biểu tượng (2026-10-21, chủ repo, T-222) | `/ban/[ma]` · `/dat-mon` | `P4-10` |
+-| `ThucDonKhach` (tầng 3) | `fe/src/app/ban/_components/thuc-don-khach.tsx` | Thẻ combo/món lẻ có ảnh giữ chỗ dẫn tới `/thuc-don/[loai]/[id]`, truyền mã bàn bằng `ban`; thẻ chia đôi: nửa trái là ảnh, nửa phải xếp dọc và căn phải tên, thành phần, nút chọn, giá và bớt/thêm; thành phần combo thu vào chữ "Chi tiết", bấm thì trượt xuống ngay trong thẻ, Giò bán rời hiển thị gọn Giò; mỗi nhóm lựa chọn là một viên chữ cam viền cam có vệt sáng chạy quanh viền, bấm thì danh sách lựa chọn trượt xuống ngay trong thẻ như "Chi tiết", bấm lại hoặc chọn xong thì thu lại, Chay ẩn Lượng nhân (2026-10-26, chủ repo, T-259). Nhãn Nhiều nhân rút gọn thành Nhiều (T-258). Chọn nhóm ngay trước khi thêm; combo chọn chung cho mọi suất phù hợp, mỗi lần thêm giữ lựa chọn riêng, mặc định theo menu (thịt + Thường hiển thị Vừa); tóm tắt chỉ đọc lựa chọn, giữ sửa số lượng/xoá (2026-10-26, chủ repo, T-258). Tìm tên không dấu, dải giỏ và tóm tắt giữ chỉ số dòng; token sáng/tối và kiểu trong CSS thường `fe/src/app/ban/_components/thuc-don-khach.css` có lớp gốc `.khach-menu` + Tailwind (2026-10-23, theo phiếu Claude, T-233); CSS module bị luật Turbopack đọc như CSS thường (F-075) | `/ban/[ma]` · `/dat-mon` | `T-232` |
++| `ThucDonKhach` (tầng 3) | `fe/src/app/ban/_components/thuc-don-khach.tsx` | Thẻ combo/món lẻ theo mẫu Gemini: ảnh ngang phía trên dùng `AnhSanPham`, dẫn tới `/thuc-don/[loai]/[id]` và giữ mã bàn qua `ban`; tên/giá cùng hàng, combo có nút Thành phần, một nút gộp lựa chọn mở các nhóm ngay trong thẻ (`LuaChonThe`), chọn xong bảng giữ mở, Chay ẩn Lượng nhân; thanh cam hiển thị số lượng và tổng báo giá API của các dòng thuộc thẻ, chưa có báo giá thì báo đang tính. Chỉ đổi hai khối menu, giữ nguyên tóm tắt (2026-10-29, chủ repo, T-269). Nhãn Thường/Nhiều nhân hiển thị Vừa/Nhiều; giá, mặc định và mã lựa chọn theo menu. Chọn nhóm ngay trước khi thêm; combo chọn chung cho mọi suất phù hợp, mỗi lần thêm giữ lựa chọn riêng, mặc định theo menu (thịt + Thường hiển thị Vừa); tóm tắt chỉ đọc lựa chọn, giữ sửa số lượng/xoá (2026-10-26, chủ repo, T-258). Món lẻ cùng mã món và tập lựa chọn gộp số lượng khi đọc/ghi nháp, áp dụng cả thêm từ trang chi tiết; khác lựa chọn giữ dòng riêng (2026-10-28, chủ repo, T-268). Tìm tên không dấu, dải giỏ và tóm tắt giữ chỉ số dòng; token sáng/tối và kiểu trong CSS thường `fe/src/app/ban/_components/thuc-don-khach.css` có lớp gốc `.khach-menu` + Tailwind (2026-10-23, theo phiếu Claude, T-233); CSS module bị luật Turbopack đọc như CSS thường (F-075) | `/ban/[ma]` · `/dat-mon` | `T-232` |
+ | `ChonMonChiTiet` (tầng 3) | `fe/src/app/thuc-don/chon-mon-chi-tiet.tsx` | Bộ chọn nhóm theo menu, số lượng nguyên dương, giá món lẻ theo tổ hợp; thêm vào giỏ nháp chung theo bàn/web, combo áp lựa chọn chung từng suất phù hợp; xác nhận tại chỗ rồi về menu xem giỏ (2026-10-26, chủ repo, T-258) | `/thuc-don/[loai]/[id]` | `T-258` |
+ | `useNhapKhach` · `dungLai` | `fe/src/lib/nhap-khach.ts` | Zustand theo `qr:{ma}` và `web`, chỉ mã món/combo, số lượng, lựa chọn và suất; dựng lại với menu hiện tại, bỏ dòng không còn; `xoaHet()` xoá mọi khoá; không lưu bộ nhớ trình duyệt (2026-10-21, theo phiếu Claude) | hai màn khách | `P4-10` |
+ | `SoanDon` · `useMenuSoan` (tầng 3) | `fe/src/app/quay/_components/soan-don.tsx` · `du-lieu-soan-don.ts` | hai phiếu dùng chung khuôn gửi một lần, giữ dấu và thân khi chưa rõ kết quả (2026-10-21, theo phiếu Claude) | `/quay/goi-mon` · `/quay/dien-thoai` | `P4-07` |
+@@ -260,3 +260,14 @@ thì ghi lý do ở dòng §2 của mình. File mẫu: `fe/src/app/chu-quan/_com
+ | Mất kết nối | lỗi đọc giữ bản cũ kèm `Alert` có giờ của bản ấy; nút *Đọc lại* |
+ | Test viết trước | backend giả bằng `fetch` tiêm vào `ApiProvider`, trả được lời hứa chưa giải để thử trạng thái chờ; mỗi ca kiểm **thân** lệnh ghi đúng hợp đồng và **số lần** đọc lại; cài lỗi *bỏ đọc lại* phải làm test đỏ |
+ 
++
++## Nút Google cho khách — T-267, 2026-10-28
++
++Theo ADR-132, `GoogleKhach` ở `fe/src/components/khach/google.tsx` dùng chung
++cho `/khach/dang-ky` và `/khach/dang-nhap`, trên form với dòng ngăn “hoặc”.
++Chỉ hiện khi có NEXT_PUBLIC_GOOGLE_CLIENT_ID; Makefile truyền biến này cho FE.
++Script Google Identity Services nạp một lần bằng next/script; nút continue_with dùng locale vi.
++Callback gửi credential qua lớp API tới POST /customer-sessions/google; thành công
++dọn cache khách và chuyển /khach/tai-khoan như đăng nhập mật khẩu. email_taken
++nhắc đăng nhập bằng mật khẩu; các lỗi khác qua hàm dịch lỗi tài khoản.
++Không có CSP hoặc COOP trong next.config.ts nên không thêm header mới.
+diff --git a/fe/src/components/khach/dang-nhap.tsx b/fe/src/components/khach/dang-nhap.tsx
+index bfd99ab..43d3f7a 100644
+--- a/fe/src/components/khach/dang-nhap.tsx
++++ b/fe/src/components/khach/dang-nhap.tsx
+@@ -6,6 +6,7 @@ import { z } from "zod";
+ import { call } from "@/lib/api/client";
+ import { useApi } from "@/lib/api/provider";
+ import { useDonPhienKhach } from "@/lib/khach/session";
++import { GoogleKhach } from "./google";
+ import { KhungKhach } from "./khung";
+ import { FormKhach, batBuoc, matKhau } from "./form";
+ 
+@@ -18,6 +19,7 @@ export function DangNhapKhach({ dangKy = false }: { dangKy?: boolean }) {
+   async function xong() { await don(); router.replace("/khach/tai-khoan"); }
+   return <KhungKhach title={dangKy ? "Đăng ký tài khoản khách" : "Đăng nhập dành cho khách"}>
+     <p className="text-muted-foreground">Nhớ thông tin giao và xem lại đơn đã đặt. Bạn vẫn có thể đặt món khi chưa đăng nhập.</p>
++    <GoogleKhach success={xong} />
+     {dangKy ? <FormKhach schema={register} defaults={{ display_name: "", phone: "", email: "", password: "" }} fields={[
+       { name: "display_name", label: "Tên", autoComplete: "name" }, { name: "phone", label: "Số điện thoại", type: "tel", autoComplete: "tel" },
+       { name: "email", label: "Gmail", type: "email", autoComplete: "email" }, { name: "password", label: "Mật khẩu (ít nhất 8 ký tự)", type: "password", autoComplete: "new-password" },
+diff --git a/fe/src/components/khach/google.test.tsx b/fe/src/components/khach/google.test.tsx
+new file mode 100644
+index 0000000..18f534c
+--- /dev/null
++++ b/fe/src/components/khach/google.test.tsx
+@@ -0,0 +1,49 @@
++import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import { ApiProvider } from "@/lib/api/provider";
++import { DangNhapKhach } from "./dang-nhap";
++
++const replace = vi.fn();
++vi.mock("next/navigation", () => ({ useRouter: () => ({ replace }) }));
++vi.mock("next/script", () => ({ default: () => null }));
++let callback: (response: { credential: string }) => void;
++const initialize = vi.fn((options) => { callback = options.callback; });
++const renderButton = vi.fn((element: HTMLElement) => { element.textContent = "Tiếp tục với Google"; });
++beforeEach(() => {
++  vi.clearAllMocks();
++  vi.stubEnv("NEXT_PUBLIC_GOOGLE_CLIENT_ID", "client-test");
++  window.google = { accounts: { id: { initialize, renderButton } } };
++});
++afterEach(() => { cleanup(); vi.unstubAllEnvs(); delete window.google; });
++function mo(status = 201, dangKy = false) {
++  const calls: { path: string; method: string; body: unknown }[] = [];
++  render(<ApiProvider fetch={async (request) => {
++    calls.push({ path: new URL(request.url).pathname, method: request.method, body: await request.json() });
++    return new Response(JSON.stringify(status === 201 ? {
++      customer_account_id: 1, display_name: "Lan", email: "lan@gmail.com", phone: null,
++      delivery_name: null, delivery_phone: null, delivery_address: null,
++    } : { code: "email_taken" }), { status, headers: { "content-type": "application/json" } });
++  }}><DangNhapKhach dangKy={dangKy} /></ApiProvider>);
++  return calls;
++}
++describe("T-267 Google cho khách", () => {
++  it("không Client ID thì không vẽ nút hoặc dòng ngăn", () => {
++    vi.stubEnv("NEXT_PUBLIC_GOOGLE_CLIENT_ID", ""); mo();
++    expect(screen.queryByLabelText("Tiếp tục với Google")).toBeNull();
++    expect(screen.queryByText("hoặc")).toBeNull(); expect(initialize).not.toHaveBeenCalled();
++  });
++  it.each([false, true])("callback gửi credential và chuyển tài khoản, đăng ký=%s", async (dangKy) => {
++    const calls = mo(201, dangKy);
++    expect(initialize).toHaveBeenCalledWith({ client_id: "client-test", callback: expect.any(Function) });
++    expect(renderButton).toHaveBeenCalledWith(expect.any(HTMLElement), expect.objectContaining({ text: "continue_with", locale: "vi" }));
++    await act(async () => { callback({ credential: "signed-google-token" }); });
++    await waitFor(() => expect(replace).toHaveBeenCalledWith("/khach/tai-khoan"));
++    expect(calls).toEqual([{ path: "/api/customer-sessions/google", method: "POST", body: { credential: "signed-google-token" } }]);
++  });
++  it("email_taken hướng dẫn dùng mật khẩu", async () => {
++    mo(409);
++    await act(async () => { callback({ credential: "token" }); });
++    expect(await screen.findByText("Gmail này đã có tài khoản đặt bằng mật khẩu. Hãy đăng nhập bằng mật khẩu.")).toBeTruthy();
++    expect(replace).not.toHaveBeenCalled();
++  });
++});
+diff --git a/fe/src/components/khach/google.tsx b/fe/src/components/khach/google.tsx
+new file mode 100644
+index 0000000..461b7aa
+--- /dev/null
++++ b/fe/src/components/khach/google.tsx
+@@ -0,0 +1,58 @@
++"use client";
++
++import Script from "next/script";
++import { useCallback, useEffect, useRef, useState } from "react";
++import { call } from "@/lib/api/client";
++import { useApi } from "@/lib/api/provider";
++import { loiTaiKhoan } from "@/lib/auth/messages";
++import { Bao } from "@/components/tai-khoan/khung-form";
++
++type Credential = { credential: string };
++declare global {
++  interface Window {
++    google?: { accounts: { id: {
++      initialize(options: { client_id: string; callback: (response: Credential) => void }): void;
++      renderButton(element: HTMLElement, options: { text: "continue_with"; locale: "vi"; theme: "outline"; size: "large" }): void;
++    } } };
++  }
++}
++const EMAIL_TAKEN = "Gmail này đã có tài khoản đặt bằng mật khẩu. Hãy đăng nhập bằng mật khẩu.";
++export function GoogleKhach({ success }: { success: () => Promise<void> }) {
++  const clientID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
++  const api = useApi();
++  const element = useRef<HTMLDivElement>(null);
++  const busy = useRef(false);
++  const active = useRef(false);
++  const [pending, setPending] = useState(false);
++  const [error, setError] = useState("");
++  const latest = useRef({ api, success });
++  useEffect(() => { latest.current = { api, success }; }, [api, success]);
++  const initialize = useCallback(() => {
++    if (!clientID || !element.current || !window.google) return;
++    window.google.accounts.id.initialize({ client_id: clientID, callback: async ({ credential }) => {
++      if (!active.current || busy.current) return;
++      busy.current = true; setPending(true); setError("");
++      try {
++        const result = await call(latest.current.api.POST("/customer-sessions/google", { body: { credential } }));
++        if (!active.current) return;
++        if (result.ok) await latest.current.success();
++        else setError(loiTaiKhoan(result.failure, { email_taken: EMAIL_TAKEN }));
++      } finally {
++        busy.current = false;
++        if (active.current) setPending(false);
++      }
++    } });
++    element.current.replaceChildren();
++    window.google.accounts.id.renderButton(element.current, { text: "continue_with", locale: "vi", theme: "outline", size: "large" });
++  }, [clientID]);
++  useEffect(() => { active.current = true; initialize(); return () => { active.current = false; }; }, [initialize]);
++  if (!clientID) return null;
++  return <div className="space-y-3">
++    <Script id="google-identity-services" src="https://accounts.google.com/gsi/client" onReady={initialize}
++      onError={() => setError("Chưa tải được nút Google. Vui lòng thử lại sau.")} />
++    <div ref={element} aria-label="Tiếp tục với Google" aria-busy={pending} className={pending ? "pointer-events-none opacity-60" : ""} />
++    {pending && <p role="status">Đang đăng nhập…</p>}
++    {error && <Bao loai="loi">{error}</Bao>}
++    <p className="text-center text-sm text-muted-foreground">hoặc</p>
++  </div>;
++}
+diff --git a/fe/src/lib/api/schema.ts b/fe/src/lib/api/schema.ts
+index 29df761..e8a868f 100644
+--- a/fe/src/lib/api/schema.ts
++++ b/fe/src/lib/api/schema.ts
+@@ -2105,6 +2105,22 @@ export interface paths {
+         patch?: never;
+         trace?: never;
+     };
++    "/customer-sessions/google": {
++        parameters: {
++            query?: never;
++            header?: never;
++            path?: never;
++            cookie?: never;
++        };
++        get?: never;
++        put?: never;
++        post: operations["loginCustomerGoogle"];
++        delete?: never;
++        options?: never;
++        head?: never;
++        patch?: never;
++        trace?: never;
++    };
+     "/customer-sessions/current": {
+         parameters: {
+             query?: never;
+@@ -2231,6 +2247,9 @@ export interface components {
+             email?: string;
+             password: string;
+         };
++        GoogleCredential: {
++            credential: string;
++        };
+         CustomerLogin: {
+             identifier: string;
+             password: string;
+@@ -3770,7 +3789,7 @@ export interface components {
+          * @description Mã lỗi công khai. FE quyết hiện gì theo mã, không theo status, không theo chữ. Mã của một luật do lát dựng cửa của luật ấy thêm (01-hop-dong-api.md §3).
+          * @enum {string}
+          */
+-        ErrorCode: "identifier_invalid" | "contact_required" | "phone_taken" | "login_failed" | "menu_combo_not_found" | "menu_combo_hidden" | "menu_combo_price_in_sales_hours" | "menu_combo_item_not_found" | "menu_combo_surcharge_in_sales_hours" | "combo_portions_mismatch" | "menu_category_not_found" | "menu_category_hidden" | "menu_category_name_taken" | "menu_item_already_in_category" | "expense_category_not_found" | "expense_not_found" | "expense_item_in_use" | "expense_category_in_use" | "expense_item_name_taken" | "expense_item_not_found" | "supply_item_unit_already_set" | "supply_day_entry_already_recorded" | "supply_item_name_taken" | "supply_day_entry_not_found" | "assigned_task_guide_not_found" | "assigned_task_guide_hidden" | "assigned_task_guide_not_text" | "assigned_task_guide_file_missing" | "file_too_large" | "training_record_not_found" | "training_record_hidden" | "assigned_task_not_found" | "person_not_found" | "assigned_task_hidden" | "assigned_task_already_done" | "assigned_task_not_done" | "supply_item_not_found" | "expense_category_name_taken" | "username_taken" | "email_taken" | "password_too_short" | "invalid_credentials" | "login_temporarily_blocked" | "reset_token_invalid" | "account_not_pending" | "account_not_active" | "account_not_locked" | "account_person_is_owner" | "cross_origin_write" | "order_intake_already_paused" | "order_intake_not_paused" | "shop_already_blind" | "shop_not_blind" | "intake_state_changed" | "internal_error" | "invalid_request" | "unauthenticated" | "not_on_counter_duty" | "counter_duty_changed" | "owner_only" | "qr_code_not_current" | "dining_table_not_found" | "qr_code_issue_conflict" | "menu_item_name_conflict" | "menu_item_component_conflict" | "menu_component_name_conflict" | "menu_item_not_found" | "menu_option_not_found" | "option_group_not_found" | "menu_option_name_taken" | "menu_option_hidden" | "menu_option_not_hidden" | "menu_option_is_default" | "menu_component_not_found" | "menu_item_component_not_found" | "menu_item_discontinued" | "option_combination_invalid" | "submission_code_conflict" | "dining_table_needs_cleaning" | "dining_table_not_needing_cleaning" | "sales_order_not_found" | "table_session_not_found" | "order_transition_not_allowed" | "table_session_transition_not_allowed" | "payment_parts_mismatch" | "debtor_name_mismatch" | "order_intake_paused" | "outside_selling_hours" | "shop_not_seeing_orders" | "delivery_served_mark_undecided" | "debt_note_required" | "order_handover_mismatch" | "order_jobs_not_served" | "prepayment_balance_exceeded" | "bill_not_found" | "prepayment_not_found" | "bill_has_no_debt" | "debt_already_settled" | "debt_overpaid" | "order_not_prepayable" | "prepayment_already_received" | "opening_float_already_declared" | "cash_count_already_recorded" | "sale_day_reconciled" | "cash_day_incomplete" | "sale_day_not_reconciled" | "sale_day_already_reconciled" | "paper_ledger_missing" | "paper_position_already_entered" | "paper_ledger_already_declared" | "paper_entries_pending" | "gap_explanation_required" | "station_job_not_found" | "station_job_transition_not_allowed" | "production_batch_not_found" | "production_batch_already_rolled_back" | "production_batch_has_discarded_jobs" | "production_batch_has_served_units" | "station_job_has_wrong_make_note" | "transfer_source_not_available" | "transfer_target_not_waiting" | "wrong_make_note_not_allowed" | "wrong_make_note_not_found" | "wrong_make_note_already_cancelled" | "served_quantity_exceeds_made";
++        ErrorCode: "identifier_invalid" | "contact_required" | "phone_taken" | "google_login_disabled" | "google_token_invalid" | "login_failed" | "menu_combo_not_found" | "menu_combo_hidden" | "menu_combo_price_in_sales_hours" | "menu_combo_item_not_found" | "menu_combo_surcharge_in_sales_hours" | "combo_portions_mismatch" | "menu_category_not_found" | "menu_category_hidden" | "menu_category_name_taken" | "menu_item_already_in_category" | "expense_category_not_found" | "expense_not_found" | "expense_item_in_use" | "expense_category_in_use" | "expense_item_name_taken" | "expense_item_not_found" | "supply_item_unit_already_set" | "supply_day_entry_already_recorded" | "supply_item_name_taken" | "supply_day_entry_not_found" | "assigned_task_guide_not_found" | "assigned_task_guide_hidden" | "assigned_task_guide_not_text" | "assigned_task_guide_file_missing" | "file_too_large" | "training_record_not_found" | "training_record_hidden" | "assigned_task_not_found" | "person_not_found" | "assigned_task_hidden" | "assigned_task_already_done" | "assigned_task_not_done" | "supply_item_not_found" | "expense_category_name_taken" | "username_taken" | "email_taken" | "password_too_short" | "invalid_credentials" | "login_temporarily_blocked" | "reset_token_invalid" | "account_not_pending" | "account_not_active" | "account_not_locked" | "account_person_is_owner" | "cross_origin_write" | "order_intake_already_paused" | "order_intake_not_paused" | "shop_already_blind" | "shop_not_blind" | "intake_state_changed" | "internal_error" | "invalid_request" | "unauthenticated" | "not_on_counter_duty" | "counter_duty_changed" | "owner_only" | "qr_code_not_current" | "dining_table_not_found" | "qr_code_issue_conflict" | "menu_item_name_conflict" | "menu_item_component_conflict" | "menu_component_name_conflict" | "menu_item_not_found" | "menu_option_not_found" | "option_group_not_found" | "menu_option_name_taken" | "menu_option_hidden" | "menu_option_not_hidden" | "menu_option_is_default" | "menu_component_not_found" | "menu_item_component_not_found" | "menu_item_discontinued" | "option_combination_invalid" | "submission_code_conflict" | "dining_table_needs_cleaning" | "dining_table_not_needing_cleaning" | "sales_order_not_found" | "table_session_not_found" | "order_transition_not_allowed" | "table_session_transition_not_allowed" | "payment_parts_mismatch" | "debtor_name_mismatch" | "order_intake_paused" | "outside_selling_hours" | "shop_not_seeing_orders" | "delivery_served_mark_undecided" | "debt_note_required" | "order_handover_mismatch" | "order_jobs_not_served" | "prepayment_balance_exceeded" | "bill_not_found" | "prepayment_not_found" | "bill_has_no_debt" | "debt_already_settled" | "debt_overpaid" | "order_not_prepayable" | "prepayment_already_received" | "opening_float_already_declared" | "cash_count_already_recorded" | "sale_day_reconciled" | "cash_day_incomplete" | "sale_day_not_reconciled" | "sale_day_already_reconciled" | "paper_ledger_missing" | "paper_position_already_entered" | "paper_ledger_already_declared" | "paper_entries_pending" | "gap_explanation_required" | "station_job_not_found" | "station_job_transition_not_allowed" | "production_batch_not_found" | "production_batch_already_rolled_back" | "production_batch_has_discarded_jobs" | "production_batch_has_served_units" | "station_job_has_wrong_make_note" | "transfer_source_not_available" | "transfer_target_not_waiting" | "wrong_make_note_not_allowed" | "wrong_make_note_not_found" | "wrong_make_note_already_cancelled" | "served_quantity_exceeds_made";
+         /** @description Hình lỗi chung của mọi lời từ chối (01-hop-dong-api.md §3). */
+         Error: {
+             code: components["schemas"]["ErrorCode"];
+@@ -8767,6 +8786,41 @@ export interface operations {
+             };
+         };
+     };
++    loginCustomerGoogle: {
++        parameters: {
++            query?: never;
++            header?: never;
++            path?: never;
++            cookie?: never;
++        };
++        requestBody: {
++            content: {
++                "application/json": components["schemas"]["GoogleCredential"];
++            };
++        };
++        responses: {
++            /** @description Tạo hoặc mở phiên khách theo ADR-132; không tự nối thư đã có tài khoản. */
++            201: {
++                headers: {
++                    /** @description banhcuon_khach; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=604800, xoá khi đăng xuất. */
++                    "Set-Cookie"?: string;
++                    [name: string]: unknown;
++                };
++                content: {
++                    "application/json": components["schemas"]["CustomerProfile"];
++                };
++            };
++            /** @description Lỗi theo ErrorCode và x-http-status. */
++            default: {
++                headers: {
++                    [name: string]: unknown;
++                };
++                content: {
++                    "application/json": components["schemas"]["Error"];
++                };
++            };
++        };
++    };
+     currentCustomer: {
+         parameters: {
+             query?: never;
+@@ -9033,5 +9087,5 @@ export const refundRequestSource_method_codeValues: ReadonlyArray<FlattenedDeepR
+ export const prepaymentReturnRequestMethod_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PrepaymentReturnRequest"]["method_code"]> = ["cash", "transfer"];
+ export const paperEntryRequestKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaperEntryRequest"]["kind"]> = ["table", "takeaway"];
+ export const paperEntryRequestHandover_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaperEntryRequest"]["handover_code"]> = ["shop_pickup", "door_delivery"];
+-export const errorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ErrorCode"]> = ["identifier_invalid", "contact_required", "phone_taken", "login_failed", "menu_combo_not_found", "menu_combo_hidden", "menu_combo_price_in_sales_hours", "menu_combo_item_not_found", "menu_combo_surcharge_in_sales_hours", "combo_portions_mismatch", "menu_category_not_found", "menu_category_hidden", "menu_category_name_taken", "menu_item_already_in_category", "expense_category_not_found", "expense_not_found", "expense_item_in_use", "expense_category_in_use", "expense_item_name_taken", "expense_item_not_found", "supply_item_unit_already_set", "supply_day_entry_already_recorded", "supply_item_name_taken", "supply_day_entry_not_found", "assigned_task_guide_not_found", "assigned_task_guide_hidden", "assigned_task_guide_not_text", "assigned_task_guide_file_missing", "file_too_large", "training_record_not_found", "training_record_hidden", "assigned_task_not_found", "person_not_found", "assigned_task_hidden", "assigned_task_already_done", "assigned_task_not_done", "supply_item_not_found", "expense_category_name_taken", "username_taken", "email_taken", "password_too_short", "invalid_credentials", "login_temporarily_blocked", "reset_token_invalid", "account_not_pending", "account_not_active", "account_not_locked", "account_person_is_owner", "cross_origin_write", "order_intake_already_paused", "order_intake_not_paused", "shop_already_blind", "shop_not_blind", "intake_state_changed", "internal_error", "invalid_request", "unauthenticated", "not_on_counter_duty", "counter_duty_changed", "owner_only", "qr_code_not_current", "dining_table_not_found", "qr_code_issue_conflict", "menu_item_name_conflict", "menu_item_component_conflict", "menu_component_name_conflict", "menu_item_not_found", "menu_option_not_found", "option_group_not_found", "menu_option_name_taken", "menu_option_hidden", "menu_option_not_hidden", "menu_option_is_default", "menu_component_not_found", "menu_item_component_not_found", "menu_item_discontinued", "option_combination_invalid", "submission_code_conflict", "dining_table_needs_cleaning", "dining_table_not_needing_cleaning", "sales_order_not_found", "table_session_not_found", "order_transition_not_allowed", "table_session_transition_not_allowed", "payment_parts_mismatch", "debtor_name_mismatch", "order_intake_paused", "outside_selling_hours", "shop_not_seeing_orders", "delivery_served_mark_undecided", "debt_note_required", "order_handover_mismatch", "order_jobs_not_served", "prepayment_balance_exceeded", "bill_not_found", "prepayment_not_found", "bill_has_no_debt", "debt_already_settled", "debt_overpaid", "order_not_prepayable", "prepayment_already_received", "opening_float_already_declared", "cash_count_already_recorded", "sale_day_reconciled", "cash_day_incomplete", "sale_day_not_reconciled", "sale_day_already_reconciled", "paper_ledger_missing", "paper_position_already_entered", "paper_ledger_already_declared", "paper_entries_pending", "gap_explanation_required", "station_job_not_found", "station_job_transition_not_allowed", "production_batch_not_found", "production_batch_already_rolled_back", "production_batch_has_discarded_jobs", "production_batch_has_served_units", "station_job_has_wrong_make_note", "transfer_source_not_available", "transfer_target_not_waiting", "wrong_make_note_not_allowed", "wrong_make_note_not_found", "wrong_make_note_already_cancelled", "served_quantity_exceeds_made"];
++export const errorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ErrorCode"]> = ["identifier_invalid", "contact_required", "phone_taken", "google_login_disabled", "google_token_invalid", "login_failed", "menu_combo_not_found", "menu_combo_hidden", "menu_combo_price_in_sales_hours", "menu_combo_item_not_found", "menu_combo_surcharge_in_sales_hours", "combo_portions_mismatch", "menu_category_not_found", "menu_category_hidden", "menu_category_name_taken", "menu_item_already_in_category", "expense_category_not_found", "expense_not_found", "expense_item_in_use", "expense_category_in_use", "expense_item_name_taken", "expense_item_not_found", "supply_item_unit_already_set", "supply_day_entry_already_recorded", "supply_item_name_taken", "supply_day_entry_not_found", "assigned_task_guide_not_found", "assigned_task_guide_hidden", "assigned_task_guide_not_text", "assigned_task_guide_file_missing", "file_too_large", "training_record_not_found", "training_record_hidden", "assigned_task_not_found", "person_not_found", "assigned_task_hidden", "assigned_task_already_done", "assigned_task_not_done", "supply_item_not_found", "expense_category_name_taken", "username_taken", "email_taken", "password_too_short", "invalid_credentials", "login_temporarily_blocked", "reset_token_invalid", "account_not_pending", "account_not_active", "account_not_locked", "account_person_is_owner", "cross_origin_write", "order_intake_already_paused", "order_intake_not_paused", "shop_already_blind", "shop_not_blind", "intake_state_changed", "internal_error", "invalid_request", "unauthenticated", "not_on_counter_duty", "counter_duty_changed", "owner_only", "qr_code_not_current", "dining_table_not_found", "qr_code_issue_conflict", "menu_item_name_conflict", "menu_item_component_conflict", "menu_component_name_conflict", "menu_item_not_found", "menu_option_not_found", "option_group_not_found", "menu_option_name_taken", "menu_option_hidden", "menu_option_not_hidden", "menu_option_is_default", "menu_component_not_found", "menu_item_component_not_found", "menu_item_discontinued", "option_combination_invalid", "submission_code_conflict", "dining_table_needs_cleaning", "dining_table_not_needing_cleaning", "sales_order_not_found", "table_session_not_found", "order_transition_not_allowed", "table_session_transition_not_allowed", "payment_parts_mismatch", "debtor_name_mismatch", "order_intake_paused", "outside_selling_hours", "shop_not_seeing_orders", "delivery_served_mark_undecided", "debt_note_required", "order_handover_mismatch", "order_jobs_not_served", "prepayment_balance_exceeded", "bill_not_found", "prepayment_not_found", "bill_has_no_debt", "debt_already_settled", "debt_overpaid", "order_not_prepayable", "prepayment_already_received", "opening_float_already_declared", "cash_count_already_recorded", "sale_day_reconciled", "cash_day_incomplete", "sale_day_not_reconciled", "sale_day_already_reconciled", "paper_ledger_missing", "paper_position_already_entered", "paper_ledger_already_declared", "paper_entries_pending", "gap_explanation_required", "station_job_not_found", "station_job_transition_not_allowed", "production_batch_not_found", "production_batch_already_rolled_back", "production_batch_has_discarded_jobs", "production_batch_has_served_units", "station_job_has_wrong_make_note", "transfer_source_not_available", "transfer_target_not_waiting", "wrong_make_note_not_allowed", "wrong_make_note_not_found", "wrong_make_note_already_cancelled", "served_quantity_exceeds_made"];
+ export const itemComponentAddComponentStation_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ItemComponentAdd"]["component"]["station_code"]> = ["quay", "trang_banh", "gap_banh", "canh", "don_ban"];
+diff --git a/fe/src/lib/auth/messages.ts b/fe/src/lib/auth/messages.ts
+index 9d5c236..4e2db9b 100644
+--- a/fe/src/lib/auth/messages.ts
++++ b/fe/src/lib/auth/messages.ts
+@@ -2,6 +2,8 @@
+ import type { ApiFailure, ErrorCode } from "@/lib/api/client";
+ 
+ const CHU: Partial<Record<ErrorCode, string>> = {
++  google_login_disabled: "Đăng nhập bằng Google chưa sẵn sàng. Vui lòng thử lại sau.",
++  google_token_invalid: "Chưa đăng nhập được bằng Google. Vui lòng thử lại.",
+   login_failed: "Sai số điện thoại, Gmail hoặc mật khẩu.",
+   identifier_invalid: "Số điện thoại hoặc Gmail chưa đúng dạng.",
+   contact_required: "Nhập số điện thoại hoặc Gmail.",
+diff --git a/scripts/db-check.sh b/scripts/db-check.sh
+index 7c19c04..c98ccbf 100755
+--- a/scripts/db-check.sh
++++ b/scripts/db-check.sh
+@@ -152,6 +152,22 @@ if [ "$n_mig" -gt 0 ]; then
+         printf '%s\n' "$out" | tail -12
+       fi
+     fi
++    if [ "$v" = 20261028120000 ]; then
++      if out="$({ echo 'BEGIN;'; echo 'SET search_path = shop;';
++                  cat db/migrations/20261028120000_khach_google.up.sql;
++                  cat db/tests/i035_google_identity.sql;
++                  echo '\echo T267_TEST_GREEN';
++                  cat db/migrations/20261028120000_khach_google.down.sql;
++                  echo 'ROLLBACK;'; } | psql_f -f - 2>&1)"; then
++        fail "T-267 đường lùi — không từ chối liên kết Google đã ghi"
++      elif printf '%s\n' "$out" | grep -q '^T267_TEST_GREEN$' &&
++           printf '%s\n' "$out" | grep -q 'customer_google_identity đang giữ dữ liệu'; then
++        echo "PASS T-267 test Google xanh; đường lùi từ chối liên kết đã ghi"
++      else
++        fail "T-267 test Google hoặc khoá chặn — lỗi khác điều cần chứng minh:"
++        printf '%s\n' "$out" | tail -12
++      fi
++    fi
+     if out="$(migrate up 1)"; then
+       schema_dump > "$snap/$v"; echo "PASS xuôi ${f%.up.sql}"
+       printf '%s\n' "$prev" > "$snap/$v.prev"; prev="$v"
+diff --git a/master_plan/shop-facts.md b/master_plan/shop-facts.md
+--- a/master_plan/shop-facts.md
++++ b/master_plan/shop-facts.md
+@@ -1576,6 +1576,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
+ | 2026-10-25 | Claude thêm **ca 15 §4.8** cùng lượt lead T-251: *Combo Đầy đủ chín · Bánh cuốn=Thịt Thường · Bánh trứng chín=Chay ⇒ 29.000* (26.000 + 3 × 1.000). Parser `seed.pl --price-cases-tsv` ở worktree /private/tmp/t251 đã khớp 15/15 trên fixture rút gọn (log `/private/tmp/t251-price-run.log`); hình token: `Bánh cuốn=Nhân:Thịt\|Bánh trứng chín=Nhân:Chay\|Bánh cuốn=Lượng nhân:Thường`. Ca này canh chỗ dễ hỏng duy nhất của *combo thật*: trộn nhân giữa hai suất con cùng combo. **Hợp đồng với chủ quán** — ADR-129 là nền thiết kế, dòng này là ca kiểm | §4.8 |
+ | 2026-10-26 | Chủ repo chốt trong hội thoại (T-255): **canh bánh cuốn có nhóm lựa chọn *Rau*** — *không rau · ít rau · nhiều rau*, cả ba **0đ**, mặc định **ít rau**, nhóm **chỉ** gắn cho canh. §4.8 thêm cột *Rau*, ca 13 chọn *ít rau*, thêm ca 16 (*không rau* ⇒ 0) và ca 17 (*bánh cuốn + ít rau* ⇒ từ chối) | §4.4 · §4.6 luật 8 · §4.8 |
+ | 2026-10-27 | Chủ repo chuyển lời chủ quán trong hội thoại (T-262) và chọn trong câu hỏi có sẵn phương án: đăng nhập bằng **số điện thoại hoặc Gmail gõ vào ô, kèm mật khẩu** (không OTP, không nút Google) cho người làm, chủ quán **và khách**; đăng ký khai **một trong hai**; khách đăng nhập **tuỳ chọn**, **không chờ duyệt**, được **xem lại đơn** và **nhớ tên, số điện thoại, địa chỉ giao**. Thay vế 3 lượt hai §8.8 ở chỗ *đăng nhập bằng gì*; mở `U-105` … `U-108`. Xem **ADR-131** | §8.8 (lượt ba) |
++| 2026-10-28 | Chủ repo chọn trong câu hỏi có sẵn phương án (T-267): **khách** đăng ký và đăng nhập được bằng **nút Google** ở trang khách; người làm và chủ quán không có nút ấy. Thay vế 1 lượt ba §8.8 ở chỗ *không phải nút Google*, chỉ cho khách. Xem **ADR-132** | §8.8 (lượt bốn) |
+ 
+ ### 7.2 Chỗ suy ra chưa xác nhận — **hai mục, tính tới 2026-10-23**
+ 
+@@ -2249,6 +2250,13 @@ giữ nguyên cho người làm.
+ Chỗ lời chưa phủ — người chỉ khai số điện thoại quên mật khẩu, đơn nào vào lịch sử, nhớ một hay nhiều địa chỉ, khách
+ muốn xoá tài khoản — là `U-105` … `U-108` ở `docs/product/99-unknowns.md`. Thiết kế: `docs/decisions.md` **ADR-131**.
+ 
++**Lượt bốn 2026-10-28 — KHÁCH được đăng ký và đăng nhập bằng nút Google** (T-267; chủ repo chọn trong câu hỏi có sẵn
++phương án: đặt nút *"chỉ trang khách"*, *"đồng ý đổi"* quyết định cũ). **Thay vế 1 lượt ba ở chỗ *"không phải nút Đăng
++nhập với Google"*, chỉ cho khách:** ở trang đăng ký và đăng nhập của khách có nút Google — bấm là máy dùng tài khoản
++Google đang đăng nhập trên trình duyệt, tạo tài khoản khách nếu chưa có rồi đăng nhập luôn. Người làm và chủ quán vẫn
++đăng nhập như lượt ba, không có nút Google. Mọi vế khác của lượt ba giữ nguyên. Thiết kế: `docs/decisions.md`
++**ADR-132**.
++
+ **Lời này KHÔNG chạm chấm công.** *Lúc này ai đứng quầy* và *hôm nay người này làm mấy giờ* là hai
+ câu khác nhau; câu thứ hai là mức 2 của §8.7 đã có lời đáp `C30` · `C31` · `C32` ngày 2026-09-25 ở §8.7; các vế còn thiếu
+ ở `work/admin-questions.md` §3.
+diff --git a/docs/decisions.md b/docs/decisions.md
+--- a/docs/decisions.md
++++ b/docs/decisions.md
+@@ -143,6 +143,7 @@ có câu trả lời mới từ người.
+ | ADR-125 | **Hoá đơn phiên bàn chỉ cộng suất đã ra hết** (`T-227`): một đoạn tính tiền đã ra theo suất dùng chung cho hoá đơn, tạm tính và trang Vận hành; đóng phiên huỷ mọi việc trạm chưa ra (`station_job` thêm `cancelled` · `discarded`) | Đã chốt 2026-10-22 (Claude, chủ repo duyệt) | — | `T-227` · ADR-118 · ADR-124 · I-002 |
+ | ADR-126 | **Bán lại món đã ngừng** (`T-243`): cửa `POST /menu-items/{menu_item_id}/resumption` xoá mốc ngừng bán trên chính dòng món, có lý do; lịch sử nằm trong vết `record_revision`, không bảng mới | Đã chốt 2026-10-24 (Claude, theo lời chủ repo đóng U-104) | — | `T-243` · I-018 · I-009 |
+ | ADR-131 | **Đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản riêng** (`T-262`): một ô định danh chuẩn hoá; tài khoản người làm thêm số điện thoại, thư và tên đăng nhập thành tuỳ chọn; khách ở bảng, cookie và lớp quyền `khach` riêng, không bao giờ chạm `person`; đơn web gắn tài khoản khách; ba lát `T-263` → `T-264` → `T-265` | Đã chốt 2026-10-27 (chủ repo duyệt, T-262) | — | ADR-109 · ADR-085 · I-035 · `U-105`…`U-108` |
++| ADR-132 | **Khách đăng ký và đăng nhập bằng nút Google** (`T-267`): FE lấy Google ID token bằng Google Identity Services, BE tự kiểm chữ ký RS256 qua JWKS bằng thư viện chuẩn của Go; bảng chỉ thêm `customer_google_identity` nối `sub` với tài khoản khách; cửa `POST /customer-sessions/google`; Gmail đã có tài khoản mật khẩu thì từ chối, không tự nối; chỉ khách | Đã chốt 2026-10-29 (chủ repo duyệt, T-267) | — | ADR-131 · I-035 · PT-8 |
+ | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
+ | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
+ | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
+@@ -8144,3 +8145,59 @@ trigger vết như mọi bảng (QD-52), nhưng `record_revision.person_id` bắ
+ `customer_*` (CHECK `record_revision_person_check`, migration `20261028090000_vet_cua_khach`); ai sửa đọc qua dòng
+ đích. Bác *bỏ trigger vết khỏi bảng khách*: mất bản trước của địa chỉ giao đã nhớ, và phải mở ngoại lệ cho QD-52.
+ I-018 ghi sửa đổi cùng ngày.
++
++**Sửa đổi 2026-10-28 (T-267; chủ repo chọn *"đồng ý đổi"*).** Phương án bị loại *nút Đăng nhập với Google* được lấy
++lại **cho khách** — thiết kế ở **ADR-132**. Người làm và chủ quán vẫn theo điểm 2, không có nút Google.
++
++## ADR-132 — Khách đăng ký và đăng nhập bằng nút Google
++
++**Status:** **Đã chốt** 2026-10-29 — Claude Code thiết kế (task `T-267`, mức **L2**), chủ repo duyệt trong hội
++thoại (nguyên văn *"duyệt"*). Hướng do chủ repo chọn trong câu
++hỏi có sẵn phương án cùng ngày: nút đặt *"chỉ trang khách"*, *"đồng ý đổi"* phương án ADR-131 đã loại. Lời:
++`master_plan/shop-facts.md` §8.8 *lượt bốn*. Mọi điểm dưới đây là thiết kế của phiên.
++
++**Context:** ADR-131 loại nút Google vì chủ quán chưa chọn và vì cần tên miền cố định (`U-094`). Chủ repo nay muốn khách
++bấm một nút là máy dùng tài khoản Google đang đăng nhập trên trình duyệt để tạo tài khoản và đăng nhập luôn. Tên miền
++vẫn chưa có, nhưng Google cho khai `http://localhost:3000` làm origin lúc phát triển; tên miền thật chỉ cần lúc triển
++khai và được thêm vào cùng Client ID. `QC-11` ghim đúng hai phụ thuộc Go trực tiếp.
++
++**Decision:**
++
++1. **Chỉ khách.** Nút *Tiếp tục với Google* ở `/khach/dang-ky` và `/khach/dang-nhap`. Màn và cửa của người làm không
++   đổi; `account` không có cột Google.
++2. **Luồng ID token, không Client Secret.** FE nạp Google Identity Services (`https://accounts.google.com/gsi/client`),
++   vẽ nút bằng Client ID; Google trả một ID token (JWT) cho trình duyệt, FE gửi nguyên chuỗi tới
++   `POST /customer-sessions/google` `{credential}`. Không dùng luồng mã uỷ quyền nên không cất bí mật nào.
++3. **BE tự kiểm token bằng thư viện chuẩn** (gói Go thuần mới `be/internal/google`, không import Gin, không thêm phụ
++   thuộc): tiêu đề `alg` = `RS256`, `kid` có trong JWKS `https://www.googleapis.com/oauth2/v3/certs` (giữ trong bộ nhớ
++   theo `Cache-Control: max-age`, gặp `kid` lạ thì nạp lại một lần); chữ ký đúng; `iss` ∈ {`accounts.google.com`,
++   `https://accounts.google.com`}; `aud` = Client ID; `exp` chưa qua (lệch đồng hồ cho phép 60 giây); `sub` không rỗng;
++   `email_verified` = true. Sai bất kỳ điều nào ⇒ `google_token_invalid`. Bộ kiểm là một interface để test thay bằng
++   khoá RSA sinh tại chỗ.
++4. **Nối bằng `sub`, không bằng thư.** Bảng chỉ thêm `customer_google_identity` (`customer_account_id` duy nhất,
++   `google_sub` duy nhất, không UPDATE, không khoá ngoại tới người của quán). `sub` đã nối ⇒ mở phiên cho đúng tài khoản
++   ấy. `sub` mới và thư chưa thuộc tài khoản khách nào ⇒ một giao dịch tạo `customer_account` (thư = thư Google đã
++   viết thường, tên = `name` của token, trống thì phần trước `@`), dòng nối và phiên. Tài khoản tạo bằng Google **không
++   có mật khẩu**; đăng nhập bằng mật khẩu với thư ấy là `login_failed` cho tới khi khách tự đặt mật khẩu qua đường quên
++   mật khẩu (ADR-131 điểm 8).
++5. **Thư đã thuộc một tài khoản khách chưa nối Google ⇒ từ chối `email_taken`, không tự nối, không ghi gì.** Màn nói
++   khách đăng nhập bằng mật khẩu. Tự nối mở đường chiếm trước: người khác đăng ký sẵn bằng thư của nạn nhân và giữ mật
++   khẩu, nạn nhân bấm Google rồi dùng tài khoản mà kẻ kia vẫn vào được. Nối Google vào tài khoản mật khẩu có sẵn là
++   việc sau, khi có màn *nối từ trang tài khoản* (đã đăng nhập bằng mật khẩu rồi mới nối).
++6. **Cấu hình:** BE đọc `BANHCUON_GOOGLE_CLIENT_ID`, FE đọc `NEXT_PUBLIC_GOOGLE_CLIENT_ID` (cùng giá trị). Trống ⇒ FE
++   không vẽ nút, cửa trả `google_login_disabled`; mọi đường đăng nhập khác chạy như cũ.
++7. **Phụ thuộc ngoài mới PT-8** (`docs/product/1-system-design/01-ranh-gioi-he-thong.md`): Google chết hay chặn ⇒ chỉ
++   nút Google hỏng; khách đăng nhập bằng mật khẩu (nếu đã đặt) hoặc đặt món không đăng nhập — đăng nhập là tuỳ chọn.
++
++**Why:** ID token + JWKS là đường Google khuyên cho đăng nhập từ trình duyệt, không cần bí mật phía máy chủ; tự kiểm bằng
++`crypto/rsa` giữ `QC-11` nguyên và đủ ngắn để test hết các nhánh từ chối. Nối bằng `sub` vì thư Google có thể đổi còn
++`sub` thì không. Từ chối thay vì tự nối vì một tài khoản khách bị chiếm lộ địa chỉ giao và lịch sử đơn.
++
++**Rejected alternatives:** *thư viện `google.golang.org/api/idtoken`* — kéo cả module lớn, phải sửa `QC-11`, đổi lấy
++khoảng trăm dòng; *luồng mã uỷ quyền với Client Secret* — thêm bí mật cần cất và một vòng chuyển hướng, không được gì
++cho đăng nhập; *tự nối theo thư đã xác minh* — chiếm trước như điểm 5; *nút Google cho người làm* — chủ repo chọn chỉ
++trang khách, và tài khoản người làm còn phải chờ duyệt.
++
++**Consequences:** `I-035` thêm một kịch bản ở Verification (bảng nối mới vẫn không trỏ tới người của quán — phép kiểm
++ngược `customer\_%` sẵn có phủ nó); test hồi quy `i035_google_identity.sql` viết trước lược đồ. Hợp đồng tăng phiên bản
++phụ. Triển khai thật cần chủ repo tạo Client ID ở Google Cloud Console và thêm tên miền khi `U-094` có lời.
+diff --git a/quality/invariants.md b/quality/invariants.md
+--- a/quality/invariants.md
++++ b/quality/invariants.md
+@@ -1679,5 +1679,9 @@ khoản khách ⇒ **bị từ chối**. Kịch bản dương: tài khoản ngư
+ bằng vai ghi; một số vừa là tài khoản người làm vừa là tài khoản khách; đơn đến lấy mang tài khoản khách. Kiểm ngược:
+ không khoá ngoại nào từ bảng khách tới người của quán hay trực quầy.
+ 
++*Thêm 2026-10-28 (T-267, Claude Code, **ADR-132**):* tài khoản khách tạo bằng Google mang thư, không mật khẩu ⇒
++**được**; dòng nối `customer_google_identity` trùng `sub`, trùng tài khoản, `sub` rỗng, hay bị vai ghi UPDATE ⇒ **bị từ
++chối**; kiểm ngược `customer\_%` phủ cả bảng nối. Test hồi quy `i035_google_identity` viết trước lược đồ.
++
+ *Viết ở T-262, 2026-10-27, Claude Code — từ lời §8.8 lượt ba và thiết kế **ADR-131** chủ repo duyệt. Test hồi quy
+ `i035_customer_account_apart_from_staff` viết trước lược đồ, vào `db/tests/` cùng lát `T-263`.*
+diff --git a/docs/product/1-system-design/01-ranh-gioi-he-thong.md b/docs/product/1-system-design/01-ranh-gioi-he-thong.md
+--- a/docs/product/1-system-design/01-ranh-gioi-he-thong.md
++++ b/docs/product/1-system-design/01-ranh-gioi-he-thong.md
+@@ -52,6 +52,8 @@ với `architecture.md` §8).
+ 
+ *Thêm **PT-7** 2026-10-14 (P2A-14, Claude Code) khi đăng nhập bằng tài khoản thêm thư đặt lại mật khẩu (**ADR-109**); phép đếm thành bảy.*
+ 
++*Thêm **PT-8** 2026-10-28 (T-267, Claude Code) khi khách được đăng nhập bằng nút Google (**ADR-132**); phép đếm thành tám.*
++
+ Mã `PT-x` là **nhãn cục bộ của file này**, để §3 và các bước sau (**P1-08** · **P1-10** · **P1-11**)
+ trỏ được vào đúng một dòng. Nó không phải một mã dùng chung của repo.
+ 
+@@ -64,6 +66,7 @@ trỏ được vào đúng một dòng. Nó không phải một mã dùng chung
+ | **PT-5** | **Đường báo đơn web về quầy** | quầy biết có đơn mới của ba kênh không gắn bàn mà **không phải ngồi canh màn hình** | `03-lat-cat.md` §3.2.1 bước 6 · `07-pham-vi-mvp.md` §7.7 dòng *Thông báo đơn* · tên cụ thể: `shop-facts.md` §1 · `docs/decisions.md` **ADR-041** (chốt 2026-09-07) |
+ | **PT-6** | **Sổ giấy** — quy trình của **người**, không phải một tính năng | ngày mất điện, doanh thu chỉ tồn tại trên giấy cho tới lúc nhập bù; và nó là nguồn đối soát **thứ nhất** | `shop-facts.md` §6.11 · §6.10 (chủ quán chốt 2026-09-02 · 2026-09-01) |
+ | **PT-7** | **Dịch vụ gửi thư đặt lại mật khẩu** (SMTP; tên dịch vụ là cấu hình triển khai) | người làm quên mật khẩu **tự đặt lại** qua thư tới Gmail của mình | `shop-facts.md` §8.8 (lời đóng `U-088`, 2026-10-14) · `docs/decisions.md` **ADR-109** điểm 8–9 (chủ repo duyệt 2026-10-14) |
++| **PT-8** | **Google Identity Services và khoá ký công khai của Google** (đường cụ thể: **ADR-132** điểm 2–3) | **khách** bấm một nút để đăng ký và đăng nhập bằng tài khoản Google đang mở trên trình duyệt | `shop-facts.md` §8.8 *lượt bốn* (chủ repo chọn 2026-10-28) · `docs/decisions.md` **ADR-132** |
+ 
+ **PT-1 và PT-2 không phải một thứ**, và chỗ khác nhau của chúng là chỗ dễ thiết kế sai nhất:
+ 
+@@ -106,6 +109,7 @@ thêm dòng.
+ | **PT-5** | Đơn web **vẫn vào hệ thống**, chỉ là **không ai được báo**. Quầy **tự mở danh sách đơn chờ xác nhận** trên POS thay vì chờ báo — đơn chưa duyệt vẫn **không sinh việc ở trạm nào** (`shop-facts.md` §6.2), nên chỗ hỏng là **khách chờ**, không phải bếp làm sai | **Người đứng quầy** — vẫn là người nhìn thấy đơn đầu tiên (`03-lat-cat.md` §3.2.1 bước 6) | **Trong buổi bán, trước giờ hẹn của đơn sớm nhất**: `pickup` và `phone_preorder` đều mang mốc giờ khách cần hàng (`shop-facts.md` §5.2 điểm 5). Chờ tới cuối buổi là trễ hẹn |
+ | **PT-6** | Bảng đối soát cuối ngày phải đọc được ***"còn N lượt bán trên giấy chưa nhập"*** — không có dòng ấy thì ngưỡng **0đ** báo lệch mà lý do chỉ là *chưa gõ xong* (§6.11) | **POS hoặc chủ quán** — người giữ sổ cũng là người nhập lại (§6.11) | **Ngay khi có thể** (§6.11). Doanh thu của lượt nhập bù rơi vào **ngày quán bán**, không phải ngày gõ (chủ quán chốt 2026-09-04, `U-032`) ⇒ **ngày còn lượt chưa nhập là ngày chưa đối soát xong** (`docs/decisions.md` **ADR-037**). **Ai chấm lại con số ấy: POS hoặc chủ quán, cuối buổi bán hàng** (chủ quán chốt 2026-09-06, `U-037`, đóng) |
+ | **PT-7** | **Không dừng bán, không ai bị khoá ngoài máy vì thư.** Mọi thứ khác chạy; chỉ người quên mật khẩu không tự đặt lại được. Người ấy báo chủ quán | **Chủ quán** — khoá rồi mở lại tài khoản kèm một **mật khẩu tạm**, người làm phải đổi ở lần đăng nhập kế (**ADR-109** điểm 9) | **Ngay khi người làm báo**; dịch vụ thư sống lại thì đường tự đặt lại dùng tiếp, không có gì phải nhập bù |
++| **PT-8** | **Không dừng bán, không ai bị khoá ngoài máy.** Chỉ nút Google hỏng; khách đặt món không cần đăng nhập (ADR-131 điểm 5), hoặc đăng nhập bằng mật khẩu nếu đã đặt. Người làm không dùng Google nên không ai ở quầy bị ảnh hưởng | **Không ai** — không có gì để bù | **Không có** — Google sống lại thì nút dùng tiếp |
+ 
+ **Sáu dòng đầu KHÔNG cùng một loại: ba dòng là lời chốt, một dòng chốt một nửa, hai dòng là SUY
+ RA** (dòng **PT-7** thêm 2026-10-14 xếp ở cuối bảng dưới). Trộn hai loại ấy vào nhau đúng là chỗ `work/findings.md` **F-004** đã ghi, và `CLAUDE.md` §7.2
+diff --git a/CLAUDE.md b/CLAUDE.md
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -58,7 +58,7 @@ is a bug to fix now.
+ | Phụ thuộc ngoài của hệ thống + đường suy giảm của từng cái | `docs/product/1-system-design/01-ranh-gioi-he-thong.md` — pha 1, sinh ra ở P1-02 |
+ | Định nghĩa **một ngày bán** cho phép cộng tiền + mốc tính tiền + nguồn thời gian | `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` — pha 1, sinh ra ở P1-03 |
+ | Quy ước dữ liệu: tiền, mốc và múi giờ, khoá, đặt tên, trạng thái, không xoá cứng, văn bản và định danh — mỗi quy ước một mã `QD-XX` và một phép kiểm | `docs/product/2-db/01-quy-uoc-du-lieu.md` — pha 2, sinh ra ở P2-03 (ADR-035, ADR-053 luật 3) |
+-| Schema: tên bảng, tên cột, kiểu, ràng buộc, khoá ngoại | **file migration thắng** — `db/migrations/` (ADR-053 luật 2). Ý định, lý do và ánh xạ `I-0xx`/`YC-xx` của từng lát: `docs/product/2-db/02-luoc-do-ban-hang.md` (P2-04) · `03-luoc-do-menu-gia.md` (P2-05) · `04-luoc-do-duong-tien.md` (P2-06) · `05-luoc-do-san-xuat.md` (P2-07) · `06-luoc-do-nguoi-va-vet.md` (P2-08) · `12-luoc-do-nguyen-lieu.md` (P2A-02) · `13-luoc-do-cham-cong.md` (P2A-03) · `14-luoc-do-khoan-cua-nguoi.md` (P2A-04) · `15-luoc-do-khoan-chi.md` (P2A-05) · `16-luoc-do-giao-viec.md` (P2A-11) · `17-luoc-do-dao-tao.md` (P2A-12) · `18-luoc-do-danh-muc-combo.md` (P2A-13) · `19-luoc-do-tai-khoan.md` (P2A-14) · `20-luoc-do-ban-combo.md` (T-193) · `21-luoc-do-so-toi-thieu.md` (T-199) · `22-luoc-do-so-nguoi-dang-lam.md` (T-197); các lát sau **thêm** file, không ghi đè. Hai bản lệch ⇒ `F-XXX`. Thứ tự việc, mức và cổng của pha 2: `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (ADR-049) |
++| Schema: tên bảng, tên cột, kiểu, ràng buộc, khoá ngoại | **file migration thắng** — `db/migrations/` (ADR-053 luật 2). Ý định, lý do và ánh xạ `I-0xx`/`YC-xx` của từng lát: `docs/product/2-db/02-luoc-do-ban-hang.md` (P2-04) · `03-luoc-do-menu-gia.md` (P2-05) · `04-luoc-do-duong-tien.md` (P2-06) · `05-luoc-do-san-xuat.md` (P2-07) · `06-luoc-do-nguoi-va-vet.md` (P2-08) · `12-luoc-do-nguyen-lieu.md` (P2A-02) · `13-luoc-do-cham-cong.md` (P2A-03) · `14-luoc-do-khoan-cua-nguoi.md` (P2A-04) · `15-luoc-do-khoan-chi.md` (P2A-05) · `16-luoc-do-giao-viec.md` (P2A-11) · `17-luoc-do-dao-tao.md` (P2A-12) · `18-luoc-do-danh-muc-combo.md` (P2A-13) · `19-luoc-do-tai-khoan.md` (P2A-14) · `20-luoc-do-ban-combo.md` (T-193) · `21-luoc-do-so-toi-thieu.md` (T-199) · `22-luoc-do-so-nguoi-dang-lam.md` (T-197) · `23-luoc-do-tai-khoan-khach.md` (T-263) · `24-luoc-do-khach-google.md` (T-267); các lát sau **thêm** file, không ghi đè. Hai bản lệch ⇒ `F-XXX`. Thứ tự việc, mức và cổng của pha 2: `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (ADR-049) |
+ | Quy ước code: DBMS + phiên bản, cách chạy database, migration, khung test, cấu trúc thư mục, stack, tên ràng buộc — mỗi quy ước một mã `QC-XX` và một phép kiểm | `docs/product/2-db/10-quy-uoc-code.md` — pha 2, sinh ra ở P2-12 (ADR-035, ADR-039, ADR-055) |
+ | Thứ tự migration, đường lùi của từng bước (khoá chặn), cách gỡ một lệnh migration hỏng, dựng lại từ số không | `docs/product/2-db/07-thu-tu-migration.md` — pha 2, sinh ra ở P2-09 (ADR-065) |
+ | Hợp đồng API: endpoint, chữ ký, hình lỗi, mã lỗi, bảng tên từ chối → mã | `docs/product/3-be/openapi.yaml` (máy đọc; pha 4 sinh type từ đây) — khuôn, luật đọc và luật đổi: `docs/product/3-be/01-hop-dong-api.md` (P3-04). **Hợp đồng thắng code; migration thắng hợp đồng về tên ràng buộc** (ADR-084). Quyền theo vai — ma trận cửa × lớp: `docs/product/3-be/02-vai-va-quyen.md` (P3-05, ADR-085). Hàm tính giá duy nhất, ba đường gọi nó, bảng ca test: `docs/product/3-be/03-ham-gia.md` (P3-06, ADR-086). Thứ tự việc, mức và cổng của pha 3: `master_plan/BE_master_plan_banh_cuon_ba_thanh.md` (ADR-076) |
+diff --git a/work/backlog.md b/work/backlog.md
+--- a/work/backlog.md
++++ b/work/backlog.md
+@@ -138,6 +138,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
+ <a id="done"></a>
+ ## Done
+ 
++- [x] T-267 **Khách đăng ký và đăng nhập bằng nút Google** — L2, ADR-132; Codex làm, Claude duyệt 2026-10-29 · [chi tiết](#t-267)
+ - [x] T-265 **Màn đăng nhập một ô và trang tài khoản khách** — L2, lát c của ADR-131; Codex làm, Claude duyệt 2026-10-28 · [chi tiết](#t-265)
+ - [x] T-264 **Backend và hợp đồng đăng nhập số điện thoại · Gmail, cửa khách** — L2, lát b của ADR-131; Codex làm, Claude duyệt 2026-10-28 · [chi tiết](#t-264)
+ - [x] T-263 **Lược đồ đăng nhập bằng số điện thoại · Gmail và tài khoản khách** — L2, lát a của ADR-131; Codex làm, Claude duyệt 2026-10-27 · [chi tiết](#t-263)
+@@ -3464,6 +3465,29 @@ tương thích với một file bạn phải sửa.
+ cuối của `./scripts/gate.sh`; (3) Bảng Acceptance 1–9 → bằng chứng (tên test · lệnh · output);
+ (4) Câu đã phải giả định (nếu có) và vì sao không hỏi được; (5) Việc chưa xong.
+ 
++<a id="t-267"></a>
++### T-267 — Khách đăng ký và đăng nhập bằng nút Google
++
++Mức **L2** (đăng nhập, dữ liệu lưu, hợp đồng). Chủ repo yêu cầu 2026-10-28 và chọn trong câu hỏi có sẵn phương án: nút
++chỉ ở trang khách, đổi phương án ADR-131 đã loại. Lời: `master_plan/shop-facts.md` §8.8 *lượt bốn*; thiết kế **ADR-132**
++(*Đề xuất*); phụ thuộc ngoài **PT-8**; test hồi quy `db/tests/i035_google_identity.sql` Claude viết trước lược đồ.
++
++Acceptance viết trước: (1) migration `customer_google_identity` (up/down; lùi từ chối khi đã có dòng) và
++`i035_google_identity` xanh, `i035_…` cũ vẫn xanh; (2) gói `be/internal/google` kiểm ID token đúng ADR-132 điểm 3, test
++từng nhánh từ chối bằng khoá RSA sinh tại chỗ và JWKS giả; (3) `POST /customer-sessions/google`: `sub` đã nối ⇒ mở
++phiên; `sub` mới ⇒ một giao dịch tạo tài khoản + dòng nối + phiên; thư đã có tài khoản khách chưa nối ⇒ `email_taken`,
++không ghi gì; token sai ⇒ `google_token_invalid`; thiếu Client ID ⇒ `google_login_disabled`; không chạm `account` ·
++`person`; (4) `openapi.yaml` tăng phiên bản phụ, ma trận quyền và ánh xạ ràng buộc đủ; (5) `/khach/dang-ky` ·
++`/khach/dang-nhap` có nút Google khi có `NEXT_PUBLIC_GOOGLE_CLIENT_ID`, thành công sang `/khach/tai-khoan`, `email_taken`
++báo đăng nhập bằng mật khẩu; (6) gate xanh, Claude tự chạy `db-check` · `be-check`.
++
++Chủ repo còn phải tạo **Google OAuth Client ID** (loại *Web application*, origin `http://localhost:3000`) và đặt vào
++`BANHCUON_GOOGLE_CLIENT_ID` · `NEXT_PUBLIC_GOOGLE_CLIENT_ID`; thiếu nó nút không hiện, mọi đường khác chạy như cũ.
++
++**Bàn giao 2026-10-29:** thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-267`, nhánh `codex/T-267` từ `d9d7e26` + toàn bộ thay đổi chưa commit của clone chính stage sẵn, gồm T-264), duyệt **Claude**. Vòng một Codex dừng đúng phiếu vì cửa mới cần `be/sqlc.yaml` ngoài scope; Claude mở scope. Vòng hai Codex hết hạn mức **trước khi viết báo cáo** — Claude duyệt thẳng diff. Claude tự sửa hai chỗ khi tích hợp: dòng PT-8 bỏ đường dẫn URL (Gate 1d coi là route), và cột `google_sub` đổi thành `google_sub_code` (QD-60 kêu ở mọi ca đối chiếu vì cột so byte không mang hậu tố `_code`; QD-61 đòi hậu tố ấy — tên ràng buộc giữ nguyên nên hợp đồng không đổi). File: migration `20261028120000_khach_google`, `db/tests/i035_google_identity.sql` (Claude viết trước, chỉ đổi tên cột), `24-luoc-do-khach-google.md` · `07-thu-tu-migration.md` · `09-doi-chieu-bat-bien.md`, `scripts/db-check.sh`, gói `be/internal/google/`, `be/internal/khach/` (`google.go`, cửa, handler, repository, đăng nhập mật khẩu khi không có mật khẩu ⇒ `login_failed`), `be/sqlc.yaml` + sqlc sinh lại, `apierr`, `router.go`, `Makefile`, hợp đồng **0.53.0** + `02-vai-va-quyen.md`, `fe/src/components/khach/google.tsx` (+ test), `dang-nhap.tsx`, `messages.ts`, `schema.ts`, `01-khung-fe.md`.
++
++Acceptance → bằng chứng: (1) `PASS db/tests/i035_google_identity.sql`, `PASS lùi 20261028120000_khach_google`; (2) `TestI035_GoogleVerify` 16 ca con (`valid` · `bad_signature` · `wrong_alg` · `unknown_kid` · `wrong_aud` · `wrong_iss` · `second_issuer` · `expired` · `expiry_boundary` · `clock_skew` · `missing_exp` · `unverified` · `verified_string` · `empty_sub` · `blank_sub` · `cache_expired`); (3) `TestI035_GoogleAccountSessionAndEmailCollision` (tạo tài khoản không mật khẩu, đăng nhập lại đúng tài khoản, mật khẩu ⇒ `login_failed`, thư đã có ⇒ `email_taken` không ghi gì) · `TestI035_GoogleConcurrentSubject` · `TestI035_GoogleDisabledAndInvalid` · `TestI035_GoogleHandlerCookie` · `TestI035_GoogleHandlerErrors`; (4) Gate 1g `hợp đồng 0.53.0; 135 đường gọi … 111 dòng ma trận`; (5) `fe/src/components/khach/google.test.tsx` (không Client ID thì không có nút; callback gửi `credential` và chuyển `/khach/tai-khoan` ở cả đăng ký lẫn đăng nhập; `email_taken` hiện câu dùng mật khẩu); (6) `./scripts/gate.sh` ở clone chính 2026-10-29: mọi cổng PASS (db-check 40 bước, be-check, verify, fe-check 546 test). Chủ repo duyệt ADR-132 ngày 2026-10-29 (nguyên văn *"duyệt"*); test user `pythondevhn2023@gmail.com` đã thêm, Client ID ở `docs/private/google-login/README.md`. Commit sau T-264 (và T-248 cho `models.go` · hợp đồng): khối commit áp `T-267.patch` bằng `git apply --cached`.
++
+ <a id="t-265"></a>
+ ### T-265 — Màn đăng nhập một ô và trang tài khoản khách
+ 

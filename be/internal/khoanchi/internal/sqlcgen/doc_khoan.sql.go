@@ -12,9 +12,9 @@ import (
 )
 
 const docKhoan = `-- name: DocKhoan :one
-SELECT e.id, e.expense_category_id, c.name AS category_name, c.paid_from_till, e.amount_vnd, e.paid_date::text AS paid_date, e.person_id, p.display_name AS person_name, e.created_at
-FROM expense e JOIN expense_category c ON c.id = e.expense_category_id JOIN person p ON p.id = e.person_id
-WHERE e.id = $1
+SELECT e.id, e.expense_category_id, c.name AS category_name, c.paid_from_till, e.amount_vnd, e.paid_date::text AS paid_date, e.person_id, p.display_name AS person_name, e.created_at, e.expense_item_id, i.name AS item_name
+FROM expense e JOIN expense_category c ON c.id = e.expense_category_id JOIN person p ON p.id = e.person_id LEFT JOIN expense_item i ON i.id = e.expense_item_id
+WHERE e.deleted_at IS NULL AND e.id = $1
 `
 
 type DocKhoanRow struct {
@@ -27,6 +27,8 @@ type DocKhoanRow struct {
 	PersonID          int64
 	PersonName        string
 	CreatedAt         pgtype.Timestamptz
+	ExpenseItemID     pgtype.Int8
+	ItemName          pgtype.Text
 }
 
 func (q *Queries) DocKhoan(ctx context.Context, id int64) (DocKhoanRow, error) {
@@ -42,6 +44,8 @@ func (q *Queries) DocKhoan(ctx context.Context, id int64) (DocKhoanRow, error) {
 		&i.PersonID,
 		&i.PersonName,
 		&i.CreatedAt,
+		&i.ExpenseItemID,
+		&i.ItemName,
 	)
 	return i, err
 }

@@ -145,7 +145,9 @@ có câu trả lời mới từ người.
 | ADR-131 | **Đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản riêng** (`T-262`): một ô định danh chuẩn hoá; tài khoản người làm thêm số điện thoại, thư và tên đăng nhập thành tuỳ chọn; khách ở bảng, cookie và lớp quyền `khach` riêng, không bao giờ chạm `person`; đơn web gắn tài khoản khách; ba lát `T-263` → `T-264` → `T-265` | Đã chốt 2026-10-27 (chủ repo duyệt, T-262) | — | ADR-109 · ADR-085 · I-035 · `U-105`…`U-108` |
 | ADR-132 | **Khách đăng ký và đăng nhập bằng nút Google** (`T-267`): FE lấy Google ID token bằng Google Identity Services, BE tự kiểm chữ ký RS256 qua JWKS bằng thư viện chuẩn của Go; bảng chỉ thêm `customer_google_identity` nối `sub` với tài khoản khách; cửa `POST /customer-sessions/google`; Gmail đã có tài khoản mật khẩu thì từ chối, không tự nối; chỉ khách | Đã chốt 2026-10-29 (chủ repo duyệt, T-267) | — | ADR-131 · I-035 · PT-8 |
 | ADR-133 | **Xác nhận Gmail khách qua thư** (`T-270`): Gmail khách tự gõ nằm ở `pending_email` tới khi bấm link 24 giờ; chỉ `email` đã xác nhận mới duy nhất, mới dùng để đăng nhập và nhận thư đặt lại; khách dùng được ngay; gửi lại tối đa 3 thư một giờ; Gmail từ Google vào thẳng `email`; chỉ khách | Đã chốt 2026-10-29 (chủ repo chọn từng vế, T-270) | — | ADR-131 · ADR-132 · I-035 · PT-7 |
-| ADR-136 | **Chat là một mặt mới, không phải một đường ghi mới** (`T-283`): trợ lý chỉ gọi đúng các cửa đã có, dưới chính phiên người đang chat, quyền kiểm tại mốc ghi; lời model không tự ghi — mọi lệnh ghi qua thẻ người bấm xác nhận; giá và số liệu chỉ lấy từ công cụ đọc; tin báo trạm ↔ POS là dữ liệu riêng, không phải tiến độ; model là phụ thuộc ngoài có đường suy giảm, chat không bao giờ là đường duy nhất | **Đề xuất** 2026-11-01 (Claude Code) — chờ chủ repo duyệt | CAO nếu bỏ qua (chạm đơn, quyền) | lane `CHAT` · U-112…U-117 · ADR-011 · ADR-085 · ADR-097 |
+| ADR-135 | **Nút Google ở `/dang-nhap` không tạo tài khoản người làm — Gmail chưa có vai làm việc đi về không gian khách** (`T-278`): cùng cửa `POST /customer-sessions/google` xử lý nút Google của cả hai trang; chỉ khi `sub` đã nằm trong bảng mới `account_google_identity` thì mở phiên **người làm** theo vai của `account`; không có liên kết → tạo/đăng nhập **customer_account** và chuyển `/khach/tai-khoan` kèm thông báo *"Dùng như khách; chủ quán cấp quyền khi cần"*; chủ quán cấp quyền sau bằng cách tạo `account` theo luồng cũ rồi gắn `sub` trong trang nhân viên (lát sau); `tai_quay` giữ nguyên — Google không mở trực quầy, chỉ form mật khẩu mở | Đã chốt 2026-11-01 (chủ repo trả lời U-111 hai lượt, T-278) | — | ADR-109 · ADR-131 · ADR-132 · I-035 |
+| ADR-136 | **Chat là một mặt mới, không phải một đường ghi mới** (`T-283`): trợ lý chỉ gọi đúng các cửa đã có, dưới chính phiên người đang chat, quyền kiểm tại mốc ghi; lời model không tự ghi — mọi lệnh ghi qua thẻ người bấm xác nhận; giá và số liệu chỉ lấy từ công cụ đọc; tin báo trạm ↔ POS là dữ liệu riêng, không phải tiến độ; model là phụ thuộc ngoài có đường suy giảm, chat không bao giờ là đường duy nhất | **Đã chốt** 2026-11-01 (chủ repo duyệt, CHAT-01) | CAO nếu bỏ qua (chạm đơn, quyền) | lane `CHAT` · U-112…U-117 · ADR-011 · ADR-085 · ADR-097 |
+| ADR-137 | **Nhánh chat không model** (CHAT-02 lượt một): vỏ ô chat sau cờ; cửa đọc *việc của tôi*; bảng chỉ thêm `station_message` tách khỏi tiến độ; POS chọn người nhận từng lần, không định tuyến theo vai; không thêm luồng SSE | Đã chốt 2026-11-01 (chủ repo duyệt, CHAT-02) | CAO nếu bỏ qua (tin thành tiến độ, lộ tin riêng) | ADR-136 · ADR-011 · ADR-097 · I-038 |
 | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
 | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
 | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
@@ -8039,6 +8041,16 @@ nhau (`/hiding` · `/unhiding`) và một `DELETE` mang thân lý do là hình l
 
 **Consequences:** schema cho phép null dù cửa tạo bắt buộc; đây là giới hạn rõ ở I-030. Migration cấp quyền sửa đúng cột mới; rollback từ chối nếu còn bất kỳ hạn nào để không làm mất dữ liệu. Triển khai migration trước backend, backend trước frontend; hợp đồng tăng 0.50.0, sinh lại sqlc và type FE.
 
+## ADR-128 — Khoản con và xoá mềm Khoản chi, giữ lịch sử và phép tính két
+
+**Status:** chốt 2026-10-24, Codex chọn cách triển khai theo quyền chủ repo trao ở T-248. Chủ repo chọn cho phép nguyên liệu trong Khoản chi; xoá mềm có lý do, chặn ngày đã đối soát.
+
+**Decision:** thêm `expense_item` dưới loại; khoản chi tham chiếu khoản con nullable để giữ dữ liệu cũ. FK ghép bảo đảm khoản con thuộc loại. Ba đối tượng có dấu xoá và người xoá, cập nhật qua cửa riêng có revision/lý do; không cấp DELETE. Loại/khoản con đang có khoản chi chưa xoá bị chặn trên mọi ngày; loại không còn khoản chi được xoá mềm cùng các khoản con trong cùng giao dịch. Khoá hàng loại/khoản con khi tạo/ghi/xoá ngăn race. Xoá khoản giữ khoá ngày và kiểm đã ký cho mọi nguồn; không thay luật ghi/sửa tiền riêng hiện hành. Hai phép tính két và API chỉ cộng khoản chưa xoá; backend trả tổng chung, tổng mục và khoản con, ngày chi gần nhất. Nguồn loại không đổi, UNIQUE tên giữ cả lịch sử, không tự tạo danh mục/nguồn cho nguyên liệu. Đổi tên cần lý do và giữ tiền đã ghi.
+
+**Alternatives:** xoá cứng mất lịch sử; ẩn ở FE vẫn cộng vào két; tự backfill khoản con hoặc nguồn nguyên liệu tạo dữ kiện giả; đổi sang UNIQUE chỉ trên bản ghi còn hiệu lực mở thêm hành vi tái dùng tên chưa cần thiết.
+
+**Consequences:** thay giới hạn tiền hàng của I-029 theo lời mới; không tạo luồng chi nguyên liệu thứ hai. Hợp đồng 0.51.0, migration 37 chạy trước backend và FE; rollback không gỡ lịch sử đã phát sinh. Chưa có thao tác khôi phục bản ghi đã xoá trong yêu cầu này.
+
 ## ADR-129 — Bảy suất Đầy đủ · Suất giò · Suất trứng là `menu_combo` thật, mỗi suất con chọn nhân riêng
 
 **Status:** chốt 2026-10-25. Chủ repo duyệt thiết kế T-244 trong hội thoại và giao T-250 (phần a) cho Codex làm, Claude duyệt tích hợp. Phần (b) T-251 và phần (c) T-252 mở sau khi (a) xanh.
@@ -8240,11 +8252,239 @@ lần bấm là đủ và ít sai.
 PT-7 nay phục vụ cả thư xác nhận (đường suy giảm không đổi: mất thư thì Gmail cứ chờ, khách vẫn dùng bằng phiên và số
 điện thoại); hợp đồng tăng phiên bản phụ; muốn nhận thư thật ở máy dev phải cấu hình `BANHCUON_SMTP_*`.
 
+## ADR-134 — Lựa chọn *Mộc nhĩ* trong nhóm Nhân cùng giá *Thịt*; chế độ *Hỗn hợp* ở trang gọi combo chia ceil/floor các phần nhận nhân (bánh cuốn + bánh trứng con) giữa Thịt và Mộc nhĩ bằng portions sẵn có
+
+**Status:** **Đã chốt** 2026-10-29 — Claude Code thiết kế (task `T-271`, mức **L2**). Chủ repo chốt
+2026-10-29 trong hội thoại: *"bánh nhân mộc nhĩ RIÊNG và bánh nhân thịt RIÊNG trong cùng combo"*,
+*"chia đôi số bánh, nếu số bánh lẻ thì thịt nhiều hơn một bánh (3 → 2 thịt + 1 mộc nhĩ, 4 → 2+2)"*,
+và *"nhân mộc nhĩ riêng có CÙNG GIÁ VÀ PHỤ THU với nhân thịt"*. Cùng ngày, chủ repo đóng thêm hai
+câu bỏ ngỏ ở phiên trước: *"coi bánh trứng như bánh cuốn cũng dc"* ⇒ chế độ *Hỗn hợp* áp cho cả
+bánh trứng con (đóng `U-110`); trả lời *"có"* cho câu *Mộc nhĩ* hiện ở trang gọi món lẻ hay không
+(đóng `U-109`). Phần còn lại là thiết kế của phiên.
+
+**Context:** Nhóm *Nhân* hôm nay có ba lựa chọn (Chay, Thịt, Thịt + mộc nhĩ) — xem `master_plan/shop-facts.md`
+§4.4. *Thịt + mộc nhĩ* là **hai nguyên liệu trộn trong một cái bánh**; không có cách nào gọi được
+một suất combo mà **mỗi bánh có một loại nhân riêng**. ADR-129 đã chốt bảy *Đầy đủ* · *Suất giò* ·
+*Suất trứng* là `menu_combo` thật, mỗi suất con chọn nhân riêng; ADR-117 điểm 2 lưu đơn combo
+thành **dòng combo + dòng con** mỗi tổ hợp lựa chọn khác nhau. Chủ repo giờ muốn khách gọi một
+combo chia **bánh cuốn** thành hai nhóm: một phần nhân thịt, một phần nhân mộc nhĩ, phụ thu bằng
+đúng *Thịt*.
+
+**Decision:**
+
+1. **Thêm lựa chọn thứ tư *Mộc nhĩ* vào nhóm Nhân** (`master_plan/shop-facts.md` §4.4). Đây là
+   **loại nhân riêng**, không phải nhãn hỗn hợp: một bánh có đúng nhân mộc nhĩ. Phụ thu +1.000 đồng
+   ở ô *Món lẻ* và +4.000 đồng ở ô *Combo* — **bằng đúng *Thịt***. §4.6 luật 4 giữ hình (loại nhân
+   không đổi giá). Nhóm *Lượng nhân* vẫn gắn vì *Mộc nhĩ ≠ Chay* (§4.6 luật 3). Thêm bằng cách sửa
+   §4.4 của owner; `db/seed/seed.pl` sinh dòng `menu_option` ở lần chạy kế tiếp — **không migration
+   mới**.
+
+2. **Chế độ *Hỗn hợp* ở giao diện khách gọi combo** là **lối tắt UI**, không phải lựa chọn thứ năm
+   của nhóm Nhân. Khi khách bấm *Hỗn hợp* ở một combo có tổng **N phần nhận nhân** cộng từ mọi
+   suất con mang nhóm *Nhân* (bánh cuốn + bánh trứng; giò không có nhóm Nhân nên không đếm — đóng
+   `U-110` 2026-10-29: chủ repo *"coi bánh trứng như bánh cuốn cũng dc"*), giao diện đặt:
+   - **ceil(N/2)** phần đầu danh sách suất con mang Nhân = *Thịt*;
+   - **floor(N/2)** phần còn lại mang Nhân = *Mộc nhĩ* (bánh trứng con rơi về cuối ⇒ thường nhận
+     Mộc nhĩ khi combo có ít nhất một suất bánh cuốn);
+   - Suất không có nhóm Nhân (giò) không bị đụng.
+
+   Khách gửi đơn ⇒ các dòng con của combo trong `order_line` tách thành **nhiều dòng con** cùng
+   `menu_item_id` nhưng khác `menu_option_id` — cùng chỉ về dòng combo cha (ADR-117 điểm 2). Hàm
+   giá đã cộng theo portions (`be/internal/gia/service.go`): không bước mới, không ca `I-013` mới.
+   Vì phụ thu Mộc nhĩ bằng Thịt, tổng tiền một combo *Hỗn hợp* **bằng đúng** tổng tiền combo ấy
+   khi mọi phần chọn Thịt (bằng chứng ở `db/tests/i034_moc_nhi_hon_hop_combo.sql`, viết trước).
+   **Chia theo mỗi combo trước khi nhân với số combo**: tăng dòng combo từ k lên k+1 ⇒ FE sinh
+   thêm đúng một bộ (ceil Thịt + floor Mộc nhĩ) nữa, không gom N × k rồi chia lại — khớp cách bếp
+   gói từng combo một.
+
+3. **Không khoá *Hỗn hợp* vào loại combo nào.** Combo có tổng phần nhận nhân `N ≥ 2` (cộng mọi
+   suất con có nhóm Nhân) ⇒ nút *Hỗn hợp* hiện; `N ≤ 1` ⇒ không hiện (degenerate về một lựa chọn
+   duy nhất). Combo không có suất con nhận nhân nào ⇒ không hiện. Giao diện tính N tại chỗ từ
+   `GET /menu` (combo thật đã trả về `items` kèm `quantity` theo ADR-129) và chỉ hiện nút khi mọi
+   suất con nhận nhân có cả hai lựa chọn *Thịt* và *Mộc nhĩ* trong `option_groups.options`.
+
+4. **Backend không đổi:** không sửa `openapi.yaml`, không migration, không cửa mới. Mọi phép tính
+   đã sẵn. Chỉ seed và FE phải đổi.
+
+5. **Mộc nhĩ hiện ở cả trang gọi món lẻ.** Chủ repo chốt 2026-10-29 (đóng `U-109`): nhóm *Nhân* là
+   nhóm dùng chung, nên *Mộc nhĩ* xuất hiện ở mọi món nhận nhân (bánh cuốn, suất trứng, bánh trứng
+   rời, bánh trong suất giò) tự nhiên qua FE hiện có — không cần lát mới hay bộ lọc theo món.
+
+**Why:** điểm 1 giữ nguyên luật *loại nhân không đổi giá* (§4.6 luật 4) và cho bếp phân biệt được
+hai cái bánh trên cùng một suất — một bánh thịt, một bánh mộc nhĩ — vì mỗi bánh là một `order_line`
+con có lựa chọn Nhân riêng. Điểm 2 chọn **lối tắt UI** thay vì một lựa chọn thứ năm *Mộc nhĩ và
+thịt*: lựa chọn thứ năm chỉ cho bếp một nhãn trộn, không cho biết trong 3 bánh thì ai thịt ai mộc
+nhĩ, nên bếp sẽ gói bừa và tiền combo *Hỗn hợp* vẫn đúng chỉ nhờ phụ thu bằng nhau — cấu tạo đúng
+tiền nhưng sai hàng (ADR-117 Why). Dùng portions sẵn có ⇒ tiền đúng do cấu tạo (ADR-117 Why) **và**
+bếp đọc đúng số bánh từng loại. Điểm 3 ẩn nút ở combo một bánh để khách không gặp lựa chọn vô
+nghĩa; điểm 4 giữ phạm vi lát ở FE + seed, không chạm hợp đồng.
+
+**Rejected alternatives:**
+- *Thêm lựa chọn thứ năm "Mộc nhĩ và thịt" cùng nhóm Nhân, phụ thu bằng Thịt* — bếp chỉ thấy một
+  nhãn trộn, không biết chia bánh cho ai; `menu_combo_item_option_surcharge` lưu một hàng cho nhãn
+  này ở mỗi suất con, nhưng dòng con trong `order_line` không nói ra số bánh thịt vs số bánh mộc
+  nhĩ. Tiền combo trùng với Thịt nhưng kitchen tickets kém chính xác và không mở đường cho combo
+  tỉ lệ khác (ví dụ sau này chủ repo muốn 1 thịt + 2 mộc nhĩ).
+- *Mở một nhóm option_group mới "Hỗn hợp" riêng cho combo, chọn tỉ lệ* — thêm nhóm, thêm cột, thêm
+  luật áp theo món. Cấu trúc đã cho phép làm việc này qua portions; thêm nhóm chỉ nhân đôi lối gọi
+  tên.
+- *Chỉ sửa UI, không thêm option Mộc nhĩ, giao diện gửi dòng con với lựa chọn giả* — mọi dòng con
+  phải trỏ về một `menu_option` thật (khoá ngoại); nếu Mộc nhĩ không có trong `menu_option` thì
+  dòng con bánh mộc nhĩ gửi là bịa.
+
+**Consequences:** `master_plan/shop-facts.md` §4.4 có bốn lựa chọn trong Nhân, §4.6 luật 4 nêu thêm
+*Mộc nhĩ*; §4.8 thêm ca 18 (Combo Đầy đủ chín · Mộc nhĩ · Thường = 30.000, bằng ca 9) và một
+test SQL riêng chứng minh combo *Hỗn hợp* 2 Thịt + 1 Mộc nhĩ ra đúng giá combo thuần Thịt
+(`db/tests/i034_moc_nhi_hon_hop_combo.sql`, viết trước code). `menu_combo_item_option_surcharge`
+có một hàng mới cho mỗi (suất con có nhóm Nhân) × *Mộc nhĩ* khi seed chạy lại — giá trị khởi tạo
+bằng `menu_option.surcharge_vnd` = +1.000, nhân với số bánh ở hàm giá đã có.
+
+## ADR-135 — Nút Google ở `/dang-nhap` không tạo tài khoản người làm; Gmail chưa có vai làm việc đi về không gian khách; chủ quán cấp quyền sau
+
+**Status:** **Đã chốt** 2026-11-01 — Claude Code thiết kế (task `T-278`, mức **L2**). Hai vế quyết định do chủ repo
+trả lời `U-111` cùng ngày trong hội thoại: lượt một *"cho đang kí bằng gmail không cần duyệt"* (Gmail chưa có tài
+khoản người làm thì không chờ ai duyệt), lượt hai *"Dùng ngay như khách; chủ quán cấp quyền làm việc khi cần"* (chọn
+giữa *dùng ngay như khách* và *vai trò nhân viên mặc định*); cùng ngày chủ repo mở nút Google ở `/dang-nhap` cho **cả
+người làm và chủ quán** (thay vế 1 lượt bốn của `master_plan/shop-facts.md` §8.8 ở chỗ *"chỉ trang khách"*). Nguyên văn
+và chỗ ở `master_plan/shop-facts.md` §8.8 *lượt sáu* (ghi cùng thay đổi này, không hoãn thành L0 doc riêng — `CLAUDE.md`
+§7.2). Phần còn lại là thiết kế của phiên.
+
+**Context:** ADR-131 vẫn giữ *tài khoản người làm phải được chủ quán duyệt* (ADR-109 điểm 1); ADR-132 loại nút Google
+cho người làm vì luật ấy. Chủ repo giờ cho nút Google chạy cho mọi đối tượng ở `/dang-nhap` nhưng vẫn không muốn Google
+tự tạo tài khoản người làm — Gmail chưa có vai làm việc thì vào không gian khách như một đăng ký khách bình thường. Chủ
+quán cấp quyền sau là một hành động **thủ công** của chủ quán, bằng cách tạo `account` theo luồng cũ (tự đăng ký +
+duyệt, hoặc chủ quán tạo tay nếu lát sau mở) rồi gắn `sub` của người ấy vào `account` ở trang nhân viên. ADR-131 điểm
+3 câu *"Một số điện thoại có thể vừa là tài khoản người làm vừa là tài khoản khách — hai không gian tách nhau"* vẫn
+đúng với Gmail: một người có thể có cả hai, và chúng không bao giờ tự chuyển thành nhau.
+
+**Decision:**
+
+1. **Một cửa `POST /customer-sessions/google`** phục vụ nút Google ở **cả hai** trang `/dang-nhap` và `/khach/dang-nhap`.
+   Thân `{credential}` giữ nguyên như ADR-132 điểm 2; bộ kiểm JWKS/RS256 giữ nguyên (`be/internal/google/verifier.go` của
+   T-267). Mã lỗi của ADR-132 (`google_login_disabled`, `google_token_invalid`, `email_taken`) giữ nguyên; cộng thêm
+   `account_not_active` (xem điểm 4) và `account_counter_only` (xem điểm 6). Vì cửa nằm trong `be/internal/khach/` và
+   mở phiên người làm, service phải nhận inject của `taikhoan` service (ô ghi `login_session` tiếp tục ở
+   `be/internal/taikhoan/`, không copy ra ô khác — Gate 1f).
+2. **Phân nhánh theo `sub` chỉ ở BẢNG NGƯỜI LÀM:** sau khi xác thực token lấy `sub`, cửa đọc
+   `account_google_identity.google_sub_code = sub` (tên theo QD-60/61, `COLLATE "C"`). **Có** →
+   nhánh người làm (điểm 4). **Không có** → nhánh khách (điểm 5). Hai nhánh không chồng chéo: `sub` nằm
+   trong `account_google_identity` không nhìn ra `customer_google_identity`, và ngược lại. Một người có cả
+   tài khoản khách và tài khoản người làm cùng một Google thì **cả hai bảng cùng có `sub`** (hai bản ghi riêng, hai
+   không gian riêng); cửa ưu tiên nhánh người làm.
+3. **Response có thêm `space: "khach" | "nguoi_lam"`** để FE biết điều hướng mà không cần hai cửa. FE `/dang-nhap`
+   nhận `space=nguoi_lam` → `sauDangNhap(data)` như form mật khẩu; nhận `space=khach` → một thông báo *"Chưa gắn vai
+   làm việc. Bạn đang dùng không gian khách; chủ quán cấp quyền khi cần."* rồi chuyển `/khach/tai-khoan`. FE
+   `/khach/dang-nhap` nhận `space=nguoi_lam` → thông báo tương tự rồi chuyển trang người làm; `space=khach` →
+   `/khach/tai-khoan` như ADR-132.
+4. **Nhánh người làm (sub có trong `account_google_identity`):**
+   - **Kiểm `account.status = 'hoat_dong'`** trong cùng giao dịch, trùng với gate `login_session_account_guard`
+     (`db/migrations/20261014170000_tai_khoan.up.sql` dòng 83–105). Account `cho_duyet`, `tu_choi` hoặc `khoa` → trả
+     `account_not_active`, **không fallback khách** (không mở `customer_session` cho `sub` cũng đã có ở
+     `customer_google_identity`): dùng phiên khách để đi vòng qua khoá tài khoản người làm là phá luật khoá.
+   - **Mở `login_session` mới** cho `account` (token hash như form mật khẩu), KHÔNG mở `counter_duty` (điểm 6).
+     Response body tương đương `POST /sessions` (ADR-109 điểm 2): `account_id`, `role_code`, `is_owner`,
+     `must_change_password`, kèm `space="nguoi_lam"`.
+   - **`must_change_password`** đọc theo luật `I-033` qua `account_password` của account ấy: có bản mật khẩu tạm còn
+     hiệu lực (chủ quán đặt, `is_temporary=true` chưa đổi) → `true`; không có bản mật khẩu nào (Google-only) → `false`
+     (không có mật khẩu tạm thì không có mật khẩu nào buộc đổi); bản mật khẩu đã đổi → `false`. **Không hardcode false
+     cho phiên Google** — bỏ cờ *buộc đổi* vòng qua Google là lách `I-033`. Hệ quả: tài khoản Google-only mở phiên qua
+     Google xong vẫn gọi được `GET /sessions/current` (sessionResult vẫn chạy khi `account_password` rỗng — Lát B phải
+     sửa truy vấn hiện tại để không FAIL `no rows` ở `be/internal/taikhoan/service.go:137–146`).
+   - **Khoá/thu hồi:** cùng ngắt mọi `login_session` của account như đường mật khẩu (`I-033` vế 4). `customer_session`
+     của khách cùng Gmail KHÔNG bị ngắt — hai không gian tách.
+5. **Nhánh khách (sub không có trong `account_google_identity`):** như ADR-132 điểm 4 không đổi. `sub` có trong
+   `customer_google_identity` → mở `customer_session`; `sub` mới → giao dịch tạo `customer_account` +
+   `customer_google_identity` + `customer_session`; Gmail đã có `customer_account` mật khẩu nhưng chưa nối Google thì
+   từ chối `email_taken` (ADR-132 điểm 5). Response có `space="khach"`.
+6. **`tai_quay` giữ nguyên:** chỉ form mật khẩu có checkbox *Đăng nhập tại quầy* (ADR-109 điểm 7). Nút Google không
+   mở `counter_duty`. Tài khoản `account` chỉ có Google (chưa đặt mật khẩu) muốn đứng quầy thì phải đặt mật khẩu
+   trước **rồi** đăng nhập lại bằng mật khẩu + `tai_quay`. Hai đường đặt mật khẩu đã có hoặc sẽ có:
+   - **Đường quên mật khẩu** (có từ ADR-109): yêu cầu `account.email`. Tài khoản tạo bằng chủ quán có `account.email`
+     → chạy được.
+   - **Đường tự đặt khi đã có phiên** (lát sau): `POST /accounts/current/password` (NeedPerson). Mở ADR phụ khi làm
+     cửa gắn Google (xem điểm 7).
+   Trường hợp cấp vai *quầy* cho tài khoản chưa có mật khẩu thì chủ quán **phải báo người ấy đặt mật khẩu trước ca
+   đứng quầy**; đây là nghiệp vụ (không phải máy chặn). Nếu người ấy bấm Google rồi tick `tai_quay` ở form mật khẩu
+   thiếu mật khẩu, form mật khẩu từ chối như hiện nay (`invalid_credentials`); không có đường mở `counter_duty` ngoài
+   form mật khẩu trong lát này. (Mã mới `account_counter_only` dành cho ca Lát B cân nhắc đổi hành vi; cho tới đó
+   không dùng.)
+7. **Bảng mới `account_google_identity` (`id` UUID, `account_id` FK duy nhất, `google_sub_code` text `COLLATE "C"`
+   duy nhất, `created_at`, `created_by_account_id` FK, `created_by_person_id` FK có thể NULL)**: chỉ thêm, không
+   UPDATE, không khoá ngoại tới `person` (quyền vẫn đọc qua `account` → `person`). Hai cột *ai gắn* mang vết `I-018`
+   cho hành động cấp quyền. Dòng chỉ được tạo bằng **cửa chủ quán** (điểm 8), **không** bằng cửa Google ở điểm 1:
+   tránh chiếm tài khoản bằng cách tạo `account.email` khớp Gmail của nạn nhân rồi bấm Google.
+8. **Cửa chủ quán gắn Google với một `account` — thiết kế cùng ADR này, thi công ở Lát B:**
+   - `POST /accounts/{account_id}/google-link` — `NeedOwner`, body `{credential}` (JWT Google của người ấy, chủ quán
+     đưa người ấy bấm nút Google trên máy chủ quán). Service kiểm `credential` qua `google.Verifier` lấy `sub`,
+     kiểm `account.status = 'hoat_dong'`, kiểm `sub` chưa nằm trong `account_google_identity` (một `sub` chỉ gắn một
+     `account`); chèn `account_google_identity`. Trả `201 Created`. Mã lỗi: `account_not_found`, `account_not_active`,
+     `google_token_invalid`, `google_sub_taken`, `account_already_linked`. Cùng `sub` có trong `customer_google_identity`
+     KHÔNG chặn gắn (đó là tài khoản khách của người ấy).
+   - **Chủ quán gắn chính Google của mình**: cùng cửa, `account_id` là của chủ quán, chủ quán tự bấm Google trên máy
+     chủ quán. Vì cửa `NeedOwner` nên chủ quán phải đang có phiên — tức là chủ quán đã đăng nhập bằng mật khẩu một lần
+     để gắn Google; sau đó mới dùng Google đăng nhập được.
+   - **Trang nhân viên** của chủ quán thêm thao tác *"Gắn Google"* bên cạnh tài khoản `account` đã *hoat_dong*; chi
+     tiết UI dời sang task FE Lát C.
+   - **Gỡ liên kết** `DELETE /accounts/{account_id}/google-link` — `NeedOwner`, mở ở Lát B nếu dễ ghép; mặc định
+     mở sau. Gỡ không khoá account; chỉ xoá dòng `account_google_identity`.
+9. **Chia bốn lát:**
+   - **Lát D (L1, gộp vào `T-278` — không mở task riêng):** cập nhật bản mẫu HTML
+     `docs/product/4-fe/thiet_ke/chu_quan/dang_nhap/dang-nhap.html` theo lời lượt sáu (bỏ chú thích *"chờ chủ quán
+     duyệt"* và *"U-111 còn mở"*, thêm thông báo không gian khách, thêm trạng thái minh hoạ `space_khach`); cùng lượt
+     commit với owner updates (shop-facts, ADR này, invariants) — ghi vào CÙNG thay đổi theo `CLAUDE.md` §7.2.
+   - **Lát A (L2, `T-281` khi mở):** migration `account_google_identity` theo điểm 7 + `db/tests/i037_staff_google_identity.sql`
+     viết trước lược đồ, đóng vào `scripts/check-schema-names` & `check-write-paths`. Thêm invariant `I-037` chuyên về bảng
+     này (song song `I-035` cho khách Google). **Độc lập, chạy trên HEAD được** — không phụ thuộc T-264/T-267/T-270.
+   - **Lát B (L2, `T-282` khi mở):** BE — (i) mở rộng `POST /customer-sessions/google` theo điểm 2–6 (nhánh người
+     làm thêm vào trong `be/internal/khach/google.go`, inject `taikhoan` service, sửa `sessionResult` ở
+     `be/internal/taikhoan/service.go` chịu được `account_password` rỗng); (ii) thêm cửa `POST /accounts/{id}/google-link`
+     theo điểm 8 (file mới `be/internal/taikhoan/google_link.go`, cập nhật `02-vai-va-quyen.md` và `openapi.yaml`
+     tăng phiên bản phụ). **Phụ thuộc T-264/T-267 commit** (file `be/internal/khach/google.go` và `be/internal/google/`
+     của T-267 phải nằm ở HEAD) **và Lát A commit** (bảng `account_google_identity`).
+   - **Lát C (L2, `T-284` khi mở, giữ `T-283` cho chat):** FE — (i) `GoogleNguoiLam` trong
+     `fe/src/components/tai-khoan/form-dang-nhap.tsx` gọi cùng endpoint, điều hướng theo `space`; (ii) thao tác
+     *"Gắn Google"* ở `fe/src/app/chu-quan/_components/nhan-vien.tsx` cho tài khoản đã *hoat_dong*; (iii) chủ quán
+     tự gắn Google cho mình. **Phụ thuộc T-265/T-267 commit** (component `GoogleKhach` làm khuôn) và Lát B commit.
+
+**Why:** cùng một cửa và một luồng Google cho hai không gian giữ *hai không gian tách nhau* của ADR-131 mà không mở
+đường tự tạo `account`; `account.email` chủ quán nhập không được tự dùng làm chứng cớ ai sở hữu Gmail (chủ quán có thể
+nhập nhầm hoặc chép từ CV), nên cấp quyền phải là một hành động thủ công có kiểm. Gmail chưa có vai làm việc vẫn đi
+qua cửa Google (không bắt người ta chuyển sang trang khác) — họ dùng được ngay như khách, và chủ quán cấp quyền sau mà
+không phá luật *tài khoản người làm phải được chủ quán duyệt*. Kiểm `account.status='hoat_dong'` ở nhánh người làm và
+không fallback khách khi khoá giữ luật khoá/thu hồi của `I-033` một đường duy nhất, không mở lỗ cho Google đi vòng.
+Đọc `account_password` theo nguyên trạng cho `must_change_password` giữ ràng buộc *mật khẩu tạm phải đổi lần sau* ở
+`I-033` ngay cả khi phiên mở bằng Google.
+
+**Rejected alternatives:** *tự liên kết nếu Gmail Google khớp `account.email`* — rủi ro chiếm trước (chủ quán vô ý
+tạo `account.email` khớp Gmail người khác, kẻ ấy bấm Google là vào vai nhân viên); *tạo `account` trạng thái `cho_duyet`
+qua Google* — chủ repo đã loại bằng câu *"dùng ngay như khách"*; *hai cửa Google riêng cho hai không gian* — FE phải
+đoán hai lần, backend trùng lặp kiểm JWKS, không giảm rủi ro gì so với một cửa phân nhánh theo `sub`; *gắn tạm quyền
+mặc định cho tài khoản mới* — chủ repo đã loại bằng lời chọn thứ nhất giữa hai phương án; *hardcode `must_change_password=false`
+cho phiên Google* — tắt một ràng buộc hiện có của `I-033` mà không có lời chủ quán cho phép, review độc lập chặn;
+*mở `counter_duty` tự động khi bấm Google nếu vai có quầy* — lời đáp không nói mở, và vé 4 lượt hai (2026-10-14) đang
+dành chữ *đăng nhập ở quầy là mốc đổi người* cho form mật khẩu + checkbox.
+
+**Consequences:** `I-033` thêm hai ca Verification (phiên Google kiểm `account.status`; `must_change_password` đọc
+`account_password` không khác đường mật khẩu); `I-035` thêm vé *hai bảng Google tách nhau* (một `sub` có thể tồn tại
+ở cả hai bảng là hai bản ghi độc lập cho hai không gian). `I-037` mới sinh ra ở Lát A chuyên về `account_google_identity`.
+Hợp đồng tăng phiên bản phụ ở Lát B khi thêm `space` và cửa `/accounts/{id}/google-link`. `master_plan/shop-facts.md`
+§8.8 lượt sáu đã ghi lời chủ repo (cùng thay đổi này, không phải L0 doc riêng). `fe/src/app/dang-nhap/page.tsx` và
+`fe/src/components/tai-khoan/form-dang-nhap.tsx` đổi ở Lát C; `fe/src/app/chu-quan/_components/nhan-vien.tsx` thêm
+thao tác gắn Google ở Lát C. Cửa `sessionResult` của `be/internal/taikhoan/service.go` phải sửa ở Lát B để chịu được
+account không có `account_password` (truy vấn hiện tại dùng JOIN sẽ 0 rows với Google-only; cần LEFT JOIN hoặc câu
+tách).
+
+**Applies to:** `T-278` (gộp Lát D) · `T-281` (Lát A, khi mở) · `T-282` (Lát B, khi mở) · `T-284` (Lát C, khi mở —
+tránh `T-283` của ADR-136); `db/migrations/`, `db/tests/i037_staff_google_identity.sql`; `be/internal/khach/`,
+`be/internal/google/`, `be/internal/taikhoan/`, `be/cmd/server/router.go`; `docs/product/3-be/openapi.yaml` ·
+`02-vai-va-quyen.md`; `fe/src/components/tai-khoan/`, `fe/src/components/khach/`, `fe/src/app/chu-quan/_components/`;
+`fe/src/lib/auth/`; `docs/product/4-fe/thiet_ke/chu_quan/dang_nhap/dang-nhap.html`.
+
 ---
 
 ## ADR-136 — Chat là một mặt mới, không phải một đường ghi mới
 
-**Status:** **Đề xuất** 2026-11-01 — Claude Code thiết kế (task `T-283`, tính năng mức **L3**), **chờ chủ repo duyệt**.
+**Status:** **Đã chốt** 2026-11-01 — Claude Code thiết kế (task `T-283`, tính năng mức **L3**), chủ repo chọn *"Duyệt, có trợ lý AI"* trong câu hỏi có sẵn phương án (CHAT-01).
 Mong muốn là của chủ repo (nguyên văn ở `work/backlog.md` entry `T-283`); mọi điểm dưới đây là thiết kế của phiên, chưa
 phải lời quán. Không bước thi công nào của lane `CHAT` được bắt đầu trước khi ADR này chuyển sang *Đã chốt*.
 
@@ -8283,3 +8523,53 @@ yêu cầu nói tới, vẫn là phương án lùi nếu `U-112` trả lời kh�
 `master_plan/CHAT_master_plan_banh_cuon_ba_thanh.md`, mô tả từng bước ở `work/backlog_CHAT.md`.
 
 **Applies to:** `T-283` · lane `CHAT` · `U-112`…`U-117`.
+
+**Sửa đổi 2026-11-01 (CHAT-01; chủ repo chọn từng vế trong câu hỏi có sẵn phương án).** `U-115`: việc chạm tiền không qua chat ⇒ `CHAT-27` · `CHAT-28` · `CHAT-29` loại khỏi lộ trình. `U-114`: giữ luật quầy. `U-117`: khách chỉ giao · đến lấy, không bắt đăng nhập, không nhắn POS. `U-113`: chỉ tin báo, điểm 6 giữ nguyên. `U-112`: trần 10 USD/tháng, không gửi dữ liệu cá nhân ra ngoài; **chưa chọn model** nên mọi bước gọi model (`CHAT-03`, `05`…`11`, `15`…`26`) còn đóng. *Suy ra của phiên, chưa ai xác nhận:* `CHAT-26` (đổi giá qua chat) không nằm trong danh sách câu hỏi `U-115`, phải hỏi lại trước khi mở.
+
+## ADR-137 — Nhánh chat không model: vỏ ô chat, việc của tôi, hộp tin trạm ↔ quầy
+
+**Status:** **Đã chốt** 2026-11-01 — Claude Code thiết kế (CHAT-02 lượt một, mức **L3**), chủ repo chọn *"Duyệt, giao Codex làm"* trong câu hỏi có sẵn phương án. Thiết bị: điện thoại riêng (`U-113`). Chỉ phủ các
+bước không gọi model: `CHAT-04`, `CHAT-34`, `CHAT-12`, `CHAT-13`, `CHAT-14`. Thẻ xác nhận lệnh ghi và lớp model thiết kế ở lượt
+sau, khi `U-112` có lời. Báo nghỉ chờ `U-116`.
+
+**Context:** lời `shop-facts.md` §8.11. Tài khoản mang `role_code`, nhưng vai không chứng minh người đang đứng trạm, và ngoài
+quầy không có mốc trực (§8.8). `listAssignedTasks` lớp `quay_hoac_chu_quan` trả cả quán nên người được giao không đọc được việc của mình.
+
+**Decision:**
+
+1. **Vỏ ô chat** là một component FE dùng chung, gắn ở layout `/quay`, `/tram`, `/chu-quan`; trang khách chưa gắn. Sau cờ
+   `NEXT_PUBLIC_CHAT_ENABLED`, tắt mặc định. Mở · đóng · Esc trả focus về nút mở; đóng mở không đụng `TinHieuProvider`. Nháp chỉ ở
+   state của component, không vào bộ nhớ trình duyệt; đổi người xoá sạch (ADR-102).
+2. **Việc của tôi:** `GET /assigned-tasks/mine`, lớp `nguoi_quan`, người lấy từ phiên, không có tham số người. Trả việc chưa ẩn
+   của chính người ấy: nội dung, hạn, đã xong chưa, và hướng dẫn **dạng chữ** chưa ẩn. Hình và video chưa mở vì đường tệp đang
+   có lớp riêng. Không có đường ghi mới; `I-030` giữ nguyên.
+3. **Bảng chỉ thêm `station_message`:** `sender_person_id` (mặc định `actor_person_id()`), `recipient_person_id` (rỗng = gửi về
+   quầy), `work_code` ∈ `canh` · `don_ban` · `trang_banh` · `gap_banh` · `khac`, `body` 1–500 ký tự, `dining_table_id` tuỳ chọn,
+   `reply_to_message_id` tuỳ chọn, `submission_code` duy nhất, `created_at`. Người gửi khác người nhận. Không `UPDATE`, không xoá,
+   không trạng thái đã đọc. Không khoá ngoại tới việc trạm, phiên hay việc giao, nên ghi tin không có đường nào đổi tiến độ.
+4. **POS chọn người nhận từng lần** từ `listPeople`; máy không định tuyến theo vai và không có lịch trực (đúng *"máy không gom,
+   người gom"* §5.4, §3). Vai chỉ dùng để gợi ý. Người canh + dọn nhận mỗi tin một lần, nhãn `work_code` phân biệt hai việc. Người
+   đi giao hay POS gánh trạm thì POS tự quyết không gửi hoặc gửi người khác. Người nhận phải có tài khoản `hoat_dong`, không thì từ
+   chối `message_recipient_invalid`.
+5. **Bốn cửa.** `hoptin/quay_gui` (`POST /station-messages`, lớp `quay`) gửi tới một người. `hoptin/gui_ve_quay`
+   (`POST /station-messages/to-counter`, lớp `nguoi_quan`) gửi về quầy. `GET /station-messages/mine` (`nguoi_quan`) trả tin gửi tới
+   và do chính người ấy gửi. `GET /station-messages/counter` (`quay_hoac_chu_quan`) trả tin về quầy và tin quầy đã gửi. Cả hai đường đọc
+   chia trang `before_id`/`limit`, trả `read_at` và `poll_interval_seconds`. Khách và cookie khách bị từ chối ở cả bốn.
+6. **Gửi lại an toàn:** cùng người gửi và cùng `submission_code` trả đúng tin cũ, không thêm dòng; mã trùng của người khác bị từ chối.
+7. **Tín hiệu:** cửa ghi phát `changed` sau COMMIT qua đường hiện có (ADR-097), không mang nội dung; hộp cá nhân kéo 20 giây, không
+   thêm luồng SSE, không đưa tin lên `GET /production-board/events`.
+8. **Thẻ tin ở FE:** trước khi gửi hiện nội dung · loại việc · người nhận; bấm xác nhận mới gọi cửa. Không có nút báo xong ghi tiến độ;
+   màn tay `cleanTable` giữ nguyên. Model không có công cụ gửi tin.
+9. **Bất biến mới `I-038`:** tin báo không đổi tiến độ, bàn hay việc giao; test hồi quy Claude viết trước.
+
+**Why:** tách bảng và không có khoá ngoại tới tiến độ làm luật ADR-011 đúng bằng cấu trúc, không phải bằng kỷ luật code. Để POS chọn
+người tránh phải dựng lịch trực bốn trạm mà chủ quán chưa bao giờ nói tới.
+
+**Rejected alternatives:** *gửi theo vai* — vai không chứng minh ai đang đứng trạm, và tin riêng lọt tới người nghỉ; *dùng
+`assigned_task` làm tin* — lẫn việc giao có đánh dấu `I-030` với tin báo; *luồng SSE theo người* — thêm một đường đẩy trái RB-1, kéo 20
+giây đủ cho tin không gấp hơn việc POS nhìn màn; *trạng thái đã đọc* — chưa ai yêu cầu, thêm cột cập nhật được.
+
+**Consequences:** `02-vai-va-quyen.md` thêm hai dòng cửa ghi; hợp đồng tăng phiên bản phụ; tin riêng đi vào phạm vi sao lưu khi pha vận
+hành mở (`T-109`).
+
+**Applies to:** lane `CHAT` · `CHAT-04` · `CHAT-12` · `CHAT-13` · `CHAT-14` · `CHAT-34`.

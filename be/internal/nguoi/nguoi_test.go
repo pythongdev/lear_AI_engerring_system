@@ -297,6 +297,17 @@ func TestYC15_RoiQuayChiNguoiDangDung(t *testing.T) {
 	}
 }
 
+// T-272: mốc thuộc đồng hồ DB; deadline chỉ dùng duration của host để chặn treo.
+func (k khung) choToiMoc(t *testing.T, batDau time.Time) {
+	t.Helper()
+	ctx, cancel := context.WithTimeout(k.ctx, 5*time.Second)
+	defer cancel()
+	if _, err := k.owner.Exec(ctx, `SELECT pg_sleep(GREATEST(0,
+		EXTRACT(EPOCH FROM ($1::timestamptz - clock_timestamp())) + 0.05))`, batDau); err != nil {
+		t.Fatalf("chờ đồng hồ DB vượt batDau quá 5 s: %v", err)
+	}
+}
+
 // F-065 · T-172: người khác vào quầy chen trong cùng mốc — khoảng đang mở bắt đầu từ mốc của giao dịch này trở
 // đi — thì từ chối counter_duty_changed, không khép khoảng ấy thành dài 0 (YC-15, C36). Dựng tất định: chủ lược
 // đồ thêm một khoảng mở cho C bắt đầu sau mốc hiện tại, đúng hình mà một giao dịch chen trước để lại.
@@ -319,7 +330,7 @@ func TestYC15_VaoChenCungMocBiTuChoi(t *testing.T) {
 	// Khoảng của C phải được khép dù test đỏ ở đâu, nếu không mọi lần vào quầy sau đó đều gặp counter_duty_changed.
 	t.Cleanup(func() {
 		if len(k.dangMo(t)) == 1 && k.dangMo(t)[0].id == cID {
-			time.Sleep(time.Until(batDau) + 50*time.Millisecond)
+			k.choToiMoc(t, batDau)
 			if r, err := k.goiTran("POST", "/counter-duty", strconv.FormatInt(b, 10)); err != nil || r.status != http.StatusCreated {
 				t.Errorf("dọn: B vào thay C sau mốc: %v %v", r, err)
 			}
@@ -351,7 +362,7 @@ func TestYC15_VaoChenCungMocBiTuChoi(t *testing.T) {
 		t.Fatalf("khoảng đang mở phải còn đúng khoảng của C (%d): %v", cID, mo)
 	}
 
-	time.Sleep(time.Until(batDau) + 50*time.Millisecond)
+	k.choToiMoc(t, batDau)
 	lai := k.vao(t, b)
 	if lai.status != http.StatusCreated || lai.so("replaced_person_id") != c {
 		t.Fatalf("qua mốc của C, B vào: muốn 201 thay C, nhận %d %v", lai.status, lai.body)

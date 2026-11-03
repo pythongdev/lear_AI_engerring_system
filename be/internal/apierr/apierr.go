@@ -54,6 +54,10 @@ const (
 	CodeSupplyDayEntryAlreadyRecorded Code = "supply_day_entry_already_recorded"
 	CodeSupplyItemUnitAlreadySet      Code = "supply_item_unit_already_set"
 
+	CodeExpenseItemNotFound      Code = "expense_item_not_found"
+	CodeExpenseItemNameTaken     Code = "expense_item_name_taken"
+	CodeExpenseCategoryInUse     Code = "expense_category_in_use"
+	CodeExpenseItemInUse         Code = "expense_item_in_use"
 	CodeExpenseCategoryNotFound  Code = "expense_category_not_found"
 	CodeExpenseNotFound          Code = "expense_not_found"
 	CodeExpenseCategoryNameTaken Code = "expense_category_name_taken"
@@ -192,6 +196,10 @@ var statusOf = map[Code]int{
 	CodeAssignedTaskHidden:            409,
 	CodeAssignedTaskAlreadyDone:       409,
 	CodeAssignedTaskNotDone:           409,
+	CodeExpenseItemNotFound:           404,
+	CodeExpenseItemNameTaken:          409,
+	CodeExpenseCategoryInUse:          409,
+	CodeExpenseItemInUse:              409,
 	CodeExpenseCategoryNotFound:       404,
 	CodeSupplyItemNotFound:            404,
 	CodeSupplyDayEntryNotFound:        404,
@@ -339,6 +347,8 @@ var constraintCodes = map[string]Code{
 	"supply_item_name_key":                             CodeSupplyItemNameTaken,
 	"supply_day_entry_one_kind_per_item_day_key":       CodeSupplyDayEntryAlreadyRecorded,
 	"supply_day_entry_supply_item_fkey":                CodeSupplyItemNotFound,
+	"expense_item_name_key":                            CodeExpenseItemNameTaken,
+	"expense_item_fkey":                                CodeExpenseItemNotFound,
 	"expense_category_name_key":                        CodeExpenseCategoryNameTaken,
 	"expense_category_fkey":                            CodeExpenseCategoryNotFound,
 

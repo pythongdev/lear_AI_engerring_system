@@ -178,7 +178,7 @@ không đưa doanh thu đã đối soát vào phản hồi tổng quan.
 
 **T-203 (2026-10-19, phiếu Claude):** tăng MINOR `0.40.0` → `0.41.0`, thêm `account_person_is_owner` (409, trường `person_id`) khi duyệt tài khoản gắn vào người mang cờ chủ quán; sinh lại type FE.
 
-**T-257 (2026-10-26, phiếu Claude, ADR-130):** tăng `0.50.0` → `0.51.0`; thêm `POST /menu-items/{menu_item_id}/components`, `MenuCategoryItem.components` và mã `menu_item_component_conflict` (409) cho `menu_item_component_once_key`. Dùng lại cửa `menu/them_mon`, không thêm dòng ma trận. Các ràng buộc trạm được xét là `internal`: id thành phần vừa tạo tồn tại, chỉ chèn một trạm đã kiểm trong năm mã, nên yêu cầu hợp lệ không gây từ chối tại đó. Sinh lại type FE.
+**T-257 (2026-10-26, phiếu Claude, ADR-130):** tăng `0.51.0` → `0.52.0`; thêm `POST /menu-items/{menu_item_id}/components`, `MenuCategoryItem.components` và mã `menu_item_component_conflict` (409) cho `menu_item_component_once_key`. Dùng lại cửa `menu/them_mon`, không thêm dòng ma trận. Các ràng buộc trạm được xét là `internal`: id thành phần vừa tạo tồn tại, chỉ chèn một trạm đã kiểm trong năm mã, nên yêu cầu hợp lệ không gây từ chối tại đó. Sinh lại type FE.
 
 ## 8. Dấu lần gửi trên dây
 
@@ -357,6 +357,7 @@ Ngày bán do backend quy như tổng quan, không nhận ngày từ người g�
 made → served trong ngày bán, kể cả phiên đã đóng. Không cửa ghi, migration hay
 ánh xạ ràng buộc mới; giữ unauthenticated và not_on_counter_duty. Sinh lại type FE.
 
+**T-248 — 2026-10-24, chủ repo cho phép mở rộng Khoản chi:** hợp đồng 0.51.0 thêm khoản con, đổi tên và xoá mềm có lý do. DELETE có body `ExpenseReason`, không xoá cứng. Loại/khoản con còn dữ liệu chưa xoá bị chặn trên mọi ngày; xoá khoản chặn cả ngày tiền riêng đã đối soát. GET trả tổng chung, theo mục/khoản con và ngày gần nhất từ backend, chỉ tính khoản chưa xoá. Khoản cũ không có khoản con vẫn hợp lệ. Nguồn tiền loại giữ bất biến, tên đã dùng không tái sử dụng sau xoá.
 T-264 (2026-10-27, phiếu Claude, ADR-131): hợp đồng 0.52.0 chuyển đăng nhập người làm sang identifier, password, tai_quay; đăng ký nhận display_name, phone/email, password. Sai dạng identifier trả identifier_invalid; không có tài khoản hoặc sai mật khẩu trả login_failed. Thêm chín đường khách với cookie banhcuon_khach tách khỏi cookie người làm. Đơn web gắn khách khi phiên còn hiệu lực, còn lại vẫn ẩn danh. Riêng lịch sử khách dùng before_id và limit theo khuôn Claude chốt; không áp sang cửa khác.
 
 T-270 (2026-10-29, phiếu Claude, ADR-133): 0.53.0 → 0.54.0. Thêm xác nhận công khai và gửi lại lớp khách,

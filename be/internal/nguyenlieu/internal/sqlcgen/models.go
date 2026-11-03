@@ -212,13 +212,27 @@ type Expense struct {
 	PaidDate          pgtype.Date
 	PersonID          int64
 	CreatedAt         pgtype.Timestamptz
+	ExpenseItemID     pgtype.Int8
+	DeletedAt         pgtype.Timestamptz
+	DeletedByPersonID pgtype.Int8
 }
 
 type ExpenseCategory struct {
-	ID           int64
-	Name         string
-	PaidFromTill bool
-	CreatedAt    pgtype.Timestamptz
+	ID                int64
+	Name              string
+	PaidFromTill      bool
+	CreatedAt         pgtype.Timestamptz
+	DeletedAt         pgtype.Timestamptz
+	DeletedByPersonID pgtype.Int8
+}
+
+type ExpenseItem struct {
+	ID                int64
+	ExpenseCategoryID int64
+	Name              string
+	CreatedAt         pgtype.Timestamptz
+	DeletedAt         pgtype.Timestamptz
+	DeletedByPersonID pgtype.Int8
 }
 
 type HolidayBonu struct {

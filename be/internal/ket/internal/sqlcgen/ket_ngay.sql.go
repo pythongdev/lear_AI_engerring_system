@@ -19,7 +19,7 @@ const ketNgay = `-- name: KetNgay :one
     SELECT paid_date, amount_vnd FROM holiday_bonus
     UNION ALL
     SELECT e.paid_date, e.amount_vnd FROM expense e
-    JOIN expense_category c ON c.id = e.expense_category_id WHERE c.paid_from_till),
+    JOIN expense_category c ON c.id = e.expense_category_id WHERE c.paid_from_till AND e.deleted_at IS NULL),
   hang_tu(ngay, tien) AS (
     -- doanh thu TIỀN MẶT: phần tiền mặt của hoá đơn (kể cả trả trước nhận bằng tiền mặt) − hoàn cho
     -- khoản đã thu bằng tiền mặt

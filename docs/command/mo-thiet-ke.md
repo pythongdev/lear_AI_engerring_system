@@ -168,6 +168,43 @@ open -a Safari docs/product/4-fe/thiet_ke/khach_hang/khong-nhan-don.html
 ```
 
 
+open docs/product/4-fe/thiet_ke/khach_hang/menu/menu.html
+
+open docs/product/4-fe/thiet_ke/khach_hang/menu/menu.html
+
+van-hanh copy
+
+open docs/product/4-fe/thiet_ke/chu_quan/van_hanh/van-hanh copy.html
+
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/chu_quan/van_hanh/van-hanh-copy.html
+
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/chu_quan/san_pham/san-pham.html
+
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/chu_quan/kho/kho.html
+
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/chu_quan/giao-viec/giao-viec.html
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/chu_quan/combos/combo.html
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/chu_quan/nhan-vien/nhan-vien.html
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/chu_quan/tong-ket/tong-ket.html
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/chu_quan/topping/topping.html
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/khach_hang/menu/menu.html
+
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/khach_hang/product-detail/product-detail.html
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/chu_quan/combos/combo.html
+
 ## Mở bản menu Gemini có nút chọn nhân và lượng nhân
 
 Lệnh mở theo yêu cầu chủ repo ngày 2026-10-27; chạy từ thư mục gốc repo. Trang dùng Tailwind CDN và Google Fonts nên cần mạng để tải đầy đủ giao diện.
@@ -175,3 +212,35 @@ Lệnh mở theo yêu cầu chủ repo ngày 2026-10-27; chạy từ thư mục 
 ```bash
 open -a "Google Chrome" docs/product/4-fe/thiet_ke/khach_hang/menu/gemini/menu-1-button-nhan-luong-nhan.html
 ```
+
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/khach_hang/menu/gemini/menu-1-button-nhan-luong-nhan.html
+
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/khach_hang/menu/gemini/meniu-anh-ngan.html
+
+
+open -a "Google Chrome"  docs/product/4-fe/thiet_ke/khach_hang/menu/gemini/menu-anh-ngan-2.html
+
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/khach_hang/menu/gemini/menu-3.html
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/khach_hang/menu/gemini/combo.html
+
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/khach_hang/login/gemini/login-gemini.html
+
+
+open -a "Google Chrome" docs/product/4-fe/thiet_ke/khach_hang/favourite/favourite.html
+
+open -a "Google Chrome" docs/private/prompt/menu-mam2.html
+
+open docs/private/prompt/menu-am-cung/index.html
+
+
+open docs/private/prompt/menu-am-cung/anh-moi.html
+
+paris
+python3 -m http.server 8091 --bind 127.0.0.1 --directory docs/private/video-paris-scroll/website
+open http://127.0.0.1:8091/
+

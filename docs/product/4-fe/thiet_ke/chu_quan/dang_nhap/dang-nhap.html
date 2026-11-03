@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="color-scheme" content="light dark">
+  <title>Đăng nhập · Bánh cuốn Bà Thanh · Bản mẫu</title>
+  <style>
+    :root{color-scheme:light;--page:#f7f6f2;--panel:#fff;--text:#202a27;--muted:#66716d;--line:#dedfd8;--accent:#b94a10;--accent-hover:#9d3d0b;--field:#fff;--error:#ad2929;--error-bg:#fff2f0;--focus:#b84b12;--shadow:0 20px 65px #263e2c08}
+    :root[data-theme="dark"]{color-scheme:dark;--page:#121916;--panel:#1b2420;--text:#f2f3ed;--muted:#b0bab3;--line:#3d4840;--accent:#ff8a40;--accent-hover:#ffa36a;--field:#202c25;--error:#ffaaa4;--error-bg:#382522;--focus:#ffa36a;--shadow:0 20px 65px #0002}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--page);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+    button,input,select{font:inherit}
+    button,a,input,select{-webkit-tap-highlight-color:transparent}
+    button,a,select{touch-action:manipulation}
+    button{cursor:pointer}
+    a{color:var(--accent);text-underline-offset:4px}
+    a:hover{text-decoration-thickness:2px}
+    button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--focus);outline-offset:4px}
+    [hidden]{display:none!important}
+    h1,h2,p{margin:0}
+    .shell{display:grid;grid-template-columns:minmax(340px,.92fr) minmax(0,1.08fr);min-height:100svh}
+    .welcome{position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:space-between;gap:64px;overflow:hidden;background:#1e352b;color:#f7f4e9;padding:48px clamp(32px,5vw,80px)}
+    .welcome::after{content:"";position:absolute;z-index:-1;width:650px;height:650px;right:-380px;bottom:-220px;border:1px solid #9cae8c29;border-radius:50%;box-shadow:0 0 0 70px #9cae8c08,0 0 0 140px #9cae8c06,0 0 0 210px #9cae8c04}
+    .brand{font-size:21px;font-weight:650;letter-spacing:-.7px}
+    .brand small{display:block;color:#bcc9b9;font-size:11px;font-weight:450;letter-spacing:2.3px;text-transform:uppercase;margin-top:4px}
+    .welcome-copy{padding:20px 0 38px;max-width:410px}
+    .eyebrow{display:flex;align-items:center;gap:10px;color:#e7b78a;font-size:11px;font-weight:650;letter-spacing:2.2px;text-transform:uppercase}
+    .eyebrow::before{content:"";width:26px;height:1px;background:currentColor}
+    .welcome h2{font-size:clamp(40px,4.2vw,63px);font-weight:450;letter-spacing:-2px;line-height:1.16;margin:24px 0}
+    .welcome h2 em{font-family:Georgia,"Times New Roman",serif;font-weight:400;color:#edb48b}
+    .welcome-description{max-width:290px;color:#c0cdbf;font-size:15px;line-height:1.8}
+    .welcome-footer{display:flex;align-items:center;gap:12px;font-size:12px;color:#c0cdbf}
+    .welcome-footer span:first-child{width:27px;height:1px;background:#6e8a71}
+    .login-side{display:flex;flex-direction:column;min-width:0;padding:28px 40px 20px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;font-size:12px;color:var(--muted)}
+    .topbar .tag{display:inline-flex;align-items:center;gap:7px}
+    .tag::before{content:"";width:6px;height:6px;border-radius:50%;background:#66836a}
+    .theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:6px 11px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--text);font-size:12px}
+    .theme-toggle svg{width:15px;height:15px}
+    .login-wrap{width:100%;max-width:420px;margin:auto; padding:38px 0 30px}
+    .login-heading{margin-bottom:27px}
+    .section-label{color:var(--accent);font-size:10px;letter-spacing:2px;font-weight:750;text-transform:uppercase}
+    h1{font-size:34px;letter-spacing:-1.2px;font-weight:650;line-height:1.25;margin:11px 0}
+    .subtitle{font-size:14px;color:var(--muted)}
+    .google-button{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:52px;border:1px solid #dadce0;border-radius:9px;background:white;color:#3c4043;font-size:15px;font-weight:550;box-shadow:0 1px 2px #00000004}
+    .google-button:hover{background:#f6f8fc;border-color:#bac7dc}
+    .google-button svg{width:20px;height:20px;flex-shrink:0}
+    .google-description{margin-top:11px;font-size:12px;line-height:1.65;color:var(--muted);text-align:center}
+    .signup-hint{font-size:12px;text-align:center;margin-top:5px}
+    .signup-hint a{display:inline-block;min-height:32px;padding:5px 0}
+    .divider{display:flex;align-items:center;gap:15px;color:var(--muted);font-size:12px;margin:20px 0 23px}
+    .divider::before,.divider::after{content:"";height:1px;background:var(--line);flex:1}
+    .field{margin-bottom:18px}
+    .field label{display:block;font-size:13px;font-weight:650;margin-bottom:7px}
+    .field input{width:100%;min-width:0;height:50px;padding:11px 14px;border:1px solid var(--line);border-radius:8px;background:var(--field);color:var(--text);font-size:16px;box-shadow:var(--shadow)}
+    .field input::placeholder{color:var(--muted);opacity:.8;font-size:14px}
+    .field input[aria-invalid="true"]{border-color:var(--error)}
+    .field-error{font-size:12px;color:var(--error);margin-top:6px}
+    .counter{display:flex;align-items:flex-start;gap:11px;min-height:44px;padding:3px 0 14px;cursor:pointer;font-size:13px;line-height:1.6}
+    .counter input{flex:0 0 auto;appearance:auto;accent-color:var(--accent);width:18px;height:18px;margin:2px 0 0}
+    .counter span{max-width:330px}
+    .submit{display:flex;align-items:center;justify-content:center;gap:11px;min-height:51px;width:100%;padding:12px 18px;background:var(--accent);border:1px solid var(--accent);border-radius:8px;color:#fff;font-size:14px;font-weight:650}
+    :root[data-theme="dark"] .submit{color:#24170d}
+    .submit:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+    .submit svg{width:17px;height:17px}
+    .account-links{display:flex;flex-wrap:wrap;justify-content:space-between;gap:5px 16px;margin-top:13px;font-size:12px}
+    .account-links a{display:inline-flex;align-items:center;min-height:44px;font-weight:550}
+    .account-links a:last-child{color:var(--muted)}
+    .alert{border:1px solid color-mix(in srgb,var(--error),transparent 65%);border-radius:8px;padding:11px 13px;margin:12px 0;color:var(--error);background:var(--error-bg);font-size:13px;line-height:1.65}
+    .notice{border-left:2px solid var(--accent);background:var(--panel);padding:10px 13px;font-size:12px;line-height:1.7;margin-top:15px;color:var(--muted)}
+    .prototype{border-top:1px solid var(--line);padding-top:18px;font-size:11px;color:var(--muted);line-height:1.8}
+    .prototype strong{display:block;font-weight:650;color:var(--text);margin-bottom:4px}
+    .demo-tools{max-width:420px;width:100%;margin:0 auto 16px;padding:14px 0 0;border-top:1px solid var(--line)}
+    .demo-tools label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:7px}
+    .demo-tools select{width:100%;min-height:44px;padding:9px 34px 9px 11px;background:var(--panel);border:1px solid var(--line);border-radius:7px;color:var(--text);font-size:12px}
+    @media(min-width:1500px){.welcome{padding-left:max(70px,calc((100vw - 1380px)/2));padding-right:60px}.login-side{padding-right:max(60px,calc((100vw - 1380px)/2))}}
+    @media(max-width:850px){.shell{grid-template-columns:minmax(260px,.8fr) minmax(0,1.2fr)}.welcome{padding:35px 26px}.welcome h2{font-size:42px}.login-side{padding:20px 27px}.topbar{font-size:11px}}
+    @media(max-width:640px){.shell{display:block}.welcome{padding:24px 24px 22px;gap:0}.brand{font-size:19px}.brand small{font-size:9px}.welcome-copy{padding:25px 0 0;max-width:none}.welcome .eyebrow,.welcome-description,.welcome-footer{display:none}.welcome h2{font-size:29px;letter-spacing:-.9px;line-height:1.25;margin:0}.welcome h2 br{display:none}.welcome h2 em{white-space:nowrap}.login-side{padding:13px 24px max(20px,env(safe-area-inset-bottom))}.topbar{min-height:42px}.login-wrap{padding-top:23px;padding-bottom:23px}.login-heading{margin-bottom:22px}h1{font-size:30px}.section-label{font-size:9px}.prototype{font-size:11px}.demo-tools{margin-bottom:0}}
+    @media(max-width:360px){.welcome{padding:22px 20px}.welcome h2{font-size:27px}.login-side{padding-left:20px;padding-right:20px}.topbar .tag{font-size:10px}.google-description{font-size:11px}.account-links{font-size:11px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+  <div class="shell" data-component="TrangDangNhap">
+    <aside class="welcome" aria-label="Bánh cuốn Bà Thanh" data-component="LoiChao">
+      <div class="brand">Bánh cuốn Bà Thanh<small>Không gian làm việc</small></div>
+      <div class="welcome-copy">
+        <p class="eyebrow">Mừng bạn trở lại</p>
+        <h2>Bắt đầu một ca<br> làm việc <em>thật tốt.</em></h2>
+        <p class="welcome-description">Một nơi để cùng nhau chuẩn bị, phục vụ và chăm chút từng đơn hàng.</p>
+      </div>
+      <div class="welcome-footer"><span aria-hidden="true"></span><span>Dành cho nhân viên và chủ quán</span></div>
+    </aside>
+
+    <main class="login-side" id="noi-dung">
+      <div class="topbar">
+        <span class="tag">TÀI KHOẢN NGƯỜI LÀM</span>
+        <button class="theme-toggle" id="theme" type="button" aria-label="Chuyển sang giao diện tối" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 15.2A8.6 8.6 0 0 1 8.8 4a8.6 8.6 0 1 0 11.2 11.2Z"/></svg>
+          <span id="theme-label">Giao diện tối</span>
+        </button>
+      </div>
+
+      <div class="login-wrap">
+        <header class="login-heading" data-component="DauDangNhap">
+          <p class="section-label">Chào ngày mới</p>
+          <h1>Đăng nhập</h1>
+          <p class="subtitle">Vào tài khoản để bắt đầu công việc của bạn.</p>
+        </header>
+
+        <section aria-label="Đăng nhập bằng Google" data-component="DangNhapGoogle">
+          <button class="google-button" type="button" id="google" lang="vi">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.38a4.6 4.6 0 0 1-2 3.02v2.51h3.25c1.9-1.75 2.97-4.33 2.97-7.36Z"/><path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.63-2.41l-3.25-2.51c-.9.6-2.04.97-3.38.97-2.6 0-4.8-1.76-5.59-4.12H3.06v2.59A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.41 13.93A6 6 0 0 1 6.1 12c0-.67.11-1.32.31-1.93V7.48H3.06A10 10 0 0 0 2 12c0 1.61.38 3.14 1.06 4.52l3.35-2.59Z"/><path fill="#EA4335" d="M12 5.95c1.47 0 2.79.51 3.83 1.51l2.87-2.87A9.6 9.6 0 0 0 12 2a10 10 0 0 0-8.94 5.48l3.35 2.59C7.2 7.71 9.4 5.95 12 5.95Z"/></svg>
+            <span>Tiếp tục với Google</span>
+          </button>
+          <p id="google-disabled" class="alert" role="alert" hidden>Đăng nhập nhanh bằng Google tạm thời chưa bật.</p>
+          <p id="google-error" class="alert" role="alert" hidden>Không xác thực được tài khoản Google. Vui lòng thử lại.</p>
+          <p class="google-description">Chưa gắn vai làm việc thì bạn vào không gian khách; chủ quán cấp quyền khi cần.</p>
+          <p id="space-khach-notice" class="notice notice--ok" role="status" aria-live="polite" hidden>Đã đăng nhập bằng Gmail chưa có vai. Bạn sẽ dùng không gian khách — chủ quán cấp quyền khi cần.</p>
+          <!-- Cùng đích với liên kết Đăng ký tài khoản bên dưới, giữ một điểm Tab cho hành động lặp này. -->
+          <p class="signup-hint"><a href="/dang-ky" tabindex="-1">Chưa có tài khoản? Đăng ký</a></p>
+        </section>
+
+        <div class="divider" aria-hidden="true">hoặc</div>
+
+        <form id="login" novalidate data-component="FormMatKhau">
+          <div class="field">
+            <label for="identifier">Số điện thoại hoặc Gmail</label>
+            <input id="identifier" name="identifier" type="text" autocomplete="username" placeholder="Nhập số điện thoại hoặc Gmail" required aria-describedby="identifier-error">
+            <p id="identifier-error" class="field-error" hidden>Nhập số điện thoại hoặc Gmail.</p>
+          </div>
+          <div class="field">
+            <label for="password">Mật khẩu</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu của bạn" required aria-describedby="password-error">
+            <p id="password-error" class="field-error" hidden>Nhập mật khẩu.</p>
+          </div>
+          <label class="counter" for="tai_quay">
+            <input id="tai_quay" name="tai_quay" type="checkbox">
+            <span>Đăng nhập tại quầy (bắt đầu đứng quầy)</span>
+          </label>
+          <p id="login-error" class="alert" role="alert" hidden>Số điện thoại/Gmail hoặc mật khẩu không đúng.</p>
+          <button class="submit" type="submit" id="submit" disabled><span>Đăng nhập</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button>
+        </form>
+
+        <nav class="account-links" aria-label="Hỗ trợ tài khoản" data-component="LienKetTaiKhoan">
+          <a href="/dang-ky" id="register">Đăng ký tài khoản</a>
+          <a href="/quen-mat-khau" id="forgot">Quên mật khẩu</a>
+        </nav>
+        <p class="notice" id="feedback" role="status" aria-live="polite" hidden></p>
+      </div>
+
+      <footer class="prototype" data-component="GhiChuBanMau">
+        <strong>Bản mẫu tĩnh, chưa đăng nhập thật.</strong>
+        <p>Chốt ADR-135: Gmail chưa có vai làm việc đi về không gian khách; chủ quán cấp quyền sau khi cần.</p>
+      </footer>
+      <section class="demo-tools" aria-label="Điều khiển bản mẫu" data-component="DieuKhienMinhHoa">
+        <label for="demo-state">Xem trạng thái minh hoạ</label>
+        <select id="demo-state">
+          <option value="default">Mặc định</option>
+          <option value="space_khach">Vào không gian khách</option>
+          <option value="login_failed">Sai thông tin đăng nhập</option>
+          <option value="google_login_disabled">Google chưa bật</option>
+          <option value="google_token_invalid">Google không xác thực được</option>
+        </select>
+      </section>
+    </main>
+  </div>
+  <script>
+    (() => {
+      const get = (id) => document.getElementById(id);
+      const feedback = () => {
+        get('feedback').textContent = 'Đây là bản mẫu tĩnh, chưa đăng nhập thật. Thông tin chưa được gửi đến hệ thống.';
+        get('feedback').hidden = false;
+      };
+      get('google').addEventListener('click', feedback);
+      get('login').addEventListener('submit', (event) => {
+        event.preventDefault();
+        let firstInvalid;
+        for (const id of ['identifier', 'password']) {
+          const field = get(id);
+          const invalid = !field.value.trim();
+          field.setAttribute('aria-invalid', String(invalid));
+          get(id + '-error').hidden = !invalid;
+          if (invalid && !firstInvalid) firstInvalid = field;
+        }
+        get('feedback').hidden = true;
+        if (firstInvalid) firstInvalid.focus();
+        else feedback();
+      });
+      // Khi JavaScript không chạy, nút gửi bị vô hiệu hoá để form mẫu không gửi dữ liệu qua URL.
+      get('submit').disabled = false;
+      for (const id of ['identifier', 'password']) {
+        get(id).addEventListener('input', () => {
+          if (get(id).value.trim()) {
+            get(id).removeAttribute('aria-invalid');
+            get(id + '-error').hidden = true;
+          }
+        });
+      }
+      get('demo-state').addEventListener('change', (event) => {
+        const state = event.target.value;
+        get('google').hidden = state === 'google_login_disabled';
+        get('google-disabled').hidden = state !== 'google_login_disabled';
+        get('google-error').hidden = state !== 'google_token_invalid';
+        get('login-error').hidden = state !== 'login_failed';
+        get('space-khach-notice').hidden = state !== 'space_khach';
+        get('feedback').hidden = true;
+      });
+      get('theme').addEventListener('click', () => {
+        const dark = document.documentElement.dataset.theme !== 'dark';
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        get('theme').setAttribute('aria-pressed', String(dark));
+        get('theme').setAttribute('aria-label', dark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối');
+        get('theme-label').textContent = dark ? 'Giao diện sáng' : 'Giao diện tối';
+      });
+    })();
+  </script>
+</body>
+</html>

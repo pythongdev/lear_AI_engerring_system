@@ -52,6 +52,7 @@ của file ấy chỉ nhận dữ kiện admin của quán).
 | Vế mới (2026-09-20) | lane admin chạy **SONG SONG** với pha 2: *hỏi chủ quán về admin trong khi pha 2 chạy* | **đang hiệu lực** |
 | Vế 2026-09-29 | **chủ repo**: *"tôi muốn làm luôn db cho phần admin"* — nhắc lại 2026-09-30 (*"tiếp tục"*) | **đang hiệu lực** — mở thi công **lược đồ** admin cho phần đã đủ luật; `docs/decisions.md` **ADR-068** |
 | Vế 2026-10-14 | **chủ repo**: *"cập nhật backlog … cho db của admin, tôi sẽ làm be cho admin"* (T-184) | **đang hiệu lực** — lược đồ admin lượt hai `P2A-10`…`P2A-16`; backend admin sẽ làm — kế hoạch mở 2026-10-14 ở `T-191` (**ADR-110**: `P3A-01`…`P3A-10`) |
+| Vế 2026-11-01 | **chủ repo**: *"step by step complete above task request codex to do you check"* (nói về `work/backlog_CHAT.md`) | **đang hiệu lực** — mở lane `CHAT` cho nhánh đã đủ lời; không mở pha 5 (`T-109`) |
 
 **Vế mới nói chính xác cái gì.** Chủ quán chọn *"Song song: hỏi chủ quán về admin trong khi pha 2
 chạy"*, và phương án ấy nói rõ hai nửa:
@@ -91,7 +92,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 - [ ] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — thêm danh mục của từng món vào `GET /menu` (hợp đồng, truy vấn, handler) rồi trang khách `/dat-mon`, `/ban/[ma]` nhóm món theo danh mục đọc từ API — L2 (đổi hợp đồng API) — mở 2026-10-23 (chủ repo chọn), làm sau T-236 · [chi tiết](#t-237)
 - [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
-- [ ] CHAT-01 **ĐANG CHỜ chủ repo duyệt ADR-136 và trả lời U-112…U-117 — không nhặt theo thứ tự trên xuống** (T-283, 2026-11-01). **Lane chat với app**: thứ tự ở `master_plan/CHAT_master_plan_banh_cuon_ba_thanh.md`, mô tả ở `work/backlog_CHAT.md`; các bước sau vào đây khi cổng lane mở.
+- [ ] CHAT-34 **Người được giao việc không có đường nào đọc việc của chính mình** — L2, ADR-137 điểm 2; Codex làm, Claude duyệt, 2026-11-01. Sau đó theo thứ tự `CHAT-04` → `CHAT-12` → `CHAT-13` → `CHAT-14`. Nhánh gọi model chờ `U-112`; báo nghỉ chờ `U-116`. Mô tả: [sổ chat](backlog_CHAT.md#chat-34).
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
 [↑ đầu file](#top)
@@ -101,9 +102,17 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 - [ ] T-279 **Bản HTML chi tiết món kể chuyện theo cuộn** — L1, chủ repo giao Codex 2026-10-31; dựa trên ý tưởng đầy đủ và mẫu Paris · [chi tiết](#t-279)
 
+- [ ] T-280 **Lát D — Sửa bản mẫu /dang-nhap theo lời U-111 2026-11-01** — L1, chủ repo đã trả lời U-111 2026-11-01 (Gmail chưa có vai làm việc dùng như khách, chủ quán cấp quyền sau); Codex thi công · [chi tiết](#t-280)
+
+- [ ] T-278 **Thiết kế lại trang /dang-nhap có nút đăng nhập nhanh bằng Google** — L1 bản HTML tĩnh (lát 1), chủ repo yêu cầu 2026-10-31 (duyệt phạm vi Google), U-111 đóng 2026-11-01 (ADR-135), Codex đã thi công Lát 1 · [chi tiết](#t-278)
+
+- [ ] T-276 **Thiết kế tạo combo yêu thích riêng cho khách** — L1, chủ repo giao Codex 2026-10-31; bản HTML minh hoạ · [chi tiết](#t-276)
+
 - [ ] T-275 **Bản thực hành Paris từ tài nguyên video Creativo** — L1, chủ repo giao Codex 2026-10-31; agent phụ đối chiếu nguồn và duyệt độc lập · [chi tiết](#t-275)
 
 - [ ] T-273 **Bố trí bốn món theo vòng cung trong bản mẫu menu mâm** — L1, chủ repo giao Codex 2026-10-29 · [chi tiết](#t-273)
+
+- [ ] T-269 **Thẻ COMBO và MÓN LẺ chưa theo mẫu Gemini** — L1, chủ repo giao Codex 2026-10-29 · [chi tiết](#t-269)
 
 - [ ] T-268 **Gộp món lẻ giống nhau trong giỏ khách** — L1, chủ repo giao Codex 2026-10-28 · [chi tiết](#t-268)
 
@@ -141,8 +150,13 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] CHAT-02 **Thiết kế nhánh chat không model** — L3, chủ repo duyệt ADR-137 2026-11-01; lượt nhánh model làm sau khi có `U-112` · [mô tả](backlog_CHAT.md#chat-02)
+- [x] CHAT-01 **Thu lời và duyệt ADR-136** — L3, chủ repo duyệt 2026-11-01; đóng `U-114` · `U-115` · `U-117`, hẹp `U-112` · `U-113`; `U-116` còn mở · [mô tả](backlog_CHAT.md#chat-01)
 - [x] T-283 **Tính năng chat với app chưa có kế hoạch và sổ việc riêng** — L1 (chỉ tài liệu kế hoạch; tính năng là L3), chủ repo yêu cầu 2026-11-01, Codex soạn, Claude duyệt · [chi tiết](#t-283)
+- [x] T-277 **Hiệu ứng khi ảnh món xuất hiện trong trang thử menu** — L1, Claude làm, chủ repo yêu cầu 2026-10-31 · [chi tiết](#t-277)
 - [x] T-274 **Bản mẫu menu theo concept bàn gỗ ấm cúng** — L1, Codex làm, Claude duyệt, chủ repo yêu cầu 2026-10-30 · [chi tiết](#t-274)
+- [x] T-272 **Chờ đồng hồ DB trong fixture *Vào chen cùng mốc*** — L1, Codex làm, Claude duyệt 2026-10-29 · [chi tiết](#t-272)
+- [x] T-271 **Nhân *Mộc nhĩ* mới và chế độ *Hỗn hợp* khi khách gọi combo** — L2, ADR-134; Claude thiết kế và viết test hồi quy trước, Codex thi công FE + seed, Claude duyệt 2026-10-29 · [chi tiết](#t-271)
 - [x] T-270 **Xác nhận Gmail khách qua thư** — L2, ADR-133; Codex làm, Claude duyệt 2026-10-29 · [chi tiết](#t-270)
 - [x] T-267 **Khách đăng ký và đăng nhập bằng nút Google** — L2, ADR-132; Codex làm, Claude duyệt 2026-10-29 · [chi tiết](#t-267)
 - [x] T-265 **Màn đăng nhập một ô và trang tài khoản khách** — L2, lát c của ADR-131; Codex làm, Claude duyệt 2026-10-28 · [chi tiết](#t-265)
@@ -3391,6 +3405,176 @@ Lát b của **ADR-131**, mức L2, sau `T-263`. Gói `be/internal/dinhdanh`; `P
 
 Kiểm đã chạy (Claude): trong worktree `db-check: PASS — 38 bước…`, `be-check` mọi test PASS; FE còn đúng `khach-qr.test.tsx` đỏ sẵn ở HEAD (sửa đổi chưa commit của task khác ở clone chính làm nó xanh). Clone chính sau tích hợp: `./scripts/gate.sh` mọi cổng PASS (be-check, db-check 39 bước, verify, hợp đồng 0.52.0 134/134). Ở clone chính dòng thứ tự migration là **39** (sau T-248 37, T-263 38); trong blob commit T-264 là 38. Hợp đồng: T-264 và T-248 (chưa commit) cùng đặt `0.52.0` — ai commit sau phải tăng tiếp.
 
+<a id="t-271"></a>
+### T-271 — Nhân *Mộc nhĩ* mới và chế độ *Hỗn hợp* khi khách gọi combo
+
+Mức **L2** (chạm nhóm Nhân dùng chung, chạm giao diện gọi combo, phụ thu phải khớp luật tiền). Chủ
+repo chốt 2026-10-29 trong hội thoại: *"bánh nhân mộc nhĩ RIÊNG và bánh nhân thịt RIÊNG trong cùng
+combo"*, *"chia đôi số bánh, nếu số bánh lẻ thì thịt nhiều hơn một bánh (3 → 2 thịt + 1 mộc nhĩ, 4 →
+2+2)"*, *"nhân mộc nhĩ riêng CÙNG GIÁ VÀ PHỤ THU với nhân thịt"*. Hai câu bỏ ngỏ ở phiên trước
+cùng ngày được chốt lại: *"có"* ⇒ `U-109` đóng, *Mộc nhĩ* hiện cả ở trang gọi món lẻ; *"coi bánh
+trứng như bánh cuốn cũng dc"* ⇒ `U-110` đóng, chế độ *Hỗn hợp* chia ceil/floor cộng cả phần bánh
+trứng con (chia **theo mỗi combo** trước khi nhân `quantity`; phần Thịt nhiều hơn một khi tổng
+phần nhận nhân lẻ). Lời: `master_plan/shop-facts.md` §4.4 đoạn *Lựa chọn Mộc nhĩ và chế độ Hỗn
+hợp*; thiết kế **ADR-134** (điểm 2 và 5 sửa 2026-10-29 để nói đúng chốt mới).
+
+**Acceptance (Claude viết trước, Codex làm cho xanh; mục 1 và 2 chỉnh 2026-10-29 vì DB dev đã có
+dữ liệu — xem *Bàn giao* dưới):**
+
+1. Nhóm Nhân có **đúng bốn** lựa chọn — Chay, Thịt, Thịt + mộc nhĩ, Mộc nhĩ — sau khi seed một DB
+   trống (`perl db/seed/seed.pl | psql`): `SELECT name FROM shop.menu_option o JOIN shop.option_group
+   g ON g.id = o.option_group_id WHERE g.name = 'Nhân' ORDER BY o.id` ⇒ bốn dòng, dòng *Mộc nhĩ* có
+   `surcharge_vnd = 1000` khớp *Thịt*; *Mộc nhĩ* nằm trong tập điều kiện của nhóm *Lượng nhân*
+   (`option_group_prerequisite`), nên gửi `Mộc nhĩ + Nhiều nhân` không bị `I-010` từ chối. Với một
+   DB đã có dữ liệu (ví dụ clone chính), dùng cửa API chủ quán để **thêm** dòng *Mộc nhĩ* (POST
+   `/option-groups/{id}/options`, phụ thu đọc từ *Thịt*) rồi **thêm** điều kiện vào nhóm *Lượng
+   nhân* qua cửa `enables groups` của *Thịt*; không chạy lại seed vì `make seed` bỏ qua DB đang có
+   dữ liệu — ADR-134 điểm 1 giữ nguyên, chỉ đường cập nhật tuỳ trạng thái DB.
+2. `menu_combo_item_option_surcharge` có một hàng cho mỗi (suất con có nhóm Nhân) × *Mộc nhĩ* với
+   `surcharge_vnd = 1000` sau seed trống, sinh ra từ `menu_option.surcharge_vnd`. Với DB có dữ liệu,
+   dùng `PUT /menu-combos/{id}/surcharges` để **thêm** cặp *Mộc nhĩ* chưa có cho từng combo đã có,
+   giá trị sao đúng mức *Thịt* của combo ấy; không ghi đè các mức đã có.
+3. §4.8 ca 18 (Combo Đầy đủ chín · Mộc nhĩ · Thường = **30.000**) PASS khi chạy
+   `perl db/seed/seed.pl --price-cases | psql_f` (`scripts/db-check.sh` bước 4). Đây là mục kiểm
+   mọi suất con cùng chọn *Mộc nhĩ* ⇒ tổng tiền bằng ca 9 (toàn *Thịt*).
+4. Test hồi quy mới `db/tests/i034_moc_nhi_hon_hop_combo.sql` (Claude viết trước lược đồ) PASS:
+   dựng một combo thử gồm 3 suất bánh cuốn con + 1 trứng + 1 giò, giá combo = 26.000; đặt một đơn
+   với dòng con **tách thành 2 Thịt + 1 Mộc nhĩ cho bánh** (quantity 2 và 1 trên hai dòng con), 1
+   trứng Thịt, 1 giò; `line_total_vnd` cộng dồn **bằng đúng** một đơn mọi suất chọn Thịt.
+5. `GET /menu` không đổi hợp đồng — combo đã trả về `items[].quantity` theo ADR-129 (phiên bản phụ
+   không bump).
+6. **FE khách gọi combo** (`fe/src/app/ban/_components/thuc-don-khach.tsx` + `lua-chon-the.tsx`):
+   combo có tổng phần nhận nhân (bánh cuốn + bánh trứng con) ≥ 2 và mọi suất con nhận nhân có đủ
+   cả hai lựa chọn *Thịt* và *Mộc nhĩ* ⇒ hiện radio *Mộc nhĩ và thịt* ở nhóm Nhân của combo; bấm
+   radio sẽ đặt ceil(N/2) phần đầu danh sách (bánh cuốn trước, rồi bánh trứng) mang *Thịt* và
+   floor(N/2) phần còn lại mang *Mộc nhĩ*; giò không bị đụng. Chia **theo mỗi combo** trước khi
+   nhân với `quantity`: tăng combo lên k ⇒ k × (ceil Thịt + floor Mộc nhĩ). N ≤ 1 hoặc thiếu một
+   trong hai option ⇒ không hiện radio. Bấm trở lại *Thịt* hoặc radio khác ở nhóm Nhân ⇒ tắt chế
+   độ Hỗn hợp.
+7. Dòng đơn tạo ra giữ nguyên hình ADR-117 điểm 2: **nhiều dòng con cùng `menu_item_id`, khác
+   `menu_option_id`, cùng cha `parent_order_line_id`**; mỗi dòng cộng đúng số portions có nhân
+   tương ứng và tổng combo không đổi so với toàn *Thịt*.
+8. Trang chủ quán `/chu-quan/combo` chỉ hiện *Mộc nhĩ* trong danh sách lựa chọn của form *Đặt phụ
+   thu* (`FormDatPhuThu`) — không nút *Hỗn hợp*; nhóm Nhân mang bốn lựa chọn, mức khởi tạo bằng
+   `menu_option.surcharge_vnd` khi seed, chủ quán có thể đổi mức riêng qua
+   `PUT /menu-combos/{menu_combo_id}/surcharges` (giữ ADR-116 không đổi).
+9. `./scripts/gate.sh` xanh ở clone chính (db-check gồm `price-cases` và `i034_moc_nhi_hon_hop_combo`;
+   be-check gồm `combo_test.go` cũ không đỏ; fe-check các test combo cũ không đỏ, test mới cho
+   Hỗn hợp qua).
+
+**Phạm vi** (đã khai trong `work/scope/T-271.txt`): `master_plan/shop-facts.md`, `docs/decisions.md`,
+`docs/product/99-unknowns.md`, `work/backlog.md`, `db/tests/i034_moc_nhi_hon_hop_combo.sql`,
+`fe/src/app/ban/_components/thuc-don-khach.tsx`, `fe/src/app/ban/_components/lua-chon-the.tsx`,
+`fe/src/app/ban/thuc-don-khach.test.tsx`, `fe/src/app/dat-mon/`, `fe/src/app/khach/`. Scope **cấm**
+sửa: `openapi.yaml`, migration mới, `be/internal/gia/`, bất cứ cửa ghi nào — không cần.
+
+**Phiếu giao Codex (bản copy ở nhớ phiên, không lưu repo per CLAUDE.md §3.8):**
+Nhận AGENTS.md → CLAUDE.md → `./scripts/brief.sh`. Chỉ đọc thêm: `master_plan/shop-facts.md` §4.4
+đoạn mới, `docs/decisions.md` **ADR-134**, `db/tests/i034_moc_nhi_hon_hop_combo.sql`,
+`db/seed/seed.pl` (chỉ để chạy, không sửa), `fe/src/app/ban/_components/thuc-don-khach.tsx` và
+`lua-chon-the.tsx`. **Việc thi công:** làm cho mọi mục Acceptance trên xanh; chú ý ba điểm:
+(a) **không thêm *Mộc nhĩ* vào shop-facts.md theo cách khác đã viết** — bản thiết kế đã chốt là
+option độc lập, phụ thu bằng Thịt; (b) **không sinh một lựa chọn thứ năm "Mộc nhĩ và thịt"** —
+*Hỗn hợp* là nút UI, không phải option; (c) **không thêm migration** — mọi dòng dữ liệu đi qua seed
+(`perl db/seed/seed.pl | psql`). **Cấm:** sửa `docs/decisions.md`, `docs/product/99-unknowns.md`,
+`master_plan/shop-facts.md`, `quality/invariants.md`, `work/backlog.md`, `CLAUDE.md`; đóng U-109,
+U-110; thêm cửa API mới; commit; dùng `git add -A`. **Dừng và hỏi** nếu bản thiết kế có vẻ không
+tương thích với một file bạn phải sửa.
+
+**Báo cáo cuối cùng (gửi về Claude):** (1) File đổi/tạo lấy từ `git status --short`; (2) Output
+cuối của `./scripts/gate.sh`; (3) Bảng Acceptance 1–9 → bằng chứng (tên test · lệnh · output);
+(4) Câu đã phải giả định (nếu có) và vì sao không hỏi được; (5) Việc chưa xong.
+
+**Bàn giao 2026-10-29:** thực hiện **Codex** (cây làm việc chính `lean_ai_engineering_system`, nhánh `P4A-01`, base `6dea88f`, patch
+`/tmp/t271-implementation.patch`), chuẩn bị lead **Claude** (shop-facts §4.4, ADR-134, U-109/U-110 đóng,
+Acceptance 1–9, patch `/tmp/t271-claude-preparation.patch`), duyệt và tích hợp **Claude**. Thi công đã
+xong theo scope: `fe/src/app/ban/_components/thuc-don-khach.tsx` và `lua-chon-the.tsx` dựng chế độ Hỗn
+hợp với radio *Mộc nhĩ và thịt* (hiện khi tổng phần nhận nhân của combo ≥ 2 và mọi suất con có đủ Thịt ·
+Mộc nhĩ; chia ceil Thịt / floor Mộc nhĩ **theo mỗi combo** rồi nhân `quantity`);
+`db/tests/i034_moc_nhi_hon_hop_combo.sql` xanh; `db/seed/seed.pl` ghi *Mộc nhĩ* vào nhóm Nhân (phụ thu
+bằng *Thịt*), nối Mộc nhĩ vào tập điều kiện của *Lượng nhân*, sinh `menu_combo_item_option_surcharge`
+cho mỗi (suất con có nhóm Nhân) × *Mộc nhĩ*. Trên DB dev đã có dữ liệu, Mộc nhĩ được thêm qua cửa API
+chủ quán và phụ thu từng combo đọc đúng mức *Thịt* để không ghi đè seed.
+
+Acceptance → bằng chứng (1) seed trống bốn lựa chọn Nhân (`db/seed/seed.pl`) và DB dev thêm Mộc nhĩ qua
+cửa API — kiểm tay 2026-10-29, giá chọn Mộc nhĩ bằng Thịt ở 7 combo; (2) `menu_combo_item_option_surcharge`
+có hàng (suất con nhận nhân) × Mộc nhĩ sau seed và sau PUT trên DB dev; (3) ca 18 §4.8 trong
+`/tmp/t271-codex-gate.log` ở nhánh `db-check` (price-cases); (4) `/tmp/t271-db-focused.log` i034 PASS
+(`BEGIN · SET · DO · NOTICE I-034 Hỗn hợp tổng 1040 đ · DO · ROLLBACK`); (5) hợp đồng không bump —
+`GET /menu` giữ `items[].quantity` (ADR-129); (6) FE `/tmp/t271-fe-tests.log` 550/550 test PASS,
+`/tmp/t271-lint.log`, `/tmp/t271-typecheck.log`, `/tmp/t271-build.log` xanh; (7) kiểm tay dòng đơn
+Hỗn hợp giữ hình ADR-117 điểm 2 (nhiều dòng con cùng `menu_item_id`, khác `menu_option_id`, cùng cha);
+(8) `FormDatPhuThu` trang chủ quán chỉ hiện bốn lựa chọn (không có "Hỗn hợp"); (9) gate xanh ở clone
+chính 2026-10-29 — `/tmp/t271-t272-completion-gate.log` mọi cổng PASS (Gate 1 be-check, db-check 41 bước
+· 19 QC · 57 test · 37 YC, Gate 1 verify 18 shell test, Gate 1g hợp đồng 0.54.0 137/137). UI kiểm tay
+thêm `/tmp/t271-combo-ui.png` ba độ rộng PASS.
+
+**Lịch sử chặn đã gỡ (test fixture, 2026-10-29):** fixture `TestYC15_VaoChenCungMocBiTuChoi` dùng
+`time.Sleep(time.Until(batDau)+50ms)` theo đồng hồ host với mốc `clock_timestamp()` của DB; khi hai
+đồng hồ lệch (Docker/macOS sau khi máy ngủ) sleep gần 0 ⇒ cleanup đỏ, nguyenlieu `dung()` vỡ
+`counter_duty_ended_after_started_check`. Giao `T-272` (xem [chi tiết](#t-272)) — đã đóng cùng ngày
+bằng helper chờ đồng hồ **DB** vượt `batDau`, không chạm production, không bớt assertion. Gate ở clone
+chính sau sửa xanh toàn cây.
+
+<a id="t-272"></a>
+### T-272 — Chờ đồng hồ DB trong fixture *Vào chen cùng mốc*
+
+Mức **L1** (chỉ sửa test fixture; không chạm code production, không chạm ràng buộc, không giảm/bỏ
+assertion). Giao Codex 2026-10-29 vì chặn gate backend không cho T-271 đóng — xem *Chặn* trong [chi
+tiết T-271](#t-271). Nguyên nhân: fixture dùng `time.Sleep(time.Until(batDau)+50ms)` so đồng hồ host
+với mốc đọc từ `clock_timestamp()` của DB; khi hai đồng hồ lệch (Docker trên macOS sau khi máy ngủ) thì
+sleep gần 0 ⇒ test đỏ và cleanup đỏ ⇒ khoảng của C với `started_at` tương lai lưu lại ⇒ nguyenlieu
+`UPDATE ... SET ended_at = now()` vỡ `counter_duty_ended_after_started_check`.
+
+**Acceptance:**
+
+1. `be/internal/nguoi/nguoi_test.go` còn đúng ba test `TestYC15_*` ở trạng thái và kiểm tra như trước;
+   mọi `t.Fatalf`/`t.Errorf` giữ nguyên câu từ.
+2. Fixture **không** dùng `time.Sleep(time.Until(batDau)...)` nữa; thay bằng chờ cho **đồng hồ DB**
+   vượt `batDau` cộng một biên nhỏ (ví dụ `+ 50 ms`). Hai điểm cần thay: dòng 322 (trong `t.Cleanup`)
+   và dòng 354 (trong thân `TestYC15_VaoChenCungMocBiTuChoi`). Chờ gọi qua `k.owner` (hoặc cùng pool
+   test) để chỉ chịu đồng hồ DB; đặt deadline theo `time.Duration` host monotonic (bound trên không
+   quá 5 s) để không treo khi DB ngắt kết nối — hết deadline thì `t.Fatal` nói rõ lý do.
+3. Khi chạy `go test ./be/internal/nguoi/... -run TestYC15_VaoChenCungMocBi -count=5 -race`, test PASS
+   mọi lần; thời lượng mỗi lần `≥ 1.5 s` và `< 3 s` (bằng chứng đồng hồ DB thật sự được chờ).
+4. `scripts/be-check.sh` xanh ở clone chính (nguoi và nguyenlieu đều xanh, không còn `counter_duty_ended_after_started_check`).
+5. `./scripts/gate.sh` xanh ở clone chính.
+
+**Phạm vi** (`work/scope/T-272.txt`): `be/internal/nguoi/nguoi_test.go`, `work/backlog.md`. **Cấm**
+sửa: migration, ràng buộc `counter_duty_ended_after_started_check`, mọi file dưới `be/internal/nguoi/`
+không phải test, fixture của nguyenlieu/kho (`be/internal/nguyenlieu/`), `docs/`, hợp đồng. Không bỏ
+hay nới bất kỳ assertion test nào (bao gồm `TestYC15_VaoChenCungMocBiTuChoi` so sánh ảnh khoảng
+`truoc` vs `sau`, kiểm `replaced_person_id`, hai lần 409 trước mốc). Không viết helper mới ở gói
+khác; nếu cần hàm chờ dùng chung, viết hàm cấp gói `nguoi_test` (ví dụ `(k khung) choToiMoc(t *testing.T,
+batDau time.Time)`).
+
+**Phiếu giao Codex:** xem phần văn xuôi của Claude trong hội thoại 2026-10-29 (không lưu repo per
+CLAUDE.md §3.8).
+
+**Báo cáo cuối (gửi về Claude):** (1) File đổi/tạo từ `git status --short`; (2) Output cuối của
+`./scripts/gate.sh` (hoặc `scripts/be-check.sh` nếu chạy tách), (3) Output `go test ./be/internal/nguoi/...
+-run TestYC15_VaoChenCungMocBi -count=5` (có `--- PASS` × 5 và dòng `ok` tổng thời lượng),
+(4) Đã giả định gì nếu có, (5) Việc chưa xong.
+
+**Bàn giao 2026-10-29:** thực hiện **Codex** (sửa `be/internal/nguoi/nguoi_test.go`), duyệt **Claude**.
+Codex thêm helper cấp gói `(k khung) choToiMoc(t *testing.T, batDau time.Time)` ở `nguoi_test.go:300`
+dùng `context.WithTimeout(k.ctx, 5*time.Second)` và `SELECT pg_sleep(GREATEST(0,
+EXTRACT(EPOCH FROM ($1::timestamptz - clock_timestamp())) + 0.05))` qua `k.owner`; thay đúng hai
+`time.Sleep(time.Until(batDau)+50ms)` (dòng 322 trong `t.Cleanup`, dòng 354 trong thân test) bằng
+`k.choToiMoc(t, batDau)`. Không chạm production, không chạm ràng buộc, mọi `t.Fatalf`/`t.Errorf` của
+ba test `TestYC15_*` giữ nguyên câu từ.
+
+Acceptance → bằng chứng (1) chỉ `nguoi_test.go` đổi, ba test `TestYC15_*` còn đủ, mọi assertion
+nguyên văn — đối chiếu `git diff be/internal/nguoi/nguoi_test.go`; (2) hai điểm `time.Sleep(time.Until(...))`
+đã thay bằng helper chờ đồng hồ DB qua `pg_sleep`, deadline 5 s host monotonic qua `context.WithTimeout`;
+(3) `/tmp/t272-focused-tests.log` `go test ./be/internal/nguoi/... -run TestYC15_VaoChenCungMocBi
+-count=5 -race` ⇒ `--- PASS: TestYC15_VaoChenCungMocBiTuChoi (1.66s)`, 1.64s, 1.64s, 1.64s, 1.65s,
+`ok banhcuon/be/internal/nguoi 9.917s` — mỗi lần trong khoảng [1.5s, 3s] chứng tỏ đồng hồ DB thật sự
+được chờ; (4) `/tmp/t271-t272-completion-gate.log` `PASS Gate 1 be-check — mọi test backend qua
+PostgreSQL thật đều đạt` (gồm nguoi và nguyenlieu, không còn `counter_duty_ended_after_started_check`);
+(5) `/tmp/t271-t272-completion-gate.log` kết thúc `PASS gate — không cổng nào đỏ`. DB check-project
+ở `/tmp/t272-check-project.txt`, chủ repo tự dọn.
+
 <a id="t-270"></a>
 ### T-270 — Xác nhận Gmail khách qua thư
 
@@ -3471,6 +3655,25 @@ Acceptance → bằng chứng: `fe/src/components/tai-khoan/t265.test.tsx` (gử
 
 **Bàn giao 2026-10-28:** Codex thực hiện trên nhánh `P4A-01`, nền `d9d7e26`, chưa duyệt độc lập. Gộp món lẻ trong `useNhapKhach.sua` và `dungLai`, dùng mã món + tập lựa chọn đã sắp thứ tự; không tính tiền ở FE. Nháp cũ và thêm từ chi tiết dùng cùng đường gộp; combo giữ xử lý hiện có. Bằng chứng acceptance: kiểm thử thẻ món xác nhận cộng số lượng, báo giá backend, sửa/bớt; kiểm thử món không lựa chọn xác nhận gộp, xoá cả dòng, thân gửi đúng số lượng; kiểm thử nháp cũ xác nhận đảo thứ tự lựa chọn vẫn gộp, khác rau/mã món tách riêng, ô trống không mất. Nhóm liên quan 4 tệp/46 kiểm thử đạt; `./scripts/fe-check.sh` đạt apigen, lint, typecheck, 39 tệp/542 kiểm thử và build; sau bổ sung kiểm thân gửi chạy lại tệp tóm tắt 12/12 đạt. Log frontend `/tmp/t268-fe.log`. Đã đọc diff, không thêm dependency/đổi API; kiểm whitespace các tệp của việc này đạt, scope riêng đạt, index chính trống. Cây có nhiều thay đổi từ trước; khối commit phải dùng blob tách riêng backlog và owner FE. Gate trên cây chính `/tmp/t268-gate.log` còn chạy database ở PID 35443 (gate PID 22365); không tuyên bố gate xanh. Kiểm bản commit tách riêng trong `/tmp/t268-review` (có bổ sung nút lựa chọn chưa track từ nền để resolve import): `./scripts/gate.sh` thoát 2; scope, doc-status, schema, cửa ghi, hợp đồng, Gin đạt; links đỏ do tài liệu nền thiếu, verify đỏ tại typecheck vì nền `d9d7e26` có giao diện tài khoản khách nhưng hợp đồng/type chưa có `CustomerProfile` và các endpoint tài khoản khách. Log `/tmp/t268-isolated-gate.log`. Không sửa các owner API L2 ngoài phạm vi. Giữ In Progress; bước tiếp theo Claude tích hợp hợp đồng/type và tài liệu nền, đọc log gate cây chính rồi chạy lại gate. Đã kiểm nội dung stage tách riêng và whitespace trong worktree kiểm tra; index cây chính không thay đổi, chưa commit.
 
+<a id="t-269"></a>
+### T-269 — Thẻ COMBO và MÓN LẺ chưa theo mẫu Gemini
+
+**Yêu cầu:** Chủ repo giao trực tiếp ngày 2026-10-29: áp dụng `docs/product/4-fe/thiet_ke/khach_hang/menu/gemini/combo.html` vào hai khối menu ở `fe/src/app/ban`, không đổi phần tóm tắt.
+
+**Goal / Phạm vi:** Thẻ ảnh ngang phía trên, tên/giá cùng hàng, nút Thành phần cho combo, một nút lựa chọn gộp mở bảng trong thẻ, thanh số lượng màu cam. Dùng ảnh sẵn có; không đổi dữ liệu/API hay quy tắc tính giá.
+
+**Lý do / Ảnh hưởng:** Bố cục hiện tại chia hai cột, khác mẫu chủ repo chọn; khách cần cùng kiểu thẻ ở COMBO và MÓN LẺ.
+
+**Acceptance (trước sửa):** Cả hai loại thẻ theo bố cục mẫu, dùng dữ liệu thật; ảnh dẫn đúng chi tiết và giữ mã bàn. Nút gộp mở các nhóm hợp lệ, chọn xong giữ bảng mở; Chay vẫn ẩn lượng nhân. Thêm/bớt và tổ hợp gửi giỏ giữ nguyên; tiền trên thanh đọc báo giá từ API, không tự nhân giá combo. JSX tóm tắt và CSS tóm tắt không đổi. Không tràn ngang ở 320/390/768px, có sáng/tối và giảm chuyển động.
+
+**Cách thực hiện:** Đọc brief/owner → xác định L1 → khai báo scope T-269 → ghi acceptance → sửa hai khối thẻ và bộ chọn riêng → cập nhật owner component → chạy test hành vi/kiểm bố cục → chạy gate → đọc diff → bàn giao khối commit, không commit.
+
+**Bàn giao:** Codex, nhánh P4A-01, base fbcff65; chưa duyệt độc lập. Cây có nhiều thay đổi việc khác từ trước, giữ nguyên và tách khỏi commit T-269. Đang thực hiện.
+
+**Bằng chứng 2026-10-29:** `npm --prefix fe test -- src/app/ban/thuc-don-khach.test.tsx src/app/ban/khach-qr.test.tsx` đạt 2 files/25 tests; payload tổ hợp, gộp dòng, thêm/bớt, giá API và tóm tắt vẫn được kiểm. `npm --prefix fe run lint` và `npm --prefix fe run typecheck` exit 0. Playwright `/tmp/t269-ui.cjs` đạt 14 thẻ ở 320/390/768px cả sáng/tối, ảnh cao 176px nằm trên tên, tên/giá cùng hàng, không tràn; Thành phần mở, Chay ẩn lượng, chọn giữ bảng mở, thêm combo/món và giá dòng API hoạt động, reduced-motion không transition, pageErrors=[]; log `/tmp/t269-ui.log`, ảnh `/tmp/t269-light.png` và `/tmp/t269-dark.png` đã xem. Đối chiếu byte xác nhận JSX từ `{thongTin}` tới cuối component và toàn bộ CSS cũ giữ nguyên; CSS mới chỉ theo lớp menu riêng. Đọc diff theo Gate 4: không đổi dependency, API, dữ liệu, quy tắc giá hay tóm tắt; test chỉ đổi thao tác theo nút gộp và bổ sung kiểm tiền API. Gate toàn cây đang chạy ở `/tmp/t269-gate.log`; chưa kết luận gate xanh. Chưa commit, chưa duyệt độc lập.
+
+**Bàn giao cuối lượt 2026-10-29:** Phần giao diện đã xong; `npm --prefix fe test` đạt 40 files/548 tests, build production exit 0 (`/tmp/t269-build.log`), lint/typecheck/check-fe-rules đều đạt. Gate tách riêng tại `/tmp/t269-review` exit 2: HEAD đã có liên kết thiếu tới hai tài liệu profile và mã tài khoản phụ thuộc kiểu API chưa commit; log `/tmp/t269-isolated-gate.log`, không sửa các phần ngoài scope. Gate cây chung đã chạy trực tiếp, còn đang kiểm ở `/tmp/t269-gate.log`; chưa tuyên bố gate xanh, giữ In Progress để lần sau đọc kết quả và nghiệm thu gate. Snapshot commit chỉ chứa bảy file của T-269 ở `/tmp/t269-commit/`, index diễn tập tại `/tmp/t269-review` đã kiểm diff/whitespace và Gate 9; index cây chính trống. Bước tiếp theo: đọc kết quả gate cây chung, xử lý việc nền bằng đúng task phụ trách nếu cần, rồi chuyển Done khi đủ điều kiện. Không commit hay gửi đơn thật; không đổi tóm tắt.
+
 
 <a id="t-273"></a>
 ### T-273 — Bố trí bốn món theo vòng cung trong bản mẫu menu mâm
@@ -3518,6 +3721,82 @@ Acceptance → bằng chứng: A1/A2: ffprobe + kiểm manifest 157 file tồn t
 
 A6: đã đọc diff/red flags và chạy gate. Gate trên cây chung khởi chạy nhưng bị dừng (exit 143), không có kết quả để tuyên bố xanh. Gate trực tiếp trên worktree `/tmp/paris-scroll-task/review-tree` từ HEAD chỉ ghép task Paris: exit 2, scope/1c/1e/1f/1g/1h PASS, 1d và verify SKIP (gate coi docs/ là tài liệu); Gate 1b FAIL đúng hai link từ file profile-gemini.md có sẵn trong HEAD tới `customer_profile.md` và `customer_profile_loading.md` chưa tồn tại trong HEAD. Log `/tmp/paris-scroll-task/isolated-gate.log`. Không sửa profile ngoài phạm vi; giữ In Progress vì gate chưa xanh. Phần website đã được kiểm xong. Bước tiếp theo: lead xử lý liên kết profile theo task riêng, chạy lại gate rồi nghiệm thu Done. Backlog commit được tách blob chỉ chứa phần Paris trên HEAD; manifest liệt kê từng tệp từ git, index cây chính giữ nguyên, không commit.
 
+<a id="t-276"></a>
+### T-276 — Thiết kế tạo combo yêu thích riêng cho khách
+
+Chủ repo giao trực tiếp Codex ngày 2026-10-31: thêm nút tạo combo yêu thích riêng cho từng khách trong bản thiết kế `docs/product/4-fe/thiet_ke/khach_hang/favourite/favourite.html`. L1, chỉ tương tác minh hoạ cục bộ; không sửa hợp đồng, backend hoặc quy tắc bán hàng.
+
+Phạm vi: tệp HTML trên và `work/backlog.md`; scope ở `work/scope/T-276.txt`.
+
+Acceptance trước sửa: (A1) nút Tạo combo riêng nổi bật, mở form đặt tên, chọn món và số lượng, tổng minh hoạ cập nhật; không lưu tên trắng hoặc combo rỗng. (A2) combo có tên, thành phần, tổng và thao tác thêm giỏ minh hoạ, sửa, xoá; huỷ không đổi dữ liệu. (A3) hai hồ sơ khách minh hoạ có dữ liệu riêng, đổi khách không lẫn combo/giỏ; tải lại giữ combo; dữ liệu bộ đã lưu cũ còn dùng được. (A4) giữ lọc món, bộ đã lưu và sáng/tối; không tràn ngang ở 320/390/430/1280px, modal cuộn được và dùng bàn phím. (A5) chạy kiểm tương tác trình duyệt, đọc diff và chạy gate; bàn giao commit chỉ chứa việc này.
+
+Thực hiện Codex; chưa duyệt độc lập. Nhánh `P4A-01`, nền `39f2143`. Cây có nhiều thay đổi từ trước, kể cả backlog và toàn thư mục favourite chưa track; snapshot trước sửa tại `/tmp/t276`. Chỉ sửa tệp HTML và hồ sơ task này; không nhận thay các thay đổi nền. Bước tiếp theo: triển khai form và kiểm tương tác.
+
+
+Bàn giao 2026-10-31: phần giao diện đã hoàn tất. Nút tạo mở form chọn món/số lượng, đặt tên và tổng minh hoạ; thẻ combo có sửa, xoá, thêm giỏ. Hai hồ sơ minh hoạ lưu riêng theo khoá trình duyệt, giữ dữ liệu cũ cho Khách 01; giỏ riêng trong phiên, dữ liệu trong phiên vẫn còn khi lưu trữ bị chặn. Không nối tài khoản thật hoặc backend. Codex đã tự đọc diff theo Gate 4, không thêm dependency hay đổi API; chưa duyệt độc lập.
+
+Bằng chứng acceptance: Chrome headless qua CDP, `python3 /tmp/t276/check_ui.py` exit 0, 48 dòng PASS tại `/tmp/t276/ui-final.log`: A1 chọn món/tổng 60.000đ/chặn rỗng và tên trắng; A2 tạo/sửa/huỷ/xoá/thêm giỏ và escape tên; A3 tải lại, hai hồ sơ độc lập, giữ bộ cũ, lỗi lưu trữ; A4 bộ đã lưu và lọc còn dùng được, 320/390/430/1280px cả sáng/tối không tràn, Esc đóng modal và focus đúng. Không có JavaScript exception. Ảnh đã xem: `/tmp/t276/page-dark.png`, `/tmp/t276/modal-light.png`.
+
+Đã chạy trực tiếp gate cây chung nhưng dừng các lượt do phiên này khởi chạy vì kiểm scope chạy nhiều phút chưa có output; không kết luận gate cây chung. Chạy `./scripts/gate.sh` trong snapshot tách riêng `/tmp/t276-review` (HEAD `39f2143`, chỉ HTML và hồ sơ T-276) exit 2, log `/tmp/t276/isolated-gate.log`: Gate 3/1c/1e/1f/1g/1h PASS; 1d và verify SKIP vì chỉ tài liệu. Gate 1b FAIL vì tài liệu nền `docs/private/prompt/profile-gemini.md` trỏ tới hai tệp chưa có trong HEAD: `customer_profile.md`, `customer_profile_loading.md` dưới thư mục profile. Không sửa lỗi nền ngoài scope. Giữ In Progress do gate chưa xanh; bước tiếp theo lead xử lý hai liên kết nền rồi chạy lại gate và nghiệm thu.
+
+Khối commit dùng `/tmp/t276/backlog-only.patch` chỉ chứa hồ sơ T-276 so với HEAD; toàn bộ thay đổi backlog của việc khác được giữ ngoài index. Tệp HTML vốn chưa track nên commit sẽ thêm cả bản thiết kế đã có và phần combo mới. Index diễn tập nằm ở worktree tách riêng, index cây chính không đổi. Không chạy lệnh commit hoặc xoá; giữ scope đến sau commit.
+
+<a id="t-277"></a>
+### T-277 — Hiệu ứng khi ảnh món xuất hiện trong trang thử menu
+
+Chủ repo yêu cầu 2026-10-31: làm hiệu ứng khi ảnh xuất hiện ở `docs/private/prompt/menu-am-cung/anh-moi.html`. L1, chỉ bản mẫu. Kiểu hiệu ứng do Claude chọn, chờ chủ repo xem.
+
+Acceptance: (1) đổi món hoặc tải trang: ảnh mới mờ dần hiện lên đè ảnh cũ, trượt nhẹ theo hướng đổi món, tên · giá · thành phần hiện nối tiếp; (2) bấm đổi món liên tục vẫn dừng đúng món cuối, chỉ còn một lớp ảnh; (3) đổi qua lại với Canh không giật nền; (4) đổi món không thêm vào giỏ; (5) `prefers-reduced-motion` đổi ngay, không chuyển động; (6) không lỗi console, gate xanh.
+
+Bàn giao 2026-10-31: thực hiện và tự kiểm Claude, chưa có người duyệt độc lập. Kịch bản Chrome 390×844 đạt cả sáu dòng (ảnh mới đè ảnh cũ với độ mờ tăng dần, bấm liên tục 8 lần còn một lớp, giảm chuyển động không có animation, 0 lỗi console). Canh giờ dùng ảnh bàn gỗ qua cùng lớp ảnh để không giật nền. File `anh-moi.html` đã được khôi phục từ `6b4512c` trước khi sửa vì bị xoá trong cây làm việc.
+
+<a id="t-278"></a>
+### T-278 — Thiết kế lại trang /dang-nhap có nút đăng nhập nhanh bằng Google
+
+Chủ repo trong hội thoại 2026-10-31 yêu cầu *"http://localhost:3000/dang-nhap thiết kế lại có nút đăng nhập nhanh bằng google"* và trả lời *"tất cả"* khi được hỏi nút dành cho ai (khách, nhân viên, chủ quán), sau đó *"ok duyệt"* phạm vi, và chọn *"Chuyển Claude lập phiếu triển khai"* khi được hỏi Codex tự làm hay chuyển Claude. Trang `/dang-nhap` là màn đăng nhập của người làm (xem `fe/src/app/dang-nhap/page.tsx` dùng `FormDangNhap`), còn `/khach/dang-nhap` là màn khách. Google cho khách đã có lát thi công theo **ADR-132** (nằm trong `docs/private/google-login/`, chưa commit cùng T-264/T-267/T-270); nút Google cho người làm thì ADR-132 *loại ngay từ đầu* vì tài khoản người làm phải chờ chủ quán duyệt (ADR-109 điểm 1). Lời chủ repo chỉ duyệt **phạm vi** nút cho mọi đối tượng, chưa duyệt **chính sách liên kết hay cấp quyền** cho người làm — câu đó mở ở **U-111** ngay dưới.
+
+Việc chia làm ba lát: **lát 1 (task này, L1)** — bản HTML tĩnh thiết kế lại giao diện `/dang-nhap` cho người làm, đặt tại `docs/product/4-fe/thiet_ke/chu_quan/dang_nhap/dang-nhap.html`; chỉ là bản mẫu kiểu T-274 · T-277, không phải thi công. Lát 2 (FE thật) và lát 3 (BE Google cho người làm) **đang chặn** cho tới khi (a) chủ repo trả lời U-111, (b) T-264/T-267/T-270 commit xong theo `docs/private/google-login/commit-khach.sh`, (c) có **ADR-135** chốt chính sách Google cho người làm.
+
+Phạm vi lát 1 (`work/scope/T-278.txt`): `docs/product/4-fe/thiet_ke/chu_quan/dang_nhap/dang-nhap.html` (file mới, thư mục mới) và `work/backlog.md`. Cấm sửa code ứng dụng, hợp đồng, migration, owner nghiệp vụ. Nền `HEAD = 3ff2490`.
+
+Acceptance của lát 1 (mỗi dòng phải có bằng chứng trong báo cáo Codex, không được đoán):
+- (A1) **Khối Google ở trên cùng**: một nút *Tiếp tục với Google* theo kiểu `size=large` · `theme=outline` · `locale=vi` (giống `fe/src/components/khach/google.tsx` dòng 46), có hình logo Google, nằm trước phần nhập số điện thoại/Gmail; dưới nút có dòng chú thích *"Chỉ dùng được khi tài khoản của bạn đã được chủ quán duyệt"* và một liên kết nhỏ *"Chưa có tài khoản? Đăng ký"* trỏ `/dang-ky`.
+- (A2) **Vạch ngăn** chữ *"hoặc"* giữa khối Google và form mật khẩu.
+- (A3) **Form mật khẩu còn đủ ba trường của HEAD** (`FormDangNhap` dòng 46–64): một ô *Số điện thoại hoặc Gmail* (`autocomplete=username`), ô *Mật khẩu* (`autocomplete=current-password`), checkbox *Đăng nhập tại quầy (bắt đầu đứng quầy)* đi cùng nút *Đăng nhập*; không đổi tên trường, không bỏ `tai_quay`, không ghép `tai_quay` vào nút Google.
+- (A4) **Hai liên kết dưới form** như hiện tại: *Đăng ký tài khoản* → `/dang-ky`, *Quên mật khẩu* → `/quen-mat-khau`.
+- (A5) **Trạng thái lỗi minh hoạ**: ba khối báo đỏ ví dụ, một cho `login_failed`, một cho `google_login_disabled` (ẩn nút, hiển thị dòng *"Đăng nhập nhanh bằng Google tạm thời chưa bật"*), một cho `google_token_invalid` (nút còn, kèm thông báo đỏ dưới nút). Nội dung thông báo không trái thiết kế lớp `khach` của ADR-132: chữ *"chủ quán"* xuất hiện ở phần người làm, không nhầm sang khách.
+- (A6) **Chú thích chờ chủ quán** đặt rõ trong trang (chú thích ở cuối hoặc trong khối Google): nêu rằng chính sách Google cho người làm còn chờ chủ quán quyết (U-111), bản mẫu không hứa luồng cấp tài khoản tự động, không gọi API thật.
+- (A7) **Không tràn ngang** ở 320/390/430/1280px (như T-276/T-277), đọc được bằng bàn phím (`Tab` qua nút Google · ô định danh · ô mật khẩu · checkbox · nút Đăng nhập · hai liên kết), bỏ dấu `prefers-reduced-motion` không có animation nào vỡ.
+- (A8) **File tĩnh thuần**: HTML + CSS inline hoặc một tệp CSS cạnh file, không fetch Google thật, không script `gsi/client`, không gọi `/customer-sessions/google` — nút chỉ là hình minh hoạ. Ghi rõ *"bản mẫu tĩnh, chưa đăng nhập thật"* trong trang.
+- (A9) `./scripts/gate.sh` xanh trên worktree sạch từ `HEAD`, bằng chứng là 7 dòng PASS/SKIP không `FAIL` của log gate dán vào báo cáo. Lưu ý Gate 1b có hai FAIL nền ở `docs/private/prompt/profile-gemini.md` trỏ `customer_profile.md` · `customer_profile_loading.md` chưa có trong HEAD (T-275 · T-276 đã gặp); nếu bị, dán nguyên log và nêu rõ *FAIL nền ngoài phạm vi*.
+
+Phiếu Codex đầy đủ (Context, Scope, Acceptance, Cấm, Báo cáo) nằm ở scratchpad ngoài repo `/tmp/google-login-claude-handoff/work-order.txt`, không lưu vào repo theo CLAUDE.md §3.8. Chủ repo dán nó vào Codex ở worktree mới `../lean_wt/T-278` nhánh `codex/T-278` tạo từ `HEAD = 3ff2490`; không có phụ thuộc chưa commit, có thể giao ngay.
+
+Bàn giao từ Claude 2026-10-31 (lập phiếu): phiếu viết ra `/tmp/google-login-claude-handoff/work-order.txt`, scope `work/scope/T-278.txt` giới hạn file HTML mới + hồ sơ task. Chặn lát 2 (FE thi công nút trong `fe/src/components/tai-khoan/form-dang-nhap.tsx`) và lát 3 (BE cửa `POST /sessions/google` lớp `nhan_vien`) cho tới khi chủ repo trả lời **U-111** và `docs/private/google-login/commit-khach.sh` đưa T-264/T-267/T-270 vào HEAD; sau đó Claude mở **ADR-135** chốt chính sách và viết test hồi quy cho I-033/I-035 trước khi giao tiếp.
+
+Bàn giao từ Codex 2026-10-31 (thi công lát 1): worktree `/Users/monghoaivu/Desktop/code/lean_wt/T-278`, nhánh `codex/T-278`, nền `HEAD = 3ff2490`; chỉ tạo một file `docs/product/4-fe/thiet_ke/chu_quan/dang_nhap/dang-nhap.html` (218 dòng, 16,8 KiB, HTML + CSS inline + JS tĩnh — không fetch, không nạp `gsi/client`, không ghi storage). Logo Google SVG inline bốn màu. Chín dòng Acceptance có bằng chứng ở `/tmp/google-login-claude-handoff/implementation-report.md` kèm `browser-check.cjs` chạy Playwright/Chrome: PASS cho bốn kích thước 320/390/430/1280px ở hai giao diện sáng/tối, đi được bàn phím đúng chuỗi *google → identifier → password → tai_quay → submit → register → forgot*, ba trạng thái lỗi `login_failed · google_login_disabled · google_token_invalid` chuyển qua bộ chọn minh hoạ, `prefers-reduced-motion: reduce` 0 animation, tắt JavaScript nút `Đăng nhập` disabled nên Enter không ghi mật khẩu vào URL, chỉ 1 request document mỗi lần mở (không script/font/image/API ngoài), 0 lỗi JS/HTTP. Ảnh ở `login-{320,390,430,1280}-{light,dark}.png` + ba ảnh trạng thái 390px. `./scripts/gate.sh` trong worktree exit 2 do đúng hai liên kết nền của `docs/private/prompt/profile-gemini.md` trỏ `customer_profile.md` · `customer_profile_loading.md` (có sẵn trong HEAD, T-275 · T-276 đã gặp); mọi dòng khác PASS/SKIP — log ở `implementation-gate.log`. Codex đã dừng (SIGTERM) đúng tiến trình `check-scope` của Claude ở gate cây chính vì nó treo hơn 4 phút; không có bằng chứng gate cây chính xanh.
+
+Tích hợp từ Claude 2026-10-31 (lead duyệt): đã xem báo cáo và sáu ảnh (390 sáng/tối + ba trạng thái lỗi) — chín dòng Acceptance đều đạt, nút Google đứng trước phần mật khẩu, chú thích *"Chỉ dùng được khi tài khoản của bạn đã được chủ quán duyệt"* và dòng *"Bản mẫu tĩnh — nút Google cho người làm còn chờ chủ quán chọn cách cấp tài khoản (U-111)"* có đủ; không trạng thái nào hứa luồng tự động cấp tài khoản. Chỉ chép file HTML về cây chính, không chạm thay đổi dirty của task khác (sqlc, khoanchi, customer google T-264/T-267/T-270, …). Entry này vẫn giữ **In Progress** vì gate cây chính không xanh do hai liên kết nền ngoài phạm vi; sẽ chuyển Done khi chủ repo gộp sửa link nền (task khác) hoặc chấp nhận ngoại lệ ở `scripts/check-links.ignore`. Khối commit tách blob viết ở `/tmp/google-login-claude-handoff/lead-review.md` — chỉ ba đường dẫn thuộc T-278 (HTML mới, dòng T-278 trong `work/backlog.md`, khối U-111 trong `docs/product/99-unknowns.md`); không `git add` cả file shared.
+
+Cập nhật từ Claude 2026-11-01 (lead): chủ repo trả lời U-111 trong chat cùng ngày hai lượt — lượt một *"cho đang kí bằng gmail không cần duyệt"*, lượt hai *"Dùng ngay như khách; chủ quán cấp quyền làm việc khi cần"*. **U-111 đã đóng** trong `docs/product/99-unknowns.md` → *Đã có lời giải*. Thiết kế hệ quả chốt ở **ADR-135** mới (`docs/decisions.md`): cùng một cửa `POST /customer-sessions/google` phục vụ cả hai trang, phân nhánh theo `sub` trong `account_google_identity`; Gmail chưa có liên kết đi về không gian khách; chủ quán cấp quyền sau bằng cách tạo `account` thủ công rồi gắn `sub` ở trang nhân viên (lát sau). Bản mẫu HTML lát 1 vẫn chạm được acceptance A1–A9 cũ nhưng nay có chú thích lỗi thời (*"chờ chủ quán duyệt"*, *"U-111 còn mở"*) — tách thành **T-280 Lát D** để Codex sửa nhỏ. Lát A (DB migration `account_google_identity`, L2, task `T-281` khi mở) chạy trên HEAD được, không chờ baseline Google khách. Lát B (BE, L2, `T-282`) và Lát C (FE thật, L2, `T-283`) phụ thuộc commit T-264/T-267/T-270 — phải chạy `bash docs/private/google-login/commit-khach.sh` trước. Entry này giữ **In Progress** cho tới khi bản mẫu HTML được sửa theo lời mới (T-280 Done); các lát A/B/C mở task riêng.
+
+<a id="t-280"></a>
+### T-280 — Lát D: Sửa bản mẫu /dang-nhap theo lời U-111 2026-11-01
+
+Claude mở 2026-11-01 sau khi chủ repo trả lời U-111 (xem T-278 phần cập nhật và **ADR-135**). L1, chỉ sửa bản mẫu HTML tĩnh đã có; không chạm FE/BE/DB. Codex thi công.
+
+Phạm vi (`work/scope/T-280.txt`): `docs/product/4-fe/thiet_ke/chu_quan/dang_nhap/dang-nhap.html`, `work/backlog.md`. Cấm chạm `docs/decisions.md`, `docs/product/99-unknowns.md`, `master_plan/`, `quality/invariants.md`, `CLAUDE.md`.
+
+Acceptance (mỗi dòng có bằng chứng trong báo cáo Codex):
+- (A1) Dòng chú thích dưới nút Google đổi từ *"Chỉ dùng được khi tài khoản của bạn đã được chủ quán duyệt"* thành *"Chưa gắn vai làm việc thì bạn vào không gian khách; chủ quán cấp quyền khi cần."*. Nội dung này khớp lời chủ repo 2026-11-01 (ADR-135 điểm 2–3).
+- (A2) Khối chú thích bản mẫu ở cuối trang bỏ dòng *"nút Google cho người làm còn chờ chủ quán chọn cách cấp tài khoản (U-111)"*, thay bằng *"Chốt ADR-135: Gmail chưa có vai làm việc đi về không gian khách; chủ quán cấp quyền sau khi cần."*. Dòng *"Bản mẫu tĩnh, chưa đăng nhập thật."* giữ nguyên.
+- (A3) Bộ chọn `demo-state` thêm **một** mục mới *"Vào không gian khách"* (`value="space_khach"`): bật trạng thái một thông báo xanh dưới nút Google *"Đã đăng nhập bằng Gmail chưa có vai. Bạn sẽ dùng không gian khách — chủ quán cấp quyền khi cần."* (không ẩn nút); ba trạng thái cũ `login_failed · google_login_disabled · google_token_invalid` giữ nguyên hành vi.
+- (A4) Chuỗi Tab, kích thước 320/390/430/1280px, giao diện sáng/tối, `prefers-reduced-motion`, no-JS submit disabled — tất cả giữ nguyên bằng chứng của T-278; chạy lại `browser-check.cjs` (nếu Codex có script cũ, nhân bản vào `/tmp/t280-check/`) cho ra PASS tương đương, chụp lại ảnh trạng thái mới `space_khach` ở 390px.
+- (A5) `./scripts/gate.sh` trong worktree sạch exit đúng 2 do hai liên kết nền của `docs/private/prompt/profile-gemini.md` chưa có trong HEAD (Gate 1b, như T-275 · T-276 · T-278 đã gặp); các dòng khác PASS/SKIP. Không sửa link nền.
+
+Phiếu Codex đầy đủ ở `/tmp/google-login-claude-handoff/next-work-order.txt` — chưa trong repo. Nền `HEAD = 4a8ee3e`; không phụ thuộc baseline chưa commit nào. Worktree `../lean_wt/T-280` nhánh `codex/T-280`.
+
+
 <a id="t-279"></a>
 ### T-279 — Bản HTML chi tiết món kể chuyện theo cuộn
 
@@ -3532,6 +3811,7 @@ Bàn giao đang làm: Codex, chưa duyệt độc lập; nhánh `P4A-01`, nền 
 Bằng chứng 2026-10-31: A1 — tự xem ảnh Chrome desktop 1280px và mobile 320px (hero, khối chuyển cảnh và khối chọn phần); có đủ năm nhịp, dùng ảnh gốc và CSS/JS inline, không thêm dependency. A2 — Chrome mở trực tiếp file://, cuộn 0/50/90/100% rồi trở về đầu đổi đúng chương 1/2/3 và transform ảnh; giảm chuyển động tĩnh, bật/tắt trực tiếp được, không JS vẫn đọc đủ ba mô tả. A3 — phần 49.000đ + thêm 7.000đ × 2 = 112.000đ, thêm hai lần gộp 4 phần = 224.000đ, bỏ món về giỏ trống; yêu thích, Escape và trả focus về nút giỏ đạt. A4 — Chrome 320×700, 390×844, 430×932, 1280×900 không tràn ngang; skip link bằng Tab/Enter, anchor, ảnh, 0 lỗi JavaScript và 0 request ngoài. Kịch bản và output ở `/tmp/t279-preview/check.cjs`, `/tmp/t279-preview/results.txt`; ảnh trong cùng thư mục. A5 — JavaScript hợp lệ, đã đọc diff/red flags, không đổi API hay nghiệp vụ; index cây chính giữ trống.
 
 Gate trực tiếp cây chung được khởi chạy, dừng lượt của phiên này vì check-scope vẫn chạy nhiều phút chưa ra output; không tuyên bố kết quả cây chung. Gate trên worktree riêng `/tmp/t279-preview/review-tree` từ HEAD chỉ có bản HTML, ảnh và hồ sơ việc này thoát 2: Gate 3/1c/1e/1f/1g/1h PASS, 1d và verify SKIP (docs-only); Gate 1b FAIL do hai đường dẫn nền trong `docs/private/prompt/profile-gemini.md` tới `customer_profile.md` và `customer_profile_loading.md` không có từ HEAD. Log `/tmp/t279-preview/gate-review.log`. Không sửa phần hồ sơ khách ngoài phạm vi. Giữ In Progress vì gate chưa xanh; giao diện đã đủ để chủ repo xem. Bước tiếp theo: lead xử lý hai liên kết nền rồi chạy lại gate để nghiệm thu. Chưa duyệt độc lập, chưa commit. Backlog trong khối commit được tách blob chỉ chứa T-279; các diff CLAUDE.md, Makefile, BE/DB/FE, tài liệu và backlog của việc khác giữ ngoài khối commit.
+
 
 Bổ sung yêu cầu chủ repo 2026-10-31: tạo ảnh mới và để người xem khám phá món theo hướng gợi cảm giác thèm ăn. Tiếp tục cùng phạm vi bản mẫu. Acceptance bổ sung trước sửa: B1 — tạo và lưu hai ảnh đồ ăn cận cảnh (đũa nâng bánh, chạm nước chấm) bằng công cụ imagegen tích hợp; ảnh chỉ minh hoạ. B2 — đưa ảnh vào hero/khối khám phá; có ba góc chọn trực tiếp bằng nút và chuyển theo cuộn, ảnh tải trước để không trắng khi đổi, giảm chuyển động vẫn chọn góc được. B3 — giữ thao tác chọn phần và giỏ thử, kiểm lại 320/390/430/1280px và bàn phím, lỗi ảnh có đường lùi; chạy gate trên snapshot riêng và bàn giao phần việc này.
 

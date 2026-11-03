@@ -7,6 +7,9 @@ Trạng thái chỉ ở `work/backlog.md`, do Claude giữ. Sổ này không gi�
 Viết 2026-11-01, T-283, Codex theo phiếu Claude; thiết kế ADR-136 còn **Đề xuất**.
 Mỗi entry là mô tả để giao bước sau, không phải lời cho phép làm ngay. **Nhận việc** để trống tới lúc nhận.
 
+**Cập nhật 2026-11-01 (CHAT-01):** ADR-136 đã chốt. Nhánh nào mở, nhánh nào đóng: kế hoạch §4; thiết kế nhánh không model: ADR-137.
+Các dòng `chờ U-113` · `U-114` · `U-115` · `U-117` bên dưới là lịch sử: những câu ấy đã có lời ở `master_plan/shop-facts.md` §8.11.
+
 **Chung cho mọi bước.**
 
 - Đọc `CLAUDE.md`, chạy `./scripts/brief.sh`, đọc entry của bước và các owner ở **Đứng trên**.
@@ -1035,6 +1038,8 @@ Lời yêu cầu nói người dọn nhận *"những việc phụ khác"*; *đ�
 **Verify:** be-check qua PostgreSQL thật, ca hai người và ca không phiên; Gate 1g; gate.
 
 **Nhận việc:**
+
+2026-11-01, Claude: phiếu giao Codex, worktree `../lean_wt/CHAT-34`, nhánh `codex/CHAT-34` từ `de881a2` cộng thay đổi chưa commit của cây chính stage sẵn. Test `be/internal/giaoviec/viec_cua_toi_test.go` Claude viết trước, chưa chạy đỏ trên database. Lần chạy Codex đầu dừng vì hết hạn mức (tới 23:20), chưa có code. Việc kế tiếp: chạy lại phiếu, Claude duyệt diff và chạy `be-check`.
 
 [↑ đầu file](#top)
 

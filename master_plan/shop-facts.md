@@ -248,11 +248,34 @@ còn ô ⚠ nào.**
 
 | Nhóm tuỳ chọn | Lựa chọn | Món lẻ | Combo |
 |---|---|---|---|
-| **Nhân** (bắt buộc chọn 1) | Chay / Thịt / Thịt + mộc nhĩ | 0 / +1.000 / +1.000 | 0 / +4.000 / +4.000 |
+| **Nhân** (bắt buộc chọn 1) | Chay / Thịt / Thịt + mộc nhĩ / Mộc nhĩ | 0 / +1.000 / +1.000 / +1.000 | 0 / +4.000 / +4.000 / +4.000 |
 | **Lượng nhân** (chỉ hiện khi nhân ≠ Chay) | Thường / Nhiều nhân | 0 / +1.000 | 0 / +4.000 |
 | **Rau** (chỉ cho canh bánh cuốn, bắt buộc chọn 1) | Không rau / Ít rau / Nhiều rau | 0 / 0 / 0 | — |
 
-Loại nhân (thịt hay thịt + mộc nhĩ) **không đổi giá**.
+Loại nhân (thịt, thịt + mộc nhĩ, mộc nhĩ) **không đổi giá**.
+
+**Lựa chọn *Mộc nhĩ* và chế độ *Hỗn hợp* khi khách gọi combo — chủ repo chốt 2026-10-29 (T-271).**
+*Mộc nhĩ* là **loại nhân riêng**, mỗi bánh có đúng nhân mộc nhĩ, phân biệt với *Thịt + mộc nhĩ* ở
+cùng dòng (hai nguyên liệu cùng gói trong một cái bánh). Phụ thu *Mộc nhĩ* **bằng đúng *Thịt*** —
+ô *Món lẻ* +1.000, ô *Combo* +4.000 — nên §4.6 luật 4 giữ hình, loại nhân không đổi giá. Nhóm
+*Lượng nhân* vẫn gắn vì nó khác *Chay* (§4.6 luật 3).
+
+**Chế độ *Hỗn hợp* ở trang gọi combo** là một lối tắt trên giao diện khách: khi combo có **N phần
+nhận nhân** cộng dồn từ cả suất bánh cuốn con **và** suất bánh trứng con của combo
+(`menu_combo_item.quantity` của mọi suất có nhóm *Nhân*; giò không nhận nhân thì không đếm) và
+khách bấm *Hỗn hợp*, giao diện chia **ceil(N/2)** phần chọn *Thịt* và **floor(N/2)** phần chọn
+*Mộc nhĩ* (3 ⇒ 2 thịt + 1 mộc nhĩ, 4 ⇒ 2+2 — chủ repo nói thẳng hai ví dụ này cho combo ba suất
+bánh cuốn 2026-10-29; cùng ngày, chốt lại *"coi bánh trứng như bánh cuốn cũng dc"* ⇒ bánh trứng
+đếm như một phần, đóng `U-110`). Mỗi suất con gửi đơn **vẫn là một dòng con độc lập** với lựa chọn
+Nhân riêng (ADR-129, ADR-117 điểm 2): hàm giá cộng mỗi suất một lần
+(`menu_combo_item_option_surcharge.surcharge_vnd` × số suất), **không cần cộng thêm chỗ nào mới**
+(`I-034`). Giao diện giữ Thịt ở các vị trí đầu (phần Thịt nhiều hơn 1 khi N lẻ); sau khi đã rải hết
+quota Thịt thì các phần còn lại, kể cả bánh trứng, chọn Mộc nhĩ. **Chia theo mỗi combo trước khi
+nhân với số combo** (`quantity` của dòng combo): tăng lên k combo ⇒ k × (ceil(N/2) Thịt +
+floor(N/2) Mộc nhĩ), không gom N × k rồi mới chia. Chủ repo chốt 2026-10-29 (T-271) **cho hiện
+*Mộc nhĩ* cả ở trang gọi món lẻ** (đóng `U-109`): nhóm *Nhân* dùng chung giữa bán lẻ và combo nên
+mỗi món nhận nhân (bánh cuốn, suất trứng, bánh trứng rời, bánh trong suất giò) đều có đủ bốn lựa
+chọn.
 
 **Nhóm Rau — chủ repo chốt 2026-10-26 trong hội thoại** (T-255), nguyên văn: *"canh bánh cuốn gồm có
 lựa chọn sau không rau, ít rau và nhiều rau"*; cùng lượt, chủ repo chọn: **cả ba lựa chọn 0đ**, **mặc
@@ -335,8 +358,10 @@ khác bảng giá §4.2 và bảng phụ thu §4.4 ở đúng chỗ đó: hai b�
 3. Nhóm **"Lượng nhân" chỉ tồn tại khi nhân ≠ Chay**. ⇒ tổ hợp **Chay + Nhiều nhân là không hợp
    lệ, phải bị TỪ CHỐI**, không được âm thầm bỏ qua tuỳ chọn thừa — bếp nhận phiếu mâu thuẫn là
    hỏng món.
-4. **Loại nhân không đổi giá.** Thịt và Thịt + mộc nhĩ cùng mức phụ thu; chỉ **lượng nhân** mới đổi
-   giá.
+4. **Loại nhân không đổi giá.** Thịt, Thịt + mộc nhĩ, và Mộc nhĩ cùng mức phụ thu; chỉ **lượng
+   nhân** mới đổi giá. Khách gọi combo bấm *Hỗn hợp* (§4.4) ⇒ giao diện chia ceil/floor các **phần
+   nhận nhân** của combo (bánh cuốn **và** bánh trứng con, không tính giò) giữa *Thịt* và *Mộc
+   nhĩ*; hàm giá vẫn cộng mỗi suất một lần theo lựa chọn của suất ấy, không có chỗ cộng mới.
 5. **Phụ thu là +1.000 cho MỖI phần nhận nhân của suất.** Suất bánh cuốn ×1 · suất giò ×4 · combo
    ×4 · **suất trứng ×5** — bốn con số này là **hệ quả** của luật 1, không phải bốn con số rời cần
    nhớ thuộc lòng. Suất trứng ×5 vì cả 4 cái bánh **và** quả trứng đều nhận nhân (§4.5); chủ quán
@@ -391,9 +416,13 @@ bất kỳ tài liệu nào, **đó là bug**, không phải quy tắc.
 | 15 | **Combo Đầy đủ chín** | Bánh cuốn=Thịt / Bánh trứng chín=Chay | Bánh cuốn=Thường / Bánh trứng chín=— | — | **29.000** | 26.000 + 3 × 1.000; **mỗi suất con chọn nhân riêng** (§8.9 lượt bảy vế 2) |
 | 16 | **Canh bánh cuốn** | — | — | Không rau | **0** | lựa chọn không phải mặc định vẫn **0đ** — cả ba lựa chọn rau không đổi giá (T-255) |
 | 17 | Bánh cuốn | Thịt | Thường | Ít rau | **PHẢI BỊ TỪ CHỐI** | nhóm Rau **chỉ** gắn cho canh (§4.4, T-255): gửi rau cho món khác là phiếu bếp mâu thuẫn, như ca 11 |
+| 18 | Combo Đầy đủ chín | Mộc nhĩ | Thường | — | **30.000** | **phải bằng ca 9** — loại nhân không đổi giá; mọi suất con cùng chọn *Mộc nhĩ* (ca Hỗn hợp theo portions xem db/tests/i034_moc_nhi_hon_hop_combo.sql) |
 
-**Mười bảy ca tính tới 2026-10-26** — đếm bảng, đừng tin câu này (`work/findings.md` **F-003**). **Cột
-*Rau*, ca 16 và ca 17 vào bảng ngày 2026-10-26** cùng nhóm Rau (§4.4, T-255): ca 13 nay chọn *ít rau*
+**Mười tám ca tính tới 2026-10-29** — đếm bảng, đừng tin câu này (`work/findings.md` **F-003**).
+**Ca 18 vào bảng ngày 2026-10-29** cùng T-271: canh lựa chọn *Mộc nhĩ* phụ thu bằng *Thịt* ở combo
+bốn phần nhận nhân; chế độ *Hỗn hợp* chia ceil/floor giữa Thịt và Mộc nhĩ các phần nhận nhân của
+combo (bánh cuốn + bánh trứng con) ở trang khách nhưng tổng tiền không đổi — bằng chứng ở
+`db/tests/i034_moc_nhi_hon_hop_combo.sql` (viết trước ở T-271). **Cột *Rau*, ca 16 và ca 17 vào bảng ngày 2026-10-26** cùng nhóm Rau (§4.4, T-255): ca 13 nay chọn *ít rau*
 vì nhóm Rau bắt buộc chọn một; ca 16 canh việc lựa chọn rau **không đổi giá**, ca 17 canh việc nhóm
 Rau **không lọt sang món khác**. Ca
 1–10 đều tính được và đã đối chiếu khớp bảng giá §4.3 từ 2026-08-30. Ca 11 là ca duy nhất có kết
@@ -1549,6 +1578,8 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-10-27 | Chủ repo chuyển lời chủ quán trong hội thoại (T-262) và chọn trong câu hỏi có sẵn phương án: đăng nhập bằng **số điện thoại hoặc Gmail gõ vào ô, kèm mật khẩu** (không OTP, không nút Google) cho người làm, chủ quán **và khách**; đăng ký khai **một trong hai**; khách đăng nhập **tuỳ chọn**, **không chờ duyệt**, được **xem lại đơn** và **nhớ tên, số điện thoại, địa chỉ giao**. Thay vế 3 lượt hai §8.8 ở chỗ *đăng nhập bằng gì*; mở `U-105` … `U-108`. Xem **ADR-131** | §8.8 (lượt ba) |
 | 2026-10-28 | Chủ repo chọn trong câu hỏi có sẵn phương án (T-267): **khách** đăng ký và đăng nhập được bằng **nút Google** ở trang khách; người làm và chủ quán không có nút ấy. Thay vế 1 lượt ba §8.8 ở chỗ *không phải nút Google*, chỉ cho khách. Xem **ADR-132** | §8.8 (lượt bốn) |
 | 2026-10-29 | Chủ repo chọn trong câu hỏi có sẵn phương án (T-270): Gmail **khách** tự gõ lúc đăng ký được **xác nhận qua thư**, link **24 giờ**; khách **dùng được ngay**, Gmail **chờ xác nhận** tới khi bấm link; **chỉ khách**. Xem **ADR-133** | §8.8 (lượt năm) |
+| 2026-11-01 | Chủ repo trả lời `U-111` hai lượt trong hội thoại (T-278): *"cho đang kí bằng gmail không cần duyệt"* rồi *"Dùng ngay như khách; chủ quán cấp quyền làm việc khi cần"*; chủ repo mở nút Google cho **cả hai trang** (`/dang-nhap` và `/khach/dang-nhap`). Thay vế 1 lượt bốn ở chỗ *"chỉ trang khách"*; Google không tự tạo tài khoản `account`, Gmail chưa có vai làm việc đi về không gian khách. Xem **ADR-135** | §8.8 (lượt sáu) |
+| 2026-11-01 | Chủ repo chọn trong câu hỏi có sẵn phương án (CHAT-01, lane chat): trạm *xác nhận* trên chat **chỉ là tin báo**, POS vẫn ghi tiến độ; chủ quán **không vượt** luật quầy qua chat; **việc chạm tiền không làm qua chat**; khách đặt qua chat **chỉ giao · đến lấy, không bắt đăng nhập**, không nhắn POS. Nhân viên dùng **điện thoại riêng**. Đóng `U-113` · `U-114` · `U-115` · `U-117`, hẹp `U-112`. Xem **ADR-136** | §8.11 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **hai mục, tính tới 2026-10-23**
 
@@ -1635,7 +1666,7 @@ sai với ít nhất một trong hai.
 |---|---|
 | **Nguyên liệu** | thứ quán mua vào, nhập, dùng, hao hụt, còn lại |
 | **Con người** | ai làm, ai trực trạm nào, công, lương |
-| **Tài chính** | tiền vào tiền ra ngoài tiền hàng — chi phí, lãi lỗ, quỹ |
+| **Tài chính** | tiền vào tiền ra — chi phí gồm tiền nguyên liệu (chủ repo 2026-10-24, T-248), lãi lỗ, quỹ |
 
 Trước ngày đó, phần mềm được mô tả là **không** làm ba mảng này. Lời chốt lật ngược đúng câu ấy.
 
@@ -2235,6 +2266,21 @@ thì máy **gửi thư có link xác nhận, link sống 24 giờ**; khách **v�
 Gmail ấy **chờ xác nhận** cho tới khi bấm link. **Chỉ khách**; người làm vẫn do chủ quán duyệt tay. Gmail lấy từ nút
 Google đã được Google xác nhận nên không gửi thư. Thiết kế: `docs/decisions.md` **ADR-133**.
 
+**Lượt sáu 2026-11-01 — Nút Google xuất hiện ở CẢ HAI trang; Gmail chưa có vai làm việc đi về không gian khách; chủ quán cấp quyền sau** (T-278; chủ repo trả lời `U-111` trong hội thoại hai lượt liên tiếp — đóng câu). Nguyên văn hai câu:
+
+> Lượt một (trả lời câu *"Người làm bấm nút Tiếp tục với Google ở `/dang-nhap` thì máy xử sao?"*): *"cho đang kí bằng gmail không cần duyệt"*.
+> Lượt hai (chọn giữa *dùng ngay như khách* và *vai trò nhân viên mặc định*): *"Dùng ngay như khách; chủ quán cấp quyền làm việc khi cần"*.
+
+**Thay vế 1 lượt bốn ở chỗ *"chỉ trang khách"*:** nút Google xuất hiện ở `/dang-nhap` (người làm, chủ quán) và `/khach/dang-nhap` (khách). Mọi vế khác của lượt bốn, lượt năm giữ nguyên — Gmail lấy từ nút Google đã được Google xác nhận nên không gửi thư.
+
+Ba điều lời chốt nói, và không điều nào rộng hơn:
+
+1. **Gmail chưa có vai làm việc dùng ngay như khách** — máy mở phiên khách (hoặc tạo `customer_account` mới) đúng như vế lượt bốn; không chờ chủ quán duyệt. Lời đáp lượt một là *không cần duyệt* ở nhánh **khách**, không phải *nâng Gmail thành tài khoản người làm không cần duyệt*.
+2. **Chủ quán cấp quyền làm việc khi cần** — một hành động thủ công của chủ quán gắn Google đã biết với một tài khoản `account` đã có. Vế 1 lượt hai (2026-10-14) giữ nguyên: **mọi tài khoản `account` vẫn do chủ quán tạo/duyệt**; Google không bao giờ tự tạo tài khoản người làm, không bao giờ nâng tài khoản khách thành người làm.
+3. **Nút Google ở `/dang-nhap` không mở trực quầy** — vế 4 lượt hai (2026-10-14, *đăng nhập ở quầy là mốc đổi người*) giữ nguyên: chỉ form mật khẩu có checkbox *tại quầy* nên tài khoản `account` muốn đứng quầy vẫn đăng nhập bằng mật khẩu. Người làm chỉ có Google thì đặt mật khẩu trước (qua đường quên mật khẩu bằng Gmail đã có, hoặc đường tự đặt khi đang có phiên khi mở lát sau).
+
+Chỗ lời chưa phủ — thao tác chủ quán ở trang nhân viên gắn Google vào `account` lấy sub bằng cách nào (chủ quán nhập sub tay, hay mời nhân viên bấm nút Google ngay tại máy chủ quán), chủ quán muốn gắn Google của chính mình để khỏi cần mật khẩu, Gmail chưa xác nhận có được chấp nhận gắn không — là một ADR phụ khi mở cửa gắn ấy; cho tới đó cửa chưa thi công, chủ quán đăng nhập bằng mật khẩu. Thiết kế toàn luồng: `docs/decisions.md` **ADR-135**.
+
 **Lời này KHÔNG chạm chấm công.** *Lúc này ai đứng quầy* và *hôm nay người này làm mấy giờ* là hai
 câu khác nhau; câu thứ hai là mức 2 của §8.7 đã có lời đáp `C30` · `C31` · `C32` ngày 2026-09-25 ở §8.7; các vế còn thiếu
 ở `work/admin-questions.md` §3.
@@ -2327,6 +2373,8 @@ của §4.6 áp **từng món** — *Chay + Nhiều nhân* vẫn bị từ chố
 
 ### 8.10 Tài chính — câu trả lời E44–E51
 
+**Quy tắc hiện hành bổ sung 2026-10-24 — T-248, chủ repo chọn trong hội thoại:** cho phép tiền mua nguyên liệu trong trang Khoản chi, theo mục và khoản con của bản thiết kế. Quy tắc này thay vế cũ loại tiền hàng khỏi Khoản chi bên dưới; lương vẫn ở luồng người làm. Khoản chi được xoá mềm có lý do, giữ lịch sử; chặn xoá khi ngày chi đã đối soát, kể cả tiền riêng. Mục chi/khoản con còn khoản chi chưa xoá ở bất kỳ ngày nào thì không xoá được (lựa chọn chủ repo trong T-247 được giữ khi triển khai thật). Không tự gán nguồn két cho mục nguyên liệu: tạo mục vẫn phải khai rõ nguồn. Không ghi tiền mua nguyên liệu lần thứ hai trong một luồng khác để cộng trùng; sổ lượng nguyên liệu vẫn chỉ theo dõi lượng.
+
 **Chủ quán trả lời 2026-09-25 (T-093).** Chuẩn hoá chính tả, giữ nguyên ý;
 đây là dữ kiện và nhu cầu, chưa phải thiết kế nghiệp vụ tài chính.
 
@@ -2361,3 +2409,19 @@ két cuối ngày (**ADR-074**: nguồn tiền nằm trên loại chi).
 **Lượt sáu 2026-10-15 — CHỈ CHỦ QUÁN ghi khoản chi** (T-192, đóng `U-095`; chủ repo trả lời trong hội thoại: *"chỉ chủ
 quán dc ghi"*). Một khoản chi — mọi loại, kể cả loại trả từ két — chỉ chủ quán ghi được; người đứng quầy không ghi.
 *Cách đọc của phiên:* lời nói *ghi*; sửa một khoản đã ghi cũng chỉ chủ quán, vì sửa là ghi lại.
+
+### 8.11 Chat với app — lời 2026-11-01 (CHAT-01)
+
+**Chủ repo chọn trong câu hỏi có sẵn phương án; chưa có xác nhận lời đến từ chủ quán.** Mong muốn gốc: `work/backlog.md`
+entry `T-283`.
+
+1. Nhân viên trạm *xác nhận* trên chat **chỉ là tin báo**. POS vẫn là nơi duy nhất ghi tiến độ; §5.4 và ADR-011 không đổi.
+2. *Chủ quán có tất cả các quyền* **không vượt** luật §6.13: chat kiểm quyền đúng như màn tay.
+3. Việc **chạm tiền** (thu, huỷ, hoàn, ghi nợ, giảm giá, đối soát) **không** làm qua chat; chat chỉ dẫn sang màn tay.
+4. Khách đặt qua chat: **chỉ giao · đến lấy, không bắt đăng nhập**; đơn vẫn qua POS duyệt (§6.2); khách chỉ nói với trợ lý.
+5. Không gửi dữ liệu cá nhân (tên, số điện thoại, địa chỉ khách, tên nhân viên) ra dịch vụ AI ngoài; trần chi phí model
+   **10 USD/tháng**. Model chưa chọn (`U-112`).
+
+6. Nhân viên đọc và bấm hộp tin trên **điện thoại riêng**, đăng nhập tài khoản của mình.
+
+Chưa có lời: báo nghỉ (`U-116`).

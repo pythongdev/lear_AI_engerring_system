@@ -399,6 +399,69 @@ var cacCaVet = []caVet{
 			canDat(t, traLoi{status: status, body: body}, 200)
 		}}
 	}},
+	// T-248: đổi tên và xoá mềm khoản chi phải giữ đủ ảnh, lý do và người thao tác.
+	{"khoanchi/sua_loai", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		khoanchi.Routes(r, khoanchi.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		id := c.id(t, "INSERT INTO shop.expense_category(name,paid_from_till) VALUES ($1,false) RETURNING id", t.Name())
+		return dichVet{"expense_category", id, c.chu, "name", t.Name(), t.Name() + "-mới", func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/expense-categories/%d", id), c.chu,
+				map[string]any{"name": t.Name() + "-mới", "reason": "đổi tên mục chi kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	{"khoanchi/sua_khoan_con", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		khoanchi.Routes(r, khoanchi.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		loai := c.id(t, "INSERT INTO shop.expense_category(name,paid_from_till) VALUES ($1,false) RETURNING id", t.Name())
+		id := c.id(t, "INSERT INTO shop.expense_item(expense_category_id,name) VALUES ($1,'test-cũ') RETURNING id", loai)
+		return dichVet{"expense_item", id, c.chu, "name", "test-cũ", "test-mới", func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/expense-items/%d", id), c.chu,
+				map[string]any{"name": "test-mới", "reason": "đổi tên khoản con kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	{"khoanchi/xoa", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		khoanchi.Routes(r, khoanchi.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		loai := c.id(t, "INSERT INTO shop.expense_category(name,paid_from_till) VALUES ($1,false) RETURNING id", t.Name())
+		id := c.id(t, "INSERT INTO shop.expense(expense_category_id,amount_vnd,paid_date) VALUES ($1,1000,'2026-01-05') RETURNING id", loai)
+		return dichVet{"expense", id, c.chu, "deleted_at", nil, "mốc", func() {
+			status, body := c.goi(t, "DELETE", fmt.Sprintf("/expenses/%d", id), c.chu,
+				map[string]any{"reason": "xoá mềm khoản chi kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 204)
+		}}
+	}},
+	{"khoanchi/xoa_danh_muc", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		khoanchi.Routes(r, khoanchi.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		id := c.id(t, "INSERT INTO shop.expense_category(name,paid_from_till) VALUES ($1,false) RETURNING id", t.Name())
+		con := c.id(t, "INSERT INTO shop.expense_item(expense_category_id,name) VALUES ($1,'test-con') RETURNING id", id)
+		return dichVet{"expense_category", id, c.chu, "deleted_at", nil, "mốc", func() {
+			status, body := c.goi(t, "DELETE", fmt.Sprintf("/expense-categories/%d", id), c.chu,
+				map[string]any{"reason": "xoá mềm mục chi kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 204)
+			if c.docSo(t, "SELECT count(*) FROM shop.expense_item WHERE id=$1 AND deleted_at IS NOT NULL AND deleted_by_person_id=$2", con, c.chu) != 1 {
+				t.Fatal("xoá mục rỗng phải xoá mềm khoản con cùng người thao tác")
+			}
+		}}
+	}},
 	{"nguyenlieu/dat_ti_le", func(t *testing.T, c canh) dichVet {
 		r := gin.New()
 		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))

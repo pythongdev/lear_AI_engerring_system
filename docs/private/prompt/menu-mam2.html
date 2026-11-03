@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<title>Menu mâm · Bánh cuốn Bà Thanh Cao Bằng</title>
+<style>
+@font-face{font-family:"Be Vietnam Pro";src:local("Be Vietnam Pro");font-display:swap}
+:root{color-scheme:dark;--bg:#0f172a;--surface:#1e293b;--text:#f8fafc;--muted:#94a3b8;--orange:#EA6A0C;--line:#334155;--dock:156px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Be Vietnam Pro",system-ui,sans-serif;font-size:14px;line-height:1.5}
+button,summary{touch-action:manipulation}
+button{font:inherit;color:inherit;cursor:pointer;min-width:44px;min-height:44px;border:0;border-radius:12px;background:var(--surface)}
+button:focus-visible,summary:focus-visible{outline:3px solid #ffbb83;outline-offset:4px}
+button:disabled{opacity:.35;cursor:default}
+button.primary{background:var(--orange);color:#fff;font-weight:700}
+button:hover:not(:disabled){filter:brightness(1.12)}
+h1,h2,h3,p{margin:0}
+small,.muted{color:var(--muted)}
+.shell{max-width:640px;margin:auto;padding-bottom:calc(var(--dock) + 22px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px 8px}
+.brand{font-size:17px;line-height:1.3;font-weight:800}
+.brand span{display:block;font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--muted);margin-top:3px}
+.table{font-size:12px;white-space:nowrap;padding:9px 12px;background:var(--surface);border-radius:24px}
+.intro{margin:0 20px 10px;font-size:12px;color:var(--muted)}
+.intro summary{cursor:pointer;min-height:28px;display:flex;align-items:center;gap:6px}
+.intro summary::before{content:"ⓘ";color:#f5a46a}
+.intro p{padding:8px 0;max-width:540px}
+.filters{display:flex;gap:8px;padding:0 20px}
+.filters button{padding:0 18px;background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:24px}
+.filters button[aria-pressed="true"]{background:var(--orange);color:white;border-color:var(--orange);font-weight:700}
+.stage{--art-size:clamp(66px,19vw,120px);--arc-drop:clamp(68px,18vw,110px);padding:10px 8px 0;touch-action:pan-y;user-select:none}
+.track{position:relative;height:calc(var(--art-size) + var(--arc-drop) + 106px)}
+.track::before{content:"";position:absolute;left:10%;right:10%;top:30px;height:var(--arc-drop);border:1px dashed #475569;border-bottom:0;border-radius:50% 50% 0 0;pointer-events:none;opacity:.55}
+.menu-item{position:absolute;left:var(--arc-x);top:var(--arc-y);width:24%;min-width:0;padding:5px 3px 8px;border:1px solid transparent;background:transparent;display:flex;flex-direction:column;align-items:center;transform:translateX(-50%);transition:left .24s ease,top .24s ease,background .2s}
+.menu-item[hidden]{display:none}
+.menu-item[aria-pressed="true"]{border-color:var(--orange);background:#1e293b}
+.menu-art{display:block;width:100%}
+.menu-item svg{display:block;width:100%;height:var(--art-size);pointer-events:none}
+.menu-name{display:block;width:100%;min-height:48px;font-size:12px;line-height:16px;font-weight:700;text-align:center;overflow-wrap:break-word}
+.menu-price{display:block;color:#ffac6c;font-size:12px;font-weight:700;margin-top:3px}
+.menu-unit{display:block;font-size:10px;color:var(--muted);font-weight:400}
+.menu-check{position:absolute;right:5px;top:3px;color:#ffac6c;font-size:13px}
+.menu-item[aria-pressed="false"] .menu-check{visibility:hidden}
+.browse{display:flex;align-items:center;justify-content:center;gap:16px;padding:2px 16px 0}
+.arrow{font-size:24px;border:1px solid var(--line);background:transparent;border-radius:50%}
+.browse-center{text-align:center;min-width:156px}
+.hint{font-size:11px;color:var(--muted);margin:0}
+.position{font-size:12px;color:#d6dfeb;margin-bottom:2px}
+.details{padding:12px 20px 20px}
+.details.enter{animation:appear .24s ease}
+@keyframes appear{from{opacity:.35;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+h1{font-size:22px;line-height:1.25;letter-spacing:-.03em}
+.price{white-space:nowrap;font-size:20px;color:#ffac6c;font-weight:800}
+.unit{display:block;font-size:11px;font-weight:400;text-align:right;color:var(--muted)}
+.description{color:var(--muted);font-size:12px;margin-top:7px}
+.ingredients{display:flex;flex-wrap:wrap;gap:4px 12px;padding:0;margin:8px 0 12px;list-style:none;font-size:12px;color:#d6dfeb}
+.ingredients li::before{content:"· ";color:var(--orange)}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0 12px}
+fieldset{padding:0;margin:0;border:0;min-width:0}
+legend{font-size:11px;color:var(--muted);margin-bottom:5px}
+.choice-group{display:flex;gap:4px;flex-wrap:wrap}
+.choice{font-size:12px;padding:0 10px;border:1px solid var(--line);border-radius:10px}
+.choice[aria-pressed="true"]{border-color:var(--orange);color:#ffb47b;background:#392b25}
+.action{display:flex;gap:10px;align-items:center}
+.stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.stepper button{background:transparent;font-size:20px;border-radius:0}
+.stepper output{min-width:28px;text-align:center;font-weight:700}
+.add{flex:1;padding:0 12px}
+.dock{position:fixed;bottom:0;left:0;right:0;z-index:10;background:var(--surface);border-top:1px solid #405069;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -8px 28px #0002}
+.dock-inner{max-width:640px;margin:auto;padding:12px 20px}
+.dock-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.dock-head strong{font-size:12px}
+#selection-count{font-size:11px;color:var(--muted)}
+.summary-parts{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:11px;min-height:34px;align-content:center;color:#d9e3ee}
+.summary-parts span{white-space:nowrap}
+.summary-parts b{color:white}
+.dock-bottom{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:7px}
+.total-label{display:block;font-size:10px;color:var(--muted)}
+#total{font-size:22px;font-weight:800;line-height:1.3}
+#open-order{padding:0 20px;min-width:130px}
+dialog{position:fixed;inset:auto 0 0;margin:0 auto;width:100%;max-width:640px;max-height:88svh;padding:0;border:1px solid var(--line);border-bottom:0;border-radius:24px 24px 0 0;background:var(--bg);color:var(--text);overflow:auto;overscroll-behavior:contain}
+dialog::backdrop{background:#020617b8}
+dialog[open]{animation:sheet-in .22s ease}
+@keyframes sheet-in{from{transform:translateY(32px);opacity:0}to{transform:translateY(0);opacity:1}}
+.sheet-header{position:sticky;top:0;background:var(--bg);z-index:1;display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+.sheet-header h2{font-size:19px}
+#close-order{font-size:22px}
+.sheet-body{padding:0 20px 20px}
+.order-row{padding:16px 0;border-bottom:1px solid var(--line)}
+.row-top{display:flex;justify-content:space-between;gap:10px}
+.row-top h3{font-size:14px}
+.row-options{font-size:12px;color:var(--muted);margin-top:4px}
+.row-controls{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.remove{background:transparent;color:#fbb9a1;text-decoration:underline;font-size:12px;padding:0 12px}
+.component-summary{margin:20px 0;padding:16px;background:var(--surface);border-radius:16px}
+.component-summary h3{font-size:14px;margin-bottom:12px}
+.component-group{font-size:12px;margin-top:12px}
+.component-group strong{display:block;margin-bottom:4px;color:#ffb47b}
+.component-group p{color:#d9e3ee}
+.sheet-total{display:flex;justify-content:space-between;font-size:17px;font-weight:700;padding:4px 0 16px}
+.continue{width:100%;margin-bottom:env(safe-area-inset-bottom)}
+.empty{padding:40px 0;text-align:center;color:var(--muted)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+body.modal-open{overflow:hidden}
+@media(min-width:700px){header{padding-top:24px}.stage{margin-top:12px}.stage{--art-size:125px}.details{padding-top:20px}h1{font-size:27px}}
+@media(max-width:359px){header,.details{padding-left:16px;padding-right:16px}.brand{font-size:15px}.filters{padding:0 16px}.filters button{padding:0 14px}.options{gap:8px;grid-template-columns:1.25fr 1fr}.choice{padding:0 8px;font-size:11px}h1{font-size:19px}.price{font-size:18px}.dock-inner{padding-left:16px;padding-right:16px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<!-- Tất cả hình món ăn đều là SVG nội tuyến. Font dùng bản cài trên máy nếu có. -->
+<svg width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden">
+<defs>
+  <radialGradient id="wood">
+    <stop stop-color="#d5a373"/>
+    <stop offset=".85" stop-color="#bf8754"/>
+    <stop offset="1" stop-color="#a76d40"/>
+  </radialGradient>
+  <linearGradient id="rice" x2="0" y2="1">
+    <stop stop-color="#fffef3"/>
+    <stop offset=".65" stop-color="#ece8d9"/>
+    <stop offset="1" stop-color="#d3d1c3"/>
+  </linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+    <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#392014" flood-opacity=".3"/>
+  </filter>
+  <symbol id="tray" viewBox="0 0 400 400">
+    <circle cx="200" cy="203" r="180" fill="#000" opacity=".2"/>
+    <circle cx="200" cy="196" r="178" fill="url(#wood)" stroke="#e2b58a" stroke-width="5"/>
+    <circle cx="200" cy="196" r="164" fill="none" stroke="#915c35" stroke-width="2" opacity=".6"/>
+    <g fill="none" stroke="#875532" opacity=".13" stroke-width="2">
+      <path d="M72 95Q210 72 328 98M42 159Q200 138 358 160M38 227Q210 209 362 230M67 294Q210 279 332 300"/>
+      <path d="M83 110Q210 88 320 114M45 175Q200 158 355 177M50 244Q210 225 349 246M82 311Q210 299 316 315"/>
+    </g>
+  </symbol>
+  <symbol id="plate" viewBox="0 0 220 220">
+    <circle cx="110" cy="110" r="105" fill="#e9e9df" filter="url(#shadow)"/>
+    <circle cx="110" cy="110" r="94" fill="#faf8ec" stroke="#c6d5cb" stroke-width="2"/>
+    <circle cx="110" cy="110" r="83" fill="#f2f0e5" stroke="#e0dfd1"/>
+  </symbol>
+  <symbol id="roll" viewBox="0 0 145 44">
+    <path d="M17 7Q69 1 128 7Q143 18 130 35Q74 42 17 35Q3 27 17 7" fill="url(#rice)" stroke="#c7c9b8" filter="url(#shadow)"/>
+    <path d="M24 12Q73 9 123 12M24 30Q70 35 123 29" fill="none" stroke="#fff" stroke-width="3" opacity=".8"/>
+    <path d="M30 21l17 2m12-4 18 3m14-1 16 1" stroke="#847a60" stroke-width="3" opacity=".28"/>
+    <path d="m33 10 8 2m49 20 8-2m12-18 6 2" stroke="#508242" stroke-width="3"/>
+  </symbol>
+  <symbol id="egg-cooked" viewBox="0 0 110 100">
+    <path d="M16 17Q48 1 88 18Q112 40 91 76Q55 100 21 77Q2 53 16 17" fill="#f3dc96" stroke="#d1b36d" stroke-width="2" filter="url(#shadow)"/>
+    <path d="M22 24Q60 10 85 27L87 67Q51 85 22 66Z" fill="#fff4d1" opacity=".85"/>
+    <ellipse cx="56" cy="46" rx="24" ry="20" fill="#edb448"/>
+    <path d="m28 30 7 3m39 34 8-3" stroke="#648549" stroke-width="3"/>
+  </symbol>
+  <symbol id="egg-soft" viewBox="0 0 110 100">
+    <path d="M14 22Q40 3 88 17Q107 42 91 78Q57 96 22 76Q2 48 14 22" fill="#f8ebc5" stroke="#d8c18b" stroke-width="2" filter="url(#shadow)"/>
+    <ellipse cx="56" cy="48" rx="26" ry="23" fill="#ef8a12"/>
+    <ellipse cx="51" cy="40" rx="12" ry="7" fill="#ffc85b"/>
+    <path d="m23 26 9 3m47 42 7-3" stroke="#608444" stroke-width="3"/>
+  </symbol>
+  <symbol id="sausage" viewBox="0 0 110 100">
+    <g filter="url(#shadow)">
+      <path d="M15 32 49 10 72 45 36 65Z" fill="#c5a88a" stroke="#a58a70"/>
+      <path d="M15 32 36 65 37 77 15 44Z" fill="#a98e74"/>
+      <path d="m49 10 23 35v12L49 24Z" fill="#b0977f"/>
+      <path d="m48 53 40-22 12 38-39 20Z" fill="#d5bba0" stroke="#a58a70"/>
+      <path d="m61 89 39-20v10L61 99Z" fill="#b79a7e"/>
+    </g>
+    <g fill="#806d58" opacity=".6">
+      <circle cx="37" cy="34" r="2"/><circle cx="49" cy="44" r="1.8"/>
+      <circle cx="43" cy="24" r="1.4"/><circle cx="78" cy="55" r="2"/>
+      <circle cx="70" cy="73" r="1.6"/><circle cx="88" cy="69" r="1.5"/>
+    </g>
+  </symbol>
+  <symbol id="soup" viewBox="0 0 130 130">
+    <circle cx="65" cy="65" r="59" fill="#e7e6db" filter="url(#shadow)"/>
+    <circle cx="65" cy="65" r="50" fill="#bcb6a0"/>
+    <circle cx="65" cy="65" r="46" fill="#bc934f"/>
+    <circle cx="65" cy="65" r="42" fill="#d8b975"/>
+    <path d="M35 46Q52 31 72 35" fill="none" stroke="#f5dfa2" stroke-width="4" opacity=".6"/>
+    <g fill="#4e7844">
+      <ellipse cx="55" cy="53" rx="7" ry="3" transform="rotate(25 55 53)"/>
+      <ellipse cx="80" cy="72" rx="8" ry="3" transform="rotate(-30 80 72)"/>
+      <ellipse cx="49" cy="83" rx="6" ry="3"/>
+      <ellipse cx="78" cy="46" rx="5" ry="3"/>
+    </g>
+    <g fill="#ece0bc"><circle cx="68" cy="86" r="3"/><circle cx="42" cy="63" r="2"/><circle cx="88" cy="58" r="2"/></g>
+  </symbol>
+</defs>
+</svg>
+
+<main class="shell">
+  <header>
+    <div class="brand">Bánh cuốn Bà Thanh<span>HƯƠNG VỊ CAO BẰNG</span></div>
+    <div class="table">Bàn 03</div>
+  </header>
+
+  <details class="intro">
+    <summary>Giới thiệu bản demo</summary>
+    <p>Bản mẫu để duyệt bố cục và cách chọn món, không kết nối bán hàng.
+    Giá và thành phần là dữ liệu minh hoạ. Lựa chọn nhân và lượng nhân
+    chỉ phục vụ thử giao diện, không thay đổi giá.</p>
+  </details>
+
+  <nav class="filters" aria-label="Lọc thực đơn">
+    <button data-filter="all" aria-pressed="true">Tất cả</button>
+    <button data-filter="combo" aria-pressed="false">Combo</button>
+    <button data-filter="single" aria-pressed="false">Món lẻ</button>
+  </nav>
+
+  <section id="stage" class="stage" aria-label="Danh sách món ăn">
+    <div id="track" class="track"></div>
+  </section>
+
+  <nav class="browse" aria-label="Xem thêm món">
+    <button id="prev" class="arrow" aria-label="Xem món phía trước" aria-controls="track">‹</button>
+    <div class="browse-center">
+      <p id="position" class="position"></p>
+      <p class="hint">Vuốt trái / phải để xem thêm</p>
+    </div>
+    <button id="next" class="arrow" aria-label="Xem món tiếp theo" aria-controls="track">›</button>
+  </nav>
+
+  <section id="details" class="details" aria-label="Thông tin và chọn món"></section>
+  <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
+</main>
+
+<footer id="dock" class="dock" aria-label="Tổng hợp món đang chọn">
+  <div class="dock-inner">
+    <div class="dock-head">
+      <strong>Bạn đã chọn</strong>
+      <span id="selection-count"></span>
+    </div>
+    <div id="summary-parts" class="summary-parts"></div>
+    <div class="dock-bottom">
+      <div><span class="total-label">Tổng tiền</span><span id="total">0đ</span></div>
+      <button id="open-order" class="primary">Xem đơn</button>
+    </div>
+  </div>
+</footer>
+
+<dialog id="order" aria-labelledby="order-title">
+  <div class="sheet-header">
+    <h2 id="order-title">Món bạn đang chọn</h2>
+    <button id="close-order" aria-label="Đóng đơn">×</button>
+  </div>
+  <div id="sheet-body" class="sheet-body"></div>
+</dialog>
+
+<script>
+"use strict";
+
+const menu = [
+  {id:"gio",name:"Suất giò",type:"combo",price:21000,unit:"combo",
+   description:"Bánh cuốn mềm, giò thơm cùng bát canh ấm.",
+   parts:[3,0,0,1,1]},
+  {id:"chin",name:"Đầy đủ trứng chín",type:"combo",price:30000,unit:"combo",
+   description:"Một mâm ấm bụng với bánh trứng chín mềm, bùi.",
+   parts:[3,1,0,1,1]},
+  {id:"tai",name:"Đầy đủ trứng tái",type:"combo",price:30000,unit:"combo",
+   description:"Bánh trứng lòng đào béo mềm, ăn cùng giò và canh.",
+   parts:[3,0,1,1,1]},
+  {id:"day",name:"Đầy đặn",type:"combo",price:42000,unit:"combo",
+   description:"Đủ bánh cuốn, hai kiểu bánh trứng, giò và canh.",
+   parts:[3,1,1,1,1]},
+  {id:"banh",name:"Bánh cuốn",type:"single",price:4000,unit:"cái",
+   description:"Từng chiếc bánh trắng mềm, chọn nhân theo ý bạn.",
+   parts:[1,0,0,0,0]},
+  {id:"cha",name:"Giò",type:"single",price:9000,unit:"phần",
+   description:"Một phần giò thơm, mềm để ăn kèm bánh cuốn.",
+   parts:[0,0,0,1,0]}
+];
+
+const labels = ["bánh cuốn","bánh trứng chín","bánh trứng tái","phần giò","bát canh"];
+const cart = new Map();
+const preferences = new Map();
+let filter = "all", index = 0, windowStart = 0;
+let pointer = null, suppressClickUntil = 0;
+const windowSize = 4;
+const $ = id => document.getElementById(id);
+const money = value => value.toLocaleString("vi-VN") + "đ";
+const visible = () => menu.filter(item => filter === "all" || item.type === filter);
+const current = () => visible()[index];
+const itemById = id => menu.find(item => item.id === id);
+
+function selected(item = current()) {
+  if (!preferences.has(item.id)) preferences.set(item.id,{fill:"Thịt",amount:"Vừa"});
+  return item.parts[0] ? preferences.get(item.id) : {fill:"",amount:""};
+}
+function key(id,fill,amount) { return [id,fill,amount].join("|"); }
+function currentKey() {
+  const item = current(), option = selected(item);
+  return key(item.id,option.fill,option.amount);
+}
+function change(id,fill,amount,delta) {
+  const k = key(id,fill,amount);
+  const qty = (cart.get(k)?.qty || 0) + delta;
+  if (qty <= 0) cart.delete(k);
+  else cart.set(k,{id,fill,amount,qty});
+}
+function totals() {
+  const result = {parts:[0,0,0,0,0],money:0};
+  for (const row of cart.values()) {
+    const item = itemById(row.id);
+    result.money += item.price * row.qty;
+    item.parts.forEach((n,i) => result.parts[i] += n * row.qty);
+  }
+  return result;
+}
+function partsText(parts) {
+  return parts.map((n,i) => n ? `${n} ${labels[i]}` : "").filter(Boolean).join(" · ");
+}
+function use(symbol,x,y,w,h,extra = "") {
+  return `<use href="#${symbol}" x="${x}" y="${y}" width="${w}" height="${h}" ${extra}/>`;
+}
+function illustration(item) {
+  let food = use("tray",0,0,400,400);
+  if (item.type === "combo") {
+    food += use("plate",43,111,220,220);
+    food += use("roll",76,154,155,47);
+    food += use("roll",72,195,155,47);
+    food += use("roll",78,236,155,47);
+    food += use("soup",241,57,116,116);
+    food += use("plate",253,226,95,95);
+    food += use("sausage",260,230,83,76);
+    if (item.parts[1]) food += use("egg-cooked",85,63,111,101);
+    if (item.parts[2]) food += use("egg-soft",item.parts[1] ? 197 : 91,item.parts[1] ? 148 : 62,111,101);
+    food += `<path d="m296 183 44 150m-33-154 44 150" stroke="#573620" stroke-width="5" stroke-linecap="round"/>`;
+  } else if (item.id === "banh") {
+    food += use("plate",82,78,238,238);
+    food += use("roll",116,176,169,52);
+    food += `<path d="m293 99 34 204m-22-207 34 204" stroke="#573620" stroke-width="5" stroke-linecap="round"/>`;
+  } else {
+    food += use("plate",88,82,230,230);
+    food += use("sausage",127,115,151,141);
+  }
+  return `<svg viewBox="0 0 400 400" role="img" aria-label="Minh hoạ mâm ${item.name}">${food}</svg>`;
+}
+function buildMenu() {
+  $("track").innerHTML = visible().map(item =>
+    `<button class="menu-item" data-item="${item.id}" aria-pressed="false" aria-controls="details">
+      <span class="menu-check" aria-hidden="true">✓</span>
+      <span class="menu-art" aria-hidden="true">${illustration(item)}</span>
+      <span class="menu-name">${item.name}</span>
+      <span class="menu-price">${money(item.price)} <span class="menu-unit">/ ${item.unit}</span></span>
+    </button>`).join("");
+}
+function updateSelection() {
+  const list = visible();
+  const count = Math.min(windowSize,list.length);
+  $("track").querySelectorAll("[data-item]").forEach((button,i) => {
+    const slot = i - windowStart;
+    const inWindow = slot >= 0 && slot < count;
+    button.hidden = !inWindow;
+    if (inWindow) {
+      const x = count === 4 ? [12.5,37.5,62.5,87.5][slot] : 50 + (slot - (count - 1) / 2) * 30;
+      const y = count === 4 && (slot === 0 || slot === 3) ? "var(--arc-drop)" : "8px";
+      button.style.setProperty("--arc-x",x + "%");
+      button.style.setProperty("--arc-y",y);
+    }
+    button.setAttribute("aria-pressed",String(button.dataset.item === current().id));
+  });
+  $("position").textContent = `Món ${windowStart + 1}–${windowStart + count} / ${list.length}`;
+  $("prev").disabled = windowStart === 0;
+  $("next").disabled = windowStart + count >= list.length;
+}
+function moveWindow(delta) {
+  const nextStart = Math.max(0,Math.min(visible().length - windowSize,windowStart + delta));
+  if (nextStart === windowStart) return;
+  windowStart = nextStart;
+  index = Math.max(windowStart,Math.min(index,windowStart + windowSize - 1));
+  updateSelection();
+  renderDetails(true);
+  $("announcement").textContent = `${$("position").textContent}. Đang xem ${current().name}.`;
+}
+function optionGroup(title,field,values,option) {
+  return `<fieldset><legend>${title}</legend><div class="choice-group">${
+    values.map(value => `<button class="choice" data-field="${field}" data-value="${value}"
+      aria-pressed="${option[field] === value}">${value}</button>`).join("")
+  }</div></fieldset>`;
+}
+function renderDetails(animate = false) {
+  const item = current(), option = selected(item);
+  $("details").innerHTML = `
+    <div class="title-row">
+      <h1>${item.name}</h1>
+      <div class="price">${money(item.price)}<span class="unit">/ ${item.unit}</span></div>
+    </div>
+    <p class="description">${item.description}</p>
+    ${item.type === "combo" ? `<ul class="ingredients">${
+      item.parts.map((n,i) => n ? `<li>${n} ${labels[i]}</li>` : "").join("")
+    }</ul>` : ""}
+    ${item.parts[0] ? `<div class="options">
+      ${optionGroup("Nhân","fill",["Thịt","Thịt mộc nhĩ"],option)}
+      ${optionGroup("Lượng nhân","amount",["Vừa","Nhiều"],option)}
+    </div>` : ""}
+    <div class="action">
+      <div class="stepper" aria-label="Số lượng với lựa chọn hiện tại">
+        <button data-current="-1" aria-label="Giảm số lượng">−</button>
+        <output id="current-qty" aria-label="Số lượng đang chọn">0</output>
+        <button data-current="1" aria-label="Tăng số lượng">+</button>
+      </div>
+      <button class="primary add" data-current="1">Thêm vào đơn</button>
+    </div>`;
+  updateQuantity();
+  if (animate) {
+    $("details").classList.remove("enter");
+    void $("details").offsetWidth;
+    $("details").classList.add("enter");
+  }
+}
+function updateQuantity() {
+  const qty = cart.get(currentKey())?.qty || 0;
+  $("current-qty").textContent = qty;
+  $("details").querySelector('[data-current="-1"]').disabled = qty === 0;
+}
+function renderDock() {
+  const result = totals();
+  const count = [...cart.values()].reduce((sum,row) => sum + row.qty,0);
+  $("selection-count").textContent = count ? `${cart.size} dòng món` : "";
+  $("summary-parts").innerHTML = count
+    ? result.parts.map((n,i) => `<span><b>${n}</b> ${labels[i]}</span>`).join("")
+    : `<span>Bạn chưa chọn món</span>`;
+  $("total").textContent = money(result.money);
+}
+function renderSheet() {
+  const focused = document.activeElement;
+  const focusKey = focused?.dataset.key;
+  const focusAction = focused?.dataset.action;
+  const result = totals();
+
+  if (!cart.size) {
+    $("sheet-body").innerHTML = `<p class="empty">Bạn chưa chọn món</p>
+      <button class="primary continue" data-close>Tiếp tục chọn món</button>`;
+    if (focusKey) $("close-order").focus();
+    return;
+  }
+
+  const rows = [...cart.entries()].map(([k,row]) => {
+    const item = itemById(row.id);
+    return `<article class="order-row">
+      <div class="row-top"><h3>${item.name}</h3><strong>${money(item.price * row.qty)}</strong></div>
+      <p class="row-options">${money(item.price)} / ${item.unit}${row.fill ? ` · ${row.fill} · Nhân ${row.amount.toLowerCase()}` : ""}</p>
+      <div class="row-controls">
+        <div class="stepper">
+          <button data-key="${k}" data-action="minus" aria-label="Giảm ${item.name}">−</button>
+          <output aria-label="Số lượng ${item.name}">${row.qty}</output>
+          <button data-key="${k}" data-action="plus" aria-label="Tăng ${item.name}">+</button>
+        </div>
+        <button class="remove" data-key="${k}" data-action="remove" aria-label="Bỏ ${item.name}">Bỏ món</button>
+      </div>
+    </article>`;
+  }).join("");
+
+  // Nhóm thành phần theo đầy đủ lựa chọn; không gộp hai kiểu nhân.
+  const groups = new Map();
+  for (const row of cart.values()) {
+    const item = itemById(row.id);
+    const groupKey = row.fill ? `${row.fill} · Nhân ${row.amount.toLowerCase()}` : "Món không có lựa chọn nhân";
+    if (!groups.has(groupKey)) groups.set(groupKey,[0,0,0,0,0]);
+    item.parts.forEach((n,i) => groups.get(groupKey)[i] += n * row.qty);
+  }
+
+  $("sheet-body").innerHTML = rows + `
+    <section class="component-summary">
+      <h3>Tổng hợp thành phần</h3>
+      <p class="muted">${partsText(result.parts)}</p>
+      ${[...groups.entries()].map(([name,parts]) => `<div class="component-group">
+        <strong>${name}</strong><p>${partsText(parts)}</p></div>`).join("")}
+    </section>
+    <div class="sheet-total"><span>Tổng tiền</span><span>${money(result.money)}</span></div>
+    <button class="primary continue" data-close>Tiếp tục chọn món</button>`;
+
+  if (focusKey) {
+    const replacement = [...$("sheet-body").querySelectorAll("[data-key]")].find(
+      button => button.dataset.key === focusKey && button.dataset.action === focusAction);
+    (replacement || $("close-order")).focus();
+  }
+}
+function refresh() {
+  updateQuantity();
+  renderDock();
+  if ($("order").open) renderSheet();
+}
+function announceChange() {
+  $("announcement").textContent = `Đang chọn tổng cộng ${money(totals().money)}.`;
+}
+
+document.querySelector(".filters").addEventListener("click",event => {
+  const button = event.target.closest("[data-filter]");
+  if (!button || filter === button.dataset.filter) return;
+  const previousId = current().id;
+  filter = button.dataset.filter;
+  index = Math.max(0,visible().findIndex(item => item.id === previousId));
+  windowStart = Math.min(index,Math.max(0,visible().length - windowSize));
+  document.querySelectorAll("[data-filter]").forEach(control =>
+    control.setAttribute("aria-pressed",String(control.dataset.filter === filter)));
+  buildMenu();
+  updateSelection();
+  renderDetails(true);
+  $("announcement").textContent = `Danh mục ${button.textContent}, ${visible().length} món.`;
+});
+$("track").addEventListener("click",event => {
+  const button = event.target.closest("[data-item]");
+  if (!button) return;
+  index = visible().findIndex(item => item.id === button.dataset.item);
+  updateSelection();
+  renderDetails(true);
+  $("announcement").textContent = `${current().name}, ${money(current().price)}`;
+});
+
+$("prev").addEventListener("click",() => moveWindow(-1));
+$("next").addEventListener("click",() => moveWindow(1));
+document.querySelector(".browse").addEventListener("keydown",event => {
+  if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+  event.preventDefault();
+  moveWindow(event.key === "ArrowRight" ? 1 : -1);
+});
+
+// Chỉ bắt đầu vuốt ở vùng mâm; cuộn dọc vẫn do trình duyệt xử lý.
+$("stage").addEventListener("pointerdown",event => {
+  if (!event.isPrimary || event.button !== 0) return;
+  pointer = {id:event.pointerId,x:event.clientX,y:event.clientY};
+});
+window.addEventListener("pointerup",event => {
+  if (!pointer || pointer.id !== event.pointerId) return;
+  const dx = event.clientX - pointer.x, dy = event.clientY - pointer.y;
+  pointer = null;
+  if (Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+    suppressClickUntil = performance.now() + 350;
+    moveWindow(dx < 0 ? 1 : -1);
+  }
+});
+window.addEventListener("pointercancel",() => pointer = null);
+$("stage").addEventListener("click",event => {
+  if (performance.now() < suppressClickUntil && event.detail !== 0) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+},true);
+
+$("details").addEventListener("click",event => {
+  const choice = event.target.closest("[data-field]");
+  if (choice) {
+    selected()[choice.dataset.field] = choice.dataset.value;
+    $("details").querySelectorAll(`[data-field="${choice.dataset.field}"]`).forEach(button =>
+      button.setAttribute("aria-pressed",String(button.dataset.value === choice.dataset.value)));
+    updateQuantity();
+    return;
+  }
+  const button = event.target.closest("[data-current]");
+  if (!button) return;
+  const item = current(), option = selected(item);
+  change(item.id,option.fill,option.amount,Number(button.dataset.current));
+  refresh();
+  announceChange();
+});
+
+$("open-order").addEventListener("click",() => {
+  renderSheet();
+  $("order").showModal();
+  document.body.classList.add("modal-open");
+  $("close-order").focus();
+});
+function closeOrder() { $("order").close(); }
+$("close-order").addEventListener("click",closeOrder);
+$("order").addEventListener("close",() => {
+  document.body.classList.remove("modal-open");
+  $("open-order").focus();
+});
+$("sheet-body").addEventListener("click",event => {
+  if (event.target.closest("[data-close]")) { closeOrder(); return; }
+  const button = event.target.closest("[data-action]");
+  if (!button) return;
+  const row = cart.get(button.dataset.key);
+  if (!row) return;
+  const delta = button.dataset.action === "remove" ? -row.qty :
+    button.dataset.action === "plus" ? 1 : -1;
+  change(row.id,row.fill,row.amount,delta);
+  refresh();
+  announceChange();
+});
+
+// Chiều cao thanh đáy được đo thực tế để không che nội dung cuối trang.
+function measureDock() {
+  document.documentElement.style.setProperty("--dock",$("dock").getBoundingClientRect().height + "px");
+}
+if ("ResizeObserver" in window) new ResizeObserver(measureDock).observe($("dock"));
+window.addEventListener("resize",measureDock);
+
+buildMenu();
+updateSelection();
+renderDetails();
+renderDock();
+measureDock();
+
+
+</script>
+</body>
+</html>

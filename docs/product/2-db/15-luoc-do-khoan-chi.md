@@ -14,6 +14,7 @@ yêu cầu **YC-33** ở `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §
 | Bảng | Ý định và lý do |
 |---|---|
 | `expense_category` | Danh sách loại thêm được; mỗi loại khai rõ nguồn két hay không. ADR-106 giữ nguồn sau khi tạo để không viết lại két của ngày cũ. |
+| `expense_item` | Khoản con theo loại, thêm ở T-248 ngày 2026-10-24; FK ghép giữ liên kết đúng loại, xoá mềm có vết. |
 | `expense` | Mỗi khoản đọc đủ loại, tiền, ngày khai, người và lúc ghi; tổng khoảng ngày là phép cộng, không cất tổng. |
 
 Dữ liệu mồi `db/seed/seed.pl` kiểm tên trong §8.10 rồi thêm điện, nước, wifi, xăng xe từ két;
@@ -42,7 +43,7 @@ S4.10 trong `db/scenario/s4_ngay_quan_tri.sql` ghi hai nguồn; `doc_lai.sql` đ
 
 ## 3. Giới hạn và bước lùi
 
-Tiền hàng và lương không thuộc khoản chi: đây là giới hạn nghiệp vụ I-029, máy không đoán nghĩa tên loại.
+Từ lựa chọn chủ repo 2026-10-24 (T-248), tiền nguyên liệu được ghi tại Khoản chi; lương vẫn ở luồng người làm. Máy không đoán nghĩa tên loại.
 Không cất ghi chú, kỳ, nhà cung cấp, hay ngày bán của két (ADR-106 điểm 5).
 Không dựng công thức lãi/lỗ, phân bổ tháng, thuế hay tiền mang về nhà; các việc ấy ngoài lát.
 Chuỗi vết chỉ phát hiện đứt khi đã có vết, không suy được lần sửa vượt database trên dòng chưa từng có vết.
@@ -52,3 +53,11 @@ Bước 28 trong [07-thu-tu-migration.md](07-thu-tu-migration.md) có file lùi:
 [`db/migrations/20261014180000_khoan_chi.down.sql`](../../../db/migrations/20261014180000_khoan_chi.down.sql).
 Khoá chặn kiểm cả hai bảng còn rỗng trước khi gỡ trigger và bảng khoản rồi bảng loại.
 Không thêm bảng vào tham số ngoại lệ của [01-quy-uoc-du-lieu.md](01-quy-uoc-du-lieu.md).
+
+## 4. Khoản con và xoá mềm — T-248, 2026-10-24
+
+Migration [20261024140000_khoan_chi_chi_tiet.up.sql](../../../db/migrations/20261024140000_khoan_chi_chi_tiet.up.sql) thêm bảng `expense_item`, liên kết khoản con nullable cho lịch sử và dấu xoá trên ba bảng. FK ghép giữ khoản con thuộc đúng loại. Cặp thời điểm/người xoá đồng bộ; revision giữ lý do và ảnh trước/sau. Nguồn loại giữ bất biến, tên loại/khoản con vẫn duy nhất kể cả lịch sử đã xoá. Không backfill khoản con giả, không tự tạo loại Mua nguyên liệu hay mặc định nguồn tiền.
+
+Service khoá loại/khoản con khi ghi hoặc xoá để tránh tạo khoản tham chiếu đối tượng đã xoá. Xoá loại bị chặn khi còn khoản chi chưa xoá; loại rỗng được xoá mềm cùng các khoản con; xoá khoản con bị chặn khi còn khoản chi chưa xoá, kiểm mọi ngày. Xoá khoản luôn giữ khoá ngày đối soát, kể cả tiền riêng. Đường đọc khoản, tổng và hai phép tính két loại khoản đã xoá. PostgreSQL giữ cấu trúc/vết, API giữ luật danh mục còn dùng và ngày đối soát như các cửa hiện có; thao tác chủ bảng ngoài API không được coi là cửa nghiệp vụ.
+
+Lùi migration bị chặn khi có bất kỳ khoản con, liên kết hay dấu xoá nào. Test bổ sung tại `db/tests/t248_expense_items_soft_delete.sql` và `be/internal/khoanchi/t248_test.go`.

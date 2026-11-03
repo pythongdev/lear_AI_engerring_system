@@ -1,0 +1,2574 @@
+diff --git a/be/cmd/server/router.go b/be/cmd/server/router.go
+index 8c77028..6dce119 100644
+--- a/be/cmd/server/router.go
++++ b/be/cmd/server/router.go
+@@ -58,7 +58,7 @@ func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtim
+ 	nguoi.Routes(r, nguoi.NewService(pool))
+ 	taikhoan.Routes(r, taikhoan.NewService(pool, taikhoan.SMTPFromEnv()))
+ 	googleClientID := strings.TrimSpace(os.Getenv("BANHCUON_GOOGLE_CLIENT_ID"))
+-	khach.Routes(r, khach.NewService(pool, taikhoan.SMTPFromEnv()).WithGoogle(googleClientID, google.New(googleClientID, google.Options{})))
++	khach.Routes(r, khach.NewService(pool, taikhoan.SMTPFromEnv()).WithOrigin(os.Getenv("BANHCUON_ORIGIN")).WithGoogle(googleClientID, google.New(googleClientID, google.Options{})))
+ 	tratruoc.Routes(r, tratruoc.NewService(pool))
+ 	hoadon.Routes(r, hoadon.NewService(pool))
+ 	ket.Routes(r, ket.NewService(pool))
+diff --git a/be/internal/apierr/apierr.go b/be/internal/apierr/apierr.go
+index aaa0aab..ee9b745 100644
+--- a/be/internal/apierr/apierr.go
++++ b/be/internal/apierr/apierr.go
+@@ -67,6 +67,9 @@ const (
+ 	CodePasswordTooShort        Code = "password_too_short"
+ 	CodeInvalidCredentials      Code = "invalid_credentials"
+ 	CodeLoginTemporarilyBlocked Code = "login_temporarily_blocked"
++	CodeVerificationInvalid     Code = "verification_invalid"
++	CodeNoPendingEmail          Code = "no_pending_email"
++	CodeVerificationRateLimited Code = "verification_rate_limited"
+ 	CodeResetTokenInvalid       Code = "reset_token_invalid"
+ 	CodeAccountNotPending       Code = "account_not_pending"
+ 	CodeAccountNotActive        Code = "account_not_active"
+@@ -212,6 +215,9 @@ var statusOf = map[Code]int{
+ 	CodeInvalidCredentials:      401,
+ 	CodeLoginTemporarilyBlocked: 429,
+ 	CodeResetTokenInvalid:       400,
++	CodeVerificationInvalid:     400,
++	CodeNoPendingEmail:          409,
++	CodeVerificationRateLimited: 429,
+ 	CodeAccountNotPending:       409,
+ 	CodeAccountNotActive:        409,
+ 	CodeAccountNotLocked:        409,
+diff --git a/be/internal/ban/internal/sqlcgen/models.go b/be/internal/ban/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/ban/internal/sqlcgen/models.go
++++ b/be/internal/ban/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/combo/internal/sqlcgen/models.go b/be/internal/combo/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/combo/internal/sqlcgen/models.go
++++ b/be/internal/combo/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/danhmuc/internal/sqlcgen/models.go b/be/internal/danhmuc/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/danhmuc/internal/sqlcgen/models.go
++++ b/be/internal/danhmuc/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/daotao/internal/sqlcgen/models.go b/be/internal/daotao/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/daotao/internal/sqlcgen/models.go
++++ b/be/internal/daotao/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/don/internal/sqlcgen/models.go b/be/internal/don/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/don/internal/sqlcgen/models.go
++++ b/be/internal/don/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/don/vet_cua_test.go b/be/internal/don/vet_cua_test.go
+index ab9f6e7..97280a4 100644
+--- a/be/internal/don/vet_cua_test.go
++++ b/be/internal/don/vet_cua_test.go
+@@ -8,6 +8,7 @@ import (
+ 	"fmt"
+ 	"net/http"
+ 	"net/http/httptest"
++	"net/url"
+ 	"os"
+ 	"path/filepath"
+ 	"reflect"
+@@ -577,6 +578,24 @@ var cacCaVet = []caVet{
+ 			khachVetGoi(t, c, "POST", "/customer-password-resets", "", map[string]any{"token": thu.ma, "new_password": "mat-khau-vet-moi"}, 200)
+ 		}}
+ 	}},
++	{"khach/xac_nhan", func(t *testing.T, c canh) dichVet {
++		thu := &thuVet{}
++		r := gin.New()
++		khach.Routes(r, khach.NewService(c.pool, thu))
++		c.srv = httptest.NewServer(r)
++		t.Cleanup(c.srv.Close)
++		khachVetGoi(t, c, "POST", "/customer-accounts", "", map[string]any{
++			"display_name": "Khách kiểm vết xác nhận", "email": fmt.Sprintf("vet.xn.%d@khach.test", c.chu), "password": "mat-khau-vet-1",
++		}, 201)
++		if thu.xacNhan == "" {
++			t.Fatal("không có mã xác nhận Gmail")
++		}
++		h := sha256.Sum256([]byte(thu.xacNhan))
++		id := c.docSo(t, "SELECT id FROM shop.customer_email_verification WHERE token_hash=$1", h[:])
++		return dichVet{"customer_email_verification", id, 0, "used_at", nil, "mốc", func() {
++			khachVetGoi(t, c, "POST", "/customer-email-verifications", "", map[string]any{"token": thu.xacNhan}, 200)
++		}}
++	}},
+ 	// Hai cửa khép khoảng của P3-12 (Claude thêm 2026-10-12 khi duyệt: TestI018_TapCuaSuaKhopTapCa đòi).
+ 	{"nhandon/mo_lai", func(t *testing.T, c canh) dichVet {
+ 		c.srv = nhandonSrv(t, c)
+@@ -783,14 +802,23 @@ func nhandonSrv(t *testing.T, c canh) *httptest.Server {
+ 	return srv
+ }
+ 
+-// thuVet giữ mã đặt lại thay cho dịch vụ gửi thư.
+-type thuVet struct{ ma string }
++// thuVet giữ mã đặt lại và mã xác nhận Gmail thay cho dịch vụ gửi thư.
++type thuVet struct{ ma, xacNhan string }
+ 
+ func (m *thuVet) SendPasswordReset(_ context.Context, _, token string) error {
+ 	m.ma = token
+ 	return nil
+ }
+ 
++func (m *thuVet) SendEmailVerification(_ context.Context, _, link string) error {
++	u, err := url.Parse(link)
++	if err != nil {
++		return err
++	}
++	m.xacNhan = u.Query().Get("ma")
++	return nil
++}
++
+ func taikhoanSrv(t *testing.T, c canh, thu taikhoan.Mailer) *httptest.Server {
+ 	t.Helper()
+ 	r := gin.New()
+@@ -815,6 +843,11 @@ func khachVetSetup(t *testing.T, c canh, mail taikhoan.Mailer) (canh, string, in
+ 	if token == "" {
+ 		t.Fatal("đăng ký khách thiếu cookie")
+ 	}
++	// ADR-133: Gmail tự gõ còn chờ; chỉ Gmail đã xác nhận mới nhận thư đặt lại.
++	if thu, ok := mail.(*thuVet); ok && thu.xacNhan != "" {
++		khachVetGoi(t, c, "POST", "/customer-email-verifications", "", map[string]any{"token": thu.xacNhan}, 200)
++		thu.xacNhan = ""
++	}
+ 	return c, token, int64(out["customer_account_id"].(float64)), email
+ }
+ func khachVetGoi(t *testing.T, c canh, method, path, token string, body any, want int) (map[string]any, string) {
+diff --git a/be/internal/gia/internal/sqlcgen/models.go b/be/internal/gia/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/gia/internal/sqlcgen/models.go
++++ b/be/internal/gia/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/giaoviec/internal/sqlcgen/models.go b/be/internal/giaoviec/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/giaoviec/internal/sqlcgen/models.go
++++ b/be/internal/giaoviec/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/hoadon/internal/sqlcgen/models.go b/be/internal/hoadon/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/hoadon/internal/sqlcgen/models.go
++++ b/be/internal/hoadon/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/ket/internal/sqlcgen/models.go b/be/internal/ket/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/ket/internal/sqlcgen/models.go
++++ b/be/internal/ket/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/khach/doors.go b/be/internal/khach/doors.go
+index 88cf96a..69a9cb1 100644
+--- a/be/internal/khach/doors.go
++++ b/be/internal/khach/doors.go
+@@ -3,6 +3,8 @@ package khach
+ import "banhcuon/be/internal/authz"
+ 
+ var (
++	XacNhan      = authz.Door{Code: "khach/xac_nhan", Need: authz.NeedPublic}
++	GuiXacNhan   = authz.Door{Code: "khach/gui_xac_nhan", Need: authz.NeedCustomer}
+ 	GoogleLogin  = authz.Door{Code: "khach/google", Need: authz.NeedPublic}
+ 	DangKy       = authz.Door{Code: "khach/dang_ky", Need: authz.NeedPublic}
+ 	DangNhap     = authz.Door{Code: "khach/dang_nhap", Need: authz.NeedPublic}
+diff --git a/be/internal/khach/google.go b/be/internal/khach/google.go
+index 2af5df1..e01861c 100644
+--- a/be/internal/khach/google.go
++++ b/be/internal/khach/google.go
+@@ -55,7 +55,7 @@ func (s *Service) loginGoogle(ctx context.Context, credential string) (Profile,
+ 				if name == "" {
+ 					name, _, _ = strings.Cut(email, "@")
+ 				}
+-				id, e = r.create(ctx, Registration{Email: email, DisplayName: name})
++				id, e = r.createGoogle(ctx, Registration{Email: email, DisplayName: name})
+ 				if e != nil {
+ 					return e
+ 				}
+diff --git a/be/internal/khach/google_test.go b/be/internal/khach/google_test.go
+index b7dab2b..efa4f64 100644
+--- a/be/internal/khach/google_test.go
++++ b/be/internal/khach/google_test.go
+@@ -29,7 +29,7 @@ func TestI035_GoogleDisabledAndInvalid(t *testing.T) {
+ 	wantCode(t, err, apierr.CodeGoogleTokenInvalid)
+ }
+ func TestI035_GoogleAccountSessionAndEmailCollision(t *testing.T) {
+-	ctx, s, _ := testService(t)
++	ctx, s, m := testService(t)
+ 	suffix := fmt.Sprint(time.Now().UnixNano())
+ 	email := "google." + suffix + "@gmail.com"
+ 	sub := "google-" + suffix
+@@ -65,6 +65,7 @@ func TestI035_GoogleAccountSessionAndEmailCollision(t *testing.T) {
+ 	if err != nil {
+ 		t.Fatal(err)
+ 	}
++	confirmLast(t, ctx, s, m)
+ 	s.WithGoogle("client", fakeGoogle{claims: google.Claims{Sub: "new-" + sub, Email: "password." + email}})
+ 	_, _, err = s.loginGoogle(ctx, "credential")
+ 	wantCode(t, err, apierr.CodeEmailTaken)
+diff --git a/be/internal/khach/handler.go b/be/internal/khach/handler.go
+index 00b3cf4..901619f 100644
+--- a/be/internal/khach/handler.go
++++ b/be/internal/khach/handler.go
+@@ -10,6 +10,8 @@ import (
+ 
+ func Routes(r *gin.Engine, s *Service) {
+ 	h := handler{s}
++	r.POST("/customer-email-verifications", h.verify)
++	r.POST("/customer-accounts/current/email-verification", h.resend)
+ 	r.POST("/customer-accounts", h.register)
+ 	r.POST("/customer-sessions", h.login)
+ 	r.POST("/customer-sessions/google", h.google)
+@@ -161,3 +163,17 @@ func (h handler) google(c *gin.Context) {
+ 	}
+ 	result(c, 201, out, err)
+ }
++
++func (h handler) verify(c *gin.Context) {
++	var in struct {
++		Token string `json:"token"`
++	}
++	if !apierr.ReadJSON(c.Writer, c.Request, &in) {
++		return
++	}
++	out, err := h.s.verify(c.Request.Context(), in.Token)
++	result(c, 200, out, err)
++}
++func (h handler) resend(c *gin.Context) {
++	result(c, 202, map[string]string{"status": "ok"}, h.s.resend(c.Request.Context(), cookie(c)))
++}
+diff --git a/be/internal/khach/internal/sqlcgen/chuyen.sql.go b/be/internal/khach/internal/sqlcgen/chuyen.sql.go
+new file mode 100644
+index 0000000..8baf4b8
+--- /dev/null
++++ b/be/internal/khach/internal/sqlcgen/chuyen.sql.go
+@@ -0,0 +1,19 @@
++// Code generated by sqlc. DO NOT EDIT.
++// versions:
++//   sqlc v1.31.1
++// source: chuyen.sql
++
++package sqlcgen
++
++import (
++	"context"
++)
++
++const xacNhanEmail = `-- name: XacNhanEmail :exec
++UPDATE customer_account SET email=pending_email,pending_email=NULL WHERE id=$1
++`
++
++func (q *Queries) XacNhanEmail(ctx context.Context, id int64) error {
++	_, err := q.db.Exec(ctx, xacNhanEmail, id)
++	return err
++}
+diff --git a/be/internal/khach/internal/sqlcgen/dem_xac_nhan.sql.go b/be/internal/khach/internal/sqlcgen/dem_xac_nhan.sql.go
+new file mode 100644
+index 0000000..0d9e175
+--- /dev/null
++++ b/be/internal/khach/internal/sqlcgen/dem_xac_nhan.sql.go
+@@ -0,0 +1,21 @@
++// Code generated by sqlc. DO NOT EDIT.
++// versions:
++//   sqlc v1.31.1
++// source: dem_xac_nhan.sql
++
++package sqlcgen
++
++import (
++	"context"
++)
++
++const demXacNhan = `-- name: DemXacNhan :one
++SELECT count(*) FROM customer_email_verification WHERE customer_account_id=$1 AND created_at>now()-interval '1 hour'
++`
++
++func (q *Queries) DemXacNhan(ctx context.Context, customerAccountID int64) (int64, error) {
++	row := q.db.QueryRow(ctx, demXacNhan, customerAccountID)
++	var count int64
++	err := row.Scan(&count)
++	return count, err
++}
+diff --git a/be/internal/khach/internal/sqlcgen/dinh_danh.sql.go b/be/internal/khach/internal/sqlcgen/dinh_danh.sql.go
+index ff53dc3..8ee96fb 100644
+--- a/be/internal/khach/internal/sqlcgen/dinh_danh.sql.go
++++ b/be/internal/khach/internal/sqlcgen/dinh_danh.sql.go
+@@ -12,16 +12,30 @@ import (
+ )
+ 
+ const dinhDanh = `-- name: DinhDanh :one
+-SELECT id, phone, email, display_name, delivery_name, delivery_phone, delivery_address, delivery_updated_at, created_at FROM customer_account WHERE phone=$1 OR email=$1 FOR UPDATE
++SELECT id, phone, email, pending_email, display_name, delivery_name, delivery_phone, delivery_address, delivery_updated_at, created_at FROM customer_account WHERE phone=$1 OR email=$1 FOR UPDATE
+ `
+ 
+-func (q *Queries) DinhDanh(ctx context.Context, phone pgtype.Text) (CustomerAccount, error) {
++type DinhDanhRow struct {
++	ID                int64
++	Phone             pgtype.Text
++	Email             pgtype.Text
++	PendingEmail      pgtype.Text
++	DisplayName       string
++	DeliveryName      pgtype.Text
++	DeliveryPhone     pgtype.Text
++	DeliveryAddress   pgtype.Text
++	DeliveryUpdatedAt pgtype.Timestamptz
++	CreatedAt         pgtype.Timestamptz
++}
++
++func (q *Queries) DinhDanh(ctx context.Context, phone pgtype.Text) (DinhDanhRow, error) {
+ 	row := q.db.QueryRow(ctx, dinhDanh, phone)
+-	var i CustomerAccount
++	var i DinhDanhRow
+ 	err := row.Scan(
+ 		&i.ID,
+ 		&i.Phone,
+ 		&i.Email,
++		&i.PendingEmail,
+ 		&i.DisplayName,
+ 		&i.DeliveryName,
+ 		&i.DeliveryPhone,
+diff --git a/be/internal/khach/internal/sqlcgen/doc.sql.go b/be/internal/khach/internal/sqlcgen/doc.sql.go
+index 4a800f6..115b010 100644
+--- a/be/internal/khach/internal/sqlcgen/doc.sql.go
++++ b/be/internal/khach/internal/sqlcgen/doc.sql.go
+@@ -7,19 +7,35 @@ package sqlcgen
+ 
+ import (
+ 	"context"
++
++	"github.com/jackc/pgx/v5/pgtype"
+ )
+ 
+ const doc = `-- name: Doc :one
+-SELECT id, phone, email, display_name, delivery_name, delivery_phone, delivery_address, delivery_updated_at, created_at FROM customer_account WHERE id=$1 FOR UPDATE
++SELECT id, phone, email, pending_email, display_name, delivery_name, delivery_phone, delivery_address, delivery_updated_at, created_at FROM customer_account WHERE id=$1 FOR UPDATE
+ `
+ 
+-func (q *Queries) Doc(ctx context.Context, id int64) (CustomerAccount, error) {
++type DocRow struct {
++	ID                int64
++	Phone             pgtype.Text
++	Email             pgtype.Text
++	PendingEmail      pgtype.Text
++	DisplayName       string
++	DeliveryName      pgtype.Text
++	DeliveryPhone     pgtype.Text
++	DeliveryAddress   pgtype.Text
++	DeliveryUpdatedAt pgtype.Timestamptz
++	CreatedAt         pgtype.Timestamptz
++}
++
++func (q *Queries) Doc(ctx context.Context, id int64) (DocRow, error) {
+ 	row := q.db.QueryRow(ctx, doc, id)
+-	var i CustomerAccount
++	var i DocRow
+ 	err := row.Scan(
+ 		&i.ID,
+ 		&i.Phone,
+ 		&i.Email,
++		&i.PendingEmail,
+ 		&i.DisplayName,
+ 		&i.DeliveryName,
+ 		&i.DeliveryPhone,
+diff --git a/be/internal/khach/internal/sqlcgen/dung.sql.go b/be/internal/khach/internal/sqlcgen/dung.sql.go
+index 675193a..c8503cb 100644
+--- a/be/internal/khach/internal/sqlcgen/dung.sql.go
++++ b/be/internal/khach/internal/sqlcgen/dung.sql.go
+@@ -17,3 +17,12 @@ func (q *Queries) DungMa(ctx context.Context, id int64) error {
+ 	_, err := q.db.Exec(ctx, dungMa, id)
+ 	return err
+ }
++
++const dungXacNhan = `-- name: DungXacNhan :exec
++UPDATE customer_email_verification SET used_at=clock_timestamp() WHERE id=$1
++`
++
++func (q *Queries) DungXacNhan(ctx context.Context, id int64) error {
++	_, err := q.db.Exec(ctx, dungXacNhan, id)
++	return err
++}
+diff --git a/be/internal/khach/internal/sqlcgen/ma_xac_nhan.sql.go b/be/internal/khach/internal/sqlcgen/ma_xac_nhan.sql.go
+new file mode 100644
+index 0000000..e96ae10
+--- /dev/null
++++ b/be/internal/khach/internal/sqlcgen/ma_xac_nhan.sql.go
+@@ -0,0 +1,27 @@
++// Code generated by sqlc. DO NOT EDIT.
++// versions:
++//   sqlc v1.31.1
++// source: ma_xac_nhan.sql
++
++package sqlcgen
++
++import (
++	"context"
++)
++
++const maXacNhan = `-- name: MaXacNhan :one
++SELECT id, customer_account_id, email FROM customer_email_verification WHERE token_hash=$1 AND used_at IS NULL AND expires_at>clock_timestamp()
++`
++
++type MaXacNhanRow struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++}
++
++func (q *Queries) MaXacNhan(ctx context.Context, tokenHash []byte) (MaXacNhanRow, error) {
++	row := q.db.QueryRow(ctx, maXacNhan, tokenHash)
++	var i MaXacNhanRow
++	err := row.Scan(&i.ID, &i.CustomerAccountID, &i.Email)
++	return i, err
++}
+diff --git a/be/internal/khach/internal/sqlcgen/models.go b/be/internal/khach/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/khach/internal/sqlcgen/models.go
++++ b/be/internal/khach/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/khach/internal/sqlcgen/them.sql.go b/be/internal/khach/internal/sqlcgen/them.sql.go
+index 693dec1..768c6ad 100644
+--- a/be/internal/khach/internal/sqlcgen/them.sql.go
++++ b/be/internal/khach/internal/sqlcgen/them.sql.go
+@@ -53,18 +53,39 @@ func (q *Queries) TaoMa(ctx context.Context, arg TaoMaParams) error {
+ 	return err
+ }
+ 
++const taoXacNhan = `-- name: TaoXacNhan :exec
++INSERT INTO customer_email_verification(customer_account_id,email,token_hash,expires_at) VALUES ($1,$2,$3,now()+interval '24 hours')
++`
++
++type TaoXacNhanParams struct {
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++}
++
++func (q *Queries) TaoXacNhan(ctx context.Context, arg TaoXacNhanParams) error {
++	_, err := q.db.Exec(ctx, taoXacNhan, arg.CustomerAccountID, arg.Email, arg.TokenHash)
++	return err
++}
++
+ const themTaiKhoan = `-- name: ThemTaiKhoan :one
+-INSERT INTO customer_account(phone,email,display_name) VALUES ($1,$2,$3) RETURNING id
++INSERT INTO customer_account(phone,email,pending_email,display_name) VALUES ($1,$2,$3,$4) RETURNING id
+ `
+ 
+ type ThemTaiKhoanParams struct {
+-	Phone       pgtype.Text
+-	Email       pgtype.Text
+-	DisplayName string
++	Phone        pgtype.Text
++	Email        pgtype.Text
++	PendingEmail pgtype.Text
++	DisplayName  string
+ }
+ 
+ func (q *Queries) ThemTaiKhoan(ctx context.Context, arg ThemTaiKhoanParams) (int64, error) {
+-	row := q.db.QueryRow(ctx, themTaiKhoan, arg.Phone, arg.Email, arg.DisplayName)
++	row := q.db.QueryRow(ctx, themTaiKhoan,
++		arg.Phone,
++		arg.Email,
++		arg.PendingEmail,
++		arg.DisplayName,
++	)
+ 	var id int64
+ 	err := row.Scan(&id)
+ 	return id, err
+diff --git a/be/internal/khach/repository.go b/be/internal/khach/repository.go
+index 1fb3f91..b890845 100644
+--- a/be/internal/khach/repository.go
++++ b/be/internal/khach/repository.go
+@@ -18,7 +18,7 @@ func pointer(s pgtype.Text) *string {
+ 	return &s.String
+ }
+ func (r repository) create(ctx context.Context, in Registration) (int64, error) {
+-	return r.ThemTaiKhoan(ctx, sqlcgen.ThemTaiKhoanParams{Phone: text(in.Phone), Email: text(in.Email), DisplayName: in.DisplayName})
++	return r.ThemTaiKhoan(ctx, sqlcgen.ThemTaiKhoanParams{Phone: text(in.Phone), PendingEmail: text(in.Email), DisplayName: in.DisplayName})
+ }
+ func (r repository) password(ctx context.Context, id int64, h string) error {
+ 	return r.GhiMatKhau(ctx, sqlcgen.GhiMatKhauParams{CustomerAccountID: id, PasswordHash: h})
+@@ -41,7 +41,7 @@ func (r repository) resetCode(ctx context.Context, id int64, h []byte) error {
+ }
+ func (r repository) profile(ctx context.Context, id int64) (Profile, error) {
+ 	a, e := r.Doc(ctx, id)
+-	return Profile{a.ID, a.DisplayName, pointer(a.Phone), pointer(a.Email), pointer(a.DeliveryName), pointer(a.DeliveryPhone), pointer(a.DeliveryAddress)}, e
++	return Profile{a.ID, a.DisplayName, pointer(a.Phone), pointer(a.Email), pointer(a.PendingEmail), pointer(a.DeliveryName), pointer(a.DeliveryPhone), pointer(a.DeliveryAddress)}, e
+ }
+ func (r repository) orders(ctx context.Context, id, before int64, limit int32) ([]sqlcgen.DonRow, error) {
+ 	return r.Don(ctx, sqlcgen.DonParams{CustomerAccountID: pgtype.Int8{Int64: id, Valid: true}, Column2: before, Column3: limit})
+@@ -66,3 +66,18 @@ func (r repository) useReset(ctx context.Context, id int64) error {
+ func (r repository) linkGoogle(ctx context.Context, id int64, sub string) error {
+ 	return r.LinkGoogle(ctx, sqlcgen.LinkGoogleParams{CustomerAccountID: id, GoogleSubCode: sub})
+ }
++
++func (r repository) createGoogle(ctx context.Context, in Registration) (int64, error) {
++	return r.ThemTaiKhoan(ctx, sqlcgen.ThemTaiKhoanParams{Email: text(in.Email), DisplayName: in.DisplayName})
++}
++func (r repository) verificationCode(ctx context.Context, id int64, email string, hash []byte) error {
++	return r.TaoXacNhan(ctx, sqlcgen.TaoXacNhanParams{CustomerAccountID: id, Email: email, TokenHash: hash})
++}
++func (r repository) verifyEmail(ctx context.Context, id, codeID int64) error {
++	return r.coVet(ctx, XacNhan.Code, func() error {
++		if err := r.DungXacNhan(ctx, codeID); err != nil {
++			return err
++		}
++		return r.XacNhanEmail(ctx, id)
++	})
++}
+diff --git a/be/internal/khach/service.go b/be/internal/khach/service.go
+index 8dd3341..6d65b86 100644
+--- a/be/internal/khach/service.go
++++ b/be/internal/khach/service.go
+@@ -35,6 +35,7 @@ type Profile struct {
+ 	DisplayName     string  `json:"display_name"`
+ 	Phone           *string `json:"phone"`
+ 	Email           *string `json:"email"`
++	PendingEmail    *string `json:"pending_email"`
+ 	DeliveryName    *string `json:"delivery_name"`
+ 	DeliveryPhone   *string `json:"delivery_phone"`
+ 	DeliveryAddress *string `json:"delivery_address"`
+@@ -56,6 +57,7 @@ type attempt struct {
+ 	until time.Time
+ }
+ type Service struct {
++	origin         string
+ 	googleClientID string
+ 	googleVerifier google.Verifier
+ 	pool           *pgxpool.Pool
+@@ -70,7 +72,7 @@ func NewService(p *pgxpool.Pool, m taikhoan.Mailer) *Service {
+ func fail(c apierr.Code) error { return apierr.Error{Code: c} }
+ func (s *Service) register(ctx context.Context, in Registration) (Profile, string, error) {
+ 	var out Profile
+-	var token string
++	var token, verification string
+ 	phone, email, e := dinhdanh.LienHe(in.Phone, in.Email)
+ 	if e != nil {
+ 		return out, token, e
+@@ -82,10 +84,29 @@ func (s *Service) register(ctx context.Context, in Registration) (Profile, strin
+ 	}
+ 	e = authz.Run(ctx, s.pool, 0, DangKy, func(tx pgx.Tx) error {
+ 		r := repo(tx)
++		if email != "" {
++			_, err := r.DinhDanh(ctx, text(email))
++			if err == nil {
++				return fail(apierr.CodeEmailTaken)
++			}
++			if !errors.Is(err, pgx.ErrNoRows) {
++				return err
++			}
++		}
+ 		id, e := r.create(ctx, in)
+ 		if e != nil {
+ 			return e
+ 		}
++		if email != "" {
++			var h []byte
++			verification, h, e = taikhoan.NewToken()
++			if e != nil {
++				return e
++			}
++			if e = r.verificationCode(ctx, id, email, h); e != nil {
++				return e
++			}
++		}
+ 		if e = r.password(ctx, id, hash); e != nil {
+ 			return e
+ 		}
+@@ -96,6 +117,9 @@ func (s *Service) register(ctx context.Context, in Registration) (Profile, strin
+ 		out, e = r.profile(ctx, id)
+ 		return e
+ 	})
++	if e == nil && verification != "" {
++		s.sendVerification(ctx, email, verification)
++	}
+ 	return out, token, e
+ }
+ func open(ctx context.Context, r repository, id int64) (string, error) {
+diff --git a/be/internal/khach/service_test.go b/be/internal/khach/service_test.go
+index f1b1169..c90e265 100644
+--- a/be/internal/khach/service_test.go
++++ b/be/internal/khach/service_test.go
+@@ -4,6 +4,7 @@ import (
+ 	"context"
+ 	"errors"
+ 	"fmt"
++	"net/url"
+ 	"strings"
+ 	"testing"
+ 	"time"
+@@ -16,8 +17,12 @@ import (
+ )
+ 
+ type testMailer struct {
+-	tokens    []string
+-	addresses []string
++	links                 []string
++	verificationAddresses []string
++	verificationError     error
++	onVerification        func(string, string)
++	tokens                []string
++	addresses             []string
+ }
+ 
+ func (m *testMailer) SendPasswordReset(_ context.Context, email, token string) error {
+@@ -46,12 +51,13 @@ func wantCode(t *testing.T, e error, c apierr.Code) {
+ }
+ 
+ func TestI035_KhachChanNamLanMuoiLamPhut(t *testing.T) {
+-	ctx, s, _ := testService(t)
++	ctx, s, m := testService(t)
+ 	email := fmt.Sprintf("chan.%d@quan.test", time.Now().UnixNano())
+ 	a, token, e := s.register(ctx, Registration{Email: email, DisplayName: "Chặn thử", Password: "mat-khau-123"})
+ 	if e != nil {
+ 		t.Fatal(e)
+ 	}
++	confirmLast(t, ctx, s, m)
+ 	for i := 0; i < 5; i++ {
+ 		_, _, e = s.login(ctx, strings.ToUpper(email), "sai")
+ 		wantCode(t, e, apierr.CodeLoginFailed)
+@@ -86,6 +92,7 @@ func TestI035_KhachDatLaiThuBaLanMotGioMaMotLan(t *testing.T) {
+ 	if e != nil {
+ 		t.Fatal(e)
+ 	}
++	confirmLast(t, ctx, s, m)
+ 	if e = s.requestReset(ctx, "khongco."+email); e != nil || len(m.tokens) != 0 {
+ 		t.Fatalf("thư không có tài khoản: %v", e)
+ 	}
+@@ -121,3 +128,22 @@ func TestI035_KhachDatLaiThuBaLanMotGioMaMotLan(t *testing.T) {
+ 		t.Fatalf("số điện thoại nhận thư: %v", e)
+ 	}
+ }
++
++func (m *testMailer) SendEmailVerification(_ context.Context, email, link string) error {
++	if m.onVerification != nil {
++		m.onVerification(email, link)
++	}
++	m.links = append(m.links, link)
++	m.verificationAddresses = append(m.verificationAddresses, email)
++	return m.verificationError
++}
++func confirmLast(t *testing.T, ctx context.Context, s *Service, m *testMailer) {
++	t.Helper()
++	link, err := url.Parse(m.links[len(m.links)-1])
++	if err != nil {
++		t.Fatal(err)
++	}
++	if _, err = s.verify(ctx, link.Query().Get("ma")); err != nil {
++		t.Fatal(err)
++	}
++}
+diff --git a/be/internal/khach/sql/dang_ky/them.sql b/be/internal/khach/sql/dang_ky/them.sql
+index 76a5dc8..e72d139 100644
+--- a/be/internal/khach/sql/dang_ky/them.sql
++++ b/be/internal/khach/sql/dang_ky/them.sql
+@@ -1,2 +1,2 @@
+ -- name: ThemTaiKhoan :one
+-INSERT INTO customer_account(phone,email,display_name) VALUES ($1,$2,$3) RETURNING id;
++INSERT INTO customer_account(phone,email,pending_email,display_name) VALUES ($1,$2,$3,$4) RETURNING id;
+diff --git a/be/internal/khach/sql/dem_xac_nhan.sql b/be/internal/khach/sql/dem_xac_nhan.sql
+new file mode 100644
+index 0000000..38d8ad8
+--- /dev/null
++++ b/be/internal/khach/sql/dem_xac_nhan.sql
+@@ -0,0 +1,2 @@
++-- name: DemXacNhan :one
++SELECT count(*) FROM customer_email_verification WHERE customer_account_id=$1 AND created_at>now()-interval '1 hour';
+diff --git a/be/internal/khach/sql/dinh_danh.sql b/be/internal/khach/sql/dinh_danh.sql
+index f8e802d..145a73f 100644
+--- a/be/internal/khach/sql/dinh_danh.sql
++++ b/be/internal/khach/sql/dinh_danh.sql
+@@ -1,2 +1,2 @@
+ -- name: DinhDanh :one
+-SELECT id, phone, email, display_name, delivery_name, delivery_phone, delivery_address, delivery_updated_at, created_at FROM customer_account WHERE phone=$1 OR email=$1 FOR UPDATE;
++SELECT id, phone, email, pending_email, display_name, delivery_name, delivery_phone, delivery_address, delivery_updated_at, created_at FROM customer_account WHERE phone=$1 OR email=$1 FOR UPDATE;
+diff --git a/be/internal/khach/sql/doc.sql b/be/internal/khach/sql/doc.sql
+index 202b961..0486621 100644
+--- a/be/internal/khach/sql/doc.sql
++++ b/be/internal/khach/sql/doc.sql
+@@ -1,2 +1,2 @@
+ -- name: Doc :one
+-SELECT id, phone, email, display_name, delivery_name, delivery_phone, delivery_address, delivery_updated_at, created_at FROM customer_account WHERE id=$1 FOR UPDATE;
++SELECT id, phone, email, pending_email, display_name, delivery_name, delivery_phone, delivery_address, delivery_updated_at, created_at FROM customer_account WHERE id=$1 FOR UPDATE;
+diff --git a/be/internal/khach/sql/gui_xac_nhan/them.sql b/be/internal/khach/sql/gui_xac_nhan/them.sql
+new file mode 100644
+index 0000000..80b2968
+--- /dev/null
++++ b/be/internal/khach/sql/gui_xac_nhan/them.sql
+@@ -0,0 +1,2 @@
++-- name: TaoXacNhan :exec
++INSERT INTO customer_email_verification(customer_account_id,email,token_hash,expires_at) VALUES ($1,$2,$3,now()+interval '24 hours');
+diff --git a/be/internal/khach/sql/ma_xac_nhan.sql b/be/internal/khach/sql/ma_xac_nhan.sql
+new file mode 100644
+index 0000000..895da13
+--- /dev/null
++++ b/be/internal/khach/sql/ma_xac_nhan.sql
+@@ -0,0 +1,2 @@
++-- name: MaXacNhan :one
++SELECT id, customer_account_id, email FROM customer_email_verification WHERE token_hash=$1 AND used_at IS NULL AND expires_at>clock_timestamp();
+diff --git a/be/internal/khach/sql/xac_nhan/chuyen.sql b/be/internal/khach/sql/xac_nhan/chuyen.sql
+new file mode 100644
+index 0000000..33394f6
+--- /dev/null
++++ b/be/internal/khach/sql/xac_nhan/chuyen.sql
+@@ -0,0 +1,2 @@
++-- name: XacNhanEmail :exec
++UPDATE customer_account SET email=pending_email,pending_email=NULL WHERE id=$1;
+diff --git a/be/internal/khach/sql/xac_nhan/dung.sql b/be/internal/khach/sql/xac_nhan/dung.sql
+new file mode 100644
+index 0000000..96d2a6b
+--- /dev/null
++++ b/be/internal/khach/sql/xac_nhan/dung.sql
+@@ -0,0 +1,2 @@
++-- name: DungXacNhan :exec
++UPDATE customer_email_verification SET used_at=clock_timestamp() WHERE id=$1;
+diff --git a/be/internal/khach/verification.go b/be/internal/khach/verification.go
+new file mode 100644
+index 0000000..2d3f176
+--- /dev/null
++++ b/be/internal/khach/verification.go
+@@ -0,0 +1,89 @@
++package khach
++
++import (
++	"banhcuon/be/internal/apierr"
++	"banhcuon/be/internal/authz"
++	"banhcuon/be/internal/taikhoan"
++	"context"
++	"errors"
++	"github.com/jackc/pgx/v5"
++	"log"
++	"net/url"
++	"strings"
++)
++
++func (s *Service) WithOrigin(origin string) *Service {
++	s.origin = strings.TrimRight(origin, "/")
++	return s
++}
++func (s *Service) sendVerification(ctx context.Context, email, token string) {
++	if s.mail == nil {
++		log.Print("không gửi được thư xác nhận khách: chưa cấu hình SMTP")
++	} else if err := s.mail.SendEmailVerification(ctx, email, s.origin+"/khach/xac-nhan-gmail?ma="+url.QueryEscape(token)); err != nil {
++		log.Print("không gửi được thư xác nhận khách")
++	}
++}
++func (s *Service) verify(ctx context.Context, token string) (Profile, error) {
++	var out Profile
++	err := authz.Run(ctx, s.pool, 0, XacNhan, func(tx pgx.Tx) error {
++		r := repo(tx)
++		code, err := r.MaXacNhan(ctx, taikhoan.TokenHash(token))
++		if errors.Is(err, pgx.ErrNoRows) {
++			return fail(apierr.CodeVerificationInvalid)
++		}
++		if err != nil {
++			return err
++		}
++		// Lock account first, as resend and login do; reread token after the lock.
++		a, err := r.Doc(ctx, code.CustomerAccountID)
++		if err != nil {
++			return err
++		}
++		code, err = r.MaXacNhan(ctx, taikhoan.TokenHash(token))
++		if errors.Is(err, pgx.ErrNoRows) {
++			return fail(apierr.CodeVerificationInvalid)
++		}
++		if err != nil {
++			return err
++		}
++		if !a.PendingEmail.Valid || a.PendingEmail.String != code.Email {
++			return fail(apierr.CodeVerificationInvalid)
++		}
++		if err = r.verifyEmail(ctx, a.ID, code.ID); err != nil {
++			return err
++		}
++		out, err = r.profile(ctx, a.ID)
++		return err
++	})
++	return out, err
++}
++func (s *Service) resend(ctx context.Context, session string) error {
++	var email, token string
++	err := s.run(ctx, session, GuiXacNhan, func(r repository, g authz.Granted) error {
++		a, err := r.Doc(ctx, g.CustomerAccountID)
++		if err != nil {
++			return err
++		}
++		if !a.PendingEmail.Valid {
++			return fail(apierr.CodeNoPendingEmail)
++		}
++		n, err := r.DemXacNhan(ctx, a.ID)
++		if err != nil {
++			return err
++		}
++		if n >= 3 {
++			return fail(apierr.CodeVerificationRateLimited)
++		}
++		email = a.PendingEmail.String
++		var hash []byte
++		token, hash, err = taikhoan.NewToken()
++		if err != nil {
++			return err
++		}
++		return r.verificationCode(ctx, a.ID, email, hash)
++	})
++	if err == nil {
++		s.sendVerification(ctx, email, token)
++	}
++	return err
++}
+diff --git a/be/internal/khach/verification_test.go b/be/internal/khach/verification_test.go
+new file mode 100644
+index 0000000..0593b20
+--- /dev/null
++++ b/be/internal/khach/verification_test.go
+@@ -0,0 +1,163 @@
++package khach
++
++import (
++	"bytes"
++	"encoding/json"
++	"errors"
++	"fmt"
++	"net/http/httptest"
++	"net/url"
++	"testing"
++	"time"
++
++	"banhcuon/be/internal/apierr"
++	"banhcuon/be/internal/google"
++	"banhcuon/be/internal/taikhoan"
++	"github.com/gin-gonic/gin"
++)
++
++func verificationToken(t *testing.T, m *testMailer) string {
++	t.Helper()
++	u, err := url.Parse(m.links[len(m.links)-1])
++	if err != nil {
++		t.Fatal(err)
++	}
++	return u.Query().Get("ma")
++}
++func TestI035_EmailVerificationLifecycle(t *testing.T) {
++	ctx, s, m := testService(t)
++	s.WithOrigin("https://quan.test/")
++	m.onVerification = func(email, link string) {
++		u, err := url.Parse(link)
++		if err != nil {
++			t.Fatal(err)
++		}
++		var committed bool
++		err = s.pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM customer_email_verification v JOIN customer_account a ON a.id=v.customer_account_id WHERE v.token_hash=$1 AND a.pending_email=$2 AND EXISTS (SELECT 1 FROM customer_password p WHERE p.customer_account_id=a.id) AND EXISTS (SELECT 1 FROM customer_session s WHERE s.customer_account_id=a.id))`, taikhoan.TokenHash(u.Query().Get("ma")), email).Scan(&committed)
++		if err != nil || !committed {
++			t.Fatal("gửi thư trước khi giao dịch tài khoản/mật khẩu/phiên/mã đã commit", err)
++		}
++	}
++	email := fmt.Sprintf("verify.%d@gmail.com", time.Now().UnixNano())
++	a, session, err := s.register(ctx, Registration{Email: email, DisplayName: "Khách", Password: "mat-khau-123"})
++	if err != nil {
++		t.Fatal(err)
++	}
++	if a.Email != nil || a.PendingEmail == nil || *a.PendingEmail != email {
++		t.Fatalf("profile: %+v", a)
++	}
++	if len(m.links) != 1 || m.verificationAddresses[0] != email {
++		t.Fatal("số thư/địa chỉ sai")
++	}
++	token := verificationToken(t, m)
++	if len(token) != 43 || m.links[0] != "https://quan.test/khach/xac-nhan-gmail?ma="+token {
++		t.Fatal("link sai origin hoặc mã")
++	}
++	var codes int
++	if err = s.pool.QueryRow(ctx, `SELECT count(*) FROM customer_email_verification WHERE customer_account_id=$1 AND token_hash=$2 AND expires_at=created_at+interval '24 hours'`, a.AccountID, taikhoan.TokenHash(token)).Scan(&codes); err != nil || codes != 1 {
++		t.Fatalf("mã: %d %v", codes, err)
++	}
++	_, _, err = s.login(ctx, email, "mat-khau-123")
++	wantCode(t, err, apierr.CodeLoginFailed)
++	if err = s.requestReset(ctx, email); err != nil || len(m.tokens) != 0 {
++		t.Fatal("Gmail chờ nhận thư đặt lại", err)
++	}
++	// Pending addresses do not reserve the email.
++	if _, _, err = s.register(ctx, Registration{Email: email, DisplayName: "Khách khác", Password: "mat-khau-123"}); err != nil {
++		t.Fatal(err)
++	}
++	if err = s.resend(ctx, session); err != nil {
++		t.Fatal(err)
++	}
++	if err = s.resend(ctx, session); err != nil {
++		t.Fatal(err)
++	}
++	wantCode(t, s.resend(ctx, session), apierr.CodeVerificationRateLimited)
++	// The first token remains usable after resends.
++	out, err := s.verify(ctx, token)
++	if err != nil || out.Email == nil || *out.Email != email || out.PendingEmail != nil {
++		t.Fatalf("xác nhận: %+v %v", out, err)
++	}
++	_, err = s.verify(ctx, token)
++	wantCode(t, err, apierr.CodeVerificationInvalid)
++	_, err = s.verify(ctx, "unknown")
++	wantCode(t, err, apierr.CodeVerificationInvalid)
++	_, err = s.verify(ctx, verificationToken(t, m))
++	wantCode(t, err, apierr.CodeVerificationInvalid)
++	if _, _, err = s.login(ctx, email, "mat-khau-123"); err != nil {
++		t.Fatal(err)
++	}
++	wantCode(t, s.resend(ctx, session), apierr.CodeNoPendingEmail)
++	_, _, err = s.register(ctx, Registration{Email: email, DisplayName: "Trùng", Password: "mat-khau-123"})
++	wantCode(t, err, apierr.CodeEmailTaken)
++}
++func TestI035_EmailVerificationGoogleCollision(t *testing.T) {
++	ctx, s, m := testService(t)
++	email := fmt.Sprintf("collision.%d@gmail.com", time.Now().UnixNano())
++	a, _, err := s.register(ctx, Registration{Email: email, DisplayName: "Chờ", Password: "mat-khau-123"})
++	if err != nil {
++		t.Fatal(err)
++	}
++	token := verificationToken(t, m)
++	s.WithGoogle("client", fakeGoogle{claims: google.Claims{Sub: email, Email: email}})
++	b, _, err := s.loginGoogle(ctx, "credential")
++	if err != nil || b.AccountID == a.AccountID || b.Email == nil {
++		t.Fatalf("Google không tạo riêng: %+v %v", b, err)
++	}
++	_, err = s.verify(ctx, token)
++	public, _ := apierr.FromDB(err)
++	wantCode(t, public, apierr.CodeEmailTaken)
++	var used bool
++	if err = s.pool.QueryRow(ctx, `SELECT used_at IS NOT NULL FROM customer_email_verification WHERE token_hash=$1`, taikhoan.TokenHash(token)).Scan(&used); err != nil || used {
++		t.Fatal("mã không rollback", err)
++	}
++}
++func TestI035_EmailVerificationExpiredAndChanged(t *testing.T) {
++	ctx, s, _ := testService(t)
++	email := fmt.Sprintf("invalid.%d@gmail.com", time.Now().UnixNano())
++	a, _, err := s.register(ctx, Registration{Email: email, DisplayName: "Chờ", Password: "mat-khau-123"})
++	if err != nil {
++		t.Fatal(err)
++	}
++	now := time.Now()
++	for _, tc := range []struct {
++		name, email      string
++		created, expires time.Time
++	}{
++		{"expired", email, now.Add(-25 * time.Hour), now.Add(-time.Hour)},
++		{"changed", "old." + email, now.Add(-time.Hour), now.Add(time.Hour)},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			token, hash, err := taikhoan.NewToken()
++			if err != nil {
++				t.Fatal(err)
++			}
++			_, err = s.pool.Exec(ctx, `INSERT INTO customer_email_verification(customer_account_id,email,token_hash,created_at,expires_at) VALUES ($1,$2,$3,$4,$5)`, a.AccountID, tc.email, hash, tc.created, tc.expires)
++			if err != nil {
++				t.Fatal(err)
++			}
++			_, err = s.verify(ctx, token)
++			wantCode(t, err, apierr.CodeVerificationInvalid)
++		})
++	}
++}
++func TestI035_EmailVerificationMailerFailureStill201(t *testing.T) {
++	ctx, s, m := testService(t)
++	m.verificationError = errors.New("SMTP unavailable")
++	r := gin.New()
++	Routes(r, s)
++	for _, missing := range []bool{false, true} {
++		if missing {
++			s.mail = nil
++		}
++		body, _ := json.Marshal(Registration{Email: fmt.Sprintf("mail.%d@gmail.com", time.Now().UnixNano()), DisplayName: "Thư lỗi", Password: "mat-khau-123"})
++		req := httptest.NewRequest("POST", "/customer-accounts", bytes.NewReader(body)).WithContext(ctx)
++		w := httptest.NewRecorder()
++		r.ServeHTTP(w, req)
++		if w.Code != 201 {
++			t.Fatalf("SMTP hỏng: %d", w.Code)
++		}
++	}
++}
++
++var _ taikhoan.Mailer = (*testMailer)(nil)
+diff --git a/be/internal/khoanchi/internal/sqlcgen/models.go b/be/internal/khoanchi/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/khoanchi/internal/sqlcgen/models.go
++++ b/be/internal/khoanchi/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/menu/internal/sqlcgen/models.go b/be/internal/menu/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/menu/internal/sqlcgen/models.go
++++ b/be/internal/menu/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/ngayban/internal/sqlcgen/models.go b/be/internal/ngayban/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/ngayban/internal/sqlcgen/models.go
++++ b/be/internal/ngayban/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/nguoi/internal/sqlcgen/models.go b/be/internal/nguoi/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/nguoi/internal/sqlcgen/models.go
++++ b/be/internal/nguoi/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/nguyenlieu/internal/sqlcgen/models.go b/be/internal/nguyenlieu/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/nguyenlieu/internal/sqlcgen/models.go
++++ b/be/internal/nguyenlieu/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/nhandon/internal/sqlcgen/models.go b/be/internal/nhandon/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/nhandon/internal/sqlcgen/models.go
++++ b/be/internal/nhandon/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/phien/internal/sqlcgen/models.go b/be/internal/phien/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/phien/internal/sqlcgen/models.go
++++ b/be/internal/phien/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/qr/internal/sqlcgen/models.go b/be/internal/qr/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/qr/internal/sqlcgen/models.go
++++ b/be/internal/qr/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/sanxuat/internal/sqlcgen/models.go b/be/internal/sanxuat/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/sanxuat/internal/sqlcgen/models.go
++++ b/be/internal/sanxuat/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/taikhoan/internal/sqlcgen/models.go b/be/internal/taikhoan/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/taikhoan/internal/sqlcgen/models.go
++++ b/be/internal/taikhoan/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/taikhoan/service.go b/be/internal/taikhoan/service.go
+index 49495cd..d62b2a3 100644
+--- a/be/internal/taikhoan/service.go
++++ b/be/internal/taikhoan/service.go
+@@ -18,6 +18,7 @@ import (
+ )
+ 
+ type Mailer interface {
++	SendEmailVerification(context.Context, string, string) error
+ 	SendPasswordReset(context.Context, string, string) error
+ }
+ type attempt struct {
+diff --git a/be/internal/taikhoan/smtp.go b/be/internal/taikhoan/smtp.go
+index efbaa48..35e8eb6 100644
+--- a/be/internal/taikhoan/smtp.go
++++ b/be/internal/taikhoan/smtp.go
+@@ -28,6 +28,12 @@ func SMTPFromEnv() Mailer {
+ type smtpMailer struct{ host, port, from, user, password string }
+ 
+ func (m smtpMailer) SendPasswordReset(ctx context.Context, email, token string) error {
++	return m.send(ctx, email, "Dat lai mat khau", "Ma dat lai mat khau (han 30 phut, dung mot lan):\r\n"+token)
++}
++func (m smtpMailer) SendEmailVerification(ctx context.Context, email, link string) error {
++	return m.send(ctx, email, "Xac nhan Gmail", "Mo link de xac nhan Gmail (han 24 gio, dung mot lan):\r\n"+link)
++}
++func (m smtpMailer) send(ctx context.Context, email, subject, body string) error {
+ 	from, err := mail.ParseAddress(m.from)
+ 	if err != nil {
+ 		return err
+@@ -74,7 +80,7 @@ func (m smtpMailer) SendPasswordReset(ctx context.Context, email, token string)
+ 	if err != nil {
+ 		return err
+ 	}
+-	_, err = fmt.Fprintf(w, "From: %s\r\nTo: %s\r\nSubject: Dat lai mat khau\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\nMa dat lai mat khau (han 30 phut, dung mot lan):\r\n%s\r\n", from.String(), to.String(), token)
++	_, err = fmt.Fprintf(w, "From: %s\r\nTo: %s\r\nSubject: %s\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n%s\r\n", from.String(), to.String(), subject, body)
+ 	if err != nil {
+ 		return err
+ 	}
+diff --git a/be/internal/taikhoan/taikhoan_test.go b/be/internal/taikhoan/taikhoan_test.go
+index a40694e..42fda17 100644
+--- a/be/internal/taikhoan/taikhoan_test.go
++++ b/be/internal/taikhoan/taikhoan_test.go
+@@ -549,3 +549,5 @@ func TestI033_DuyetKhongGanVaoNguoiChuQuan(t *testing.T) {
+ 		t.Fatal("đăng nhập sau duyệt: muốn đúng người, is_owner=false")
+ 	}
+ }
++
++func (m *thuGia) SendEmailVerification(context.Context, string, string) error { return nil }
+diff --git a/be/internal/tongket/internal/sqlcgen/models.go b/be/internal/tongket/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/tongket/internal/sqlcgen/models.go
++++ b/be/internal/tongket/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/tongquan/internal/sqlcgen/models.go b/be/internal/tongquan/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/tongquan/internal/sqlcgen/models.go
++++ b/be/internal/tongquan/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/tratruoc/internal/sqlcgen/models.go b/be/internal/tratruoc/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/tratruoc/internal/sqlcgen/models.go
++++ b/be/internal/tratruoc/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/internal/vongdoi/internal/sqlcgen/models.go b/be/internal/vongdoi/internal/sqlcgen/models.go
+index 74b62a3..eb621a8 100644
+--- a/be/internal/vongdoi/internal/sqlcgen/models.go
++++ b/be/internal/vongdoi/internal/sqlcgen/models.go
+@@ -130,6 +130,17 @@ type CustomerAccount struct {
+ 	DeliveryAddress   pgtype.Text
+ 	DeliveryUpdatedAt pgtype.Timestamptz
+ 	CreatedAt         pgtype.Timestamptz
++	PendingEmail      pgtype.Text
++}
++
++type CustomerEmailVerification struct {
++	ID                int64
++	CustomerAccountID int64
++	Email             string
++	TokenHash         []byte
++	CreatedAt         pgtype.Timestamptz
++	ExpiresAt         pgtype.Timestamptz
++	UsedAt            pgtype.Timestamptz
+ }
+ 
+ type CustomerGoogleIdentity struct {
+diff --git a/be/sqlc.yaml b/be/sqlc.yaml
+index a60de40..109d306 100644
+--- a/be/sqlc.yaml
++++ b/be/sqlc.yaml
+@@ -311,6 +311,8 @@ sql:
+     schema: ../db/migrations
+     queries:
+       - internal/khach/sql
++      - internal/khach/sql/xac_nhan
++      - internal/khach/sql/gui_xac_nhan
+       - internal/khach/sql/google
+       - internal/khach/sql/dang_ky
+       - internal/khach/sql/dang_nhap
+diff --git a/db/migrations/20261029120000_xac_nhan_gmail.down.sql b/db/migrations/20261029120000_xac_nhan_gmail.down.sql
+new file mode 100644
+index 0000000..4b7f239
+--- /dev/null
++++ b/db/migrations/20261029120000_xac_nhan_gmail.down.sql
+@@ -0,0 +1,19 @@
++-- T-270 — không mất Gmail chờ hoặc mã xác nhận đã ghi.
++LOCK TABLE customer_account, customer_email_verification IN ACCESS EXCLUSIVE MODE;
++DO $$ BEGIN
++  IF EXISTS (SELECT 1 FROM customer_email_verification) OR
++     EXISTS (SELECT 1 FROM customer_account WHERE pending_email IS NOT NULL) THEN
++    RAISE EXCEPTION 'đường lùi từ chối: còn mã xác nhận hoặc Gmail chờ'
++      USING ERRCODE = 'check_violation', CONSTRAINT = 'customer_email_verification_rollback_check';
++  END IF;
++END $$;
++DROP TABLE customer_email_verification;
++DROP FUNCTION customer_email_verification_used_guard();
++REVOKE UPDATE (email, pending_email) ON customer_account FROM shop_app;
++ALTER TABLE customer_account
++  DROP CONSTRAINT customer_account_contact_check,
++  ADD CONSTRAINT customer_account_contact_check CHECK (phone IS NOT NULL OR email IS NOT NULL),
++  DROP COLUMN pending_email;
++ALTER TABLE record_revision DROP CONSTRAINT record_revision_person_check,
++  ADD CONSTRAINT record_revision_person_check CHECK (person_id IS NOT NULL OR target_table_code IN
++    ('customer_account', 'customer_password', 'customer_session', 'customer_password_reset'));
+diff --git a/db/migrations/20261029120000_xac_nhan_gmail.up.sql b/db/migrations/20261029120000_xac_nhan_gmail.up.sql
+new file mode 100644
+index 0000000..16bc0d2
+--- /dev/null
++++ b/db/migrations/20261029120000_xac_nhan_gmail.up.sql
+@@ -0,0 +1,47 @@
++-- T-270 — ADR-133; ý định: 25-luoc-do-xac-nhan-gmail.md.
++ALTER TABLE customer_account
++  ADD COLUMN pending_email text COLLATE "vi-x-icu",
++  ADD CONSTRAINT customer_account_pending_email_check CHECK (pending_email = lower(pending_email) AND position('@' IN pending_email) > 0),
++  ADD CONSTRAINT customer_account_pending_email_differs_check CHECK (pending_email IS NULL OR pending_email IS DISTINCT FROM email),
++  DROP CONSTRAINT customer_account_contact_check,
++  ADD CONSTRAINT customer_account_contact_check CHECK (phone IS NOT NULL OR email IS NOT NULL OR pending_email IS NOT NULL);
++GRANT UPDATE (email, pending_email) ON customer_account TO shop_app;
++
++CREATE TABLE customer_email_verification (
++  id bigint GENERATED ALWAYS AS IDENTITY,
++  customer_account_id bigint NOT NULL,
++  email text COLLATE "vi-x-icu" NOT NULL,
++  token_hash bytea NOT NULL,
++  created_at timestamptz NOT NULL DEFAULT now(),
++  expires_at timestamptz NOT NULL,
++  used_at timestamptz,
++  CONSTRAINT customer_email_verification_email_check CHECK (email = lower(email) AND position('@' IN email) > 0),
++  CONSTRAINT customer_email_verification_pkey PRIMARY KEY (id),
++  CONSTRAINT customer_email_verification_account_fkey FOREIGN KEY (customer_account_id) REFERENCES customer_account (id),
++  CONSTRAINT customer_email_verification_token_key UNIQUE (token_hash),
++  CONSTRAINT customer_email_verification_token_hash_check CHECK (octet_length(token_hash) = 32),
++  CONSTRAINT customer_email_verification_expiry_check CHECK (expires_at > created_at AND expires_at <= created_at + interval '24 hours'),
++  CONSTRAINT customer_email_verification_used_at_check CHECK (used_at IS NULL OR (used_at >= created_at AND used_at < expires_at))
++);
++
++CREATE FUNCTION customer_email_verification_used_guard() RETURNS trigger
++LANGUAGE plpgsql SET search_path = shop, pg_temp AS $$
++BEGIN
++  IF OLD.used_at IS NOT NULL THEN
++    RAISE EXCEPTION 'mã xác nhận đã dùng không được sửa'
++      USING ERRCODE = 'check_violation', CONSTRAINT = 'customer_email_verification_used_once_check';
++  END IF;
++  RETURN NEW;
++END $$;
++REVOKE ALL ON FUNCTION customer_email_verification_used_guard() FROM PUBLIC;
++CREATE TRIGGER customer_email_verification_used_guard_trg BEFORE UPDATE ON customer_email_verification
++  FOR EACH ROW EXECUTE FUNCTION customer_email_verification_used_guard();
++
++CREATE TRIGGER customer_email_verification_record_revision_trg AFTER UPDATE ON customer_email_verification
++  FOR EACH ROW EXECUTE FUNCTION record_revision_capture();
++REVOKE UPDATE ON customer_email_verification FROM shop_app;
++GRANT UPDATE (used_at) ON customer_email_verification TO shop_app;
++
++ALTER TABLE record_revision DROP CONSTRAINT record_revision_person_check,
++  ADD CONSTRAINT record_revision_person_check CHECK (person_id IS NOT NULL OR target_table_code IN
++    ('customer_account', 'customer_password', 'customer_session', 'customer_password_reset', 'customer_email_verification'));
+diff --git a/db/reconcile/i035.sql b/db/reconcile/i035.sql
+index fd2a822..078ea26 100644
+--- a/db/reconcile/i035.sql
++++ b/db/reconcile/i035.sql
+@@ -3,7 +3,7 @@
+ -- @@ I-035/1 — tài khoản không có số điện thoại lẫn thư
+ SELECT 'account' AS loai, id FROM account WHERE phone IS NULL AND email IS NULL
+ UNION ALL
+-SELECT 'customer_account' AS loai, id FROM customer_account WHERE phone IS NULL AND email IS NULL
++SELECT 'customer_account' AS loai, id FROM customer_account WHERE phone IS NULL AND email IS NULL AND pending_email IS NULL
+ 
+ -- @@ I-035/2 — số điện thoại chưa chuẩn hoá
+ SELECT 'account' AS loai, id FROM account WHERE phone COLLATE "C" !~ '^0[1-9][0-9]{8,9}$'
+diff --git a/db/tests/i035_email_verification.sql b/db/tests/i035_email_verification.sql
+new file mode 100644
+index 0000000..df757cb
+--- /dev/null
++++ b/db/tests/i035_email_verification.sql
+@@ -0,0 +1,116 @@
++-- I-035 (tầng 1), phần xác nhận Gmail của khách (ADR-133): Gmail khách tự gõ lúc đăng ký nằm ở `pending_email` cho tới
++-- khi bấm link; chỉ `email` đã xác nhận mới duy nhất và mới dùng để đăng nhập; mã xác nhận băm 32 byte, sống tối đa 24
++-- giờ, dùng một lần; lần khách tự xác nhận để lại vết với người sửa rỗng.
++-- Viết trước lược đồ (T-270, Claude Code): đỏ cho tới khi migration xác nhận Gmail dựng.
++
++DO $$ BEGIN PERFORM set_config('shop.revision_reason', 'test-i035_email_verification', true); END $$;
++DO $$
++DECLARE a bigint; b bigint; c bigint; v bigint; n int;
++BEGIN
++  SET LOCAL ROLE shop_app;
++
++  -- Dương: khách đăng ký chỉ bằng Gmail ⇒ Gmail chờ xác nhận, chưa có `email`, vẫn mở phiên (dùng được ngay).
++  INSERT INTO customer_account (pending_email, display_name) VALUES ('test.xacnhan@gmail.com', 'test-khách chờ xác nhận') RETURNING id INTO a;
++  INSERT INTO customer_session (customer_account_id, token_hash, expires_at)
++  VALUES (a, sha256('test-i035-xacnhan-phien'), now() + interval '7 days');
++  RAISE NOTICE 'I-035 dương: khách chỉ có Gmail chờ xác nhận vẫn tạo được và mở phiên';
++
++  -- Dương: Gmail chờ xác nhận KHÔNG giữ chỗ — người khác cũng chờ cùng địa chỉ được, và một tài khoản đã xác nhận
++  -- địa chỉ ấy vẫn tồn tại song song.
++  INSERT INTO customer_account (pending_email, display_name) VALUES ('test.xacnhan@gmail.com', 'test-kẻ gõ nhầm') RETURNING id INTO b;
++  INSERT INTO customer_account (email, display_name) VALUES ('test.daxacnhan@gmail.com', 'test-chủ thật') RETURNING id INTO c;
++  INSERT INTO customer_account (pending_email, display_name) VALUES ('test.daxacnhan@gmail.com', 'test-chờ trùng thư đã xác nhận');
++  RAISE NOTICE 'I-035 dương: Gmail chờ xác nhận không giữ chỗ';
++
++  BEGIN
++    INSERT INTO customer_account (pending_email, display_name) VALUES ('Test.HOA@gmail.com', 'test-x');
++    RAISE EXCEPTION 'I-035: database KHÔNG từ chối Gmail chờ xác nhận có chữ hoa';
++  EXCEPTION WHEN check_violation THEN
++    RAISE NOTICE 'I-035 bị từ chối (Gmail chờ có chữ hoa): %', SQLERRM;
++  END;
++  BEGIN
++    INSERT INTO customer_account (pending_email, display_name) VALUES ('khong-co-a-cong', 'test-x');
++    RAISE EXCEPTION 'I-035: database KHÔNG từ chối Gmail chờ xác nhận thiếu @';
++  EXCEPTION WHEN check_violation THEN
++    RAISE NOTICE 'I-035 bị từ chối (Gmail chờ thiếu @): %', SQLERRM;
++  END;
++  BEGIN
++    INSERT INTO customer_account (email, pending_email, display_name) VALUES ('test.trung@gmail.com', 'test.trung@gmail.com', 'test-x');
++    RAISE EXCEPTION 'I-035: database KHÔNG từ chối Gmail chờ trùng Gmail đã xác nhận của chính tài khoản';
++  EXCEPTION WHEN check_violation THEN
++    RAISE NOTICE 'I-035 bị từ chối (chờ trùng đã xác nhận cùng tài khoản): %', SQLERRM;
++  END;
++
++  -- Mã xác nhận: băm 32 byte, sống tối đa 24 giờ, dùng một lần.
++  INSERT INTO customer_email_verification (customer_account_id, email, token_hash, expires_at)
++  VALUES (a, 'test.xacnhan@gmail.com', sha256('test-i035-ma-xacnhan'), now() + interval '24 hours') RETURNING id INTO v;
++  RAISE NOTICE 'I-035 dương: mã xác nhận 24 giờ';
++  BEGIN
++    INSERT INTO customer_email_verification (customer_account_id, email, token_hash, expires_at)
++    VALUES (a, 'test.xacnhan@gmail.com', sha256('test-i035-ma-dai'), now() + interval '25 hours');
++    RAISE EXCEPTION 'I-035: database KHÔNG từ chối mã xác nhận sống quá 24 giờ';
++  EXCEPTION WHEN check_violation THEN
++    RAISE NOTICE 'I-035 bị từ chối (mã quá 24 giờ): %', SQLERRM;
++  END;
++  BEGIN
++    INSERT INTO customer_email_verification (customer_account_id, email, token_hash, expires_at)
++    VALUES (a, 'test.xacnhan@gmail.com', '\x0102'::bytea, now() + interval '1 hour');
++    RAISE EXCEPTION 'I-035: database KHÔNG từ chối mã xác nhận không phải băm 32 byte';
++  EXCEPTION WHEN check_violation THEN
++    RAISE NOTICE 'I-035 bị từ chối (mã không phải băm 32 byte): %', SQLERRM;
++  END;
++  BEGIN
++    INSERT INTO customer_email_verification (customer_account_id, email, token_hash, expires_at)
++    VALUES (a, 'Test.XacNhan@gmail.com', sha256('test-i035-ma-hoa'), now() + interval '1 hour');
++    RAISE EXCEPTION 'I-035: database KHÔNG từ chối mã xác nhận mang Gmail có chữ hoa';
++  EXCEPTION WHEN check_violation THEN
++    RAISE NOTICE 'I-035 bị từ chối (mã mang Gmail chữ hoa): %', SQLERRM;
++  END;
++  BEGIN
++    UPDATE customer_email_verification SET token_hash = sha256('test-i035-doi-ma') WHERE id = v;
++    RAISE EXCEPTION 'I-035: vai ghi sửa được băm của mã xác nhận';
++  EXCEPTION WHEN insufficient_privilege THEN
++    RAISE NOTICE 'I-035 bị từ chối (vai ghi sửa băm mã): %', SQLERRM;
++  END;
++
++  -- Khách tự xác nhận: dùng mã, chuyển Gmail chờ sang `email` — vết ghi với người sửa rỗng phải được nhận.
++  UPDATE customer_email_verification SET used_at = now() WHERE id = v;
++  UPDATE customer_account SET email = pending_email, pending_email = NULL WHERE id = a;
++  RAISE NOTICE 'I-035 dương: khách tự xác nhận, Gmail chờ thành Gmail đăng nhập';
++  BEGIN
++    UPDATE customer_email_verification SET used_at = now() WHERE id = v;
++    RAISE EXCEPTION 'I-035: database KHÔNG từ chối dùng lại mã xác nhận đã dùng';
++  EXCEPTION WHEN check_violation THEN
++    RAISE NOTICE 'I-035 bị từ chối (mã xác nhận dùng lần hai): %', SQLERRM;
++  END;
++
++  -- Kẻ gõ nhầm xác nhận sau chủ thật ⇒ trùng `email` đã xác nhận ⇒ từ chối.
++  BEGIN
++    UPDATE customer_account SET email = pending_email, pending_email = NULL WHERE id = b;
++    RAISE EXCEPTION 'I-035: database KHÔNG từ chối hai tài khoản khách cùng một Gmail đã xác nhận';
++  EXCEPTION WHEN unique_violation THEN
++    RAISE NOTICE 'I-035 bị từ chối (xác nhận Gmail đã thuộc tài khoản khác): %', SQLERRM;
++  END;
++  RESET ROLE;
++
++  -- Vết của lần khách tự sửa: có bản ghi cho cả hai bảng, người sửa rỗng.
++  SELECT count(*) INTO n FROM record_revision
++  WHERE person_id IS NULL AND target_table_code IN ('customer_account', 'customer_email_verification')
++    AND reason = 'test-i035_email_verification';
++  IF n < 2 THEN
++    RAISE EXCEPTION 'I-035: lần khách tự xác nhận không để lại đủ vết (% dòng)', n;
++  END IF;
++  RAISE NOTICE 'I-035 dương: lần tự xác nhận để lại vết, người sửa rỗng';
++
++  -- Kiểm ngược: bảng mã xác nhận chỉ trỏ tới tài khoản khách.
++  SELECT count(*) INTO n
++  FROM information_schema.referential_constraints rc
++  JOIN information_schema.table_constraints src ON src.constraint_name = rc.constraint_name AND src.constraint_schema = rc.constraint_schema
++  JOIN information_schema.table_constraints dst ON dst.constraint_name = rc.unique_constraint_name AND dst.constraint_schema = rc.unique_constraint_schema
++  WHERE src.table_schema = 'shop' AND src.table_name = 'customer_email_verification'
++    AND dst.table_name <> 'customer_account';
++  IF n <> 0 THEN
++    RAISE EXCEPTION 'I-035: % khoá ngoại từ customer_email_verification trỏ ra ngoài tài khoản khách', n;
++  END IF;
++  RAISE NOTICE 'I-035 kiểm ngược: mã xác nhận chỉ trỏ tới tài khoản khách';
++END $$;
+diff --git a/docs/product/2-db/07-thu-tu-migration.md b/docs/product/2-db/07-thu-tu-migration.md
+index 43f3458..6ffc5e8 100644
+--- a/docs/product/2-db/07-thu-tu-migration.md
++++ b/docs/product/2-db/07-thu-tu-migration.md
+@@ -66,6 +66,7 @@ ngược từ dưới lên, **từng bước một**.
+ | 38 | `20261027120000_tai_khoan_khach` | `T-263` | `account.phone`, email/username tuỳ chọn; bốn bảng khách tách người làm; liên kết đơn web bất biến sau tạo. Lùi từ chối nếu account thiếu email/username, có phone, hoặc customer_account có dòng; gỡ trigger/hàm/CHECK/FK/cột liên kết đơn trước, rồi bảng con trước bảng khách, trả account về hình cũ | 27 · 8 · 20 |
+ | 39 | `20261028090000_vet_cua_khach` | `T-264` | `record_revision.person_id` được rỗng chỉ cho bốn bảng `customer_*` (ADR-131 sửa đổi 2026-10-28). Lùi từ chối nếu đã có vết người sửa rỗng | 38 |
+ | 40 | `20261028120000_khach_google` | `T-267` | `customer_google_identity`, liên kết Google chỉ thêm; lùi khoá bảng và từ chối khi đã có dòng (`customer_google_identity_rollback_check`) | 39 |
++| 41 | `20261029120000_xac_nhan_gmail` | `T-270` | `customer_email_verification` và Gmail chờ; lùi khoá hai bảng, từ chối khi có mã hoặc pending_email; trả quyền và hai CHECK về bước trước | 40 |
+ 
+ **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
+ thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
+diff --git a/docs/product/2-db/09-doi-chieu-bat-bien.md b/docs/product/2-db/09-doi-chieu-bat-bien.md
+index a10b610..c078225 100644
+--- a/docs/product/2-db/09-doi-chieu-bat-bien.md
++++ b/docs/product/2-db/09-doi-chieu-bat-bien.md
+@@ -305,3 +305,5 @@ Từ bước 23, `I-005/1`, `I-005/3` và `I-015/1` · `I-015/2` đọc số sau
+ T-267 (2026-10-28, ADR-132): I-035/3 dùng mẫu customer_* nên đã phủ
+ customer_google_identity; không thêm phép đối chiếu. Test i035_google_identity.sql
+ kiểm liên kết duy nhất, chỉ thêm và không trỏ người của quán.
++
++T-270 (2026-10-29, ADR-133): I-035/1 nhận pending_email là liên lạc của khách; I-035/3 phủ cả customer_email_verification bằng mẫu bảng khách.
+diff --git a/docs/product/2-db/25-luoc-do-xac-nhan-gmail.md b/docs/product/2-db/25-luoc-do-xac-nhan-gmail.md
+new file mode 100644
+index 0000000..8d25a4b
+--- /dev/null
++++ b/docs/product/2-db/25-luoc-do-xac-nhan-gmail.md
+@@ -0,0 +1,25 @@
++# Lược đồ xác nhận Gmail khách
++
++T-270 · 2026-10-29 · Codex thi công phiếu Claude theo ADR-133.
++Tên, kiểu, ràng buộc thuộc [migration](../../../db/migrations/20261029120000_xac_nhan_gmail.up.sql).
++
++## Chỗ cất và quyền
++
++| Bảng | Ý định |
++|---|---|
++| `customer_email_verification` | Mã xác nhận Gmail khách, dùng một lần trong 24 giờ |
++
++customer_account thêm pending_email không duy nhất, chuẩn hoá và khác email khi có giá trị.
++email giữ Gmail đã xác nhận; tài khoản chỉ có pending_email vẫn hợp lệ.
++customer_email_verification cất Gmail mỗi lần gửi, băm 32 byte duy nhất, hạn tối đa 24 giờ;
++used_at trong thời hạn và chỉ đặt một lần. FK chỉ trỏ customer_account (I-035).
++Quyền SELECT/INSERT và sequence theo QC-03; REVOKE UPDATE rồi chỉ cấp used_at.
++Trigger record_revision_capture ghi vết; record_revision_person_check cho phép person_id rỗng
++với bảng mới. customer_account được cập nhật email, pending_email.
++
++## Đối chiếu và đường lùi
++
++Giữ nguyên db/tests/i035_email_verification.sql cùng các test I-035 cũ.
++I-035/1 trong db/reconcile/i035.sql nhận cả Gmail chờ; I-035/3 đã phủ bảng mới.
++Down khoá cả hai bảng, từ chối khi có mã hoặc Gmail chờ; khi rỗng mới gỡ bảng,
++hàm trigger, quyền mới, cột và trả hai CHECK về như trước.
+diff --git a/docs/product/3-be/01-hop-dong-api.md b/docs/product/3-be/01-hop-dong-api.md
+index e1bf86a..a2f8378 100644
+--- a/docs/product/3-be/01-hop-dong-api.md
++++ b/docs/product/3-be/01-hop-dong-api.md
+@@ -359,3 +359,10 @@ made → served trong ngày bán, kể cả phiên đã đóng. Không cửa ghi
+ 
+ **T-248 — 2026-10-24, chủ repo cho phép mở rộng Khoản chi:** hợp đồng 0.51.0 thêm khoản con, đổi tên và xoá mềm có lý do. DELETE có body `ExpenseReason`, không xoá cứng. Loại/khoản con còn dữ liệu chưa xoá bị chặn trên mọi ngày; xoá khoản chặn cả ngày tiền riêng đã đối soát. GET trả tổng chung, theo mục/khoản con và ngày gần nhất từ backend, chỉ tính khoản chưa xoá. Khoản cũ không có khoản con vẫn hợp lệ. Nguồn tiền loại giữ bất biến, tên đã dùng không tái sử dụng sau xoá.
+ T-264 (2026-10-27, phiếu Claude, ADR-131): hợp đồng 0.52.0 chuyển đăng nhập người làm sang identifier, password, tai_quay; đăng ký nhận display_name, phone/email, password. Sai dạng identifier trả identifier_invalid; không có tài khoản hoặc sai mật khẩu trả login_failed. Thêm chín đường khách với cookie banhcuon_khach tách khỏi cookie người làm. Đơn web gắn khách khi phiên còn hiệu lực, còn lại vẫn ẩn danh. Riêng lịch sử khách dùng before_id và limit theo khuôn Claude chốt; không áp sang cửa khác.
++
++T-270 (2026-10-29, phiếu Claude, ADR-133): 0.53.0 → 0.54.0. Thêm xác nhận công khai và gửi lại lớp khách,
++CustomerProfile luôn trả pending_email nullable. Gửi lại trả 202 CustomerOK theo khuôn yêu cầu đặt lại.
++Ba mã verification_invalid (400), no_pending_email (409), verification_rate_limited (429).
++Nhận việc: ràng buộc Gmail chờ và email trên mã là internal vì đã chuẩn hoá trước khi ghi; khoá chính,
++FK, băm, thời hạn do server cấp; dùng một lần đã khoá tài khoản và đọc lại mã trước khi sửa. Các ràng buộc
++ấy là internal; xung đột customer_account_email_key vẫn email_taken. Tên chặn đường lùi chỉ ở down, không thuộc bảng ánh xạ mà Gate 1g đọc từ up (cùng khuôn lát trước).
+diff --git a/docs/product/3-be/02-vai-va-quyen.md b/docs/product/3-be/02-vai-va-quyen.md
+index 55e7cea..70ff152 100644
+--- a/docs/product/3-be/02-vai-va-quyen.md
++++ b/docs/product/3-be/02-vai-va-quyen.md
+@@ -221,6 +221,8 @@ khi bấm rời, chỉ khoảng mở của chính người gọi được khép.
+ 
+ P3A-08 (2026-10-15, phiếu Claude): `GET /supply-stock` chỉ lớp `chu_quan`; cờ nhắc dành cho POS kiểm tra không tự cấp quyền đọc kho cho POS.
+ 
++| `khach/xac_nhan` | `cong_khai` | ADR-133; T-270; mã thư dùng một lần, không cần phiên |
++| `khach/gui_xac_nhan` | `khach` | ADR-133; T-270; tạo mã cho Gmail chờ của chính phiên |
+ | `khach/dang_ky` | `cong_khai` | ADR-131; T-264 |
+ | `khach/google` | `cong_khai` | ADR-132; T-267; kiểm ID token trước giao dịch, tái dùng cửa tạo tài khoản và mở phiên |
+ | `khach/dang_nhap` | `cong_khai` | ADR-131; T-264 |
+diff --git a/docs/product/3-be/openapi.yaml b/docs/product/3-be/openapi.yaml
+index 2d3f097..4435618 100644
+--- a/docs/product/3-be/openapi.yaml
++++ b/docs/product/3-be/openapi.yaml
+@@ -6,7 +6,7 @@
+ openapi: 3.1.0
+ info:
+   title: Bánh cuốn Bà Thanh — API
+-  version: 0.53.0
++  version: 0.54.0
+   description: >-
+     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
+     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
+@@ -4252,6 +4252,55 @@ paths:
+             application/json:
+               schema:
+                 $ref: '#/components/schemas/Error'
++  /customer-email-verifications:
++    post:
++      operationId: verifyCustomerEmail
++      tags: [khach]
++      security: []
++      description: ADR-133; mã dùng một lần trong 24 giờ. Mã sai, đã dùng, hết hạn hoặc Gmail chờ đổi trả verification_invalid; trùng Gmail đã xác nhận trả email_taken.
++      requestBody:
++        required: true
++        content:
++          application/json:
++            schema:
++              type: object
++              required: [token]
++              properties:
++                token:
++                  type: string
++      responses:
++        '200':
++          description: Gmail đã xác nhận; không tạo phiên.
++          content:
++            application/json:
++              schema:
++                $ref: '#/components/schemas/CustomerProfile'
++        default:
++          description: Lỗi theo ErrorCode và x-http-status.
++          content:
++            application/json:
++              schema:
++                $ref: '#/components/schemas/Error'
++  /customer-accounts/current/email-verification:
++    post:
++      operationId: resendCustomerEmailVerification
++      tags: [khach]
++      security:
++        - CustomerIdentity: []
++      description: ADR-133; no_pending_email nếu không có Gmail chờ; verification_rate_limited khi đã có 3 mã trong giờ qua, tính cả mã đăng ký. Gửi thư hỏng vẫn nhận yêu cầu.
++      responses:
++        '202':
++          description: Đã tạo mã và thử gửi thư.
++          content:
++            application/json:
++              schema:
++                $ref: '#/components/schemas/CustomerOK'
++        default:
++          description: Lỗi theo ErrorCode và x-http-status.
++          content:
++            application/json:
++              schema:
++                $ref: '#/components/schemas/Error'
+ components:
+   securitySchemes:
+     CustomerIdentity:
+@@ -4268,7 +4317,7 @@ components:
+     CustomerRegistration:
+       type: object
+       required: [display_name, password]
+-      description: Cần ít nhất phone hoặc email; chuẩn hoá ADR-131, thiếu cả hai trả contact_required.
++      description: Cần ít nhất phone hoặc email; chuẩn hoá ADR-131, thiếu cả hai trả contact_required. Gmail form vào pending_email, gửi thư xác nhận sau giao dịch; chỉ email đã xác nhận giữ chỗ (ADR-133).
+       properties:
+         display_name:
+           type: string
+@@ -4297,7 +4346,7 @@ components:
+           type: string
+     CustomerProfile:
+       type: object
+-      required: [customer_account_id, display_name, phone, email, delivery_name, delivery_phone, delivery_address]
++      required: [customer_account_id, display_name, phone, email, pending_email, delivery_name, delivery_phone, delivery_address]
+       properties:
+         customer_account_id:
+           type: integer
+@@ -4308,6 +4357,8 @@ components:
+           type: [string, "null"]
+         email:
+           type: [string, "null"]
++        pending_email:
++          type: [string, "null"]
+         delivery_name:
+           type: [string, "null"]
+         delivery_phone:
+@@ -7501,6 +7552,9 @@ components:
+         - password_too_short
+         - invalid_credentials
+         - login_temporarily_blocked
++        - verification_invalid
++        - no_pending_email
++        - verification_rate_limited
+         - reset_token_invalid
+         - account_not_pending
+         - account_not_active
+@@ -7629,6 +7683,9 @@ components:
+         password_too_short: 400
+         invalid_credentials: 401
+         login_temporarily_blocked: 429
++        verification_invalid: 400
++        no_pending_email: 409
++        verification_rate_limited: 429
+         reset_token_invalid: 400
+         account_not_pending: 409
+         account_not_active: 409
+@@ -8686,3 +8743,13 @@ x-constraint-errors:
+   customer_google_identity_account_key: unreviewed
+   customer_google_identity_sub_key: unreviewed
+   customer_google_identity_sub_check: unreviewed
++  customer_account_pending_email_check: internal
++  customer_account_pending_email_differs_check: internal
++  customer_email_verification_account_fkey: internal
++  customer_email_verification_email_check: internal
++  customer_email_verification_expiry_check: internal
++  customer_email_verification_pkey: internal
++  customer_email_verification_token_hash_check: internal
++  customer_email_verification_token_key: internal
++  customer_email_verification_used_at_check: internal
++  customer_email_verification_used_once_check: internal
+diff --git a/docs/product/4-fe/01-khung-fe.md b/docs/product/4-fe/01-khung-fe.md
+index 825c5bb..c76ed62 100644
+--- a/docs/product/4-fe/01-khung-fe.md
++++ b/docs/product/4-fe/01-khung-fe.md
+@@ -32,6 +32,7 @@ Mỗi màn thêm **một dòng** ở đây cùng lượt dựng nó, và nhóm n
+ | `/api/[...path]` | — | **tầng chuyển tiếp** cùng origin, không phải màn (§3.2) | `P4-02` |
+ | `/khach/dang-nhap` | khách | một ô số điện thoại hoặc Gmail và mật khẩu; đăng nhập tuỳ chọn (2026-10-28, phiếu Claude, ADR-131) | `T-265` |
+ | `/khach/dang-ky` | khách | tên, ít nhất số điện thoại hoặc Gmail, mật khẩu; mở phiên ngay sau đăng ký | `T-265` |
++| `/khach/xac-nhan-gmail` | công khai | đọc ma từ query, xác nhận một lần, link về tài khoản | `T-270` |
+ | `/khach/tai-khoan` | khách | tên · số · thư; sửa hoặc xoá bộ giao đã nhớ, đổi mật khẩu, đăng xuất | `T-265` |
+ | `/khach/don` | khách | lịch sử đơn của phiên, mới nhất trước, Xem thêm theo con trỏ backend | `T-265` |
+ | `/khach/quen-mat-khau` | khách | xin mã qua Gmail; nói rõ khách chỉ có số chưa có cách lấy lại mật khẩu | `T-265` |
+@@ -88,7 +89,7 @@ xem đi trên URL (**ADR-102** điểm 4).
+ | `/ban/[ma]` | `GET /qr-codes/{code}` · `GET /menu` ở server từng request với `no-store`; menu vào Query bằng `initialData`, khoá `menu` | `POST /price-quotes` cả giỏ · `POST /qr-codes/{code}/orders` | menu khi mở màn · quay lại cửa sổ · mạng về · sau ghi; tổng khi giỏ đổi | giữ nháp; gửi mất phản hồi khoá phiếu, *Gửi lại* giữ thân và dấu; tổng chỉ lấy backend (2026-10-21, theo phiếu Claude) | `P4-10` |
+ | `/dat-mon` | `GET /menu` ở server từng request với `no-store`, `initialData`, khoá `menu` chung; `GET /customer-sessions/current` phía trình duyệt để điền sẵn một lần tên · số · địa chỉ đã nhớ (2026-10-28, phiếu Claude) | `POST /price-quotes` cả giỏ · `POST /online-orders` | như màn QR | cùng khuôn giữ thân và dấu; thành công xoá giỏ và form; giờ gửi `+07:00` (2026-10-21, theo phiếu Claude); không phiên hoặc lỗi đọc phiên vẫn đặt ẩn danh, sửa form chỉ cho đơn ấy, không ghi bộ đã nhớ; trong lúc đọc phiên vẫn render tên món từ menu server | `P4-10` |
+ | `/khach/dang-nhap` · `/khach/dang-ky` | — | `POST /customer-sessions` · `POST /customer-accounts` | thành công dọn cache và nháp khách, chuyển tài khoản để đọc phiên mới | báo chưa rõ kết quả khi mất phản hồi; không gửi lại ngầm | `T-265` |
+-| `/khach/tai-khoan` | `GET /customer-sessions/current` | `PUT /customer-accounts/current/delivery-profile` · `PUT /customer-accounts/current/password` · `POST /customer-sessions/current/end` | mở màn · quay lại cửa sổ · mạng về · sau ghi đọc lại phiên; 401 chuyển đăng nhập khách; đổi mật khẩu giữ phiên hiện tại | giữ bản đọc cũ kèm lỗi, mốc đọc và nút Đọc lại; lưu xong nhưng đọc lại lỗi báo rõ đã lưu | `T-265` |
++| `/khach/tai-khoan` | `GET /customer-sessions/current` | `PUT /customer-accounts/current/delivery-profile` · `PUT /customer-accounts/current/password` · `POST /customer-sessions/current/end` · `POST /customer-accounts/current/email-verification` | mở màn · quay lại cửa sổ · mạng về · sau ghi đọc lại phiên; 401 chuyển đăng nhập khách; đổi mật khẩu giữ phiên hiện tại | giữ bản đọc cũ kèm lỗi, mốc đọc và nút Đọc lại; lưu xong nhưng đọc lại lỗi báo rõ đã lưu | `T-265` |
+ | `/khach/don` | `GET /customer-accounts/current/orders`; Xem thêm gửi `before_id` bằng `next_before_id`, null thì ẩn nút | — | mở màn · quay lại cửa sổ · mạng về · Xem thêm; giữ thứ tự backend, 401 chuyển đăng nhập khách | giữ trang cũ kèm lỗi, mốc đọc và nút Đọc lại | `T-265` |
+ | `/khach/quen-mat-khau` · `/khach/dat-lai-mat-khau` | — | `POST /customer-password-reset-requests` · `POST /customer-password-resets` | xin mã luôn cùng câu khi thành công; đặt lại xong dọn cache và nháp khách, mời đăng nhập | báo chưa rõ kết quả, không gửi lại ngầm | `T-265` |
+ | `/chu-quan` — Tổng quan | `GET /owner-overview` | `PUT /daily-minimums/{sale_date}` (`sale_date` của lần đọc) | mở màn · quay lại cửa sổ · mạng về · sau ghi; **không** kéo theo chu kỳ — hợp đồng không trả `poll_interval_seconds` cho chủ quán | giữ bản cũ kèm `Alert` có mốc `read_at` của bản ấy (dòng *Chủ quán*) | `P4A-02` |
+@@ -271,3 +272,11 @@ Callback gửi credential qua lớp API tới POST /customer-sessions/google; th
+ dọn cache khách và chuyển /khach/tai-khoan như đăng nhập mật khẩu. email_taken
+ nhắc đăng nhập bằng mật khẩu; các lỗi khác qua hàm dịch lỗi tài khoản.
+ Không có CSP hoặc COOP trong next.config.ts nên không thêm header mới.
++
++### Xác nhận Gmail khách (2026-10-29, phiếu Claude, T-270)
++
++XacNhanGmail đọc ma từ query ở /khach/xac-nhan-gmail, gọi POST /customer-email-verifications một lần,
++không tự gửi lại khi mất phản hồi; thiếu ma không gọi. Hiện thành công, verification_invalid hoặc email_taken
++bằng câu của phiếu; thành công làm mới cache phiên khách, không lấy hồ sơ trả về làm phiên đăng nhập.
++Trang tài khoản đọc pending_email từ GET /customer-sessions/current, báo đã gửi thư và Gmail đang chờ,
++nút gửi lại gọi POST /customer-accounts/current/email-verification; verification_rate_limited báo thử sau một giờ.
+diff --git a/fe/src/app/khach/xac-nhan-gmail/page.tsx b/fe/src/app/khach/xac-nhan-gmail/page.tsx
+new file mode 100644
+index 0000000..07c5c5b
+--- /dev/null
++++ b/fe/src/app/khach/xac-nhan-gmail/page.tsx
+@@ -0,0 +1,6 @@
++import { Suspense } from "react";
++import { XacNhanGmail } from "@/components/khach/xac-nhan-gmail";
++
++export default function Page() {
++  return <Suspense fallback={<p>Đang tải…</p>}><XacNhanGmail /></Suspense>;
++}
+diff --git a/fe/src/app/khach/xac-nhan-gmail/xac-nhan-gmail.test.tsx b/fe/src/app/khach/xac-nhan-gmail/xac-nhan-gmail.test.tsx
+new file mode 100644
+index 0000000..3c7448e
+--- /dev/null
++++ b/fe/src/app/khach/xac-nhan-gmail/xac-nhan-gmail.test.tsx
+@@ -0,0 +1,46 @@
++import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
++import { afterEach, beforeEach, expect, it, vi } from "vitest";
++import { StrictMode } from "react";
++import { ApiProvider } from "@/lib/api/provider";
++import { XacNhanGmail, LINK_KHONG_HOP_LE } from "@/components/khach/xac-nhan-gmail";
++import { TaiKhoanKhach } from "@/components/khach/tai-khoan";
++
++let query = "ma=ma-thu";
++vi.mock("next/navigation", () => ({ useSearchParams: () => new URLSearchParams(query), useRouter: () => ({ replace: vi.fn() }) }));
++afterEach(cleanup);
++beforeEach(() => { query = "ma=ma-thu"; });
++const profile = { customer_account_id: 1, display_name: "Lan", phone: null, email: null, pending_email: "lan@gmail.com", delivery_name: null, delivery_phone: null, delivery_address: null };
++function response(body: unknown, status = 200) {
++  return new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
++}
++it.each([
++  [200, { ...profile, email: profile.pending_email, pending_email: null }, "Đã xác nhận Gmail."],
++  [400, { code: "verification_invalid" }, LINK_KHONG_HOP_LE],
++  [409, { code: "email_taken" }, "Gmail này đã thuộc một tài khoản khác."],
++])("xác nhận trả %s và chỉ gửi một lần trong StrictMode", async (status, body, message) => {
++  const requests: { path: string; method: string; body: unknown }[] = [];
++  render(<StrictMode><ApiProvider fetch={async (req) => {
++    requests.push({ path: new URL(req.url).pathname, method: req.method, body: await req.json() });
++    return response(body, status);
++  }}><XacNhanGmail /></ApiProvider></StrictMode>);
++  expect(await screen.findByText(message)).toBeTruthy();
++  expect(requests).toEqual([{ path: "/api/customer-email-verifications", method: "POST", body: { token: "ma-thu" } }]);
++  expect(screen.getByRole("link", { name: "Về tài khoản" }).getAttribute("href")).toBe("/khach/tai-khoan");
++});
++it("thiếu ma không gọi API", () => {
++  query = ""; const fetch = vi.fn();
++  render(<ApiProvider fetch={fetch}><XacNhanGmail /></ApiProvider>);
++  expect(screen.getByText(LINK_KHONG_HOP_LE)).toBeTruthy(); expect(fetch).not.toHaveBeenCalled();
++});
++it.each([202, 429])("Gmail chờ và gửi lại đúng cửa: %s", async (status) => {
++  const requests: string[] = [];
++  render(<ApiProvider fetch={async (req) => {
++    requests.push(req.method + " " + new URL(req.url).pathname);
++    return req.method === "GET" ? response(profile) : response(status === 202 ? { status: "ok" } : { code: "verification_rate_limited" }, status);
++  }}><TaiKhoanKhach /></ApiProvider>);
++  await screen.findByText("Gmail lan@gmail.com đang chờ xác nhận");
++  expect(screen.getByText("Đã gửi thư xác nhận tới lan@gmail.com. Mở thư và bấm link trong 24 giờ.")).toBeTruthy();
++  fireEvent.click(screen.getByRole("button", { name: "Gửi lại thư xác nhận" }));
++  await waitFor(() => expect(requests).toContain("POST /api/customer-accounts/current/email-verification"));
++  if (status === 429) expect(await screen.findByText("Đã gửi nhiều lần, thử lại sau một giờ.")).toBeTruthy();
++});
+diff --git a/fe/src/components/khach/tai-khoan.tsx b/fe/src/components/khach/tai-khoan.tsx
+index 151e6ba..7af0cf2 100644
+--- a/fe/src/components/khach/tai-khoan.tsx
++++ b/fe/src/components/khach/tai-khoan.tsx
+@@ -17,6 +17,7 @@ const password = z.object({ current_password: batBuoc, new_password: matKhau });
+ export function TaiKhoanKhach() {
+   const api = useApi(); const router = useRouter(); const phien = usePhienKhach(); const don = useDonPhienKhach();
+   const [busy, setBusy] = useState(false); const lock = useRef(false);
++  const [notice, setNotice] = useState<string | null>(null);
+   const [loi, setLoi] = useState<ApiFailure | null>(null);
+   useChuyenDangNhap(phien.data === null || hetPhien(loi));
+   const p = phien.data;
+@@ -24,6 +25,19 @@ export function TaiKhoanKhach() {
+     const r = await phien.refetch();
+     return r.isError ? "Đã lưu nhưng chưa đọc lại được thông tin. Bấm Đọc lại để cập nhật." : "Đã lưu thông tin giao.";
+   }
++  async function guiLai() {
++    if (lock.current) return; lock.current = true; setBusy(true); setLoi(null); setNotice(null);
++    try {
++      const r = await call(api.POST("/customer-accounts/current/email-verification"));
++      if (!r.ok) {
++        if (r.failure.kind === "rejected" && r.failure.code === "verification_rate_limited") {
++          setNotice("Đã gửi nhiều lần, thử lại sau một giờ.");
++        } else setLoi(r.failure);
++        return;
++      }
++      setNotice(`Đã gửi thư xác nhận tới ${p?.pending_email}. Mở thư và bấm link trong 24 giờ.`);
++    } finally { lock.current = false; setBusy(false); }
++  }
+   async function thoat() {
+     if (lock.current) return; lock.current = true; setBusy(true); setLoi(null);
+     try {
+@@ -39,6 +53,12 @@ export function TaiKhoanKhach() {
+       <section aria-label="Thông tin cá nhân" className="space-y-2"><h2 className="text-lg font-semibold">{p.display_name}</h2>
+         <p>Số điện thoại: {p.phone || "Chưa có"}</p><p>Gmail: {p.email || "Chưa có"}</p>
+       </section>
++      {p.pending_email && <section aria-label="Xác nhận Gmail" className="space-y-2">
++        <p>Gmail {p.pending_email} đang chờ xác nhận</p>
++        <p>Đã gửi thư xác nhận tới {p.pending_email}. Mở thư và bấm link trong 24 giờ.</p>
++        <Button disabled={busy} onClick={() => void guiLai()}>Gửi lại thư xác nhận</Button>
++      </section>}
++      {notice && <Bao loai="tin">{notice}</Bao>}
+       <section aria-label="Thông tin giao đã nhớ" className="space-y-3"><h2 className="font-semibold">Thông tin giao đã nhớ</h2>
+         <p>Chỉ nhớ một bộ thông tin. Để trống cả ba ô rồi lưu để xoá bộ đã nhớ.</p>
+         <FormKhach schema={delivery} defaults={{ delivery_name: p.delivery_name ?? "", delivery_phone: p.delivery_phone ?? "", delivery_address: p.delivery_address ?? "" }}
+diff --git a/fe/src/components/khach/xac-nhan-gmail.tsx b/fe/src/components/khach/xac-nhan-gmail.tsx
+new file mode 100644
+index 0000000..beb8563
+--- /dev/null
++++ b/fe/src/components/khach/xac-nhan-gmail.tsx
+@@ -0,0 +1,38 @@
++"use client";
++
++import { useEffect, useRef, useState } from "react";
++import { useSearchParams } from "next/navigation";
++import Link from "next/link";
++import { useQueryClient } from "@tanstack/react-query";
++import { call } from "@/lib/api/client";
++import { useApi } from "@/lib/api/provider";
++import { loiTaiKhoan } from "@/lib/auth/messages";
++import { KHOA_KHACH } from "@/lib/khach/session";
++import { KhungKhach } from "./khung";
++
++export const LINK_KHONG_HOP_LE = "Link xác nhận không còn dùng được. Đăng nhập rồi bấm Gửi lại thư xác nhận.";
++export function XacNhanGmail() {
++  const token = useSearchParams().get("ma");
++  const api = useApi(); const qc = useQueryClient();
++  const started = useRef(false);
++  const [message, setMessage] = useState<string | null>(null);
++  useEffect(() => {
++    if (!token || started.current) return;
++    started.current = true;
++    void (async () => {
++      const r = await call(api.POST("/customer-email-verifications", { body: { token } }));
++      if (r.ok) {
++        setMessage("Đã xác nhận Gmail.");
++        await qc.invalidateQueries({ queryKey: KHOA_KHACH });
++      } else if (r.failure.kind === "rejected" && r.failure.code === "verification_invalid") {
++        setMessage(LINK_KHONG_HOP_LE);
++      } else if (r.failure.kind === "rejected" && r.failure.code === "email_taken") {
++        setMessage("Gmail này đã thuộc một tài khoản khác.");
++      } else setMessage(loiTaiKhoan(r.failure));
++    })();
++  }, [api, qc, token]);
++  return <KhungKhach title="Xác nhận Gmail">
++    <p role="status">{!token ? LINK_KHONG_HOP_LE : message ?? "Đang xác nhận Gmail…"}</p>
++    <Link href="/khach/tai-khoan">Về tài khoản</Link>
++  </KhungKhach>;
++}
+diff --git a/fe/src/lib/api/schema.ts b/fe/src/lib/api/schema.ts
+index e8a868f..2130f4d 100644
+--- a/fe/src/lib/api/schema.ts
++++ b/fe/src/lib/api/schema.ts
+@@ -2236,11 +2236,45 @@ export interface paths {
+         patch?: never;
+         trace?: never;
+     };
++    "/customer-email-verifications": {
++        parameters: {
++            query?: never;
++            header?: never;
++            path?: never;
++            cookie?: never;
++        };
++        get?: never;
++        put?: never;
++        /** @description ADR-133; mã dùng một lần trong 24 giờ. Mã sai, đã dùng, hết hạn hoặc Gmail chờ đổi trả verification_invalid; trùng Gmail đã xác nhận trả email_taken. */
++        post: operations["verifyCustomerEmail"];
++        delete?: never;
++        options?: never;
++        head?: never;
++        patch?: never;
++        trace?: never;
++    };
++    "/customer-accounts/current/email-verification": {
++        parameters: {
++            query?: never;
++            header?: never;
++            path?: never;
++            cookie?: never;
++        };
++        get?: never;
++        put?: never;
++        /** @description ADR-133; no_pending_email nếu không có Gmail chờ; verification_rate_limited khi đã có 3 mã trong giờ qua, tính cả mã đăng ký. Gửi thư hỏng vẫn nhận yêu cầu. */
++        post: operations["resendCustomerEmailVerification"];
++        delete?: never;
++        options?: never;
++        head?: never;
++        patch?: never;
++        trace?: never;
++    };
+ }
+ export type webhooks = Record<string, never>;
+ export interface components {
+     schemas: {
+-        /** @description Cần ít nhất phone hoặc email; chuẩn hoá ADR-131, thiếu cả hai trả contact_required. */
++        /** @description Cần ít nhất phone hoặc email; chuẩn hoá ADR-131, thiếu cả hai trả contact_required. Gmail form vào pending_email, gửi thư xác nhận sau giao dịch; chỉ email đã xác nhận giữ chỗ (ADR-133). */
+         CustomerRegistration: {
+             display_name: string;
+             phone?: string;
+@@ -2260,6 +2294,7 @@ export interface components {
+             display_name: string;
+             phone: string | null;
+             email: string | null;
++            pending_email: string | null;
+             delivery_name: string | null;
+             delivery_phone: string | null;
+             delivery_address: string | null;
+@@ -3789,7 +3824,7 @@ export interface components {
+          * @description Mã lỗi công khai. FE quyết hiện gì theo mã, không theo status, không theo chữ. Mã của một luật do lát dựng cửa của luật ấy thêm (01-hop-dong-api.md §3).
+          * @enum {string}
+          */
+-        ErrorCode: "identifier_invalid" | "contact_required" | "phone_taken" | "google_login_disabled" | "google_token_invalid" | "login_failed" | "menu_combo_not_found" | "menu_combo_hidden" | "menu_combo_price_in_sales_hours" | "menu_combo_item_not_found" | "menu_combo_surcharge_in_sales_hours" | "combo_portions_mismatch" | "menu_category_not_found" | "menu_category_hidden" | "menu_category_name_taken" | "menu_item_already_in_category" | "expense_category_not_found" | "expense_not_found" | "expense_item_in_use" | "expense_category_in_use" | "expense_item_name_taken" | "expense_item_not_found" | "supply_item_unit_already_set" | "supply_day_entry_already_recorded" | "supply_item_name_taken" | "supply_day_entry_not_found" | "assigned_task_guide_not_found" | "assigned_task_guide_hidden" | "assigned_task_guide_not_text" | "assigned_task_guide_file_missing" | "file_too_large" | "training_record_not_found" | "training_record_hidden" | "assigned_task_not_found" | "person_not_found" | "assigned_task_hidden" | "assigned_task_already_done" | "assigned_task_not_done" | "supply_item_not_found" | "expense_category_name_taken" | "username_taken" | "email_taken" | "password_too_short" | "invalid_credentials" | "login_temporarily_blocked" | "reset_token_invalid" | "account_not_pending" | "account_not_active" | "account_not_locked" | "account_person_is_owner" | "cross_origin_write" | "order_intake_already_paused" | "order_intake_not_paused" | "shop_already_blind" | "shop_not_blind" | "intake_state_changed" | "internal_error" | "invalid_request" | "unauthenticated" | "not_on_counter_duty" | "counter_duty_changed" | "owner_only" | "qr_code_not_current" | "dining_table_not_found" | "qr_code_issue_conflict" | "menu_item_name_conflict" | "menu_item_component_conflict" | "menu_component_name_conflict" | "menu_item_not_found" | "menu_option_not_found" | "option_group_not_found" | "menu_option_name_taken" | "menu_option_hidden" | "menu_option_not_hidden" | "menu_option_is_default" | "menu_component_not_found" | "menu_item_component_not_found" | "menu_item_discontinued" | "option_combination_invalid" | "submission_code_conflict" | "dining_table_needs_cleaning" | "dining_table_not_needing_cleaning" | "sales_order_not_found" | "table_session_not_found" | "order_transition_not_allowed" | "table_session_transition_not_allowed" | "payment_parts_mismatch" | "debtor_name_mismatch" | "order_intake_paused" | "outside_selling_hours" | "shop_not_seeing_orders" | "delivery_served_mark_undecided" | "debt_note_required" | "order_handover_mismatch" | "order_jobs_not_served" | "prepayment_balance_exceeded" | "bill_not_found" | "prepayment_not_found" | "bill_has_no_debt" | "debt_already_settled" | "debt_overpaid" | "order_not_prepayable" | "prepayment_already_received" | "opening_float_already_declared" | "cash_count_already_recorded" | "sale_day_reconciled" | "cash_day_incomplete" | "sale_day_not_reconciled" | "sale_day_already_reconciled" | "paper_ledger_missing" | "paper_position_already_entered" | "paper_ledger_already_declared" | "paper_entries_pending" | "gap_explanation_required" | "station_job_not_found" | "station_job_transition_not_allowed" | "production_batch_not_found" | "production_batch_already_rolled_back" | "production_batch_has_discarded_jobs" | "production_batch_has_served_units" | "station_job_has_wrong_make_note" | "transfer_source_not_available" | "transfer_target_not_waiting" | "wrong_make_note_not_allowed" | "wrong_make_note_not_found" | "wrong_make_note_already_cancelled" | "served_quantity_exceeds_made";
++        ErrorCode: "identifier_invalid" | "contact_required" | "phone_taken" | "google_login_disabled" | "google_token_invalid" | "login_failed" | "menu_combo_not_found" | "menu_combo_hidden" | "menu_combo_price_in_sales_hours" | "menu_combo_item_not_found" | "menu_combo_surcharge_in_sales_hours" | "combo_portions_mismatch" | "menu_category_not_found" | "menu_category_hidden" | "menu_category_name_taken" | "menu_item_already_in_category" | "expense_category_not_found" | "expense_not_found" | "expense_item_in_use" | "expense_category_in_use" | "expense_item_name_taken" | "expense_item_not_found" | "supply_item_unit_already_set" | "supply_day_entry_already_recorded" | "supply_item_name_taken" | "supply_day_entry_not_found" | "assigned_task_guide_not_found" | "assigned_task_guide_hidden" | "assigned_task_guide_not_text" | "assigned_task_guide_file_missing" | "file_too_large" | "training_record_not_found" | "training_record_hidden" | "assigned_task_not_found" | "person_not_found" | "assigned_task_hidden" | "assigned_task_already_done" | "assigned_task_not_done" | "supply_item_not_found" | "expense_category_name_taken" | "username_taken" | "email_taken" | "password_too_short" | "invalid_credentials" | "login_temporarily_blocked" | "verification_invalid" | "no_pending_email" | "verification_rate_limited" | "reset_token_invalid" | "account_not_pending" | "account_not_active" | "account_not_locked" | "account_person_is_owner" | "cross_origin_write" | "order_intake_already_paused" | "order_intake_not_paused" | "shop_already_blind" | "shop_not_blind" | "intake_state_changed" | "internal_error" | "invalid_request" | "unauthenticated" | "not_on_counter_duty" | "counter_duty_changed" | "owner_only" | "qr_code_not_current" | "dining_table_not_found" | "qr_code_issue_conflict" | "menu_item_name_conflict" | "menu_item_component_conflict" | "menu_component_name_conflict" | "menu_item_not_found" | "menu_option_not_found" | "option_group_not_found" | "menu_option_name_taken" | "menu_option_hidden" | "menu_option_not_hidden" | "menu_option_is_default" | "menu_component_not_found" | "menu_item_component_not_found" | "menu_item_discontinued" | "option_combination_invalid" | "submission_code_conflict" | "dining_table_needs_cleaning" | "dining_table_not_needing_cleaning" | "sales_order_not_found" | "table_session_not_found" | "order_transition_not_allowed" | "table_session_transition_not_allowed" | "payment_parts_mismatch" | "debtor_name_mismatch" | "order_intake_paused" | "outside_selling_hours" | "shop_not_seeing_orders" | "delivery_served_mark_undecided" | "debt_note_required" | "order_handover_mismatch" | "order_jobs_not_served" | "prepayment_balance_exceeded" | "bill_not_found" | "prepayment_not_found" | "bill_has_no_debt" | "debt_already_settled" | "debt_overpaid" | "order_not_prepayable" | "prepayment_already_received" | "opening_float_already_declared" | "cash_count_already_recorded" | "sale_day_reconciled" | "cash_day_incomplete" | "sale_day_not_reconciled" | "sale_day_already_reconciled" | "paper_ledger_missing" | "paper_position_already_entered" | "paper_ledger_already_declared" | "paper_entries_pending" | "gap_explanation_required" | "station_job_not_found" | "station_job_transition_not_allowed" | "production_batch_not_found" | "production_batch_already_rolled_back" | "production_batch_has_discarded_jobs" | "production_batch_has_served_units" | "station_job_has_wrong_make_note" | "transfer_source_not_available" | "transfer_target_not_waiting" | "wrong_make_note_not_allowed" | "wrong_make_note_not_found" | "wrong_make_note_already_cancelled" | "served_quantity_exceeds_made";
+         /** @description Hình lỗi chung của mọi lời từ chối (01-hop-dong-api.md §3). */
+         Error: {
+             code: components["schemas"]["ErrorCode"];
+@@ -9045,6 +9080,70 @@ export interface operations {
+             };
+         };
+     };
++    verifyCustomerEmail: {
++        parameters: {
++            query?: never;
++            header?: never;
++            path?: never;
++            cookie?: never;
++        };
++        requestBody: {
++            content: {
++                "application/json": {
++                    token: string;
++                };
++            };
++        };
++        responses: {
++            /** @description Gmail đã xác nhận; không tạo phiên. */
++            200: {
++                headers: {
++                    [name: string]: unknown;
++                };
++                content: {
++                    "application/json": components["schemas"]["CustomerProfile"];
++                };
++            };
++            /** @description Lỗi theo ErrorCode và x-http-status. */
++            default: {
++                headers: {
++                    [name: string]: unknown;
++                };
++                content: {
++                    "application/json": components["schemas"]["Error"];
++                };
++            };
++        };
++    };
++    resendCustomerEmailVerification: {
++        parameters: {
++            query?: never;
++            header?: never;
++            path?: never;
++            cookie?: never;
++        };
++        requestBody?: never;
++        responses: {
++            /** @description Đã tạo mã và thử gửi thư. */
++            202: {
++                headers: {
++                    [name: string]: unknown;
++                };
++                content: {
++                    "application/json": components["schemas"]["CustomerOK"];
++                };
++            };
++            /** @description Lỗi theo ErrorCode và x-http-status. */
++            default: {
++                headers: {
++                    [name: string]: unknown;
++                };
++                content: {
++                    "application/json": components["schemas"]["Error"];
++                };
++            };
++        };
++    };
+ }
+ type FlattenedDeepRequired<T> = {
+     [K in keyof T]-?: FlattenedDeepRequired<T[K] extends unknown[] | undefined | null ? Extract<T[K], unknown[]>[number] : T[K]>;
+@@ -9087,5 +9186,5 @@ export const refundRequestSource_method_codeValues: ReadonlyArray<FlattenedDeepR
+ export const prepaymentReturnRequestMethod_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PrepaymentReturnRequest"]["method_code"]> = ["cash", "transfer"];
+ export const paperEntryRequestKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaperEntryRequest"]["kind"]> = ["table", "takeaway"];
+ export const paperEntryRequestHandover_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaperEntryRequest"]["handover_code"]> = ["shop_pickup", "door_delivery"];
+-export const errorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ErrorCode"]> = ["identifier_invalid", "contact_required", "phone_taken", "google_login_disabled", "google_token_invalid", "login_failed", "menu_combo_not_found", "menu_combo_hidden", "menu_combo_price_in_sales_hours", "menu_combo_item_not_found", "menu_combo_surcharge_in_sales_hours", "combo_portions_mismatch", "menu_category_not_found", "menu_category_hidden", "menu_category_name_taken", "menu_item_already_in_category", "expense_category_not_found", "expense_not_found", "expense_item_in_use", "expense_category_in_use", "expense_item_name_taken", "expense_item_not_found", "supply_item_unit_already_set", "supply_day_entry_already_recorded", "supply_item_name_taken", "supply_day_entry_not_found", "assigned_task_guide_not_found", "assigned_task_guide_hidden", "assigned_task_guide_not_text", "assigned_task_guide_file_missing", "file_too_large", "training_record_not_found", "training_record_hidden", "assigned_task_not_found", "person_not_found", "assigned_task_hidden", "assigned_task_already_done", "assigned_task_not_done", "supply_item_not_found", "expense_category_name_taken", "username_taken", "email_taken", "password_too_short", "invalid_credentials", "login_temporarily_blocked", "reset_token_invalid", "account_not_pending", "account_not_active", "account_not_locked", "account_person_is_owner", "cross_origin_write", "order_intake_already_paused", "order_intake_not_paused", "shop_already_blind", "shop_not_blind", "intake_state_changed", "internal_error", "invalid_request", "unauthenticated", "not_on_counter_duty", "counter_duty_changed", "owner_only", "qr_code_not_current", "dining_table_not_found", "qr_code_issue_conflict", "menu_item_name_conflict", "menu_item_component_conflict", "menu_component_name_conflict", "menu_item_not_found", "menu_option_not_found", "option_group_not_found", "menu_option_name_taken", "menu_option_hidden", "menu_option_not_hidden", "menu_option_is_default", "menu_component_not_found", "menu_item_component_not_found", "menu_item_discontinued", "option_combination_invalid", "submission_code_conflict", "dining_table_needs_cleaning", "dining_table_not_needing_cleaning", "sales_order_not_found", "table_session_not_found", "order_transition_not_allowed", "table_session_transition_not_allowed", "payment_parts_mismatch", "debtor_name_mismatch", "order_intake_paused", "outside_selling_hours", "shop_not_seeing_orders", "delivery_served_mark_undecided", "debt_note_required", "order_handover_mismatch", "order_jobs_not_served", "prepayment_balance_exceeded", "bill_not_found", "prepayment_not_found", "bill_has_no_debt", "debt_already_settled", "debt_overpaid", "order_not_prepayable", "prepayment_already_received", "opening_float_already_declared", "cash_count_already_recorded", "sale_day_reconciled", "cash_day_incomplete", "sale_day_not_reconciled", "sale_day_already_reconciled", "paper_ledger_missing", "paper_position_already_entered", "paper_ledger_already_declared", "paper_entries_pending", "gap_explanation_required", "station_job_not_found", "station_job_transition_not_allowed", "production_batch_not_found", "production_batch_already_rolled_back", "production_batch_has_discarded_jobs", "production_batch_has_served_units", "station_job_has_wrong_make_note", "transfer_source_not_available", "transfer_target_not_waiting", "wrong_make_note_not_allowed", "wrong_make_note_not_found", "wrong_make_note_already_cancelled", "served_quantity_exceeds_made"];
++export const errorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ErrorCode"]> = ["identifier_invalid", "contact_required", "phone_taken", "google_login_disabled", "google_token_invalid", "login_failed", "menu_combo_not_found", "menu_combo_hidden", "menu_combo_price_in_sales_hours", "menu_combo_item_not_found", "menu_combo_surcharge_in_sales_hours", "combo_portions_mismatch", "menu_category_not_found", "menu_category_hidden", "menu_category_name_taken", "menu_item_already_in_category", "expense_category_not_found", "expense_not_found", "expense_item_in_use", "expense_category_in_use", "expense_item_name_taken", "expense_item_not_found", "supply_item_unit_already_set", "supply_day_entry_already_recorded", "supply_item_name_taken", "supply_day_entry_not_found", "assigned_task_guide_not_found", "assigned_task_guide_hidden", "assigned_task_guide_not_text", "assigned_task_guide_file_missing", "file_too_large", "training_record_not_found", "training_record_hidden", "assigned_task_not_found", "person_not_found", "assigned_task_hidden", "assigned_task_already_done", "assigned_task_not_done", "supply_item_not_found", "expense_category_name_taken", "username_taken", "email_taken", "password_too_short", "invalid_credentials", "login_temporarily_blocked", "verification_invalid", "no_pending_email", "verification_rate_limited", "reset_token_invalid", "account_not_pending", "account_not_active", "account_not_locked", "account_person_is_owner", "cross_origin_write", "order_intake_already_paused", "order_intake_not_paused", "shop_already_blind", "shop_not_blind", "intake_state_changed", "internal_error", "invalid_request", "unauthenticated", "not_on_counter_duty", "counter_duty_changed", "owner_only", "qr_code_not_current", "dining_table_not_found", "qr_code_issue_conflict", "menu_item_name_conflict", "menu_item_component_conflict", "menu_component_name_conflict", "menu_item_not_found", "menu_option_not_found", "option_group_not_found", "menu_option_name_taken", "menu_option_hidden", "menu_option_not_hidden", "menu_option_is_default", "menu_component_not_found", "menu_item_component_not_found", "menu_item_discontinued", "option_combination_invalid", "submission_code_conflict", "dining_table_needs_cleaning", "dining_table_not_needing_cleaning", "sales_order_not_found", "table_session_not_found", "order_transition_not_allowed", "table_session_transition_not_allowed", "payment_parts_mismatch", "debtor_name_mismatch", "order_intake_paused", "outside_selling_hours", "shop_not_seeing_orders", "delivery_served_mark_undecided", "debt_note_required", "order_handover_mismatch", "order_jobs_not_served", "prepayment_balance_exceeded", "bill_not_found", "prepayment_not_found", "bill_has_no_debt", "debt_already_settled", "debt_overpaid", "order_not_prepayable", "prepayment_already_received", "opening_float_already_declared", "cash_count_already_recorded", "sale_day_reconciled", "cash_day_incomplete", "sale_day_not_reconciled", "sale_day_already_reconciled", "paper_ledger_missing", "paper_position_already_entered", "paper_ledger_already_declared", "paper_entries_pending", "gap_explanation_required", "station_job_not_found", "station_job_transition_not_allowed", "production_batch_not_found", "production_batch_already_rolled_back", "production_batch_has_discarded_jobs", "production_batch_has_served_units", "station_job_has_wrong_make_note", "transfer_source_not_available", "transfer_target_not_waiting", "wrong_make_note_not_allowed", "wrong_make_note_not_found", "wrong_make_note_already_cancelled", "served_quantity_exceeds_made"];
+ export const itemComponentAddComponentStation_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ItemComponentAdd"]["component"]["station_code"]> = ["quay", "trang_banh", "gap_banh", "canh", "don_ban"];
+diff --git a/fe/src/lib/auth/messages.ts b/fe/src/lib/auth/messages.ts
+index 4e2db9b..41099b7 100644
+--- a/fe/src/lib/auth/messages.ts
++++ b/fe/src/lib/auth/messages.ts
+@@ -4,6 +4,9 @@ import type { ApiFailure, ErrorCode } from "@/lib/api/client";
+ const CHU: Partial<Record<ErrorCode, string>> = {
+   google_login_disabled: "Đăng nhập bằng Google chưa sẵn sàng. Vui lòng thử lại sau.",
+   google_token_invalid: "Chưa đăng nhập được bằng Google. Vui lòng thử lại.",
++  no_pending_email: "Tài khoản không có Gmail đang chờ xác nhận.",
++  verification_invalid: "Link xác nhận không còn dùng được. Đăng nhập rồi bấm Gửi lại thư xác nhận.",
++  verification_rate_limited: "Đã gửi nhiều lần, thử lại sau một giờ.",
+   login_failed: "Sai số điện thoại, Gmail hoặc mật khẩu.",
+   identifier_invalid: "Số điện thoại hoặc Gmail chưa đúng dạng.",
+   contact_required: "Nhập số điện thoại hoặc Gmail.",
+diff --git a/scripts/db-check.sh b/scripts/db-check.sh
+index c98ccbf..d2d9a42 100755
+--- a/scripts/db-check.sh
++++ b/scripts/db-check.sh
+@@ -152,6 +152,28 @@ if [ "$n_mig" -gt 0 ]; then
+         printf '%s\n' "$out" | tail -12
+       fi
+     fi
++    if [ "$v" = 20261029120000 ]; then
++      for kind in pending code; do
++        if out="$({ echo 'BEGIN; SET search_path = shop;';
++                    cat db/migrations/20261029120000_xac_nhan_gmail.up.sql;
++                    if [ "$kind" = pending ]; then
++                      echo "INSERT INTO customer_account (pending_email, display_name) VALUES ('t270.pending@gmail.com', 'T-270');";
++                    else
++                      cat db/tests/i035_email_verification.sql;
++                    fi
++                    echo '\echo T270_TEST_GREEN';
++                    cat db/migrations/20261029120000_xac_nhan_gmail.down.sql;
++                    echo 'ROLLBACK;'; } | psql_f -f - 2>&1)"; then
++          fail "T-270 đường lùi — không từ chối $kind"
++        elif printf '%s\n' "$out" | grep -q '^T270_TEST_GREEN$' &&
++             printf '%s\n' "$out" | grep -q 'còn mã xác nhận hoặc Gmail chờ'; then
++          echo "PASS T-270 test $kind xanh; đường lùi từ chối dữ liệu đã ghi"
++        else
++          fail "T-270 test $kind hoặc khoá chặn — lỗi khác điều cần chứng minh:"
++          printf '%s\n' "$out" | tail -12
++        fi
++      done
++    fi
+     if [ "$v" = 20261028120000 ]; then
+       if out="$({ echo 'BEGIN;'; echo 'SET search_path = shop;';
+                   cat db/migrations/20261028120000_khach_google.up.sql;
+diff --git a/master_plan/shop-facts.md b/master_plan/shop-facts.md
+--- a/master_plan/shop-facts.md
++++ b/master_plan/shop-facts.md
+@@ -1577,6 +1577,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
+ | 2026-10-26 | Chủ repo chốt trong hội thoại (T-255): **canh bánh cuốn có nhóm lựa chọn *Rau*** — *không rau · ít rau · nhiều rau*, cả ba **0đ**, mặc định **ít rau**, nhóm **chỉ** gắn cho canh. §4.8 thêm cột *Rau*, ca 13 chọn *ít rau*, thêm ca 16 (*không rau* ⇒ 0) và ca 17 (*bánh cuốn + ít rau* ⇒ từ chối) | §4.4 · §4.6 luật 8 · §4.8 |
+ | 2026-10-27 | Chủ repo chuyển lời chủ quán trong hội thoại (T-262) và chọn trong câu hỏi có sẵn phương án: đăng nhập bằng **số điện thoại hoặc Gmail gõ vào ô, kèm mật khẩu** (không OTP, không nút Google) cho người làm, chủ quán **và khách**; đăng ký khai **một trong hai**; khách đăng nhập **tuỳ chọn**, **không chờ duyệt**, được **xem lại đơn** và **nhớ tên, số điện thoại, địa chỉ giao**. Thay vế 3 lượt hai §8.8 ở chỗ *đăng nhập bằng gì*; mở `U-105` … `U-108`. Xem **ADR-131** | §8.8 (lượt ba) |
+ | 2026-10-28 | Chủ repo chọn trong câu hỏi có sẵn phương án (T-267): **khách** đăng ký và đăng nhập được bằng **nút Google** ở trang khách; người làm và chủ quán không có nút ấy. Thay vế 1 lượt ba §8.8 ở chỗ *không phải nút Google*, chỉ cho khách. Xem **ADR-132** | §8.8 (lượt bốn) |
++| 2026-10-29 | Chủ repo chọn trong câu hỏi có sẵn phương án (T-270): Gmail **khách** tự gõ lúc đăng ký được **xác nhận qua thư**, link **24 giờ**; khách **dùng được ngay**, Gmail **chờ xác nhận** tới khi bấm link; **chỉ khách**. Xem **ADR-133** | §8.8 (lượt năm) |
+ 
+ ### 7.2 Chỗ suy ra chưa xác nhận — **hai mục, tính tới 2026-10-23**
+ 
+@@ -2257,6 +2258,12 @@ Google đang đăng nhập trên trình duyệt, tạo tài khoản khách nếu
+ đăng nhập như lượt ba, không có nút Google. Mọi vế khác của lượt ba giữ nguyên. Thiết kế: `docs/decisions.md`
+ **ADR-132**.
+ 
++**Lượt năm 2026-10-29 — Gmail khách tự gõ phải được xác nhận qua thư** (T-270; chủ repo hỏi *"có tự gửi email để
++xác nhận email có là đúng hay không"* rồi chọn trong câu hỏi có sẵn phương án): khách đăng ký bằng Gmail kèm mật khẩu
++thì máy **gửi thư có link xác nhận, link sống 24 giờ**; khách **vẫn dùng được ngay** (vế 4 lượt ba giữ nguyên), còn
++Gmail ấy **chờ xác nhận** cho tới khi bấm link. **Chỉ khách**; người làm vẫn do chủ quán duyệt tay. Gmail lấy từ nút
++Google đã được Google xác nhận nên không gửi thư. Thiết kế: `docs/decisions.md` **ADR-133**.
++
+ **Lời này KHÔNG chạm chấm công.** *Lúc này ai đứng quầy* và *hôm nay người này làm mấy giờ* là hai
+ câu khác nhau; câu thứ hai là mức 2 của §8.7 đã có lời đáp `C30` · `C31` · `C32` ngày 2026-09-25 ở §8.7; các vế còn thiếu
+ ở `work/admin-questions.md` §3.
+diff --git a/docs/decisions.md b/docs/decisions.md
+--- a/docs/decisions.md
++++ b/docs/decisions.md
+@@ -144,6 +144,7 @@ có câu trả lời mới từ người.
+ | ADR-126 | **Bán lại món đã ngừng** (`T-243`): cửa `POST /menu-items/{menu_item_id}/resumption` xoá mốc ngừng bán trên chính dòng món, có lý do; lịch sử nằm trong vết `record_revision`, không bảng mới | Đã chốt 2026-10-24 (Claude, theo lời chủ repo đóng U-104) | — | `T-243` · I-018 · I-009 |
+ | ADR-131 | **Đăng nhập bằng số điện thoại hoặc Gmail, khách có tài khoản riêng** (`T-262`): một ô định danh chuẩn hoá; tài khoản người làm thêm số điện thoại, thư và tên đăng nhập thành tuỳ chọn; khách ở bảng, cookie và lớp quyền `khach` riêng, không bao giờ chạm `person`; đơn web gắn tài khoản khách; ba lát `T-263` → `T-264` → `T-265` | Đã chốt 2026-10-27 (chủ repo duyệt, T-262) | — | ADR-109 · ADR-085 · I-035 · `U-105`…`U-108` |
+ | ADR-132 | **Khách đăng ký và đăng nhập bằng nút Google** (`T-267`): FE lấy Google ID token bằng Google Identity Services, BE tự kiểm chữ ký RS256 qua JWKS bằng thư viện chuẩn của Go; bảng chỉ thêm `customer_google_identity` nối `sub` với tài khoản khách; cửa `POST /customer-sessions/google`; Gmail đã có tài khoản mật khẩu thì từ chối, không tự nối; chỉ khách | Đã chốt 2026-10-29 (chủ repo duyệt, T-267) | — | ADR-131 · I-035 · PT-8 |
++| ADR-133 | **Xác nhận Gmail khách qua thư** (`T-270`): Gmail khách tự gõ nằm ở `pending_email` tới khi bấm link 24 giờ; chỉ `email` đã xác nhận mới duy nhất, mới dùng để đăng nhập và nhận thư đặt lại; khách dùng được ngay; gửi lại tối đa 3 thư một giờ; Gmail từ Google vào thẳng `email`; chỉ khách | Đã chốt 2026-10-29 (chủ repo chọn từng vế, T-270) | — | ADR-131 · ADR-132 · I-035 · PT-7 |
+ | **Giả định BA — cả năm ĐÃ ĐƯỢC THAY bằng quy tắc thật, 2026-09-02** ||||
+ | GĐ-01 | ~~Hai người cùng thao tác một bàn: người bấm sau thắng~~ | **Đã thay** 2026-09-02 → I-018 | ~~TRUNG BÌNH~~ | — |
+ | GĐ-02 | ~~Món hết sau khi khách đã chọn~~ | **Đã thay** 2026-09-02 → ADR-018 | — | — |
+@@ -8201,3 +8202,136 @@ trang khách, và tài khoản người làm còn phải chờ duyệt.
+ **Consequences:** `I-035` thêm một kịch bản ở Verification (bảng nối mới vẫn không trỏ tới người của quán — phép kiểm
+ ngược `customer\_%` sẵn có phủ nó); test hồi quy `i035_google_identity.sql` viết trước lược đồ. Hợp đồng tăng phiên bản
+ phụ. Triển khai thật cần chủ repo tạo Client ID ở Google Cloud Console và thêm tên miền khi `U-094` có lời.
++
++## ADR-133 — Xác nhận Gmail khách qua thư; Gmail chưa xác nhận không giữ chỗ
++
++**Status:** **Đã chốt** 2026-10-29 — Claude Code thiết kế (task `T-270`, mức **L2**). Ba vế hành vi do chủ repo chọn
++trong câu hỏi có sẵn phương án cùng ngày: *"Dùng được ngay, Gmail treo"*, *"Chỉ khách"*, *"24 giờ"*. Lời:
++`master_plan/shop-facts.md` §8.8 *lượt năm*. Phần còn lại là thiết kế của phiên.
++
++**Context:** ADR-131 lưu Gmail khách gõ lúc đăng ký mà không kiểm ai sở hữu nó. Ai cũng đăng ký được bằng Gmail người
++khác; chủ thật sau đó đăng ký bị `email_taken`, bấm nút Google cũng bị từ chối (ADR-132 điểm 5), và thư đặt lại mật
++khẩu của tài khoản kia gửi vào hộp thư của chủ thật.
++
++**Decision:**
++
++1. **Hai cột:** `customer_account.email` là Gmail **đã xác nhận** (duy nhất, dùng để đăng nhập, nhận thư đặt lại);
++   cột mới `pending_email` là Gmail **chờ xác nhận** — **không** duy nhất, không đăng nhập được bằng nó, không nhận thư
++   đặt lại. CHECK *có liên lạc* đổi thành *số điện thoại hoặc `email` hoặc `pending_email`*; `pending_email` viết
++   thường, có `@`, khác `email` của chính dòng.
++2. **Đăng ký bằng form có Gmail:** Gmail vào `pending_email`, tạo mã xác nhận, mở phiên ngay (khách dùng được ngay),
++   gửi thư sau khi giao dịch xong; gửi hỏng hay chưa cấu hình SMTP **không** làm hỏng đăng ký (đường suy giảm PT-7).
++   Kiểm trùng lúc đăng ký chỉ so với `email` đã xác nhận.
++3. **Mã xác nhận:** bảng `customer_email_verification` (Gmail của lần gửi, băm SHA-256 của mã 32 byte, sống tối đa
++   **24 giờ**, dùng **một lần**, chỉ thêm, chỉ `used_at` được sửa). Thư mang link
++   `<BANHCUON_ORIGIN>/khach/xac-nhan-gmail?ma=<mã>`.
++4. **Bấm link:** cửa công khai nhận mã — mã lạ, hết hạn, đã dùng, hay Gmail của mã không còn là `pending_email` của
++   tài khoản ⇒ `verification_invalid`; Gmail đã là `email` của tài khoản khác ⇒ `email_taken`. Hợp lệ ⇒ một giao dịch:
++   dùng mã, `email` ← `pending_email`, `pending_email` ← rỗng. Không cần đang đăng nhập (mở link trên máy khác vẫn được).
++5. **Gửi lại:** khách đang đăng nhập có Gmail chờ ⇒ gửi lại thư mới, tối đa **3 thư một giờ** cho mỗi tài khoản (cùng
++   mức thư đặt lại); mã cũ vẫn sống tới hạn.
++6. **Gmail từ nút Google** đã được Google xác nhận (`email_verified`) ⇒ vào thẳng `email`, không thư. Vì Gmail chờ
++   không giữ chỗ, chủ thật bấm Google khi kẻ khác đang *chờ* Gmail ấy thì tạo được tài khoản; kẻ kia xác nhận sau sẽ bị
++   `email_taken`.
++7. **Tài khoản cũ** (tạo trước T-270, chỉ có ở máy dev) giữ `email` như đã có — chưa chạy thật nên không có dữ liệu
++   thật để chuyển.
++8. **Vết:** lần khách tự xác nhận để lại vết người sửa rỗng như bốn bảng khách khác — `record_revision_person_check`
++   thêm `customer_email_verification`.
++
++**Why:** để Gmail chờ ở cột riêng, không duy nhất, nên kẻ gõ nhầm hay cố ý không chặn được chủ thật mà vẫn giữ vế
++*dùng được ngay*; luật *chỉ Gmail đã xác nhận mới đăng nhập và nhận thư đặt lại* chặn đường chiếm tài khoản qua thư.
++
++**Rejected alternatives:** *chặn đăng nhập tới khi xác nhận* — chủ repo chọn dùng được ngay; *một cột `email` cộng cờ
++`email_verified_at`* — Gmail chờ vẫn giữ chỗ duy nhất, chủ thật vẫn bị chặn; *mã gõ tay như thư đặt lại* — link một
++lần bấm là đủ và ít sai.
++
++**Consequences:** `I-035` thêm kịch bản ở Verification, test hồi quy `i035_email_verification.sql` viết trước lược đồ;
++PT-7 nay phục vụ cả thư xác nhận (đường suy giảm không đổi: mất thư thì Gmail cứ chờ, khách vẫn dùng bằng phiên và số
++điện thoại); hợp đồng tăng phiên bản phụ; muốn nhận thư thật ở máy dev phải cấu hình `BANHCUON_SMTP_*`.
++
++## ADR-134 — Lựa chọn *Mộc nhĩ* trong nhóm Nhân cùng giá *Thịt*; chế độ *Hỗn hợp* ở trang gọi combo chia ceil/floor các phần nhận nhân (bánh cuốn + bánh trứng con) giữa Thịt và Mộc nhĩ bằng portions sẵn có
++
++**Status:** **Đã chốt** 2026-10-29 — Claude Code thiết kế (task `T-271`, mức **L2**). Chủ repo chốt
++2026-10-29 trong hội thoại: *"bánh nhân mộc nhĩ RIÊNG và bánh nhân thịt RIÊNG trong cùng combo"*,
++*"chia đôi số bánh, nếu số bánh lẻ thì thịt nhiều hơn một bánh (3 → 2 thịt + 1 mộc nhĩ, 4 → 2+2)"*,
++và *"nhân mộc nhĩ riêng có CÙNG GIÁ VÀ PHỤ THU với nhân thịt"*. Cùng ngày, chủ repo đóng thêm hai
++câu bỏ ngỏ ở phiên trước: *"coi bánh trứng như bánh cuốn cũng dc"* ⇒ chế độ *Hỗn hợp* áp cho cả
++bánh trứng con (đóng `U-110`); trả lời *"có"* cho câu *Mộc nhĩ* hiện ở trang gọi món lẻ hay không
++(đóng `U-109`). Phần còn lại là thiết kế của phiên.
++
++**Context:** Nhóm *Nhân* hôm nay có ba lựa chọn (Chay, Thịt, Thịt + mộc nhĩ) — xem `master_plan/shop-facts.md`
++§4.4. *Thịt + mộc nhĩ* là **hai nguyên liệu trộn trong một cái bánh**; không có cách nào gọi được
++một suất combo mà **mỗi bánh có một loại nhân riêng**. ADR-129 đã chốt bảy *Đầy đủ* · *Suất giò* ·
++*Suất trứng* là `menu_combo` thật, mỗi suất con chọn nhân riêng; ADR-117 điểm 2 lưu đơn combo
++thành **dòng combo + dòng con** mỗi tổ hợp lựa chọn khác nhau. Chủ repo giờ muốn khách gọi một
++combo chia **bánh cuốn** thành hai nhóm: một phần nhân thịt, một phần nhân mộc nhĩ, phụ thu bằng
++đúng *Thịt*.
++
++**Decision:**
++
++1. **Thêm lựa chọn thứ tư *Mộc nhĩ* vào nhóm Nhân** (`master_plan/shop-facts.md` §4.4). Đây là
++   **loại nhân riêng**, không phải nhãn hỗn hợp: một bánh có đúng nhân mộc nhĩ. Phụ thu +1.000 đồng
++   ở ô *Món lẻ* và +4.000 đồng ở ô *Combo* — **bằng đúng *Thịt***. §4.6 luật 4 giữ hình (loại nhân
++   không đổi giá). Nhóm *Lượng nhân* vẫn gắn vì *Mộc nhĩ ≠ Chay* (§4.6 luật 3). Thêm bằng cách sửa
++   §4.4 của owner; `db/seed/seed.pl` sinh dòng `menu_option` ở lần chạy kế tiếp — **không migration
++   mới**.
++
++2. **Chế độ *Hỗn hợp* ở giao diện khách gọi combo** là **lối tắt UI**, không phải lựa chọn thứ năm
++   của nhóm Nhân. Khi khách bấm *Hỗn hợp* ở một combo có tổng **N phần nhận nhân** cộng từ mọi
++   suất con mang nhóm *Nhân* (bánh cuốn + bánh trứng; giò không có nhóm Nhân nên không đếm — đóng
++   `U-110` 2026-10-29: chủ repo *"coi bánh trứng như bánh cuốn cũng dc"*), giao diện đặt:
++   - **ceil(N/2)** phần đầu danh sách suất con mang Nhân = *Thịt*;
++   - **floor(N/2)** phần còn lại mang Nhân = *Mộc nhĩ* (bánh trứng con rơi về cuối ⇒ thường nhận
++     Mộc nhĩ khi combo có ít nhất một suất bánh cuốn);
++   - Suất không có nhóm Nhân (giò) không bị đụng.
++
++   Khách gửi đơn ⇒ các dòng con của combo trong `order_line` tách thành **nhiều dòng con** cùng
++   `menu_item_id` nhưng khác `menu_option_id` — cùng chỉ về dòng combo cha (ADR-117 điểm 2). Hàm
++   giá đã cộng theo portions (`be/internal/gia/service.go`): không bước mới, không ca `I-013` mới.
++   Vì phụ thu Mộc nhĩ bằng Thịt, tổng tiền một combo *Hỗn hợp* **bằng đúng** tổng tiền combo ấy
++   khi mọi phần chọn Thịt (bằng chứng ở `db/tests/i034_moc_nhi_hon_hop_combo.sql`, viết trước).
++   **Chia theo mỗi combo trước khi nhân với số combo**: tăng dòng combo từ k lên k+1 ⇒ FE sinh
++   thêm đúng một bộ (ceil Thịt + floor Mộc nhĩ) nữa, không gom N × k rồi chia lại — khớp cách bếp
++   gói từng combo một.
++
++3. **Không khoá *Hỗn hợp* vào loại combo nào.** Combo có tổng phần nhận nhân `N ≥ 2` (cộng mọi
++   suất con có nhóm Nhân) ⇒ nút *Hỗn hợp* hiện; `N ≤ 1` ⇒ không hiện (degenerate về một lựa chọn
++   duy nhất). Combo không có suất con nhận nhân nào ⇒ không hiện. Giao diện tính N tại chỗ từ
++   `GET /menu` (combo thật đã trả về `items` kèm `quantity` theo ADR-129) và chỉ hiện nút khi mọi
++   suất con nhận nhân có cả hai lựa chọn *Thịt* và *Mộc nhĩ* trong `option_groups.options`.
++
++4. **Backend không đổi:** không sửa `openapi.yaml`, không migration, không cửa mới. Mọi phép tính
++   đã sẵn. Chỉ seed và FE phải đổi.
++
++5. **Mộc nhĩ hiện ở cả trang gọi món lẻ.** Chủ repo chốt 2026-10-29 (đóng `U-109`): nhóm *Nhân* là
++   nhóm dùng chung, nên *Mộc nhĩ* xuất hiện ở mọi món nhận nhân (bánh cuốn, suất trứng, bánh trứng
++   rời, bánh trong suất giò) tự nhiên qua FE hiện có — không cần lát mới hay bộ lọc theo món.
++
++**Why:** điểm 1 giữ nguyên luật *loại nhân không đổi giá* (§4.6 luật 4) và cho bếp phân biệt được
++hai cái bánh trên cùng một suất — một bánh thịt, một bánh mộc nhĩ — vì mỗi bánh là một `order_line`
++con có lựa chọn Nhân riêng. Điểm 2 chọn **lối tắt UI** thay vì một lựa chọn thứ năm *Mộc nhĩ và
++thịt*: lựa chọn thứ năm chỉ cho bếp một nhãn trộn, không cho biết trong 3 bánh thì ai thịt ai mộc
++nhĩ, nên bếp sẽ gói bừa và tiền combo *Hỗn hợp* vẫn đúng chỉ nhờ phụ thu bằng nhau — cấu tạo đúng
++tiền nhưng sai hàng (ADR-117 Why). Dùng portions sẵn có ⇒ tiền đúng do cấu tạo (ADR-117 Why) **và**
++bếp đọc đúng số bánh từng loại. Điểm 3 ẩn nút ở combo một bánh để khách không gặp lựa chọn vô
++nghĩa; điểm 4 giữ phạm vi lát ở FE + seed, không chạm hợp đồng.
++
++**Rejected alternatives:**
++- *Thêm lựa chọn thứ năm "Mộc nhĩ và thịt" cùng nhóm Nhân, phụ thu bằng Thịt* — bếp chỉ thấy một
++  nhãn trộn, không biết chia bánh cho ai; `menu_combo_item_option_surcharge` lưu một hàng cho nhãn
++  này ở mỗi suất con, nhưng dòng con trong `order_line` không nói ra số bánh thịt vs số bánh mộc
++  nhĩ. Tiền combo trùng với Thịt nhưng kitchen tickets kém chính xác và không mở đường cho combo
++  tỉ lệ khác (ví dụ sau này chủ repo muốn 1 thịt + 2 mộc nhĩ).
++- *Mở một nhóm option_group mới "Hỗn hợp" riêng cho combo, chọn tỉ lệ* — thêm nhóm, thêm cột, thêm
++  luật áp theo món. Cấu trúc đã cho phép làm việc này qua portions; thêm nhóm chỉ nhân đôi lối gọi
++  tên.
++- *Chỉ sửa UI, không thêm option Mộc nhĩ, giao diện gửi dòng con với lựa chọn giả* — mọi dòng con
++  phải trỏ về một `menu_option` thật (khoá ngoại); nếu Mộc nhĩ không có trong `menu_option` thì
++  dòng con bánh mộc nhĩ gửi là bịa.
++
++**Consequences:** `master_plan/shop-facts.md` §4.4 có bốn lựa chọn trong Nhân, §4.6 luật 4 nêu thêm
++*Mộc nhĩ*; §4.8 thêm ca 18 (Combo Đầy đủ chín · Mộc nhĩ · Thường = 30.000, bằng ca 9) và một
++test SQL riêng chứng minh combo *Hỗn hợp* 2 Thịt + 1 Mộc nhĩ ra đúng giá combo thuần Thịt
++(`db/tests/i034_moc_nhi_hon_hop_combo.sql`, viết trước code). `menu_combo_item_option_surcharge`
++có một hàng mới cho mỗi (suất con có nhóm Nhân) × *Mộc nhĩ* khi seed chạy lại — giá trị khởi tạo
++bằng `menu_option.surcharge_vnd` = +1.000, nhân với số bánh ở hàm giá đã có.
+diff --git a/quality/invariants.md b/quality/invariants.md
+--- a/quality/invariants.md
++++ b/quality/invariants.md
+@@ -1683,5 +1683,11 @@ không khoá ngoại nào từ bảng khách tới người của quán hay tr
+ **được**; dòng nối `customer_google_identity` trùng `sub`, trùng tài khoản, `sub` rỗng, hay bị vai ghi UPDATE ⇒ **bị từ
+ chối**; kiểm ngược `customer\_%` phủ cả bảng nối. Test hồi quy `i035_google_identity` viết trước lược đồ.
+ 
++*Thêm 2026-10-29 (T-270, Claude Code, **ADR-133**):* khách chỉ có Gmail chờ xác nhận vẫn tạo và mở phiên được; Gmail
++chờ không giữ chỗ (trùng chờ, hay trùng `email` đã xác nhận của người khác ⇒ **được**); Gmail chờ có chữ hoa, thiếu
++`@`, trùng `email` của chính dòng; mã xác nhận quá 24 giờ, không phải băm 32 byte, dùng lần hai, bị vai ghi sửa băm;
++hai tài khoản cùng một `email` đã xác nhận ⇒ **bị từ chối**; lần khách tự xác nhận để lại vết người sửa rỗng. Test
++hồi quy `i035_email_verification` viết trước lược đồ.
++
+ *Viết ở T-262, 2026-10-27, Claude Code — từ lời §8.8 lượt ba và thiết kế **ADR-131** chủ repo duyệt. Test hồi quy
+ `i035_customer_account_apart_from_staff` viết trước lược đồ, vào `db/tests/` cùng lát `T-263`.*
+diff --git a/docs/product/1-system-design/01-ranh-gioi-he-thong.md b/docs/product/1-system-design/01-ranh-gioi-he-thong.md
+--- a/docs/product/1-system-design/01-ranh-gioi-he-thong.md
++++ b/docs/product/1-system-design/01-ranh-gioi-he-thong.md
+@@ -54,6 +54,8 @@ với `architecture.md` §8).
+ 
+ *Thêm **PT-8** 2026-10-28 (T-267, Claude Code) khi khách được đăng nhập bằng nút Google (**ADR-132**); phép đếm thành tám.*
+ 
++*Mở rộng **PT-7** 2026-10-29 (T-270, Claude Code, **ADR-133**): dịch vụ thư nay gửi cả thư xác nhận Gmail của khách. Mất thư thì Gmail khách cứ ở trạng thái chờ; khách vẫn dùng bằng phiên đang mở và số điện thoại, không ai phải bù.*
++
+ Mã `PT-x` là **nhãn cục bộ của file này**, để §3 và các bước sau (**P1-08** · **P1-10** · **P1-11**)
+ trỏ được vào đúng một dòng. Nó không phải một mã dùng chung của repo.
+ 
+diff --git a/CLAUDE.md b/CLAUDE.md
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -58,7 +58,7 @@ is a bug to fix now.
+ | Phụ thuộc ngoài của hệ thống + đường suy giảm của từng cái | `docs/product/1-system-design/01-ranh-gioi-he-thong.md` — pha 1, sinh ra ở P1-02 |
+ | Định nghĩa **một ngày bán** cho phép cộng tiền + mốc tính tiền + nguồn thời gian | `docs/product/1-system-design/02-thoi-gian-ngay-ban.md` — pha 1, sinh ra ở P1-03 |
+ | Quy ước dữ liệu: tiền, mốc và múi giờ, khoá, đặt tên, trạng thái, không xoá cứng, văn bản và định danh — mỗi quy ước một mã `QD-XX` và một phép kiểm | `docs/product/2-db/01-quy-uoc-du-lieu.md` — pha 2, sinh ra ở P2-03 (ADR-035, ADR-053 luật 3) |
+-| Schema: tên bảng, tên cột, kiểu, ràng buộc, khoá ngoại | **file migration thắng** — `db/migrations/` (ADR-053 luật 2). Ý định, lý do và ánh xạ `I-0xx`/`YC-xx` của từng lát: `docs/product/2-db/02-luoc-do-ban-hang.md` (P2-04) · `03-luoc-do-menu-gia.md` (P2-05) · `04-luoc-do-duong-tien.md` (P2-06) · `05-luoc-do-san-xuat.md` (P2-07) · `06-luoc-do-nguoi-va-vet.md` (P2-08) · `12-luoc-do-nguyen-lieu.md` (P2A-02) · `13-luoc-do-cham-cong.md` (P2A-03) · `14-luoc-do-khoan-cua-nguoi.md` (P2A-04) · `15-luoc-do-khoan-chi.md` (P2A-05) · `16-luoc-do-giao-viec.md` (P2A-11) · `17-luoc-do-dao-tao.md` (P2A-12) · `18-luoc-do-danh-muc-combo.md` (P2A-13) · `19-luoc-do-tai-khoan.md` (P2A-14) · `20-luoc-do-ban-combo.md` (T-193) · `21-luoc-do-so-toi-thieu.md` (T-199) · `22-luoc-do-so-nguoi-dang-lam.md` (T-197) · `23-luoc-do-tai-khoan-khach.md` (T-263) · `24-luoc-do-khach-google.md` (T-267); các lát sau **thêm** file, không ghi đè. Hai bản lệch ⇒ `F-XXX`. Thứ tự việc, mức và cổng của pha 2: `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (ADR-049) |
++| Schema: tên bảng, tên cột, kiểu, ràng buộc, khoá ngoại | **file migration thắng** — `db/migrations/` (ADR-053 luật 2). Ý định, lý do và ánh xạ `I-0xx`/`YC-xx` của từng lát: `docs/product/2-db/02-luoc-do-ban-hang.md` (P2-04) · `03-luoc-do-menu-gia.md` (P2-05) · `04-luoc-do-duong-tien.md` (P2-06) · `05-luoc-do-san-xuat.md` (P2-07) · `06-luoc-do-nguoi-va-vet.md` (P2-08) · `12-luoc-do-nguyen-lieu.md` (P2A-02) · `13-luoc-do-cham-cong.md` (P2A-03) · `14-luoc-do-khoan-cua-nguoi.md` (P2A-04) · `15-luoc-do-khoan-chi.md` (P2A-05) · `16-luoc-do-giao-viec.md` (P2A-11) · `17-luoc-do-dao-tao.md` (P2A-12) · `18-luoc-do-danh-muc-combo.md` (P2A-13) · `19-luoc-do-tai-khoan.md` (P2A-14) · `20-luoc-do-ban-combo.md` (T-193) · `21-luoc-do-so-toi-thieu.md` (T-199) · `22-luoc-do-so-nguoi-dang-lam.md` (T-197) · `23-luoc-do-tai-khoan-khach.md` (T-263) · `24-luoc-do-khach-google.md` (T-267) · `25-luoc-do-xac-nhan-gmail.md` (T-270); các lát sau **thêm** file, không ghi đè. Hai bản lệch ⇒ `F-XXX`. Thứ tự việc, mức và cổng của pha 2: `master_plan/DB_master_plan_banh_cuon_ba_thanh.md` (ADR-049) |
+ | Quy ước code: DBMS + phiên bản, cách chạy database, migration, khung test, cấu trúc thư mục, stack, tên ràng buộc — mỗi quy ước một mã `QC-XX` và một phép kiểm | `docs/product/2-db/10-quy-uoc-code.md` — pha 2, sinh ra ở P2-12 (ADR-035, ADR-039, ADR-055) |
+ | Thứ tự migration, đường lùi của từng bước (khoá chặn), cách gỡ một lệnh migration hỏng, dựng lại từ số không | `docs/product/2-db/07-thu-tu-migration.md` — pha 2, sinh ra ở P2-09 (ADR-065) |
+ | Hợp đồng API: endpoint, chữ ký, hình lỗi, mã lỗi, bảng tên từ chối → mã | `docs/product/3-be/openapi.yaml` (máy đọc; pha 4 sinh type từ đây) — khuôn, luật đọc và luật đổi: `docs/product/3-be/01-hop-dong-api.md` (P3-04). **Hợp đồng thắng code; migration thắng hợp đồng về tên ràng buộc** (ADR-084). Quyền theo vai — ma trận cửa × lớp: `docs/product/3-be/02-vai-va-quyen.md` (P3-05, ADR-085). Hàm tính giá duy nhất, ba đường gọi nó, bảng ca test: `docs/product/3-be/03-ham-gia.md` (P3-06, ADR-086). Thứ tự việc, mức và cổng của pha 3: `master_plan/BE_master_plan_banh_cuon_ba_thanh.md` (ADR-076) |
+diff --git a/work/backlog.md b/work/backlog.md
+--- a/work/backlog.md
++++ b/work/backlog.md
+@@ -138,6 +138,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
+ <a id="done"></a>
+ ## Done
+ 
++- [x] T-270 **Xác nhận Gmail khách qua thư** — L2, ADR-133; Codex làm, Claude duyệt 2026-10-29 · [chi tiết](#t-270)
+ - [x] T-267 **Khách đăng ký và đăng nhập bằng nút Google** — L2, ADR-132; Codex làm, Claude duyệt 2026-10-29 · [chi tiết](#t-267)
+ - [x] T-265 **Màn đăng nhập một ô và trang tài khoản khách** — L2, lát c của ADR-131; Codex làm, Claude duyệt 2026-10-28 · [chi tiết](#t-265)
+ - [x] T-264 **Backend và hợp đồng đăng nhập số điện thoại · Gmail, cửa khách** — L2, lát b của ADR-131; Codex làm, Claude duyệt 2026-10-28 · [chi tiết](#t-264)
+@@ -3465,6 +3466,26 @@ tương thích với một file bạn phải sửa.
+ cuối của `./scripts/gate.sh`; (3) Bảng Acceptance 1–9 → bằng chứng (tên test · lệnh · output);
+ (4) Câu đã phải giả định (nếu có) và vì sao không hỏi được; (5) Việc chưa xong.
+ 
++<a id="t-270"></a>
++### T-270 — Xác nhận Gmail khách qua thư
++
++Mức **L2** (đăng nhập, dữ liệu lưu, hợp đồng). Chủ repo hỏi 2026-10-29 trang `/khach/dang-ky` có gửi thư xác nhận
++Gmail không (không — từ ADR-131 tới nay), rồi chọn ba vế trong câu hỏi có sẵn phương án. Lời: `shop-facts.md` §8.8
++*lượt năm*; thiết kế **ADR-133**; test hồi quy `db/tests/i035_email_verification.sql` Claude viết trước lược đồ.
++Dựa trên T-264 và T-267 chưa commit.
++
++Acceptance viết trước: (1) migration xác nhận Gmail (up/down; lùi từ chối khi đã có mã hay Gmail chờ),
++`i035_email_verification` xanh, `i035_*` cũ vẫn xanh; (2) đăng ký có Gmail ⇒ `pending_email`, mã, phiên, thư sau giao
++dịch, gửi hỏng không làm hỏng đăng ký; (3) đăng nhập và đặt lại mật khẩu chỉ khớp `email` đã xác nhận; (4) cửa xác
++nhận công khai: hợp lệ ⇒ chuyển Gmail; mã lạ/hết hạn/đã dùng/Gmail đã đổi ⇒ `verification_invalid`; Gmail đã của người
++khác ⇒ `email_taken`; (5) gửi lại khi đang đăng nhập, quá 3 thư một giờ ⇒ từ chối; (6) hợp đồng tăng phiên bản phụ,
++`CustomerProfile` có `pending_email`; (7) FE: báo đã gửi thư sau đăng ký, trang tài khoản hiện Gmail chờ + nút gửi lại,
++trang `/khach/xac-nhan-gmail`; (8) gate xanh, Claude tự chạy `db-check` · `be-check`.
++
++**Bàn giao 2026-10-29:** thực hiện **Codex** (`codex exec -m gpt-6-astra`, worktree `../lean_wt/T-270`, nhánh `codex/T-270` từ `6dea88f` + toàn bộ thay đổi chưa commit của clone chính stage sẵn, gồm T-264 và T-267), duyệt **Claude**. Codex làm hết phần trong scope nhưng không tới được Docker; dừng đúng phiếu ở `be/internal/don/vet_cua_test.go` ngoài scope. Claude mở scope và tự sửa: `thuVet` cài `SendEmailVerification`, `khachVetSetup` xác nhận Gmail khi có hộp thư giả (ca `khach/dat_lai` cần Gmail đã xác nhận mới nhận thư đặt lại), thêm ca vết `khach/xac_nhan` (thư mục `sql/xac_nhan/` có UPDATE nên `TestI018_TapCuaSuaKhopTapCa` đòi), gofmt. Giả định Codex ghi lại và Claude nhận: gửi lại trả `202 {"status":"ok"}` theo khuôn yêu cầu đặt lại; giới hạn 3 mã một giờ tính cả mã lúc đăng ký. File: migration `20261029120000_xac_nhan_gmail`, `db/tests/i035_email_verification.sql` (Claude viết trước, không sửa), `db/reconcile/i035.sql`, `25-luoc-do-xac-nhan-gmail.md` · `07` · `09`, `scripts/db-check.sh`, `be/internal/khach/` (`verification.go` + test, đăng ký, đăng nhập, Google, câu SQL), `be/internal/taikhoan/` (`Mailer.SendEmailVerification`, `smtp.go`), `apierr`, `router.go` (`WithOrigin`), `be/sqlc.yaml` + sqlc sinh lại, `vet_cua_test.go`, hợp đồng **0.54.0** + `01-hop-dong-api.md` · `02-vai-va-quyen.md`, FE `/khach/xac-nhan-gmail` + test, `tai-khoan.tsx`, `messages.ts`, `schema.ts`, `01-khung-fe.md`.
++
++Acceptance → bằng chứng: (1) `PASS db/tests/i035_email_verification.sql`, `PASS lùi 20261029120000_xac_nhan_gmail`; (2)(3)(5) `TestI035_EmailVerificationLifecycle` (Gmail chờ, một mã, thư đúng origin sau commit, đăng nhập và đặt lại với Gmail chờ bị từ chối, xác nhận rồi đăng nhập được, gửi lại lần bốn ⇒ `verification_rate_limited`, không Gmail chờ ⇒ `no_pending_email`) · `TestI035_EmailVerificationMailerFailureStill201`; (4) `TestI035_EmailVerificationExpiredAndChanged` (`expired` · `changed`) · `TestI035_EmailVerificationGoogleCollision`; (6) Gate 1g `hợp đồng 0.54.0; 137 đường gọi … 113 dòng ma trận`; (7) `fe/src/app/khach/xac-nhan-gmail/xac-nhan-gmail.test.tsx` 6 test; (8) `./scripts/gate.sh` ở clone chính 2026-10-29: mọi cổng PASS (db-check 41 bước, be-check, verify). Commit sau T-264 và T-267, bằng `docs/private/google-login/T-270.patch`.
++
+ <a id="t-267"></a>
+ ### T-267 — Khách đăng ký và đăng nhập bằng nút Google
+ 

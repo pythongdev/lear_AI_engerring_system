@@ -15,6 +15,14 @@ func TestQC14_HinhKhoanChiTruocQuyen(t *testing.T) {
 	r := gin.New()
 	khoanchi.Routes(r, khoanchi.NewService(nil))
 	for _, c := range []struct{ method, path, body, field string }{
+		{"POST", "/expense-items", `{"name":"Gạo"}`, "expense_category_id"},
+		{"PUT", "/expense-items/nope", `{}`, "expense_item_id"},
+		{"PUT", "/expense-items/1", `{"name":"Gạo","reason":" "}`, "reason"},
+		{"DELETE", "/expense-items/1", `{"reason":" "}`, "reason"},
+		{"DELETE", "/expense-categories/1", `{"reason":" "}`, "reason"},
+		{"DELETE", "/expenses/1", `{"reason":" "}`, "reason"},
+		{"PUT", "/expense-categories/1", `{"name":" ","reason":"Sửa"}`, "name"},
+		{"POST", "/expenses", `{"expense_item_id":0}`, "expense_item_id"},
 		{"POST", "/expense-categories", `{"name":"  ","paid_from_till":true}`, "name"},
 		{"POST", "/expense-categories", `{"name":"điện"}`, "paid_from_till"},
 		{"POST", "/expense-categories", `{"name":"điện","paid_from_till":null}`, "paid_from_till"},

@@ -18,7 +18,7 @@ mảng là một lần đọc nhầm mảng kia.
 |---|---|
 | **Nguyên liệu** | thứ quán mua vào, nhập, dùng, hao hụt, còn lại |
 | **Con người** | ai làm, ai trực trạm nào, công, lương |
-| **Tài chính** | tiền vào tiền ra ngoài tiền hàng — chi phí, lãi lỗ, quỹ |
+| **Tài chính** | tiền vào tiền ra — chi phí gồm tiền nguyên liệu (chủ repo 2026-10-24, T-248), lãi lỗ, quỹ |
 
 Tới 2026-09-01, §1.4 còn một dòng cuối trong danh sách *KHÔNG chịu trách nhiệm*: *"Không quản lý
 nguyên liệu, tồn kho, chấm công hay kế toán"*. Lời chốt **lật ngược đúng câu ấy**, nên dòng đó bị
@@ -114,8 +114,8 @@ khối dưới đây nói **hành vi** — thứ mục này sở hữu — của
   U-067), **trong ngày, trước lúc đếm két** (2026-10-01), nên mỗi khoản vào phép đối soát két cuối
   ngày (`quality/invariants.md` `I-021`); tính vào két của **ngày người ghi khai** cho khoản (chủ quán chốt 2026-10-09, đóng
   [99-unknowns.md](../../99-unknowns.md) **U-072**). Khoản ấy trừ vào hay cộng vào lương thế nào cũng chưa có lời (`C26` · `C33`).
-- **Khoản chi ngoài tiền hàng và lương — ghi từng khoản theo loại** (§8.10, `E44` · `E45`). Danh
-  sách loại là thứ quán kể thêm dần. **Tiền hàng và lương không ghi thành khoản chi.** Điện, nước, wifi,
+- **Khoản chi gồm tiền nguyên liệu, ngoài lương (chủ repo 2026-10-24, T-248) — ghi từng khoản theo loại** (§8.10, `E44` · `E45`). Danh
+  sách loại là thứ quán kể thêm dần. **Tiền nguyên liệu được ghi tại Khoản chi theo lời chủ repo 2026-10-24 (T-248); lương giữ ở luồng người làm. Không cộng trùng một lần chi.** Điện, nước, wifi,
   xăng xe trả **từ két bán hàng** (chủ quán chốt 2026-09-30, trả lời U-066), **trong ngày, trước
   lúc đếm két** (2026-10-01), nên vào phép đối soát két như tạm ứng; mỗi loại chi mang nguồn tiền
   của nó, và thêm loại mới là hỏi nguồn cùng lúc. Chi lặt vặt bằng tiền riêng của chủ quán (`E46`); lãi/lỗ theo ngày,

@@ -72,3 +72,45 @@
   .khach-menu .thumb svg { width: 32px; height: 32px; }
   .khach-menu .card .stepper button { width: 27px; height: 30px; }
 }
+
+/* T-269: chỉ hai khối menu; tóm tắt giữ bộ kiểu riêng ở trên. */
+.khach-menu .menu-section { margin-top: 16px; }
+.khach-menu .menu-section-title { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 12px; font-weight: 700; letter-spacing: .06em; color: var(--muted); }
+.khach-menu .menu-section-title::after { content: ""; height: 1px; flex: 1; background: var(--line); }
+.khach-menu .menu-card { margin-bottom: 16px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); box-shadow: 0 1px 3px #0000000d; }
+.khach-menu .menu-card:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.khach-menu .menu-photo { display: block; position: relative; height: 176px; overflow: hidden; background: var(--field); }
+.khach-menu .menu-image { width: 100%; height: 100%; border-radius: 0; }
+.khach-menu .menu-image img { transition: transform 300ms ease; }
+.khach-menu .menu-photo:hover img { transform: scale(1.05); }
+.khach-menu .menu-photo-caption { position: absolute; top: 8px; right: 8px; padding: 4px 8px; border-radius: 8px; background: #0009; color: white; font-size: 10px; }
+.khach-menu .menu-card-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 8px; padding: 16px; }
+.khach-menu .menu-card-heading { grid-column: 1 / -1; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.khach-menu .menu-card-heading h3 { min-width: 0; overflow-wrap: anywhere; font-size: 16px; line-height: 1.4; font-weight: 700; }
+.khach-menu .menu-price, .khach-menu .menu-price p { margin: 0; color: var(--accent); font-size: 16px; font-weight: 700; white-space: nowrap; }
+.khach-menu .menu-chip { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 32px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--muted); font-size: 12px; }
+.khach-menu .menu-details { justify-self: start; }
+.khach-menu .menu-options { display: contents; }
+.khach-menu .menu-choice { grid-column: 2; justify-self: end; border-color: color-mix(in srgb, var(--accent) 20%, transparent); background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--accent); text-align: left; }
+.khach-menu .menu-chip svg { flex-shrink: 0; transition: transform 250ms ease; }
+.khach-menu .menu-chip[aria-expanded=true] svg { transform: rotate(180deg); }
+.khach-menu .menu-panel { grid-column: 1 / -1; display: grid; grid-template-rows: 0fr; transition: grid-template-rows 250ms ease; }
+.khach-menu .menu-panel[data-open=true] { grid-template-rows: 1fr; }
+.khach-menu .menu-panel > div { min-height: 0; overflow: hidden; }
+.khach-menu .menu-option-groups, .khach-menu .menu-ingredients { margin-top: 12px; padding: 12px; border-radius: 12px; background: var(--card); font-size: 12px; }
+.khach-menu .menu-option-groups { display: grid; gap: 12px; }
+.khach-menu .menu-option-groups legend { margin-bottom: 6px; color: var(--muted); font-size: 11px; font-weight: 700; }
+.khach-menu .menu-option-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.khach-menu .menu-option { position: relative; display: flex; align-items: center; justify-content: center; padding: 8px; border: 1px solid var(--line); border-radius: 12px; text-align: center; overflow-wrap: anywhere; cursor: pointer; }
+.khach-menu .menu-option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.khach-menu .menu-option:has(input:checked) { border-color: var(--accent); background: var(--badge); color: var(--accent); font-weight: 600; }
+.khach-menu .menu-option:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.khach-menu .menu-ingredients { display: grid; gap: 4px; color: var(--muted); }
+.khach-menu .menu-quantity { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; margin-top: 16px; padding: 6px 6px 6px 20px; border-radius: 24px; background: var(--accent); color: white; box-shadow: 0 4px 6px #0000001a; }
+.khach-menu .menu-quantity-text { min-width: 0; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+.khach-menu .menu-quantity .stepper { flex-shrink: 0; padding: 4px; border-radius: 24px; background: #ffffff26; }
+.khach-menu .menu-quantity .stepper button { width: 32px; height: 32px; border-radius: 50%; background: #fff3; color: white; }
+.khach-menu .menu-quantity output { font-weight: 700; }
+@media (prefers-reduced-motion: reduce) {
+  .khach-menu .menu-panel, .khach-menu .menu-chip svg, .khach-menu .menu-image img { transition: none; }
+}

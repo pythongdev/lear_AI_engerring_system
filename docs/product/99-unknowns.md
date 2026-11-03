@@ -165,29 +165,19 @@ phạm vi của nó ở `master_plan/shop-facts.md` **§8.8**.
 trong sáu câu đụng luật quán đã chốt nên không được suy ra.
 
 <a id="u-112"></a>
-- **U-112** — Trợ lý chat chạy bằng dịch vụ AI bên ngoài (LLM): dùng nhà cung cấp và model nào, trần chi phí mỗi tháng
-  bao nhiêu, và có chấp nhận gửi nội dung chat (tên, số điện thoại, địa chỉ khách, tên nhân viên) ra dịch vụ ấy không?
-  Ai trả lời: chủ repo. Chặn gì: mọi bước gọi model của lane `CHAT`; kế hoạch tạm dựng sau một lớp đổi được nhà cung cấp.
-<a id="u-113"></a>
-- **U-113** — Nhân viên trạm (canh, tráng, gấp) *"xác nhận"* trên chat có nghĩa gì: chỉ là **tin báo** để POS xem rồi
-  POS ghi tiến độ, hay **ghi thẳng** tiến độ? Chủ quán chốt 2026-08-31 *"bỏ qua bước này, POS sẽ tự cập nhật"* vì ba đôi
-  tay ấy đang bận (`shop-facts.md` §5.4, ADR-011); ghi thẳng là lật luật này. Kèm theo: bếp cầm thiết bị gì để đọc và
-  bấm? Ai trả lời: chủ quán. Chặn gì: hộp tin trạm ↔ POS của lane `CHAT`; tạm đọc là **tin báo, POS vẫn là người ghi**.
-<a id="u-114"></a>
-- **U-114** — *"Chủ quán có tất cả các quyền"* trong chat có vượt luật *chủ quán không đứng quầy thì nhờ người đứng quầy
-  bấm* (`shop-facts.md` §6.13, `architecture.md` §4) không? Ai trả lời: chủ quán. Chặn gì: bước chủ quán ra lệnh ghi
-  bằng chat; tạm giữ luật cũ — chủ quán không đứng quầy bị từ chối đúng như ở màn tay.
-<a id="u-115"></a>
-- **U-115** — Việc chạm tiền (thu, huỷ, hoàn, ghi nợ, giảm giá, đối soát) có được làm qua chat không, hay chat chỉ dẫn
-  sang màn tay? Ai trả lời: chủ quán. Chặn gì: danh sách cửa ghi chat được gọi; tạm **không** mở cửa chạm tiền nào.
+- **U-112** — Trợ lý chat chạy bằng dịch vụ AI bên ngoài (LLM): dùng **nhà cung cấp và model nào**? (Hẹp lại 2026-11-01,
+  CHAT-01: chủ repo chọn trần **10 USD/tháng** và **không gửi dữ liệu cá nhân** ra dịch vụ ngoài, xem ADR-136 *Sửa đổi*;
+  câu model chủ repo chọn *"Chưa chọn"*.) Ai trả lời: chủ repo. Chặn gì: mọi bước gọi model của lane `CHAT`.
 <a id="u-116"></a>
 - **U-116** — *"Báo nghỉ"*: ai báo cho ai, báo trước bao lâu, có cần ai duyệt không, và có chạm ca · lương không? Hôm nay
   chưa có chỗ cất loại nghỉ, câu `C30` ở `work/admin-questions.md` mới có lời một phần. Ai trả lời: chủ quán. Chặn gì:
   bước báo nghỉ của lane `CHAT`, gồm cả lược đồ của nó; các bước khác không phụ thuộc.
-<a id="u-117"></a>
-- **U-117** — Khách đặt món qua chat: có phải đăng nhập không; áp cho đơn giao · đến lấy, hay cả khách ngồi bàn QR gọi
-  thêm; và khách có nhắn được tới POS không, hay chỉ nói chuyện với trợ lý? Ai trả lời: chủ quán. Chặn gì: bước đặt món
-  qua chat; hỏi thông tin quán không phụ thuộc. Tạm đọc: chỉ đơn giao · đến lấy, theo đúng luật đơn web đang có.
+
+**Ngày 2026-10-31, T-278 mở U-111 — đóng 2026-11-01** sau khi chủ repo trả lời hai lượt liên tiếp. Nguyên văn: *"cho
+đang kí bằng gmail không cần duyệt"* (lượt một, trả lời câu *"Gmail chưa có tài khoản người làm sẽ được xử lý thế
+nào?"*); rồi *"Dùng ngay như khách; chủ quán cấp quyền làm việc khi cần"* (lượt hai, chọn giữa hai phương án *dùng
+ngay như khách* và *vai trò nhân viên mặc định*). Lời đáp đã vào `master_plan/shop-facts.md` §8.8 *lượt sáu* và
+**ADR-135** điểm 1–2. Câu dời xuống [Đã có lời giải](#da-co-loi-giai).
 
 <a id="cach-viet"></a>
 ### Cách viết một câu ở đây
@@ -212,6 +202,42 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ repo chọn 2026-11-01 (CHAT-01), trong câu hỏi có sẵn phương án.** **U-113** — *"Chỉ là tin báo"* và *"Điện thoại riêng của nhân viên"*: POS vẫn là nơi duy nhất ghi tiến độ, ADR-011 giữ nguyên; hộp tin ưu tiên màn điện thoại, mỗi người đăng nhập tài khoản của mình. Bốn câu ghi *ai trả lời: chủ quán* nhưng lời là
+của chủ repo; chưa có xác nhận lời đến từ chủ quán. **U-114** — *"Không vượt, giữ luật cũ"*: chat kiểm quyền đúng như màn
+tay, chủ quán không đứng quầy bị từ chối ở cửa quầy. **U-115** — *"Không, chat chỉ dẫn sang màn tay"*: thu, huỷ, hoàn, ghi
+nợ, giảm giá, đối soát không làm qua chat. **U-117** — *"Giao · đến lấy, không bắt đăng nhập"*: đúng luật đơn web đang có,
+đơn vẫn qua POS duyệt, khách chỉ nói với trợ lý, không nhắn POS. Lời đã vào `master_plan/shop-facts.md` §8.11 và
+**ADR-136** *Sửa đổi*.
+
+**Chủ repo trả lời 2026-11-01 (T-278), trong hội thoại, hai lượt liên tiếp.** Lời đáp đã vào owner
+(`master_plan/shop-facts.md` §8.8 *lượt sáu*) và **ADR-135** điểm 1–2.
+
+<a id="u-111"></a>
+
+| Câu đã đóng | Lời chủ repo | Owner |
+|---|---|---|
+| ~~U-111 — Người làm bấm nút *Tiếp tục với Google* ở `/dang-nhap` thì máy xử sao?~~ | Lượt một: *"cho đang kí bằng gmail không cần duyệt"*. Lượt hai (chọn giữa *dùng ngay như khách* và *vai trò nhân viên mặc định*): *"Dùng ngay như khách; chủ quán cấp quyền làm việc khi cần"*. | `master_plan/shop-facts.md` §8.8 · **ADR-135** điểm 1–2 |
+
+**Chủ repo trả lời 2026-10-29 (T-271), trong hội thoại.** Lời đáp đã vào owner (`master_plan/shop-facts.md` §4.4
+đoạn *Lựa chọn Mộc nhĩ và chế độ Hỗn hợp*) và **ADR-134** điểm 2, 5.
+
+<a id="u-109"></a>
+<a id="u-110"></a>
+
+| Câu đã đóng | Lời chủ repo | Owner |
+|---|---|---|
+| ~~U-109 — Mộc nhĩ có hiện ở trang gọi món lẻ không, hay chỉ trong combo?~~ | *"có"* (hiện ở trang gọi món lẻ; nhóm Nhân dùng chung nên tự nhiên hiện ở mọi món nhận nhân). | `master_plan/shop-facts.md` §4.4 · **ADR-134** điểm 5 |
+| ~~U-110 — Chế độ Hỗn hợp chỉ chia bánh cuốn, hay cả bánh trứng con?~~ | *"coi bánh trứng như bánh cuốn cũng dc"* (chia ceil/floor cả bánh cuốn và bánh trứng con; giò không nhận nhân nên không chia). | `master_plan/shop-facts.md` §4.4 · **ADR-134** điểm 2 |
+
+**Chủ repo trả lời 2026-10-24 (T-243), trong hội thoại.** Lời đáp đã vào owner (`master_plan/shop-facts.md` §8.9, đoạn
+*bán lại món đã ngừng*).
+
+<a id="u-104"></a>
+
+| Câu đã đóng | Lời chủ repo | Owner |
+|---|---|---|
+| ~~U-104 — Chủ quán có cần bán lại một món đã ngừng bán không, và bán lại thế nào: giữ món cũ hay tạo món mới?~~ | *"trả lời có"*, rồi *"giữ món cũ cùng tên, cùng thành phần, cùng lịch sử"*. | `master_plan/shop-facts.md` §8.9 |
 
 **Chủ repo trả lời 2026-10-22 (T-227), trong hội thoại, chọn trong câu hỏi có sẵn phương án.** Lời đáp đã vào owner
 (`master_plan/shop-facts.md` §6.1).

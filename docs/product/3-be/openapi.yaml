@@ -1230,7 +1230,7 @@ paths:
       operationId: createExpenseCategory
       tags: [khoanchi]
       summary: Chủ quán thêm loại chi, khai rõ nguồn tiền.
-      description: Tên cắt khoảng trắng hai đầu; tên rỗng hoặc nguồn thiếu/null trả invalid_request. Trùng tên trả expense_category_name_taken. Không có cửa đổi tên hay nguồn loại.
+      description: Tên cắt khoảng trắng hai đầu; tên rỗng hoặc nguồn thiếu/null trả invalid_request. Trùng tên trả expense_category_name_taken. Nguồn loại giữ nguyên; đổi tên và xoá mềm qua cửa riêng có lý do. Tên đã xoá vẫn được giữ để tránh tái dùng nhầm lịch sử.
       requestBody:
         required: true
         content:
@@ -1244,6 +1244,148 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpenseCategory'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /expense-categories/{expense_category_id}:
+    put:
+      operationId: renameExpenseCategory
+      tags: [khoanchi]
+      summary: Đổi tên mục chi với lý do, giữ nguồn tiền.
+      parameters:
+        - name: expense_category_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RenameExpense'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseCategory'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteExpenseCategory
+      tags: [khoanchi]
+      summary: Xoá mềm mục chi có lý do; còn khoản chi chưa xoá trả expense_category_in_use; mục rỗng xoá mềm cả khoản con trong cùng giao dịch.
+      parameters:
+        - name: expense_category_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseReason'
+      responses:
+        '204':
+          description: Thành công.
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /expense-items:
+    post:
+      operationId: createExpenseItem
+      tags: [khoanchi]
+      summary: Thêm khoản con vào mục chi còn hiệu lực.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExpenseItem'
+      responses:
+        '201':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseItem'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /expense-items/{expense_item_id}:
+    put:
+      operationId: renameExpenseItem
+      tags: [khoanchi]
+      summary: Đổi tên khoản con có lý do; không đổi tiền và lịch sử.
+      parameters:
+        - name: expense_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RenameExpense'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseItem'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteExpenseItem
+      tags: [khoanchi]
+      summary: Xoá mềm khoản con có lý do; còn khoản chi chưa xoá trả expense_item_in_use, kiểm mọi ngày.
+      parameters:
+        - name: expense_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseReason'
+      responses:
+        '204':
+          description: Thành công.
         default:
           description: Lời từ chối theo ErrorCode và x-http-status.
           content:
@@ -1279,7 +1421,7 @@ paths:
       operationId: listExpenses
       tags: [khoanchi]
       summary: Chủ quán đọc khoản chi theo khoảng ngày, loại và nguồn.
-      description: from và to bắt buộc, đúng YYYY-MM-DD và from ≤ to; sai trả invalid_request ở tham số sai. Sắp theo paid_date rồi expense_id; backend cộng total_vnd từ các khoản trả về.
+      description: from và to bắt buộc, đúng YYYY-MM-DD và from ≤ to; sai trả invalid_request ở tham số sai. Sắp theo paid_date rồi expense_id; backend cộng total_vnd, category_totals và item_totals từ các khoản chưa xoá trả về; last_paid_date là ngày gần nhất trong bộ lọc.
       parameters:
         - name: from
           in: query
@@ -1342,6 +1484,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Expense'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteExpense
+      tags: [khoanchi]
+      summary: Xoá mềm có lý do và vết; cả tiền riêng cũng chặn sale_day_reconciled. Khoản đã xoá không vào tổng hoặc két và không sửa được.
+      parameters:
+        - name: expense_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseReason'
+      responses:
+        '204':
+          description: Thành công.
         default:
           description: Lời từ chối theo ErrorCode và x-http-status.
           content:
@@ -5646,6 +5815,70 @@ components:
         reason:
           type: string
           minLength: 1
+    ExpenseReason:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+          minLength: 1
+          description: Lý do cắt khoảng trắng, bắt buộc không rỗng.
+    RenameExpense:
+      allOf:
+        - $ref: '#/components/schemas/ExpenseReason'
+        - type: object
+          required: [name]
+          properties:
+            name:
+              type: string
+              minLength: 1
+    CreateExpenseItem:
+      type: object
+      required: [expense_category_id, name]
+      properties:
+        expense_category_id:
+          type: integer
+          format: int64
+          minimum: 1
+        name:
+          type: string
+          minLength: 1
+    ExpenseItem:
+      type: object
+      required: [expense_item_id, expense_category_id, name]
+      properties:
+        expense_item_id:
+          type: integer
+          format: int64
+          minimum: 1
+        expense_category_id:
+          type: integer
+          format: int64
+          minimum: 1
+        name:
+          type: string
+    ExpenseCategoryTotal:
+      type: object
+      required: [expense_category_id, total_vnd]
+      properties:
+        expense_category_id:
+          type: integer
+          format: int64
+        total_vnd:
+          type: integer
+          format: int64
+    ExpenseItemTotal:
+      type: object
+      required: [expense_item_id, total_vnd, last_paid_date]
+      properties:
+        expense_item_id:
+          type: integer
+          format: int64
+        total_vnd:
+          type: integer
+          format: int64
+        last_paid_date:
+          $ref: '#/components/schemas/SaleDate'
     CreateExpenseCategory:
       type: object
       required: [name, paid_from_till]
@@ -5661,6 +5894,10 @@ components:
       type: object
       required: [expense_category_id, name, paid_from_till]
       properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpenseItem'
         expense_category_id:
           type: integer
           format: int64
@@ -5681,6 +5918,11 @@ components:
       type: object
       required: [expense_category_id, amount_vnd, paid_date]
       properties:
+        expense_item_id:
+          type: [integer, 'null']
+          format: int64
+          minimum: 1
+          description: Bỏ trống/null cho khoản không có khoản con; có mã phải thuộc đúng mục và chưa xoá.
         expense_category_id:
           type: integer
           format: int64
@@ -5706,6 +5948,13 @@ components:
       type: object
       required: [expense_id, expense_category_id, category_name, paid_from_till, amount_vnd, paid_date, person_id, person_name, created_at]
       properties:
+        item_name:
+          type: [string, 'null']
+        expense_item_id:
+          type: [integer, 'null']
+          format: int64
+          minimum: 1
+          description: Bỏ trống/null cho khoản không có khoản con; có mã phải thuộc đúng mục và chưa xoá.
         expense_id:
           type: integer
           format: int64
@@ -5738,6 +5987,14 @@ components:
       type: object
       required: [from, to, expenses, total_vnd]
       properties:
+        category_totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpenseCategoryTotal'
+        item_totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpenseItemTotal'
         from:
           $ref: '#/components/schemas/SaleDate'
         to:
@@ -7268,6 +7525,10 @@ components:
         - menu_item_already_in_category
         - expense_category_not_found
         - expense_not_found
+        - expense_item_in_use
+        - expense_category_in_use
+        - expense_item_name_taken
+        - expense_item_not_found
         - supply_item_unit_already_set
         - supply_day_entry_already_recorded
         - supply_item_name_taken
@@ -7395,6 +7656,10 @@ components:
         menu_item_already_in_category: 409
         expense_category_not_found: 404
         expense_not_found: 404
+        expense_item_in_use: 409
+        expense_category_in_use: 409
+        expense_item_name_taken: 409
+        expense_item_not_found: 404
         supply_item_unit_already_set: 409
         supply_day_entry_already_recorded: 409
         supply_item_name_taken: 409
@@ -8423,6 +8688,18 @@ x-constraint-errors:
   expense_category_fkey: expense_category_not_found
   expense_person_fkey: internal
   expense_positive_amount_check: internal
+  expense_item_name_key: expense_item_name_taken
+  expense_item_fkey: expense_item_not_found
+  expense_category_deleted_pair_check: internal
+  expense_deleted_pair_check: internal
+  expense_item_category_key: internal
+  expense_item_deleted_pair_check: internal
+  expense_item_name_not_blank_check: internal
+  expense_category_deleted_by_person_fkey: internal
+  expense_item_pkey: internal
+  expense_item_category_fkey: internal
+  expense_item_deleted_by_person_fkey: internal
+  expense_deleted_by_person_fkey: internal
 
   # T-264 — ràng buộc khách; các tên nội bộ được chặn bởi phiên/luồng ghi.
   account_contact_check: contact_required

@@ -841,9 +841,8 @@ Với mỗi **ngày bán** (định nghĩa ở `docs/product/1-system-design/02-
 rằng điện, nước, wifi, xăng xe, tạm ứng và thưởng đều lấy **từ két bán hàng** (`U-066` · `U-067`,
 `master_plan/shop-facts.md` §8.7 · §8.10), và 2026-10-01 tiền ấy được xác nhận rời két **trong
 ngày, trước lúc đếm két cuối ngày** (§8.10). Hạng tử gồm: **mọi** khoản tạm ứng và **mọi** khoản
-thưởng của `I-028`, và mọi khoản chi của `I-029` mà **loại** của nó mang nguồn *két bán hàng*. Chi
-lặt vặt bằng tiền riêng của chủ quán (`E46`) **không** đứng ở đây — nó là tiền hàng, không phải
-khoản chi, và không rời két. Mỗi khoản trong hạng tử đã có người đứng tên — người ghi, và với tạm
+thưởng của `I-028`, và mọi khoản chi **chưa xoá mềm** của `I-029` mà **loại** của nó mang nguồn *két bán hàng*. Chi
+lặt vặt bằng tiền riêng của chủ quán (`E46`) **không** đứng ở đây — nguồn của nó là tiền riêng, không rời két. Tiền nguyên liệu được ghi tại Khoản chi theo lời chủ repo 2026-10-24 (T-248). Mỗi khoản trong hạng tử đã có người đứng tên — người ghi, và với tạm
 ứng thêm người duyệt — nên hạng tử mở ra được thành danh sách từng khoản như mọi hạng tử khác.
 **Khoản ấy trừ vào két của NGÀY NGƯỜI GHI KHAI cho khoản**, không phải ngày tiền rời két (chủ
 quán chốt 2026-10-09, đóng **U-072**; `master_plan/shop-facts.md` §8.10 `E46`). Mệnh đề giữ vế
@@ -1352,20 +1351,17 @@ buổi ⇒ vào hạng tử *chi từ két* của **một** ngày bán, không n
 ghi rõ ở mục Why; câu *tiền lấy từ đâu* mở thành **U-067** cùng lượt.*
 *Thêm vế thứ năm ở T-125, 2026-10-01 — từ lời đóng `U-067`; **ADR-074**.*
 
-### I-029 — Mỗi khoản chi đọc ra được LOẠI · SỐ TIỀN · NGÀY · AI GHI; tiền hàng và lương không bao giờ là một khoản chi
+### I-029 — Mỗi khoản chi đọc ra được LOẠI · SỐ TIỀN · NGÀY · AI GHI; tiền nguyên liệu được ghi theo mục, lương ở luồng người làm
 
 **Invariant:**
-*Khoản chi* ở đây là khoản chi **ngoài tiền hàng và lương** của `master_plan/shop-facts.md` §8.10
-(`E44`). Bốn vế:
+*Khoản chi* theo `master_plan/shop-facts.md` §8.10 bao gồm tiền mua nguyên liệu từ lựa chọn chủ repo ngày 2026-10-24 (T-248), thay giới hạn tiền hàng trước đó; lương vẫn ở luồng người làm. Bốn vế:
 
 - **Mỗi khoản đủ bốn câu.** Một khoản chi tồn tại thì đọc ra được **loại** của nó, **số tiền** —
   lớn hơn 0 —, **ngày** chi, và **ai ghi**.
 - **Loại là một trong các loại quán đã kể, và danh sách ấy thêm được.** Hôm nay: điện, nước, wifi,
   xăng xe (`E44`), và **marketing** (lời đóng `U-085`, 2026-10-14). §8.10 nói thẳng *không suy rằng quán không có khoản chi nào khác*, nên thêm một
   loại mới là việc bình thường; một khoản chi **không mang loại nào** thì không tồn tại được.
-- **Tiền hàng và lương không đứng ở đây.** Giò, trứng, rau, quất là tiền hàng (§8.10, *Giới hạn lời
-  đáp*); tiền mua hàng và tiền trả cho người làm không bao giờ được ghi thành một khoản chi, để một
-  phép cộng sau này không đếm chúng hai lần.
+- **Tiền nguyên liệu được ghi tại Khoản chi, lương giữ luồng riêng.** Không ghi cùng một lần chi tiền nguyên liệu thêm lần nữa để cộng trùng. Khoản con thuộc đúng mục cha; dữ liệu cũ không có khoản con vẫn hợp lệ.
 - **Mỗi loại mang NGUỒN TIỀN của nó — két bán hàng hay không — và khoản chi của một loại mang nguồn
   két trừ vào phép đối soát két của đúng MỘT ngày bán** (`I-021`, hạng tử *chi từ két*). Điện,
   nước, wifi, xăng xe mang nguồn **két bán hàng** (lời đóng `U-066`, 2026-09-30; rời két **trong
@@ -1377,7 +1373,9 @@ ghi rõ ở mục Why; câu *tiền lấy từ đâu* mở thành **U-067** cùn
   nó không rời két, nên không vào hạng tử *chi từ két* của ngày nào. *Thêm 2026-10-14, P2A-10.*
 
 Và vì mỗi khoản có số tiền và ngày: **tổng chi của một khoảng ngày là phép cộng** các khoản trong
-khoảng ấy, không phải một con số ghi riêng.
+khoảng ấy **chưa xoá mềm**, không phải một con số ghi riêng. Tổng theo mục/khoản con cũng do backend cộng từ cùng tập khoản chưa xoá.
+
+**Xoá mềm (chủ repo 2026-10-24, T-248):** giữ hàng và ảnh trước/sau cùng người, thời điểm và lý do; không cấp DELETE. Khoản của ngày đã đối soát không xoá được, kể cả tiền riêng. Mục/khoản con còn khoản chi chưa xoá ở bất kỳ ngày nào không xoá được; mục không còn khoản chi được xoá mềm cùng các khoản con trong cùng giao dịch. Khoản đã xoá không vào tổng hay hạng tử két và không sửa được qua API.
 
 Khoản chi của loại mang nguồn két trừ vào két của **ngày người ghi khai cho khoản** (chủ quán chốt
 2026-10-09, đóng **U-072**) — vế ngày ở `I-021`.
@@ -1386,15 +1384,14 @@ Khoản chi của loại mang nguồn két trừ vào két của **ngày ngườ
 
 **Giới hạn đã biết:** máy giữ được rằng mỗi khoản chi **mang đúng một loại trong danh sách**. Máy
 **không ngăn được** một người gõ tiền mua trứng dưới một loại khác, và cũng không ngăn được người
-thêm vào danh sách một loại mang nghĩa tiền hàng hay lương — một cái tên loại không tự nói nó là gì.
+thêm vào danh sách một loại mang nghĩa lương — một cái tên loại không tự nói nó là gì.
 Cả hai chỗ ấy do người giữ. Máy cũng **không** biết nguồn khai cho một loại có đúng là nơi tiền ra
 không; khai sai thì phép trừ két của `I-021` lệch đúng bằng khoản ấy — lệch có tên, không im lặng.
 
 **Why:**
 Hệ thống cộng được mọi đồng đi **vào** quán và chưa biết một đồng nào đi **ra**. Chủ quán muốn xem
 lãi/lỗ theo ngày (`E47`); phép tính ấy còn chờ lời, nhưng đầu vào của nó — từng khoản chi có loại,
-số tiền, ngày — đã đủ lời để ghi. Vế *tiền hàng không đứng ở đây* chép đúng giới hạn §8.10 đặt ra:
-cộng trùng tiền hàng làm lãi/lỗ sai mà không khoản nào sai. Vế *số tiền lớn hơn 0* là **suy ra**
+số tiền, ngày — đã đủ lời để ghi. Tiền nguyên liệu được ghi tại đây theo lời mới của chủ repo 2026-10-24; một lần chi không được cộng hai lần. Vế *số tiền lớn hơn 0* là **suy ra**
 (`CLAUDE.md` §7.2), cùng lý do với `I-028`.
 
 **Verification:**
@@ -1405,7 +1402,7 @@ tổng chi của tuần ấy bằng tổng hai khoản; thêm một loại mới
 khoản thuộc loại ấy ⇒ **ghi được**; thêm một loại **không** khai nguồn ⇒ **bị từ chối**. Kịch bản
 két: tiền điện 300.000 lấy giữa buổi ⇒ vào hạng tử *chi từ két* của **một** ngày bán (kịch bản *chi
 từ két* ở `I-021`). Kiểm ngược: không khoản chi nào thiếu loại hay mang loại ngoài danh sách;
-còn *danh sách loại không có loại nào là tiền hàng hay lương* là một lượt **người đọc** danh sách,
+còn *danh sách loại không có loại nào là lương và không ghi trùng một lần chi tiền hàng* là một lượt **người đọc** danh sách,
 không phải một phép máy chấm được.
 
 *Viết ở P2A-01, 2026-09-30, Claude Code — từ lời chủ quán `E44` · `E45` (2026-09-25). Một chỗ suy ra
@@ -1606,8 +1603,20 @@ vai, phiên mở lúc nào, kết thúc vì sao, khoảng trực quầy của ch
 đặt hai lần ⇒ hai bản còn, bản mới nhất là hiện hành. Kiểm ngược: mọi phiên còn hiệu lực thuộc một tài
 khoản hoạt động; mọi phiên gắn trực quầy gắn khoảng của chính người của tài khoản ấy.
 
+**Kịch bản đường Google (thêm 2026-11-01, `T-278`, **ADR-135**):** cửa Google của `account` kiểm
+`account.status = 'hoat_dong'` cùng gate `login_session_account_guard`; account `cho_duyet` · `tu_choi`
+· `khoa` bấm Google ⇒ **bị từ chối với mã người làm**, **không mở `customer_session` thay thế** — dùng
+phiên khách cho `sub` cùng đang có ở `customer_google_identity` để đi vòng qua khoá là phá luật khoá/thu
+hồi của vế 4. Khoá một `account` đang có liên kết Google ⇒ mọi `login_session` của account đóng với lý
+do; `customer_session` của khách cùng Gmail (nếu có) **không đóng** — hai không gian tách
+(`I-035`). `must_change_password` của phiên Google đọc `account_password` theo cùng luật của vế 3:
+bản mật khẩu tạm `is_temporary=true` còn hiệu lực ⇒ `true`; không có bản mật khẩu nào (Google-only) ⇒
+`false`; bản đã đổi ⇒ `false` — **không hardcode `false` cho Google** là bật ràng buộc *mật khẩu tạm
+phải đổi lần sau* một đường duy nhất, không chừa cửa Google.
+
 *Viết ở P2A-14, 2026-10-14, Claude Code — từ lời chủ quán đóng `U-083` · `U-088` và thiết kế
-**ADR-109** chủ repo duyệt. Chỗ suy ra ghi ở mục Why.*
+**ADR-109** chủ repo duyệt. Chỗ suy ra ghi ở mục Why. Kịch bản đường Google thêm 2026-11-01, Claude
+Code lead `T-278`, từ lời chủ repo đóng `U-111` và thiết kế **ADR-135** cùng ngày.*
 
 ### I-034 — Một combo trên đơn mang giá combo chủ quán đặt CỘNG mức phụ thu chủ quán đặt cho từng suất; mỗi suất chọn nhân riêng theo luật của món ấy; một combo trên đơn luôn đủ suất
 
@@ -1692,5 +1701,30 @@ chờ không giữ chỗ (trùng chờ, hay trùng `email` đã xác nhận củ
 hai tài khoản cùng một `email` đã xác nhận ⇒ **bị từ chối**; lần khách tự xác nhận để lại vết người sửa rỗng. Test
 hồi quy `i035_email_verification` viết trước lược đồ.
 
+*Thêm 2026-11-01 (T-278, Claude Code lead, **ADR-135**):* một `google_sub_code` có thể tồn tại ĐỒNG THỜI ở
+`customer_google_identity` và `account_google_identity` — đó là hai bản ghi độc lập của một người có cả tài
+khoản khách và tài khoản người làm cùng một Google. Cửa `POST /customer-sessions/google` tra `account_google_identity`
+trước; có liên kết người làm ⇒ nhánh người làm (`I-033` chi phối); không có ⇒ nhánh khách (`I-035` chi phối, không
+đổi). Không có đường trong luật này cho phép Gmail hay `sub` của bên khách tự nâng thành người làm; và không có đường
+nào cho phép phiên khách chạm bảng người làm hay trực quầy. Kịch bản âm thêm: `account_google_identity` không có
+`google_sub_code`, `COLLATE "C"` sai, hai dòng cùng `sub` cho hai `account`, một `account` có hai liên kết Google,
+dòng thiếu `created_by_account_id` ⇒ **bị từ chối** (Lát A, `T-281`, viết test `db/tests/i037_staff_google_identity.sql`
+trước lược đồ).
+
 *Viết ở T-262, 2026-10-27, Claude Code — từ lời §8.8 lượt ba và thiết kế **ADR-131** chủ repo duyệt. Test hồi quy
 `i035_customer_account_apart_from_staff` viết trước lược đồ, vào `db/tests/` cùng lát `T-263`.*
+
+### I-038 — Tin báo trên hộp tin KHÔNG BAO GIỜ đổi tiến độ, bàn hay việc giao; tin riêng chỉ người gửi, người nhận (hoặc quầy) đọc được
+
+**Invariant:**
+Lời `master_plan/shop-facts.md` §8.11 (2026-11-01, chủ repo chọn): nhân viên trạm *xác nhận* trên chat **chỉ là tin báo**; POS vẫn là
+nơi duy nhất ghi tiến độ (ADR-011). Thiết kế **ADR-137**. Một dòng `station_message` chỉ thêm, không sửa, không xoá; người gửi là người
+của quán, khác người nhận; người nhận rỗng nghĩa là gửi về quầy; một người gửi không thể ghi hai dòng cùng `submission_code`. Bảng không có
+khoá ngoại nào tới việc trạm, phiên, đơn hay việc giao.
+
+**Verification:**
+Kịch bản âm: `body` rỗng hay quá 500 ký tự; `work_code` lạ; người gửi trùng người nhận; `UPDATE`/`DELETE` bằng vai ghi; `submission_code`
+trùng ⇒ **bị từ chối**. Kịch bản dương: gửi tới một người, gửi về quầy, trả lời một tin. Kiểm ngược: không khoá ngoại nào từ `station_message`
+tới bảng tiến độ; ghi tin không đổi số dòng và trạng thái của việc trạm, phiên, việc giao. Test hồi quy `i038_station_message.sql` viết trước lược đồ.
+
+*Viết ở CHAT-02, 2026-11-01, Claude Code.*

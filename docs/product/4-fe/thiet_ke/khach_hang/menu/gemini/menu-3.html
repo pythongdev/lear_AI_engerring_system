@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gọi món tại bàn</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#EA6A0C',
+                            dark: '#FF7A1A',
+                            hover: '#d05b05',
+                            light: '#fdf3ed'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border-color: #e2e8f0;
+        }
+        .dark {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border-color: #334155;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start p-0 sm:p-4 transition-colors duration-200">
+
+    <!-- THANH ĐIỀU KHIỂN DEMO TRẠNG THÁI (NGOÀI KHUNG ĐIỆN THOẠI) -->
+    <header class="w-full max-w-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-none sm:rounded-2xl p-4 mb-4 shadow-sm z-50">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+            <h1 class="text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider">🛠️ Bảng điều khiển Demo trạng thái</h1>
+            <button onclick="toggleDarkMode()" class="text-xs px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                🌙 Sáng / Tối
+            </button>
+        </div>
+        <div id="stateButtons" class="flex flex-wrap gap-1.5">
+            <button onclick="setState('empty')" class="state-btn px-2.5 py-1 text-xs font-medium rounded-lg bg-brand text-white transition">1. Giỏ trống</button>
+            <button onclick="setState('calculating')" class="state-btn px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 transition">2. Đang tính giá</button>
+            <button onclick="setState('normal')" class="state-btn px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 transition">3. Đã tính xong</button>
+            <button onclick="setState('sending')" class="state-btn px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 transition">4. Đang gửi</button>
+            <button onclick="setState('sent')" class="state-btn px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 transition">5. Đã gửi</button>
+            <button onclick="setState('error')" class="state-btn px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 transition">6. Lỗi mạng</button>
+            <button onclick="setState('expired')" class="state-btn px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 transition">7. QR hết hạn</button>
+            <button onclick="setState('no-result')" class="state-btn px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 transition">8. Không tìm thấy</button>
+        </div>
+    </header>
+
+    <!-- KHUNG ĐIỆN THOẠI CHÍNH -->
+    <main class="w-full sm:w-[390px] min-h-screen sm:min-h-[844px] bg-[var(--card-bg)] sm:rounded-[40px] sm:shadow-2xl sm:border-[8px] sm:border-slate-800 dark:sm:border-slate-700 flex flex-col relative overflow-hidden transition-colors duration-200">
+
+        <!-- TRẠNG THÁI 7: QR HẾT HẠN -->
+        <div id="viewExpired" class="hidden absolute inset-0 z-50 bg-[var(--card-bg)] flex flex-col items-center justify-center p-6 text-center">
+            <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-600 rounded-full flex items-center justify-center text-2xl mb-4">⚠️</div>
+            <h2 class="text-lg font-bold mb-2">Mã QR đã hết hạn</h2>
+            <p class="text-sm text-[var(--text-sub)] mb-6">Bạn vui lòng quét lại mã trên bàn để tiếp tục gọi món.</p>
+            <button onclick="setState('normal')" class="px-6 py-3 bg-brand text-white font-semibold rounded-xl shadow-md hover:bg-brand-hover transition">Quét lại mã mới</button>
+        </div>
+
+        <!-- 1. MenuHeader -->
+        <div data-component="MenuHeader" class="px-4 pt-4 pb-3 border-b border-[var(--border-color)] flex items-center justify-between bg-[var(--card-bg)] sticky top-0 z-30">
+            <div>
+                <p class="text-xs font-medium text-[var(--text-sub)] uppercase tracking-wide">Bánh cuốn Bà Thanh Cao Bằng</p>
+                <h1 class="text-xl font-bold tracking-tight">Bàn 3</h1>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-brand/10 text-brand flex items-center justify-center font-bold text-sm border border-brand/20">
+                QR
+            </div>
+        </div>
+
+        <!-- 2. MiniCartStrip -->
+        <div data-component="MiniCartStrip" id="miniCartStrip" class="bg-brand/10 dark:bg-brand/20 border-b border-brand/20 px-4 py-2.5 flex items-center justify-between text-xs font-medium sticky top-[65px] z-20 backdrop-blur transition-all">
+            <button onclick="scrollToSummary()" class="flex items-center gap-1.5 font-bold text-brand hover:underline min-h-[36px]">
+                <span id="miniCartCount" class="bg-brand text-white px-2 py-0.5 rounded-full text-[11px]">5 món</span>
+                <span>Xem tóm tắt ↓</span>
+            </button>
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar max-w-[150px] sm:max-w-[180px]">
+                <span class="bg-white/80 dark:bg-slate-800 px-2 py-0.5 rounded text-[11px] whitespace-nowrap border border-brand/20">Đầy đủ trứng ×1</span>
+                <span class="bg-white/80 dark:bg-slate-800 px-2 py-0.5 rounded text-[11px] whitespace-nowrap border border-brand/20">Suất giò ×2</span>
+            </div>
+            <div class="font-bold text-brand whitespace-nowrap" id="miniCartTotal">
+                94.000 ₫
+            </div>
+        </div>
+
+        <!-- 3. SearchBar -->
+        <div data-component="SearchBar" class="p-4 pb-2">
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[var(--text-sub)]">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </span>
+                <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Tìm món nhanh (không dấu)..." class="w-full pl-10 pr-10 py-2.5 bg-slate-100 dark:bg-slate-800 border border-[var(--border-color)] rounded-xl text-sm focus:outline-none focus:border-brand transition">
+                <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--text-sub)] hover:text-brand">✕</button>
+            </div>
+        </div>
+
+        <!-- THÔNG BÁO LỖI / TRẠNG THÁI GỬI -->
+        <div id="bannerMessage" class="hidden mx-4 mt-2 p-3 rounded-xl text-xs font-medium flex items-center justify-between">
+            <span id="bannerText">Đang gửi lượt gọi...</span>
+            <button id="bannerAction" onclick="retrySend()" class="underline font-bold hidden">Gửi lại</button>
+        </div>
+
+        <!-- DANH SÁCH MÓN CUỘN -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-6 pb-36">
+
+            <!-- TRẠNG THÁI KHÔNG TÌM THẤY MÓN -->
+            <div id="noResultState" class="hidden py-12 text-center text-[var(--text-sub)] text-sm">
+                Không có món nào khớp.
+            </div>
+
+            <div id="menuContentContainer" class="space-y-6">
+                <!-- 4. ComboSection -->
+                <div data-component="ComboSection" class="space-y-4">
+                    <h2 class="text-xs font-bold text-[var(--text-sub)] uppercase tracking-wider flex items-center gap-2">
+                        <span>Combo đặc trưng</span>
+                        <div class="h-[1px] bg-[var(--border-color)] flex-1"></div>
+                    </h2>
+
+                    <!-- ComboCard 1 (Đã thiết kế lại hài hòa) -->
+                    <div class="combo-card bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-sm hover:border-brand/40 transition">
+                        <!-- Ảnh to nằm ngang trên cùng -->
+                        <div class="w-full h-44 bg-slate-100 dark:bg-slate-800 relative cursor-pointer group overflow-hidden" onclick="alert('Chuyển sang trang chi tiết món')">
+                            <img src="watermarked_img_1908186792104376963.png" alt="Đầy đủ trứng chín" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-1 rounded-lg">Xem chi tiết ảnh</div>
+                        </div>
+
+                        <!-- Thông tin chi tiết bên dưới ảnh -->
+                        <div class="p-4 space-y-3.5">
+                            <!-- Header: Tên món & Mô tả -->
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <h3 class="font-bold text-base tracking-tight text-[var(--text-main)]">Đầy đủ trứng chín</h3>
+                                    <p class="text-xs text-[var(--text-sub)] mt-0.5">3 bánh + 1 trứng + 1 giò</p>
+                                </div>
+                                <span class="text-[10px] font-semibold bg-brand/10 text-brand px-2 py-0.5 rounded-full whitespace-nowrap">Phổ biến</span>
+                            </div>
+
+                            <!-- Khu vực Tùy chọn & Thành phần (Gom nhóm gọn gàng) -->
+                            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-2.5 space-y-2 border border-[var(--border-color)]/50">
+                                <!-- Tùy chọn (Dropdown) -->
+                                <div class="relative flex items-center justify-between text-xs">
+                                    <span class="text-[var(--text-sub)] font-medium">Tùy chọn:</span>
+                                    <button onclick="toggleDropdown(this)" class="font-semibold text-brand flex items-center gap-1 py-1 px-2 rounded-lg bg-white dark:bg-slate-700 border border-[var(--border-color)] shadow-2xs hover:border-brand transition">
+                                        <span>Thịt, Vừa</span>
+                                        <span class="text-[10px] opacity-75">▾</span>
+                                    </button>
+                                    <div class="hidden absolute top-full left-0 mt-1 w-56 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-xl shadow-lg z-20 p-2.5 space-y-2.5 text-xs">
+                                        <div>
+                                            <p class="font-bold text-[11px] text-[var(--text-sub)] mb-1">Nhân:</p>
+                                            <div class="grid grid-cols-2 gap-1.5">
+                                                <div onclick="selectComboOption(this, 'Thịt')" class="px-2 py-1.5 rounded-lg bg-brand/10 text-brand font-medium cursor-pointer text-center">Thịt</div>
+                                                <div onclick="selectComboOption(this, 'Chay')" class="px-2 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 font-medium cursor-pointer text-center">Chay</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-[11px] text-[var(--text-sub)] mb-1">Lượng nhân:</p>
+                                            <div class="grid grid-cols-2 gap-1.5">
+                                                <div onclick="selectComboOption(this, 'Vừa')" class="px-2 py-1.5 rounded-lg bg-brand/10 text-brand font-medium cursor-pointer text-center">Vừa</div>
+                                                <div onclick="selectComboOption(this, 'Nhiều')" class="px-2 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 font-medium cursor-pointer text-center">Nhiều</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Chi tiết thành phần (Accordion) -->
+                                <div>
+                                    <button onclick="toggleDetails(this)" class="w-full text-xs text-[var(--text-sub)] flex items-center justify-between py-1 hover:text-brand transition">
+                                        <span class="flex items-center gap-1.5 font-medium">
+                                            Xem chi tiết thành phần
+                                        </span>
+                                        <span class="transition-transform duration-200 text-[10px]">▾</span>
+                                    </button>
+                                    <div class="hidden mt-2 pt-2 border-t border-[var(--border-color)] text-[11px] text-[var(--text-sub)] space-y-1">
+                                        <div class="flex justify-between"><span>3× Bánh cuốn</span><span>(mặc định)</span></div>
+                                        <div class="flex justify-between"><span>1× Trứng chín</span><span>(mặc định)</span></div>
+                                        <div class="flex justify-between"><span>1× Giò</span><span>(mặc định)</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Footer: Giá & Số lượng -->
+                            <div class="pt-1 flex items-center justify-between">
+                                <div>
+                                    <span class="text-[11px] text-[var(--text-sub)] block">Thành tiền</span>
+                                    <span class="text-base font-extrabold text-brand price-val">30.000 ₫</span>
+                                </div>
+                                <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-xl border border-[var(--border-color)]">
+                                    <button onclick="adjustQty(this, -1)" class="w-7 h-7 flex items-center justify-center font-bold text-sm bg-white dark:bg-slate-700 rounded-lg shadow-2xs hover:bg-slate-50 transition">−</button>
+                                    <span class="text-xs font-bold w-5 text-center">1</span>
+                                    <button onclick="adjustQty(this, 1)" class="w-7 h-7 flex items-center justify-center font-bold text-sm bg-white dark:bg-slate-700 rounded-lg shadow-2xs hover:bg-slate-50 transition">＋</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ComboCard 2 -->
+                    <div class="combo-card bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-sm hover:border-brand/40 transition">
+                        <div class="w-full h-44 bg-slate-100 dark:bg-slate-800 relative cursor-pointer group overflow-hidden" onclick="alert('Chuyển sang trang chi tiết món')">
+                            <img src="watermarked_img_1908186792104376963.png" alt="Suất giò" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-1 rounded-lg">Xem chi tiết ảnh</div>
+                        </div>
+                        <div class="p-4 space-y-3.5">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <h3 class="font-bold text-base tracking-tight text-[var(--text-main)]">Suất giò</h3>
+                                    <p class="text-xs text-[var(--text-sub)] mt-0.5">1 giò + 4 bánh</p>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-2.5 space-y-2 border border-[var(--border-color)]/50">
+                                <div class="relative flex items-center justify-between text-xs">
+                                    <span class="text-[var(--text-sub)] font-medium">Tùy chọn:</span>
+                                    <button onclick="toggleDropdown(this)" class="font-semibold text-brand flex items-center gap-1 py-1 px-2 rounded-lg bg-white dark:bg-slate-700 border border-[var(--border-color)] shadow-2xs hover:border-brand transition">
+                                        <span>Thịt, Nhiều</span>
+                                        <span class="text-[10px] opacity-75">▾</span>
+                                    </button>
+                                    <div class="hidden absolute top-full left-0 mt-1 w-56 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-xl shadow-lg z-20 p-2.5 space-y-2.5 text-xs">
+                                        <div>
+                                            <p class="font-bold text-[11px] text-[var(--text-sub)] mb-1">Nhân:</p>
+                                            <div class="grid grid-cols-2 gap-1.5">
+                                                <div onclick="selectComboOption(this, 'Thịt')" class="px-2 py-1.5 rounded-lg bg-brand/10 text-brand font-medium cursor-pointer text-center">Thịt</div>
+                                                <div onclick="selectComboOption(this, 'Chay')" class="px-2 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 font-medium cursor-pointer text-center">Chay</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-[11px] text-[var(--text-sub)] mb-1">Lượng nhân:</p>
+                                            <div class="grid grid-cols-2 gap-1.5">
+                                                <div onclick="selectComboOption(this, 'Vừa')" class="px-2 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 font-medium cursor-pointer text-center">Vừa</div>
+                                                <div onclick="selectComboOption(this, 'Nhiều')" class="px-2 py-1.5 rounded-lg bg-brand/10 text-brand font-medium cursor-pointer text-center">Nhiều</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button onclick="toggleDetails(this)" class="w-full text-xs text-[var(--text-sub)] flex items-center justify-between py-1 hover:text-brand transition">
+                                        <span class="flex items-center gap-1.5 font-medium">Xem chi tiết thành phần</span>
+                                        <span class="transition-transform duration-200 text-[10px]">▾</span>
+                                    </button>
+                                    <div class="hidden mt-2 pt-2 border-t border-[var(--border-color)] text-[11px] text-[var(--text-sub)] space-y-1">
+                                        <div class="flex justify-between"><span>1× Giò</span><span>(mặc định)</span></div>
+                                        <div class="flex justify-between"><span>4× Bánh cuốn</span><span>(mặc định)</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pt-1 flex items-center justify-between">
+                                <div>
+                                    <span class="text-[11px] text-[var(--text-sub)] block">Thành tiền</span>
+                                    <span class="text-base font-extrabold text-brand price-val">29.000 ₫</span>
+                                </div>
+                                <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-xl border border-[var(--border-color)]">
+                                    <button onclick="adjustQty(this, -1)" class="w-7 h-7 flex items-center justify-center font-bold text-sm bg-white dark:bg-slate-700 rounded-lg shadow-2xs">−</button>
+                                    <span class="text-xs font-bold w-5 text-center">2</span>
+                                    <button onclick="adjustQty(this, 1)" class="w-7 h-7 flex items-center justify-center font-bold text-sm bg-white dark:bg-slate-700 rounded-lg shadow-2xs">＋</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. ProductList -->
+                <div data-component="ProductList" class="space-y-4">
+                    <h2 class="text-xs font-bold text-[var(--text-sub)] uppercase tracking-wider flex items-center gap-2">
+                        <span>Món lẻ</span>
+                        <div class="h-[1px] bg-[var(--border-color)] flex-1"></div>
+                    </h2>
+
+                    <!-- ProductCard 1 -->
+                    <div class="product-card bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-sm hover:border-brand/40 transition">
+                        <div class="w-full h-40 bg-slate-100 dark:bg-slate-800 relative overflow-hidden">
+                            <img src="watermarked_img_1908186792104376963.png" alt="Bánh cuốn lẻ" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-4 space-y-3">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <h3 class="font-bold text-base">Bánh cuốn (1 cái)</h3>
+                                    <p class="text-xs text-[var(--text-sub)] mt-0.5">Thanh mềm, nóng hổi</p>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <button onclick="toggleDropdown(this)" class="text-xs font-medium text-brand flex items-center gap-1 min-h-[28px] hover:underline">
+                                    <span>Nhân: <strong class="font-bold">Chay</strong></span>
+                                    <span class="text-[10px]">▾</span>
+                                </button>
+                                <div class="hidden absolute top-full left-0 mt-1 w-44 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-xl shadow-lg z-10 p-1.5 space-y-1 text-xs">
+                                    <div onclick="selectOption(this, 'Chay')" class="px-2.5 py-1.5 rounded-lg hover:bg-brand/10 cursor-pointer font-medium text-brand">Chay</div>
+                                    <div onclick="selectOption(this, 'Thịt')" class="px-2.5 py-1.5 rounded-lg hover:bg-brand/10 cursor-pointer font-medium">Thịt</div>
+                                </div>
+                            </div>
+                            <div class="pt-2 border-t border-[var(--border-color)] flex items-center justify-between">
+                                <span class="text-base font-bold text-brand price-val">từ 3.000 ₫</span>
+                                <div class="flex items-center gap-3 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-xl border border-[var(--border-color)]">
+                                    <button onclick="adjustQty(this, -1)" class="w-8 h-8 flex items-center justify-center font-bold text-sm bg-white dark:bg-slate-700 rounded-lg shadow-sm">−</button>
+                                    <span class="text-xs font-bold w-6 text-center">2</span>
+                                    <button onclick="adjustQty(this, 1)" class="w-8 h-8 flex items-center justify-center font-bold text-sm bg-white dark:bg-slate-700 rounded-lg shadow-sm">＋</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ProductCard 2 -->
+                    <div class="product-card bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-sm hover:border-brand/40 transition">
+                        <div class="w-full h-40 bg-slate-100 dark:bg-slate-800 relative overflow-hidden">
+                            <img src="watermarked_img_1908186792104376963.png" alt="Canh bánh cuốn" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-4 space-y-3">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <h3 class="font-bold text-base">Canh bánh cuốn</h3>
+                                    <p class="text-xs text-[var(--text-sub)] mt-0.5">Nước xương hầm thanh ngọt</p>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <button onclick="toggleDropdown(this)" class="text-xs font-medium text-brand flex items-center gap-1 min-h-[28px] hover:underline">
+                                    <span>Rau: <strong class="font-bold">Ít rau</strong></span>
+                                    <span class="text-[10px]">▾</span>
+                                </button>
+                                <div class="hidden absolute top-full left-0 mt-1 w-44 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-xl shadow-lg z-10 p-1.5 space-y-1 text-xs">
+                                    <div onclick="selectOption(this, 'Ít rau')" class="px-2.5 py-1.5 rounded-lg hover:bg-brand/10 cursor-pointer font-medium text-brand">Ít rau</div>
+                                    <div onclick="selectOption(this, 'Nhiều rau')" class="px-2.5 py-1.5 rounded-lg hover:bg-brand/10 cursor-pointer font-medium">Nhiều rau</div>
+                                    <div onclick="selectOption(this, 'Không rau')" class="px-2.5 py-1.5 rounded-lg hover:bg-brand/10 cursor-pointer font-medium">Không rau</div>
+                                </div>
+                            </div>
+                            <div class="pt-2 border-t border-[var(--border-color)] flex items-center justify-between">
+                                <span class="text-base font-bold text-brand price-val">0 ₫</span>
+                                <div class="flex items-center gap-3 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-xl border border-[var(--border-color)]">
+                                    <button onclick="adjustQty(this, -1)" class="w-8 h-8 flex items-center justify-center font-bold text-sm bg-white dark:bg-slate-700 rounded-lg shadow-sm">−</button>
+                                    <span class="text-xs font-bold w-6 text-center">2</span>
+                                    <button onclick="adjustQty(this, 1)" class="w-8 h-8 flex items-center justify-center font-bold text-sm bg-white dark:bg-slate-700 rounded-lg shadow-sm">＋</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. OrderSummary -->
+                <div data-component="OrderSummary" id="orderSummarySection" class="pt-4 border-t border-[var(--border-color)] space-y-4">
+                    <h2 class="text-sm font-bold flex items-center justify-between">
+                        <span>Tóm tắt đơn hàng</span>
+                        <span class="text-xs font-medium text-[var(--text-sub)]">Bàn 3</span>
+                    </h2>
+
+                    <!-- Nhóm COMBO -->
+                    <div class="space-y-2">
+                        <div class="bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-lg text-xs font-bold text-[var(--text-sub)] uppercase">Combo</div>
+                        
+                        <div class="bg-slate-50 dark:bg-slate-800/40 border border-[var(--border-color)] rounded-2xl p-3 space-y-2">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-bold text-xs">Đầy đủ trứng chín</h4>
+                                    <p class="text-[11px] text-[var(--text-sub)]">Nhân: Thịt · Lượng nhân: Vừa</p>
+                                    <button onclick="toggleDetails(this)" class="text-[11px] font-medium text-brand mt-0.5">Chi tiết thành phần ▾</button>
+                                    <div class="hidden mt-1 text-[11px] text-[var(--text-sub)]">3 bánh cuốn, 1 trứng chín, 1 giò</div>
+                                </div>
+                                <button onclick="this.closest('.space-y-2 > div').remove()" class="text-slate-400 hover:text-red-500 p-1">✕</button>
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-[var(--border-color)]">
+                                <div class="flex items-center gap-2 bg-white dark:bg-slate-700 px-2 py-0.5 rounded-lg border border-[var(--border-color)]">
+                                    <button onclick="adjustSummaryQty(this, -1)" class="text-xs font-bold px-1.5">">−</button>
+                                    <span class="text-xs font-bold">1</span>
+                                    <button onclick="adjustSummaryQty(this, 1)" class="text-xs font-bold px-1.5">＋</button>
+                                </div>
+                                <span class="text-xs font-bold text-brand summary-price">30.000 ₫</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-800/40 border border-[var(--border-color)] rounded-2xl p-3 space-y-2">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-bold text-xs">Suất giò</h4>
+                                    <p class="text-[11px] text-[var(--text-sub)]">Nhân: Thịt · Lượng nhân: Nhiều</p>
+                                    <button onclick="toggleDetails(this)" class="text-[11px] font-medium text-brand mt-0.5">Chi tiết thành phần ▾</button>
+                                    <div class="hidden mt-1 text-[11px] text-[var(--text-sub)]">1 giò, 4 bánh cuốn</div>
+                                </div>
+                                <button onclick="this.closest('.space-y-2 > div').remove()" class="text-slate-400 hover:text-red-500 p-1">✕</button>
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-[var(--border-color)]">
+                                <div class="flex items-center gap-2 bg-white dark:bg-slate-700 px-2 py-0.5 rounded-lg border border-[var(--border-color)]">
+                                    <button onclick="adjustSummaryQty(this, -1)" class="text-xs font-bold px-1.5">">−</button>
+                                    <span class="text-xs font-bold">2</span>
+                                    <button onclick="adjustSummaryQty(this, 1)" class="text-xs font-bold px-1.5">＋</button>
+                                </div>
+                                <span class="text-xs font-bold text-brand summary-price">58.000 ₫</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nhóm MÓN LẺ -->
+                    <div class="space-y-2">
+                        <div class="bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-lg text-xs font-bold text-[var(--text-sub)] uppercase">Món lẻ</div>
+                        
+                        <div class="bg-slate-50 dark:bg-slate-800/40 border border-[var(--border-color)] rounded-2xl p-3 space-y-2">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-bold text-xs">Bánh cuốn (1 cái)</h4>
+                                    <p class="text-[11px] text-[var(--text-sub)]">Nhân: Chay</p>
+                                </div>
+                                <button onclick="this.closest('.space-y-2 > div').remove()" class="text-slate-400 hover:text-red-500 p-1">✕</button>
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-[var(--border-color)]">
+                                <div class="flex items-center gap-2 bg-white dark:bg-slate-700 px-2 py-0.5 rounded-lg border border-[var(--border-color)]">
+                                    <button onclick="adjustSummaryQty(this, -1)" class="text-xs font-bold px-1.5">">−</button>
+                                    <span class="text-xs font-bold">2</span>
+                                    <button onclick="adjustSummaryQty(this, 1)" class="text-xs font-bold px-1.5">＋</button>
+                                </div>
+                                <span class="text-xs font-bold text-brand summary-price">6.000 ₫</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. BottomActionSticky -->
+        <div data-component="BottomActionSticky" class="absolute bottom-0 inset-x-0 bg-[var(--card-bg)] border-t border-[var(--border-color)] p-4 shadow-lg z-30">
+            <div class="flex items-center justify-between mb-3">
+                <div>
+                    <span class="text-xs text-[var(--text-sub)]">Tổng cộng thanh toán</span>
+                    <div class="text-lg font-extrabold text-brand" id="bottomTotal">94.000 ₫</div>
+                </div>
+                <div class="text-right">
+                    <span class="text-xs font-medium bg-brand/10 text-brand px-2.5 py-1 rounded-lg">Bàn 3</span>
+                </div>
+            </div>
+            <button id="submitOrderBtn" onclick="submitOrder()" class="w-full py-3.5 bg-brand text-white font-bold rounded-2xl shadow-lg shadow-brand/30 hover:bg-brand-hover active:scale-[0.98] transition flex items-center justify-center gap-2">
+                <span>Gửi yêu cầu gọi món</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- JAVASCRIPT XỬ LÝ DEMO TRẠNG THÁI & TƯƠNG TÁC -->
+    <script>
+        // Chuyển đổi Dark Mode
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+            }
+        }
+
+        // Đóng/Mở Dropdown tùy chọn
+        function toggleDropdown(button) {
+            const dropdown = button.nextElementSibling;
+            document.querySelectorAll('.absolute.top-full').forEach(el => {
+                if (el !== dropdown) el.classList.add('hidden');
+            });
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Chọn tùy chọn trong dropdown
+        function selectOption(item, value) {
+            const parentDropdown = item.closest('.relative');
+            const btnStrong = parentDropdown.querySelector('button strong');
+            if (btnStrong) btnStrong.innerText = value;
+            
+            Array.from(item.parentNode.children).forEach(child => {
+                child.classList.remove('text-brand', 'bg-brand/10');
+            });
+            item.classList.add('text-brand', 'bg-brand/10');
+            parentDropdown.querySelector('.absolute').classList.add('hidden');
+        }
+
+        function selectComboOption(item, value) {
+            const container = item.closest('.relative');
+            Array.from(item.parentNode.children).forEach(child => {
+                child.classList.remove('text-brand', 'bg-brand/10', 'font-bold');
+            });
+            item.classList.add('text-brand', 'bg-brand/10', 'font-bold');
+        }
+
+        // Đóng/Mở Chi tiết thành phần
+        function toggleDetails(button) {
+            const detailsDiv = button.nextElementSibling;
+            const arrow = button.querySelector('span:last-child');
+            detailsDiv.classList.toggle('hidden');
+            if(arrow) {
+                arrow.style.transform = detailsDiv.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+            }
+        }
+
+        // Cuộn xuống phần tóm tắt
+        function scrollToSummary() {
+            const summary = document.getElementById('orderSummarySection');
+            if (summary) {
+                summary.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Thay đổi số lượng món
+        function adjustQty(btn, delta) {
+            const qtySpan = btn.parentNode.querySelector('span');
+            let qty = parseInt(qtySpan.innerText) + delta;
+            if (qty < 0) qty = 0;
+            qtySpan.innerText = qty;
+        }
+
+        function adjustSummaryQty(btn, delta) {
+            const qtySpan = btn.parentNode.querySelector('span');
+            let qty = parseInt(qtySpan.innerText) + delta;
+            if (qty < 1) qty = 1;
+            qtySpan.innerText = qty;
+        }
+
+        // Tìm kiếm món
+        function handleSearch(keyword) {
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const noResult = document.getElementById('noResultState');
+            
+            if (keyword.trim() !== '') {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            const cards = document.querySelectorAll('.combo-card, .product-card');
+            let matched = 0;
+            cards.forEach(card => {
+                const title = card.querySelector('h3').innerText.toLowerCase();
+                const query = keyword.toLowerCase();
+                if (title.includes(query)) {
+                    card.style.display = 'block';
+                    matched++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (matched === 0) {
+                noResult.classList.remove('hidden');
+            } else {
+                noResult.classList.add('hidden');
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            handleSearch('');
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+        }
+
+        // BẢNG ĐIỀU KHIỂN DEMO TRẠNG THÁI (STATE CONTROLLER)
+        function setState(state) {
+            document.querySelectorAll('.state-btn').forEach(btn => {
+                btn.className = "state-btn px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 transition";
+            });
+            event.target.className = "state-btn px-2.5 py-1 text-xs font-medium rounded-lg bg-brand text-white transition";
+
+            document.getElementById('viewExpired').classList.add('hidden');
+            const banner = document.getElementById('bannerMessage');
+            banner.classList.add('hidden');
+            
+            const submitBtn = document.getElementById('submitOrderBtn');
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+            switch(state) {
+                case 'empty':
+                    document.getElementById('miniCartCount').innerText = '0 món';
+                    document.getElementById('miniCartTotal').innerText = '0 ₫';
+                    document.getElementById('bottomTotal').innerText = '0 ₫';
+                    break;
+                case 'calculating':
+                    banner.className = "mx-4 mt-2 p-3 rounded-xl text-xs font-medium flex items-center justify-between bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300";
+                    document.getElementById('bannerText').innerText = '⏳ Đang tính toán giá tiền và khuyến mãi...';
+                    banner.classList.remove('hidden');
+                    break;
+                case 'normal':
+                    document.getElementById('miniCartCount').innerText = '5 món';
+                    document.getElementById('miniCartTotal').innerText = '94.000 ₫';
+                    document.getElementById('bottomTotal').innerText = '94.000 ₫';
+                    break;
+                case 'sending':
+                    banner.className = "mx-4 mt-2 p-3 rounded-xl text-xs font-medium flex items-center justify-between bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300";
+                    document.getElementById('bannerText').innerText = '🔄 Đang gửi yêu cầu gọi món tới bếp...';
+                    document.getElementById('bannerAction').classList.add('hidden');
+                    banner.classList.remove('hidden');
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    break;
+                case 'sent':
+                    banner.className = "mx-4 mt-2 p-3 rounded-xl text-xs font-medium flex items-center justify-between bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300";
+                    document.getElementById('bannerText').innerText = '✅ Đã gửi đơn thành công! Bếp đang chuẩn bị.';
+                    document.getElementById('bannerAction').classList.add('hidden');
+                    banner.classList.remove('hidden');
+                    submitBtn.innerText = 'Đã gọi món thành công';
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    break;
+                case 'error':
+                    banner.className = "mx-4 mt-2 p-3 rounded-xl text-xs font-medium flex items-center justify-between bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300";
+                    document.getElementById('bannerText').innerText = '❌ Mất kết nối mạng. Không thể gửi đơn.';
+                    const actionBtn = document.getElementById('bannerAction');
+                    actionBtn.classList.remove('hidden');
+                    actionBtn.innerText = 'Thử lại';
+                    banner.classList.remove('hidden');
+                    break;
+                case 'expired':
+                    document.getElementById('viewExpired').classList.remove('hidden');
+                    break;
+                case 'no-result':
+                    document.getElementById('searchInput').value = 'MonKhongTonTai';
+                    handleSearch('MonKhongTonTai');
+                    break;
+            }
+        }
+
+        function submitOrder() {
+            setState('sending');
+            setTimeout(() => {
+                setState('sent');
+            }, 2000);
+        }
+
+        function retrySend() {
+            submitOrder();
+        }
+    </script>
+</body>
+</html>

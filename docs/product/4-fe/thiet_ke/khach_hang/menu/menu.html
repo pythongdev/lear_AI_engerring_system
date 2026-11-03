@@ -76,6 +76,8 @@ summary::-webkit-details-marker { display:none}
 details[open]>.disclosure:after { content:'⌄ Ẩn'}
 .order-line { display:flex; align-items:center; gap:6px}
 .order-line .name { flex:1; font-size:13px}
+#summary-combo .name { font-size:11px}
+#summary-combo .order-line { min-width:130px}
 .compact.stepper { gap:3px}
 .compact.stepper button { width:23px; height:23px; background:transparent; border:1px solid var(--line); color:var(--muted); font-size:12px}
 .compact.stepper output { min-width:19px; font-size:11px}
@@ -140,6 +142,37 @@ to { transform:translateX(0)}
 @media(prefers-reduced-motion:reduce) { .drawer[open] { animation:none}
 }
 
+
+/* Combo detail: a self-contained menu preview. */
+#combo { width:min(472px,calc(100% - 20px)); padding:0; background:var(--bg); border-radius:24px; }
+.combo-top { display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--line); }
+.combo-top button { min-height:40px; }
+.combo-top span { color:var(--muted); font-size:11px; }
+.combo-hero { position:relative; margin:16px 18px 0; height:190px; border-radius:18px; overflow:hidden; display:grid; place-items:center; background:radial-gradient(ellipse at 50% 45%,#ffe7ba,#dca86d); }
+.combo-plate { width:220px; height:135px; border-radius:50%; background:#fff7e6; border:9px solid #f6e3c5; box-shadow:0 18px 30px #74461840; display:flex; justify-content:center; align-items:center; gap:8px; transform:rotate(-8deg); font-size:52px; }
+.combo-plate span:last-child { font-size:40px; }
+.combo-hero small { position:absolute; bottom:12px; left:14px; color:#694522; font-size:10px; }
+.combo-copy { padding:22px 22px 18px; }
+.combo-eyebrow { color:var(--accent); font-size:10px; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+#combo h2 { font-size:26px; line-height:1.2; margin:0 0 10px; letter-spacing:-.7px; }
+.combo-unit { display:flex; align-items:baseline; gap:7px; margin-bottom:12px; }
+.combo-unit .price { font-size:24px; font-weight:650; }
+.combo-copy>p:last-child { color:var(--muted); font-size:13px; line-height:1.7; }
+.combo-includes { padding:0 22px 20px; }
+.combo-section-title { display:flex; align-items:center; justify-content:space-between; padding:16px 0 8px; border-top:1px solid var(--line); }
+.combo-section-title h3 { font-size:15px; font-weight:600; }
+.combo-section-title span { color:var(--muted); font-size:11px; }
+.combo-item { display:flex; gap:12px; align-items:center; padding:12px 0; border-bottom:1px solid var(--line); font-size:13px; }
+.combo-item-icon { display:grid; place-items:center; width:42px; height:42px; background:var(--card); border-radius:12px; font-size:23px; }
+.combo-item strong { margin-left:auto; color:var(--accent); font-size:13px; }
+.combo-footer { position:sticky; bottom:0; background:var(--bg); padding:16px 22px max(20px,env(safe-area-inset-bottom)); border-top:1px solid var(--line); }
+.combo-footer .row { margin:0 0 14px; }
+.combo-footer .stepper { height:40px; }
+.combo-footer .stepper button { width:40px; height:38px; }
+.combo-footer>button { width:100%; display:flex; justify-content:space-between; align-items:center; min-height:50px; border-radius:13px; padding:12px 16px; font-size:14px; font-weight:600; }
+.combo-footer button:disabled { opacity:.4; cursor:default; }
+@media(max-width:480px) { #combo { width:100%; max-width:100%; height:100dvh; max-height:100dvh; margin:0; border:0; border-radius:0; } }
+
 </style>
 </head>
 <body>
@@ -153,19 +186,25 @@ to { transform:translateX(0)}
 <section data-component="FavouritesRail" id="favourites"><h2 class="label">YÊU THÍCH</h2><div class="rail" id="favourites-list"></div></section>
 <section data-component="ComboSection"><h2 class="label">COMBO</h2><div id="combos"></div></section>
 <section data-component="ProductList"><h2 class="label">MÓN LẺ</h2><div id="products"></div></section>
-<section class="summary" data-component="OrderSummary" id="summary"><details open><summary class="row disclosure"><h2>Tóm tắt đơn hàng</h2><span class="badge">Bàn 03</span></summary>
-<h3 class="label">COMBO</h3><div id="summary-combo"></div><span class="badge">Nhân thịt</span><details open class="combo-breakdown"><summary class="detail">⌃ Ẩn chi tiết</summary><div class="subitems" id="subitems"></div></details><p class="subtotal">Subtotal: 42.000đ</p>
+<section class="summary" data-component="OrderSummary" id="summary"><details open><summary class="row disclosure"><h2>Tóm tắt đơn hàng</h2><span class="badge" hidden>Bàn 03</span></summary>
+<h3 class="label">COMBO</h3><div class="table-wrap"><table aria-label="Thông tin combo"><thead><tr><th scope="col">Combo</th><th scope="col">Nhân</th><th scope="col">SL</th><th scope="col">Đơn giá</th><th scope="col">Thành tiền</th></tr></thead><tbody><tr><td id="summary-combo"></td><td>Nhân thịt</td><td>1</td><td>42.000đ</td><td>42.000đ</td></tr></tbody></table></div><details open class="combo-breakdown"><summary class="detail">⌃ Ẩn chi tiết</summary><div class="subitems" id="subitems"></div></details><p class="subtotal">Subtotal: 42.000đ</p>
 <h3 class="label">MÓN LẺ</h3><div id="summary-product"></div><span class="badge">Nhân thịt</span><p class="subtotal">Subtotal: 35.000đ</p><div class="row total"><span>Tổng cộng:</span><span class="price">77.000đ</span></div>
 <section class="canh" id="canh"><h3 class="muted" style="font-size:11px">CANH</h3><div id="soup-quantities"></div></section>
 <details open><summary class="row label disclosure">TỔNG SỐ MÓN (5 LOẠI)</summary><div class="table-wrap"><table><thead><tr><th>Món</th><th>Nhân</th><th>SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead><tbody id="dish-totals"></tbody></table></div></details>
 <div class="note"><div class="row"><label for="note" class="muted">GHI CHÚ</label><span class="saved">✓ Đã lưu</span></div><textarea id="note" placeholder="ít hành, mang thêm tương ớt..."></textarea></div></details></section>
 <button class="checkout primary row" data-component="CartBottomBar" data-open="confirm"><span class="count">3</span><span>Thanh toán</span><span>77.000đ</span></button>
-<nav class="bottom-nav" data-component="ClientBottomNav" aria-label="Điều hướng cuối trang"><a href="#menu">🏠 Menu</a><span>🧾 Đơn</span><a href="#favourites">♥ Thích</a><span>📡 Theo dõi</span><span>⚙ Cài đặt</span></nav>
+<nav class="bottom-nav" data-component="ClientBottomNav" aria-label="Điều hướng cuối trang"><a href="#menu">🏠 Menu</a><a href="../order_detail/order-detail.html">🧾 Đơn</a><a href="../favourite/favourite.html">♥ Thích</a><a href="../order_detail/order-detail.html">📡 Theo dõi</a><span>⚙ Cài đặt</span></nav>
 </main>
 <dialog id="confirm" aria-labelledby="confirm-title"><h2 id="confirm-title">Xác nhận đặt hàng</h2><div class="row"><span>1× Combo Đầy Đặn</span><span class="price">42.000đ</span></div><div class="row"><span>1× Bánh cuốn thịt</span><span class="price">35.000đ</span></div><div class="row"><span>1× Canh (có rau)</span><span class="price">0đ</span></div><div class="row total"><span>Tổng cộng</span><span class="price" style="font-size:16px">77.000đ</span></div><textarea id="kitchen-note" aria-label="Ghi chú cho bếp (tuỳ chọn)" placeholder="Ghi chú cho bếp (tuỳ chọn)"></textarea><div class="actions"><button data-close>Hủy</button><button class="primary" data-place>Đặt hàng</button></div></dialog>
 <dialog id="filling" aria-labelledby="filling-title"><h2 id="filling-title">Bánh cuốn thịt</h2><p class="muted">Chọn nhân (bắt buộc)</p><label class="radio"><input type="radio" name="filling" value="Nhân thịt" checked>Nhân thịt<span class="muted">+0đ</span></label><label class="radio"><input type="radio" name="filling" value="Nhân thịt mộc nhĩ">Nhân thịt mộc nhĩ<span class="muted">+0đ</span></label><div class="row total"><span class="muted">Tổng</span><span class="price">35.000đ</span></div><div class="actions"><button data-close>Đóng</button><button class="primary" data-add="product">Thêm vào giỏ</button></div></dialog>
 <dialog id="cart" class="drawer" aria-labelledby="cart-title"><header><div class="row"><h2 id="cart-title">Giỏ hàng</h2><button class="price" data-view>▤ Xem đơn</button><button class="plain" data-close aria-label="Đóng giỏ hàng">✕</button></div><p class="muted" style="font-size:11px">Khách · Bàn 03</p></header><div class="row"><h3>Tóm tắt đơn hàng</h3><span class="chip">3 món</span></div><div id="cart-lines"></div><div class="drawer-footer"><div class="row total"><span class="muted">Tổng cộng</span><span class="price" style="font-size:18px">77.000đ</span></div><button class="checkout primary" data-open="confirm">Thanh toán</button><button class="continue muted" data-close>Tiếp tục chọn món</button></div></dialog>
-<dialog id="combo" aria-labelledby="combo-title"><div class="modal-hero">🍱 ảnh combo</div><h2 id="combo-title">Combo Đầy Đặn</h2><p class="price" style="font-size:14px">42.000đ</p><div class="muted"><p style="margin-top:20px">1x Giò</p><p style="margin-top:12px">3x Bánh Cuốn</p><p style="margin-top:12px">1x Canh</p></div><div class="actions"><button data-close>Đóng</button><button class="primary" data-add="combo">Thêm combo vào giỏ</button></div></dialog>
+<dialog id="combo" aria-labelledby="combo-title" aria-describedby="combo-description" data-component="ComboDetail">
+<header class="combo-top"><button data-close aria-label="Quay lại menu">← Menu</button><span>CHI TIẾT COMBO</span></header>
+<div class="combo-hero" role="img" aria-label="Minh hoạ bánh cuốn và các món ăn kèm"><div class="combo-plate" aria-hidden="true"><span>🥟</span><span>🍳</span><span>🥣</span></div><small>Hình minh hoạ</small></div>
+<div class="combo-copy"><p class="combo-eyebrow">Bánh cuốn · món ăn kèm</p><h2 id="combo-title"></h2><div class="combo-unit"><span class="price" id="combo-price"></span><span class="muted">/ combo</span></div><p id="combo-description">Một lựa chọn trọn vẹn với bánh cuốn và các món ăn kèm. Xem thành phần bên dưới để chọn phần hợp khẩu vị.</p></div>
+<section class="combo-includes" aria-labelledby="combo-includes-title"><div class="combo-section-title"><h3 id="combo-includes-title">Trong combo có gì?</h3><span id="combo-item-count"></span></div><div id="combo-items"></div></section>
+<footer class="combo-footer"><div class="row"><span>Số lượng combo</span><span class="stepper"><button data-combo-step="-1" aria-label="Giảm số lượng combo">−</button><output id="combo-quantity" aria-live="polite">1</output><button data-combo-step="1" aria-label="Tăng số lượng combo">＋</button></span></div><button class="primary" data-add="combo"><span>Thêm vào giỏ</span><span id="combo-total" aria-live="polite"></span></button></footer>
+</dialog>
 <div class="notice" role="status" aria-live="polite"></div>
 <script>
 // Theme toggle: dark is the panel default; the choice is remembered per browser when storage allows.
@@ -183,20 +222,46 @@ const combos = [
  ['Combo Đầy Đặn','42.000đ',[['Bánh Trứng Chín',1],['Bánh Trứng Tái',1],['Giò',1],['Bánh Cuốn',3],['Canh',1]],1],
  ['Suất Giò','21.000đ',[['Giò',1],['Bánh Cuốn',3],['Canh',1]],0]
 ];
-const line = (name, n, price = '') => `<div class="order-line"><span class="name">${name}</span>${step(n,true)}${price ? `<span class="price">${price}</span>` : ''}<button class="trash" aria-label="Xóa ${name}">🗑</button></div>`;
+const line = (name, n, price = '', editable = true) => `<div class="order-line"><span class="name">${name}</span>${editable ? step(n,true) : `<span aria-label="Số lượng">${n}</span>`}${price ? `<span class="price">${price}</span>` : ''}<button class="trash" aria-label="Xóa ${name}">🗑</button></div>`;
 document.querySelector('#favourites-list').innerHTML = [['Suất Giò','21.000đ'],['Bánh Chay','18.000đ'],['Combo Đầy Đặn','42.000đ']].map(([name,price]) => `<article class="favourite"><div class="fav-image">🍜${heart(true)}</div><div class="fav-copy">${name}<p class="price">${price}</p></div></article>`).join('');
-document.querySelector('#combos').innerHTML = combos.map(([name,price,dishes,n]) => `<article class="card" data-component="ComboCard"><div class="thumb">🍱${heart()}</div><div class="card-copy"><h3>${name}</h3><ul class="dishes">${dishes.map(([dish,qty]) => `<li><span class="badge">×${qty}</span>${dish}</li>`).join('')}</ul><button class="plain detail" data-open="combo">Chi tiết</button></div><div class="controls"><p class="price">${price}</p>${step(n)}${fillings()}</div></article>`).join('');
+document.querySelector('#combos').innerHTML = combos.map(([name,price,dishes,n],index) => `<article class="card" data-component="ComboCard"><div class="thumb">🍱${heart()}</div><div class="card-copy"><h3>${name}</h3><ul class="dishes">${dishes.map(([dish,qty]) => `<li><span class="badge">×${qty}</span>${dish}</li>`).join('')}</ul><button class="plain detail" data-open="combo" data-combo-index="${index}">Chi tiết</button></div><div class="controls"><p class="price">${price}</p>${step(n)}${fillings()}</div></article>`).join('');
 document.querySelector('#products').innerHTML = [['Bánh cuốn thịt','35.000đ','🍜','Bánh cuốn nhân thịt mộc nhĩ truyền thống',1],['Canh mọc','10.000đ','🍲','Có rau / không rau — chọn ở Tóm tắt đơn',0]].map(([name,price,emoji,desc,n]) => {
  const action = n ? 'data-open="filling"' : 'data-soup';
  return `<article class="card ${n ? 'product' : 'soup-card'}" data-component="ProductCard" ${n ? 'data-product' : ''}><div class="thumb"><button class="plain" ${action} aria-label="${name}">${emoji}</button>${heart()}</div><div class="card-copy"><h3><button class="plain" ${action}>${name}</button></h3><p class="description">${desc}</p><button class="plain detail" ${action}>Chi tiết</button></div><div class="controls"><p class="price">${price}</p>${step(n)}${n ? fillings() : ''}</div></article>`;
 }).join('');
-document.querySelector('#summary-combo').innerHTML = line('Combo Đầy Đặn',1,'42.000đ');
-document.querySelector('#summary-product').innerHTML = line('Bánh cuốn thịt',1,'35.000đ');
+document.querySelector('#summary-combo').innerHTML = '<div class="order-line"><span class="name">Combo Đầy Đặn</span><button class="trash" aria-label="Xóa Combo Đầy Đặn">🗑</button></div>';
+document.querySelector('#summary-product').innerHTML = line('Bánh cuốn thịt',1,'35.000đ',false);
 document.querySelector('#subitems').innerHTML = combos[2][2].map(([name,n]) => line(name,n)).join('');
 document.querySelector('#soup-quantities').innerHTML = [['Bát có rau',1],['Bát không rau',0]].map(([name,n]) => `<div class="row"><span>${name}</span>${step(n,true)}</div>`).join('');
 document.querySelector('#dish-totals').innerHTML = [['Bánh Trứng Chín',1,'—','—'],['Bánh Trứng Tái',1,'—','—'],['Bánh Cuốn',3,'4.000đ','12.000đ'],['Giò',1,'9.000đ','9.000đ'],['Bánh cuốn thịt',1,'35.000đ','35.000đ'],['Canh (có rau)',1,'—','—']].map(([name,n,price,total]) => `<tr><td>${name}</td><td>${name.startsWith('Canh') ? '—' : 'Nhân thịt'}</td><td>×${n}</td><td>${price}</td><td>${total}</td></tr>`).join('');
 document.querySelector('#cart-lines').innerHTML = line('Combo Đầy Đặn',1) + '<button class="plain muted" data-open="combo" style="font-size:11px">3 món · bấm để xem</button><p class="price">42.000đ</p>' + line('Bánh cuốn thịt',1) + '<p class="muted" style="font-size:11px">+ Nhân thịt</p><p class="price">35.000đ</p>' + line('Canh (có rau)',1) + '<p class="price">0đ</p>';
+try {
+ const saved = JSON.parse(localStorage.getItem('customer-favourite-design-v1'));
+ if (saved) document.querySelectorAll('article .heart').forEach(button => {
+  const card = button.closest('article');
+  const name = card.querySelector('h3')?.textContent.trim() || card.querySelector('.fav-copy')?.firstChild.textContent.trim();
+  const selected = saved.items.some(item => item.name === name);
+  button.setAttribute('aria-pressed',selected); button.textContent = selected ? '♥' : '♡';
+ });
+} catch {}
 const dialogs = [...document.querySelectorAll('dialog')];
+let selectedCombo = 2;
+const comboMoney = value => new Intl.NumberFormat('vi-VN').format(value) + 'đ';
+function updateComboTotal() {
+ const quantity = Number(document.querySelector('#combo-quantity').value);
+ document.querySelector('#combo-total').textContent = comboMoney(Number(combos[selectedCombo][1].replace(/\D/g,'')) * quantity);
+ document.querySelector('[data-combo-step="-1"]').disabled = quantity <= 1;
+}
+function renderCombo(index) {
+ selectedCombo = index;
+ const [name,price,dishes] = combos[index];
+ document.querySelector('#combo-title').textContent = name;
+ document.querySelector('#combo-price').textContent = price;
+ document.querySelector('#combo-item-count').textContent = dishes.length + ' loại món';
+ document.querySelector('#combo-items').innerHTML = dishes.map(([dish,quantity]) => `<div class="combo-item"><span class="combo-item-icon" aria-hidden="true">${dish.includes('Canh') ? '🥣' : dish.includes('Trứng') ? '🍳' : dish.includes('Giò') ? '🍖' : '🥟'}</span><span>${dish}</span><strong>×${quantity}</strong></div>`).join('');
+ document.querySelector('#combo-quantity').value = 1;
+ updateComboTotal();
+}
 let returnFocus = null;
 let noticeTimer;
 function notice(message) {
@@ -209,6 +274,7 @@ function openDialog(id,trigger) {
  const current = dialogs.find(dialog => dialog.open);
  if (!current) returnFocus = trigger;
  if (current) current.close();
+ if (id === 'combo') renderCombo(Number(trigger?.dataset.comboIndex ?? 2));
  if (id === 'confirm') document.querySelector('#kitchen-note').value = document.querySelector('#note').value;
  document.getElementById(id).showModal();
  document.body.style.overflow = 'hidden';
@@ -234,6 +300,12 @@ document.addEventListener('click',event => {
  }
  if (button.dataset.open) return openDialog(button.dataset.open,button);
  if (button.hasAttribute('data-close')) return closeDialog(button.closest('dialog'));
+ if (button.dataset.comboStep) {
+  const output = document.querySelector('#combo-quantity');
+  output.value = Math.max(1,Number(output.value) + Number(button.dataset.comboStep));
+  updateComboTotal();
+  return;
+ }
  if (button.dataset.step) {
   const output = button.parentElement.querySelector('output');
   output.value = Math.max(0,Number(output.value) + Number(button.dataset.step));
@@ -243,6 +315,22 @@ document.addEventListener('click',event => {
   const selected = button.getAttribute('aria-pressed') !== 'true';
   button.setAttribute('aria-pressed',selected);
   button.textContent = selected ? '♥' : '♡';
+  const card = button.closest('article');
+  const name = card.querySelector('h3')?.textContent.trim() || card.querySelector('.fav-copy')?.firstChild.textContent.trim();
+  const price = Number(card.querySelector('.price').textContent.replace(/\D/g,''));
+  try {
+   const key = 'customer-favourite-design-v1';
+   const defaults = [{name:'Suất Giò',type:'combo',price:21000,icon:'🍱',qty:1},{name:'Bánh Chay',type:'product',price:18000,icon:'🥟',qty:1},{name:'Combo Đầy Đặn',type:'combo',price:42000,icon:'🍱',qty:1}];
+   const state = JSON.parse(localStorage.getItem(key)) || {items:defaults,sets:[]};
+   const type = card.dataset.component === 'ComboCard' || ['Suất Giò','Combo Đầy Đặn'].includes(name) ? 'combo' : 'product';
+   state.items = state.items.filter(item => item.name !== name || item.type !== type);
+   if (selected) state.items.push({name,type,price,icon:type === 'combo' ? '🍱' : '🥟',qty:1});
+   localStorage.setItem(key,JSON.stringify(state));
+   document.querySelectorAll('article').forEach(other => {
+    const otherName = other.querySelector('h3')?.textContent.trim() || other.querySelector('.fav-copy')?.firstChild.textContent.trim();
+    if (otherName === name) { const heart = other.querySelector('.heart'); if (heart) { heart.setAttribute('aria-pressed',selected); heart.textContent = selected ? '♥' : '♡'; } }
+   });
+  } catch { notice('Không thể lưu yêu thích trên trình duyệt này.'); }
  }
  if (button.closest('.fillings')) for (const sibling of button.parentElement.children) sibling.setAttribute('aria-pressed',sibling === button);
  if (button.closest('.tabs')) for (const sibling of button.parentElement.children) {
@@ -256,13 +344,14 @@ document.addEventListener('click',event => {
   document.querySelector(button.hasAttribute('data-soup') ? '#canh' : '#summary').scrollIntoView({block:'center'});
  }
  if (button.dataset.add) {
-  const target = button.dataset.add === 'product' ? document.querySelector('[data-product] output') : document.querySelectorAll('[data-component="ComboCard"] output')[2];
-  target.value = Number(target.value) + 1;
+  const target = button.dataset.add === 'product' ? document.querySelector('[data-product] output') : document.querySelectorAll('[data-component="ComboCard"] output')[selectedCombo];
+  target.value = Number(target.value) + (button.dataset.add === 'combo' ? Number(document.querySelector('#combo-quantity').value) : 1);
   if (button.dataset.add === 'product') {
    const filling = document.querySelector('input[name="filling"]:checked').value;
    document.querySelectorAll('[data-product] .fillings button').forEach(option => option.setAttribute('aria-pressed',option.textContent === filling));
   }
   closeDialog(button.closest('dialog'));
+  if (button.dataset.add === 'combo') notice('Đã tăng số lượng ' + combos[selectedCombo][0] + ' trên menu minh hoạ.');
  }
  if (button.hasAttribute('data-place')) { closeDialog(button.closest('dialog')); notice('Bản minh hoạ — chưa gửi đơn hàng.'); }
  if (button.hasAttribute('data-demo')) notice('Bản minh hoạ giao diện đăng nhập.');

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bánh Cuốn Cao Bằng - Đăng nhập</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans & Be Vietnam Pro -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            orange: '#f97316',
+                            orangeHover: '#ea580c',
+                            orangeGlow: 'rgba(249, 115, 22, 0.25)',
+                            darkBg: '#0b0b0e',
+                            cardBg: '#16161c',
+                            inputBg: '#202029',
+                            border: '#2e2e3a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #050507;
+            color: #f3f4f6;
+        }
+
+        /* Ambient Glow Effects */
+        .orange-glow {
+            box-shadow: 0 0 25px -5px rgba(249, 115, 22, 0.4);
+        }
+        
+        .input-glow:focus-within {
+            box-shadow: 0 0 15px -3px rgba(249, 115, 22, 0.3);
+            border-color: #f97316;
+        }
+
+        /* Hide scrollbar for smooth carousel */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Subtle pulse for floating badge */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        .animate-float {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-0 md:p-6 bg-neutral-950 text-gray-100 selection:bg-orange-500 selection:text-white">
+
+    <!-- Subtle Background Elements -->
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-lg h-96 bg-orange-600/10 blur-[120px] pointer-events-none rounded-full"></div>
+    <div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-lg h-96 bg-amber-600/5 blur-[100px] pointer-events-none rounded-full"></div>
+
+    <!-- Mobile Frame Simulation Container -->
+    <div class="w-full max-w-[430px] min-h-screen md:min-h-[860px] md:max-h-[920px] bg-brand-darkBg md:rounded-[40px] md:border md:border-brand-border/60 shadow-2xl overflow-y-auto no-scrollbar relative flex flex-col justify-between">
+        
+        <!-- Header Banner Section -->
+        <div class="relative pt-8 px-6 pb-2">
+            <!-- Top Bar / Logo -->
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white shadow-lg shadow-orange-500/30">
+                        <i class="fa-solid font-bold text-xl fa-bowl-rice"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent leading-none">
+                            BÁNH CUỐN
+                        </h1>
+                        <span class="text-xs font-bold text-orange-500 tracking-widest uppercase">CAO BẰNG</span>
+                    </div>
+                </div>
+                <span class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                    <i class="fa-solid fa-fire-flame-curved mr-1 text-orange-500"></i> Nóng hổi
+                </span>
+            </div>
+
+            <!-- Hero Headline -->
+            <div class="mt-4">
+                <h2 class="text-2xl font-extrabold text-white tracking-tight leading-snug">
+                    Thưởng thức vị ngon <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-500 to-orange-500">chuẩn gốc Cao Bằng</span>
+                </h2>
+                <p class="text-xs text-gray-400 mt-1">Đăng nhập để đặt món & nhận ưu đãi ngay hôm nay</p>
+            </div>
+
+            <!-- Food Showcase Carousel Banner -->
+            <div class="mt-5 relative">
+                <div id="dishCard" class="bg-gradient-to-r from-brand-cardBg to-brand-cardBg/80 border border-brand-border/80 rounded-2xl p-3.5 flex items-center space-x-4 shadow-xl relative overflow-hidden transition-all duration-300">
+                    <!-- Glow Behind Image -->
+                    <div class="absolute -left-4 -top-4 w-20 h-20 bg-orange-500/20 blur-xl rounded-full"></div>
+
+                    <!-- Dish Image / Illustration -->
+                    <div class="relative w-20 h-20 flex-shrink-0 bg-neutral-900 rounded-xl overflow-hidden border border-brand-border flex items-center justify-center text-4xl">
+                        <span id="dishEmoji" class="animate-float">🍲</span>
+                    </div>
+
+                    <!-- Dish Details -->
+                    <div class="flex-1 min-w-0">
+                        <div class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-orange-500/20 text-orange-400 mb-1">
+                            Đặc sản nổi tiếng
+                        </div>
+                        <h3 id="dishTitle" class="text-sm font-bold text-white truncate">Bánh Cuốn Canh Xương</h3>
+                        <p id="dishDesc" class="text-[11px] text-gray-400 truncate mt-0.5">Nước canh ninh xương ngọt thanh, mộc nhĩ thịt băm</p>
+                        
+                        <div class="flex items-center space-x-1 mt-1 text-[11px] text-amber-400 font-medium">
+                            <i class="fa-solid fa-star text-[10px]"></i>
+                            <span>4.9 (1.2k+ đánh giá)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carousel Indicators -->
+                <div class="flex justify-center items-center space-x-1.5 mt-3">
+                    <button onclick="setSlide(0)" id="dot-0" class="w-5 h-1.5 rounded-full bg-orange-500 transition-all duration-300"></button>
+                    <button onclick="setSlide(1)" id="dot-1" class="w-1.5 h-1.5 rounded-full bg-gray-700 hover:bg-gray-500 transition-all duration-300"></button>
+                    <button onclick="setSlide(2)" id="dot-2" class="w-1.5 h-1.5 rounded-full bg-gray-700 hover:bg-gray-500 transition-all duration-300"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="px-6 py-4 flex-1 flex flex-col justify-center">
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                
+                <!-- Input 1: Phone or Email -->
+                <div class="space-y-1.5">
+                    <label class="text-xs font-semibold text-gray-300 ml-1">Số điện thoại / Email</label>
+                    <div class="relative flex items-center bg-brand-inputBg border border-brand-border rounded-2xl transition-all duration-200 input-glow">
+                        <div class="w-12 h-12 flex items-center justify-center text-gray-400">
+                            <i class="fa-solid fa-envelope text-base"></i>
+                        </div>
+                        <input 
+                            type="text" 
+                            id="accountInput"
+                            required
+                            placeholder="Nhập số điện thoại hoặc email..."
+                            class="w-full bg-transparent pr-4 text-sm text-white placeholder-gray-500 focus:outline-none"
+                        />
+                    </div>
+                </div>
+
+                <!-- Input 2: Password -->
+                <div class="space-y-1.5">
+                    <label class="text-xs font-semibold text-gray-300 ml-1">Mật khẩu</label>
+                    <div class="relative flex items-center bg-brand-inputBg border border-brand-border rounded-2xl transition-all duration-200 input-glow">
+                        <div class="w-12 h-12 flex items-center justify-center text-gray-400">
+                            <i class="fa-solid fa-lock text-base"></i>
+                        </div>
+                        <input 
+                            type="password" 
+                            id="passwordInput"
+                            required
+                            placeholder="Nhập mật khẩu của bạn..."
+                            class="w-full bg-transparent pr-10 text-sm text-white placeholder-gray-500 focus:outline-none"
+                        />
+                        <button 
+                            type="button" 
+                            onclick="togglePassword()"
+                            class="absolute right-3.5 text-gray-400 hover:text-gray-200 focus:outline-none p-1"
+                        >
+                            <i id="eyeIcon" class="fa-solid fa-eye text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember & Forgot Password -->
+                <div class="flex items-center justify-between text-xs pt-0.5">
+                    <label class="flex items-center space-x-2 cursor-pointer text-gray-400 hover:text-gray-300">
+                        <input type="checkbox" class="w-4 h-4 rounded border-brand-border bg-brand-inputBg text-orange-500 focus:ring-orange-500/20 focus:ring-offset-0">
+                        <span>Ghi nhớ tôi</span>
+                    </label>
+                    <a href="#" onclick="showNotification('Tính năng lấy lại mật khẩu đã gửi tới số ĐT/Email của bạn')" class="font-medium text-orange-400 hover:text-orange-300 transition-colors">
+                        Quên mật khẩu?
+                    </a>
+                </div>
+
+                <!-- Notification Alert Container -->
+                <div id="alertBox" class="hidden p-3 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-300 text-xs flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span id="alertMessage">Thông báo ở đây</span>
+                </div>
+
+                <!-- Primary Login Button -->
+                <button 
+                    type="submit" 
+                    id="submitBtn"
+                    class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold text-base shadow-lg orange-glow flex items-center justify-center space-x-2 transition-all duration-200 active:scale-[0.99] mt-2"
+                >
+                    <span>Đăng nhập</span>
+                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="relative my-6 flex items-center justify-center">
+                <div class="border-t border-brand-border w-full"></div>
+                <span class="bg-brand-darkBg px-3 text-xs font-medium text-gray-500 absolute">Hoặc</span>
+            </div>
+
+            <!-- Social Login: Google -->
+            <button 
+                type="button"
+                onclick="handleGoogleLogin()"
+                class="w-full py-3.2 px-4 rounded-2xl bg-brand-cardBg hover:bg-brand-inputBg border border-brand-border text-gray-200 font-semibold text-sm flex items-center justify-center space-x-3 transition-all duration-200 active:scale-[0.99]"
+            >
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                    <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/>
+                    <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
+                    <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 10.8 0 12s.7 2.3 1.9 4.7l3.7-2.9z"/>
+                    <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/>
+                </svg>
+                <span>Tiếp tục với Google</span>
+            </button>
+        </div>
+
+        <!-- Footer Signup Link -->
+        <div class="py-5 text-center border-t border-brand-border/40 bg-brand-cardBg/30">
+            <p class="text-xs text-gray-400">
+                Chưa có tài khoản? 
+                <a href="#" onclick="showNotification('Chuyển sang trang đăng ký thành viên mới')" class="font-bold text-orange-400 hover:text-orange-300 ml-1 transition-colors">
+                    Đăng ký ngay
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Interactive JavaScript -->
+    <script>
+        // Dish Showcase Data
+        const dishes = [
+            {
+                emoji: "🍲",
+                title: "Bánh Cuốn Canh Xương",
+                desc: "Nước canh ninh xương ngọt thanh, mộc nhĩ thịt băm"
+            },
+            {
+                emoji: "🍳",
+                title: "Bánh Cuốn Trứng Dầm",
+                desc: "Lòng đỏ trứng béo ngậy tan chảy cùng nước dùng nóng"
+            },
+            {
+                emoji: "🌭",
+                title: "Bánh Cuốn Lạp Xưởng",
+                desc: "Thơm lừng vị lạp xưởng hun khói trứ danh Cao Bằng"
+            }
+        ];
+
+        let currentSlide = 0;
+
+        function setSlide(index) {
+            currentSlide = index;
+            const dish = dishes[index];
+            
+            // Elements
+            const card = document.getElementById('dishCard');
+            const emoji = document.getElementById('dishEmoji');
+            const title = document.getElementById('dishTitle');
+            const desc = document.getElementById('dishDesc');
+
+            // Quick fade out/in effect
+            card.classList.add('opacity-75');
+            setTimeout(() => {
+                emoji.innerText = dish.emoji;
+                title.innerText = dish.title;
+                desc.innerText = dish.desc;
+                card.classList.remove('opacity-75');
+            }, 150);
+
+            // Update Dots
+            for(let i = 0; i < 3; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i === index) {
+                    dot.className = "w-5 h-1.5 rounded-full bg-orange-500 transition-all duration-300";
+                } else {
+                    dot.className = "w-1.5 h-1.5 rounded-full bg-gray-700 hover:bg-gray-500 transition-all duration-300";
+                }
+            }
+        }
+
+        // Auto-slide carousel every 4 seconds
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % dishes.length;
+            setSlide(currentSlide);
+        }, 4000);
+
+        // Password visibility toggle
+        function togglePassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const eyeIcon = document.getElementById('eyeIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Custom Notification function (replacing default alert)
+        function showNotification(msg) {
+            const alertBox = document.getElementById('alertBox');
+            const alertMessage = document.getElementById('alertMessage');
+            
+            alertMessage.innerText = msg;
+            alertBox.classList.remove('hidden');
+
+            setTimeout(() => {
+                alertBox.classList.add('hidden');
+            }, 3500);
+        }
+
+        // Handle Form Submit
+        function handleLogin(e) {
+            e.preventDefault();
+            const account = document.getElementById('accountInput').value;
+            const submitBtn = document.getElementById('submitBtn');
+
+            // UI feedback
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> <span>Đang xử lý...</span>`;
+
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<span>Đăng nhập</span><i class="fa-solid fa-arrow-right text-sm"></i>`;
+                showNotification(`Chào mừng ${account} quay trở lại! Đã đăng nhập thành công.`);
+            }, 1200);
+        }
+
+        // Handle Google Login Simulation
+        function handleGoogleLogin() {
+            showNotification("Đang kết nối tài khoản Google...");
+        }
+    </script>
+</body>
+</html>

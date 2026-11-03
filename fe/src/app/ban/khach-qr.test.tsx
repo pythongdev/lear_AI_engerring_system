@@ -159,6 +159,7 @@ describe("khách QR tại bàn — giỏ, tổng tính thử, gửi", () => {
 describe("khách QR tại bàn — giỏ nháp", () => {
   it("giỏ giữ khi rời trang rồi quay lại cùng mã; mã khác thì giỏ trống; nháp không một số tiền nào", async () => {
     await mo("ma-f1");
+    fireEvent.click(screen.getByRole("button", { name: "Thịt · Vừa" }));
     fireEvent.click(screen.getByRole("radio", { name: "Chay" }));
     fireEvent.click(screen.getByRole("button", { name: "Thêm Bánh cuốn" }));
     cleanup();

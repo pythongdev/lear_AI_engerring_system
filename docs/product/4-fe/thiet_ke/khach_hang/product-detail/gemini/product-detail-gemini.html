@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Món Ăn - Bánh Cuốn Nhân Thịt</title>
+    <!-- Google Fonts: Be Vietnam Pro -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            DEFAULT: '#EA6A0C',
+                            bright: '#FF7A1A',
+                            hover: '#d05b05',
+                            lightBg: 'rgba(234, 106, 12, 0.12)',
+                            border: 'rgba(255, 122, 26, 0.4)'
+                        },
+                        dark: {
+                            bg: '#0f172a',
+                            card: '#1e293b',
+                            border: '#334155',
+                            textMain: '#f8fafc',
+                            textSub: '#94a3b8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Custom scrollbar for demo controls */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Skeleton Animation */
+        @keyframes pulse-fast {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .animate-skeleton {
+            animation: pulse-fast 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-start p-0 sm:p-4 transition-colors duration-200">
+
+    <!-- DEMO CONTROLS PANEL (Outside Mobile Frame) -->
+    <div class="w-full max-w-[430px] sm:max-w-xl bg-slate-900 border border-slate-800 rounded-2xl p-3 sm:p-4 mb-2 sm:mb-4 shadow-xl text-xs sm:text-sm">
+        <div class="flex items-center justify-between gap-2 border-b border-slate-800 pb-2 mb-3">
+            <div class="flex items-center gap-2 font-semibold text-brand-bright">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                <span>Bảng Điều Khiển Mẫu (Demo Control)</span>
+            </div>
+            <!-- Theme Toggle -->
+            <button id="themeToggleBtn" onclick="toggleTheme()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 font-medium transition active:scale-95" aria-label="Đổi giao diện Sáng/Tối">
+                <span id="themeIcon">🌙</span>
+                <span id="themeText">Dark Mode</span>
+            </button>
+        </div>
+
+        <!-- State Selector Buttons -->
+        <div class="flex flex-wrap gap-1.5">
+            <button onclick="setDemoState('normal')" class="state-btn flex-1 min-w-[100px] px-2.5 py-1.5 rounded-lg border text-center transition font-medium bg-brand text-white border-brand">Bình thường</button>
+            <button onclick="setDemoState('outOfStock')" class="state-btn flex-1 min-w-[100px] px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition font-medium">Hết hàng</button>
+            <button onclick="setDemoState('loading')" class="state-btn flex-1 min-w-[100px] px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition font-medium">Đang tải</button>
+            <button onclick="setDemoState('error')" class="state-btn flex-1 min-w-[100px] px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition font-medium">Lỗi / Không tìm thấy</button>
+            <button onclick="setDemoState('noTopping')" class="state-btn flex-1 min-w-[100px] px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition font-medium">Không Topping</button>
+        </div>
+    </div>
+
+    <!-- MAIN APP MOBILE FRAME -->
+    <div id="appContainer" class="w-full max-w-[430px] min-h-[100vh] sm:min-h-[844px] sm:h-[844px] bg-dark-bg text-dark-textMain sm:rounded-[36px] sm:border-[8px] sm:border-slate-800 shadow-2xl relative flex flex-col overflow-hidden transition-colors duration-200">
+
+        <!-- 1. HEADER BAR -->
+        <header class="sticky top-0 z-30 bg-dark-bg/95 backdrop-blur-md border-b border-dark-border px-4 py-3 flex items-center justify-between min-h-[56px] transition-colors">
+            <button onclick="goBack()" class="w-10 h-10 rounded-xl bg-dark-card border border-dark-border flex items-center justify-center text-dark-textMain hover:bg-slate-800 transition active:scale-95" aria-label="Quay lại">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+
+            <h1 class="text-base font-bold text-dark-textMain tracking-wide">Chi tiết món</h1>
+
+            <button onclick="openCartModal()" class="w-10 h-10 rounded-xl bg-dark-card border border-dark-border flex items-center justify-center text-dark-textMain hover:bg-slate-800 transition relative active:scale-95" aria-label="Xem giỏ hàng">
+                <svg class="w-5 h-5 text-brand-bright" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <span id="cartBadge" class="absolute -top-1 -right-1 bg-brand text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md animate-bounce">0</span>
+            </button>
+        </header>
+
+        <!-- MAIN SCROLLABLE CONTENT AREA -->
+        <div class="flex-1 overflow-y-auto no-scrollbar pb-32">
+
+            <!-- STATE 1: NORMAL & OUT OF STOCK & NO TOPPING CONTENT -->
+            <div id="contentNormal" class="block">
+                <!-- Food Image Hero Section -->
+                <div class="relative w-full aspect-[4/3] bg-slate-800 overflow-hidden">
+                    <img id="foodImage" src="https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?auto=format&fit=crop&w=800&q=80" 
+                         onerror="this.src='https://placehold.co/600x450/1e293b/f8fafc?text=B%C3%A1nh+Cu%E1%BB%91n+Nh%C3%A2n+Th%E1%BB%8Bt'" 
+                         alt="Bánh cuốn nhân thịt" 
+                         class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-transparent to-transparent opacity-90"></div>
+                    
+                    <!-- Stock Status Badge -->
+                    <div class="absolute top-3 left-3">
+                        <span id="stockBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 backdrop-blur-md">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>Còn hàng</span>
+                        </span>
+                    </div>
+
+                    <div class="absolute bottom-3 left-4 right-4 flex justify-between items-end">
+                        <span class="text-xs text-dark-textSub bg-dark-bg/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-dark-border">
+                            Khẩu phần: 1 Đĩa
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Food Info Card -->
+                <div class="p-4 space-y-3">
+                    <div class="flex items-start justify-between gap-2">
+                        <h2 class="text-xl font-bold text-dark-textMain leading-snug">Bánh cuốn nhân thịt</h2>
+                        <div class="text-right flex-shrink-0">
+                            <span class="text-xl font-extrabold text-brand-bright">35.000<span class="text-xs font-normal text-dark-textSub ml-0.5">đ</span></span>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-dark-textSub leading-relaxed">
+                        Bánh cuốn tráng tay mềm mượt, nhân thịt băm mộc nhĩ đậm đà thơm phức, ăn kèm rau thơm tươi sạch và nước chấm gia truyền chuẩn vị.
+                    </p>
+                </div>
+
+                <!-- Divider -->
+                <div class="h-1.5 bg-slate-900 border-y border-dark-border my-2"></div>
+
+                <!-- TOPPINGS SECTION ("Thêm chút ngon") -->
+                <div id="toppingSection" class="p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-dark-textMain uppercase tracking-wider flex items-center gap-2">
+                            <span>Thêm chút ngon</span>
+                            <span class="text-[10px] normal-case font-normal text-dark-textSub bg-dark-card px-2 py-0.5 rounded-full border border-dark-border">Tùy chọn</span>
+                        </h3>
+                        <span class="text-xs text-dark-textSub">Chọn nhiều</span>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        <!-- Topping 1: Chả lụa -->
+                        <label id="toppingLabel1" onclick="toggleTopping('chaLua')" class="flex items-center justify-between p-3.5 rounded-2xl bg-dark-card border border-dark-border cursor-pointer transition-all duration-200 hover:border-slate-600 active:scale-[0.99] min-h-[52px]">
+                            <div class="flex items-center gap-3">
+                                <div id="checkBg1" class="w-5 h-5 rounded-md border border-slate-600 flex items-center justify-center bg-slate-800 transition">
+                                    <svg id="checkIcon1" class="w-3.5 h-3.5 text-brand-bright hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <span class="text-sm font-semibold text-dark-textMain">Chả lụa</span>
+                            </div>
+                            <span class="text-xs font-bold text-brand-bright">+10.000đ</span>
+                        </label>
+
+                        <!-- Topping 2: Hành phi -->
+                        <label id="toppingLabel2" onclick="toggleTopping('hanhPhi')" class="flex items-center justify-between p-3.5 rounded-2xl bg-dark-card border border-dark-border cursor-pointer transition-all duration-200 hover:border-slate-600 active:scale-[0.99] min-h-[52px]">
+                            <div class="flex items-center gap-3">
+                                <div id="checkBg2" class="w-5 h-5 rounded-md border border-slate-600 flex items-center justify-center bg-slate-800 transition">
+                                    <svg id="checkIcon2" class="w-3.5 h-3.5 text-brand-bright hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <span class="text-sm font-semibold text-dark-textMain">Hành phi giòn thơm</span>
+                            </div>
+                            <span class="text-xs font-bold text-brand-bright">+5.000đ</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- QUANTITY SELECTOR SECTION -->
+                <div class="p-4 pt-2">
+                    <div class="flex items-center justify-between bg-dark-card p-3 rounded-2xl border border-dark-border">
+                        <span class="text-sm font-semibold text-dark-textMain">Số lượng</span>
+                        <div class="flex items-center gap-3">
+                            <button id="btnDecrease" onclick="updateQuantity(-1)" class="w-10 h-10 rounded-xl bg-slate-800 border border-dark-border text-dark-textMain flex items-center justify-center font-bold text-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-700 active:scale-90 transition" aria-label="Giảm số lượng">
+                                ➖
+                            </button>
+                            <span id="quantityVal" class="text-base font-extrabold text-dark-textMain min-w-[24px] text-center">1</span>
+                            <button id="btnIncrease" onclick="updateQuantity(1)" class="w-10 h-10 rounded-xl bg-brand/20 border border-brand/40 text-brand-bright flex items-center justify-center font-bold text-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-brand/30 active:scale-90 transition" aria-label="Tăng số lượng">
+                                ➕
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATE 2: LOADING SKELETON VIEW -->
+            <div id="contentLoading" class="hidden p-4 space-y-4">
+                <div class="w-full aspect-[4/3] bg-slate-800 rounded-2xl animate-skeleton"></div>
+                <div class="h-6 bg-slate-800 rounded-lg w-3/4 animate-skeleton"></div>
+                <div class="h-4 bg-slate-800 rounded-lg w-1/2 animate-skeleton"></div>
+                <div class="space-y-2 pt-4">
+                    <div class="h-12 bg-slate-800 rounded-xl animate-skeleton"></div>
+                    <div class="h-12 bg-slate-800 rounded-xl animate-skeleton"></div>
+                </div>
+            </div>
+
+            <!-- STATE 3: ERROR / NOT FOUND VIEW -->
+            <div id="contentError" class="hidden p-8 text-center space-y-4 my-8">
+                <div class="w-16 h-16 bg-red-500/10 border border-red-500/20 text-red-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                    ⚠️
+                </div>
+                <h3 class="text-lg font-bold text-dark-textMain">Không tìm thấy món ăn</h3>
+                <p class="text-xs text-dark-textSub leading-relaxed max-w-xs mx-auto">
+                    Món ăn bạn đang tìm kiếm có thể đã bị xóa hoặc tạm thời không khả dụng trên hệ thống.
+                </p>
+                <button onclick="setDemoState('normal')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold rounded-xl border border-dark-border text-dark-textMain transition">
+                    Thử lại
+                </button>
+            </div>
+
+        </div>
+
+        <!-- 2. BOTTOM STICKY ACTION BAR -->
+        <div id="bottomActionBar" class="absolute bottom-16 left-0 right-0 z-20 bg-dark-card/95 backdrop-blur-lg border-t border-dark-border p-3.5 sm:px-4 shadow-2xl transition-all duration-300">
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex flex-col">
+                    <span class="text-[11px] text-dark-textSub">Tổng thanh toán</span>
+                    <span id="priceDetailText" class="text-xs text-slate-400 hidden sm:inline">(35k + 0k) x 1</span>
+                    <div class="text-lg font-black text-brand-bright flex items-baseline gap-0.5">
+                        <span id="totalPriceDisplay">35.000</span>
+                        <span class="text-xs font-semibold">đ</span>
+                    </div>
+                </div>
+
+                <button id="addToCartBtn" onclick="addToCart()" class="flex-1 max-w-[230px] h-[48px] bg-brand hover:bg-brand-hover text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-brand/20 active:scale-95 transition-all text-sm disabled:bg-slate-800 disabled:text-slate-500 disabled:shadow-none disabled:cursor-not-allowed border border-brand/30">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    <span id="btnText">Thêm vào giỏ</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. BOTTOM NAV BAR -->
+        <nav class="absolute bottom-0 left-0 right-0 z-30 bg-dark-bg/95 backdrop-blur-md border-t border-dark-border h-16 flex items-center justify-around px-2 text-[10px] font-medium text-dark-textSub">
+            <a href="#" class="flex flex-col items-center gap-1 text-slate-400 hover:text-brand-bright transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span>Trang chủ</span>
+            </a>
+            <a href="#" class="flex flex-col items-center gap-1 text-brand-bright font-bold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                <span>Menu</span>
+            </a>
+            <a href="#" onclick="openCartModal(); return false;" class="flex flex-col items-center gap-1 text-slate-400 hover:text-brand-bright transition relative">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <span>Giỏ hàng</span>
+            </a>
+            <a href="#" class="flex flex-col items-center gap-1 text-slate-400 hover:text-brand-bright transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                <span>Đơn hàng</span>
+            </a>
+        </nav>
+
+        <!-- TOAST NOTIFICATION -->
+        <div id="toast" class="absolute top-16 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-semibold border border-emerald-400/30 opacity-0 pointer-events-none transition-all duration-300 transform translate-y-[-10px]">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+            <span>Đã thêm vào giỏ hàng thành công!</span>
+        </div>
+
+        <!-- CART DRAWER / MODAL -->
+        <div id="cartModal" class="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col justify-end">
+            <div id="cartModalContent" class="bg-dark-card border-t border-dark-border rounded-t-3xl p-4 space-y-4 transform translate-y-full transition-transform duration-300 max-h-[80%] overflow-y-auto">
+                <div class="flex items-center justify-between border-b border-dark-border pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-base font-bold text-dark-textMain">Giỏ hàng của bạn</span>
+                        <span id="modalCartCount" class="bg-brand/20 text-brand-bright text-xs px-2 py-0.5 rounded-full font-bold">0 món</span>
+                    </div>
+                    <button onclick="closeCartModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center hover:text-white">✕</button>
+                </div>
+
+                <div id="cartList" class="space-y-3 min-h-[100px] flex flex-col justify-center">
+                    <!-- Items inserted via JS -->
+                </div>
+
+                <div class="border-t border-dark-border pt-3 space-y-2">
+                    <div class="flex justify-between text-sm font-bold text-dark-textMain">
+                        <span>Tổng cộng:</span>
+                        <span id="cartModalTotal" class="text-brand-bright">0đ</span>
+                    </div>
+                    <button onclick="closeCartModal()" class="w-full py-3 bg-brand hover:bg-brand-hover text-white font-bold rounded-xl text-sm transition">
+                        Đóng xem thử
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // State variables
+        const BASE_PRICE = 35000;
+        const TOPPING_PRICES = {
+            chaLua: 10000,
+            hanhPhi: 5000
+        };
+
+        let currentQuantity = 1;
+        let selectedToppings = {
+            chaLua: false,
+            hanhPhi: false
+        };
+
+        let cartItems = [];
+        let currentDemoState = 'normal'; // 'normal', 'outOfStock', 'loading', 'error', 'noTopping'
+
+        // Format Currency
+        function formatMoney(num) {
+            return num.toLocaleString('vi-VN');
+        }
+
+        // Calculate and Update Price
+        function calculateTotal() {
+            let toppingTotal = 0;
+            if (selectedToppings.chaLua) toppingTotal += TOPPING_PRICES.chaLua;
+            if (selectedToppings.hanhPhi) toppingTotal += TOPPING_PRICES.hanhPhi;
+
+            const unitPrice = BASE_PRICE + toppingTotal;
+            const grandTotal = unitPrice * currentQuantity;
+
+            // Update UI
+            document.getElementById('totalPriceDisplay').innerText = formatMoney(grandTotal);
+            
+            const detailText = `(${formatMoney(BASE_PRICE / 1000)}k + ${formatMoney(toppingTotal / 1000)}k) x ${currentQuantity}`;
+            document.getElementById('priceDetailText').innerText = detailText;
+
+            return grandTotal;
+        }
+
+        // Toggle Topping Checkbox Logic
+        function toggleTopping(toppingKey) {
+            if (currentDemoState === 'outOfStock') return;
+
+            selectedToppings[toppingKey] = !selectedToppings[toppingKey];
+
+            const labelObj = toppingKey === 'chaLua' ? document.getElementById('toppingLabel1') : document.getElementById('toppingLabel2');
+            const checkBg = toppingKey === 'chaLua' ? document.getElementById('checkBg1') : document.getElementById('checkBg2');
+            const checkIcon = toppingKey === 'chaLua' ? document.getElementById('checkIcon1') : document.getElementById('checkIcon2');
+
+            if (selectedToppings[toppingKey]) {
+                labelObj.classList.add('border-brand-bright', 'bg-brand-lightBg');
+                labelObj.classList.remove('border-dark-border', 'bg-dark-card');
+                checkBg.classList.add('bg-brand/20', 'border-brand-bright');
+                checkBg.classList.remove('bg-slate-800', 'border-slate-600');
+                checkIcon.classList.remove('hidden');
+            } else {
+                labelObj.classList.remove('border-brand-bright', 'bg-brand-lightBg');
+                labelObj.classList.add('border-dark-border', 'bg-dark-card');
+                checkBg.classList.remove('bg-brand/20', 'border-brand-bright');
+                checkBg.classList.add('bg-slate-800', 'border-slate-600');
+                checkIcon.classList.add('hidden');
+            }
+
+            calculateTotal();
+        }
+
+        // Update Quantity
+        function updateQuantity(delta) {
+            if (currentDemoState === 'outOfStock') return;
+
+            const newQty = currentQuantity + delta;
+            if (newQty < 1) return;
+
+            currentQuantity = newQty;
+            document.getElementById('quantityVal').innerText = currentQuantity;
+
+            // Toggle Disabled state for Decrease button
+            document.getElementById('btnDecrease').disabled = (currentQuantity === 1);
+
+            calculateTotal();
+        }
+
+        // Add To Cart Function
+        function addToCart() {
+            if (currentDemoState === 'outOfStock') return;
+
+            const itemToppings = [];
+            if (selectedToppings.chaLua) itemToppings.push('Chả lụa');
+            if (selectedToppings.hanhPhi) itemToppings.push('Hành phi');
+
+            const itemTotal = calculateTotal();
+
+            cartItems.push({
+                title: 'Bánh cuốn nhân thịt',
+                qty: currentQuantity,
+                toppings: itemToppings,
+                price: itemTotal
+            });
+
+            updateCartBadge();
+            showToast();
+        }
+
+        // Update Badge
+        function updateCartBadge() {
+            const totalCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
+            document.getElementById('cartBadge').innerText = totalCount;
+            document.getElementById('modalCartCount').innerText = `${totalCount} món`;
+        }
+
+        // Show Toast Notification
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 2200);
+        }
+
+        // Cart Modal Handlers
+        function openCartModal() {
+            const modal = document.getElementById('cartModal');
+            const content = document.getElementById('cartModalContent');
+            const list = document.getElementById('cartList');
+
+            if (cartItems.length === 0) {
+                list.innerHTML = `<p class="text-xs text-center text-dark-textSub py-4">Chưa có món nào trong giỏ hàng</p>`;
+                document.getElementById('cartModalTotal').innerText = '0đ';
+            } else {
+                let html = '';
+                let grandTotal = 0;
+                cartItems.forEach((item, index) => {
+                    grandTotal += item.price;
+                    html += `
+                        <div class="flex items-center justify-between bg-slate-900 p-3 rounded-xl border border-dark-border text-xs">
+                            <div>
+                                <h4 class="font-bold text-dark-textMain">${item.title} x${item.qty}</h4>
+                                <p class="text-[11px] text-dark-textSub">${item.toppings.length ? item.toppings.join(', ') : 'Không topping'}</p>
+                            </div>
+                            <span class="font-bold text-brand-bright">${formatMoney(item.price)}đ</span>
+                        </div>
+                    `;
+                });
+                list.innerHTML = html;
+                document.getElementById('cartModalTotal').innerText = `${formatMoney(grandTotal)}đ`;
+            }
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('translate-y-full');
+        }
+
+        function closeCartModal() {
+            const modal = document.getElementById('cartModal');
+            const content = document.getElementById('cartModalContent');
+
+            content.classList.add('translate-y-full');
+            setTimeout(() => {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+            }, 200);
+        }
+
+        // Handle Demo State Switches
+        function setDemoState(state) {
+            currentDemoState = state;
+
+            // Highlight state buttons
+            const btns = document.querySelectorAll('.state-btn');
+            btns.forEach(btn => {
+                btn.classList.remove('bg-brand', 'text-white', 'border-brand');
+                btn.classList.add('bg-slate-800', 'text-slate-300', 'border-slate-700');
+            });
+            event.target.classList.remove('bg-slate-800', 'text-slate-300', 'border-slate-700');
+            event.target.classList.add('bg-brand', 'text-white', 'border-brand');
+
+            // Hide all content containers
+            document.getElementById('contentNormal').classList.add('hidden');
+            document.getElementById('contentLoading').classList.add('hidden');
+            document.getElementById('contentError').classList.add('hidden');
+            document.getElementById('bottomActionBar').classList.remove('hidden');
+
+            const stockBadge = document.getElementById('stockBadge');
+            const addToCartBtn = document.getElementById('addToCartBtn');
+            const btnText = document.getElementById('btnText');
+            const toppingSection = document.getElementById('toppingSection');
+            const btnDecrease = document.getElementById('btnDecrease');
+            const btnIncrease = document.getElementById('btnIncrease');
+
+            // Reset disables
+            addToCartBtn.disabled = false;
+            btnDecrease.disabled = (currentQuantity === 1);
+            btnIncrease.disabled = false;
+
+            if (state === 'normal') {
+                document.getElementById('contentNormal').classList.remove('hidden');
+                toppingSection.classList.remove('hidden');
+                stockBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 backdrop-blur-md';
+                stockBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Còn hàng</span>`;
+                btnText.innerText = 'Thêm vào giỏ';
+            } 
+            else if (state === 'outOfStock') {
+                document.getElementById('contentNormal').classList.remove('hidden');
+                toppingSection.classList.remove('hidden');
+                stockBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/30 backdrop-blur-md';
+                stockBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-400"></span><span>Hết hàng</span>`;
+                btnText.innerText = 'Món tạm hết';
+                addToCartBtn.disabled = true;
+                btnDecrease.disabled = true;
+                btnIncrease.disabled = true;
+            } 
+            else if (state === 'noTopping') {
+                document.getElementById('contentNormal').classList.remove('hidden');
+                toppingSection.classList.add('hidden');
+                stockBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 backdrop-blur-md';
+                stockBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Còn hàng</span>`;
+                btnText.innerText = 'Thêm vào giỏ';
+            } 
+            else if (state === 'loading') {
+                document.getElementById('contentLoading').classList.remove('hidden');
+                document.getElementById('bottomActionBar').classList.add('hidden');
+            } 
+            else if (state === 'error') {
+                document.getElementById('contentError').classList.remove('hidden');
+                document.getElementById('bottomActionBar').classList.add('hidden');
+            }
+
+            calculateTotal();
+        }
+
+        // Light / Dark Theme Toggle
+        let isDarkMode = true;
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+
+            isDarkMode = !isDarkMode;
+            if (isDarkMode) {
+                html.classList.add('dark');
+                icon.innerText = '🌙';
+                text.innerText = 'Dark Mode';
+            } else {
+                html.classList.remove('dark');
+                icon.innerText = '☀️';
+                text.innerText = 'Light Mode';
+            }
+        }
+
+        function goBack() {
+            alert("Sự kiện Quay lại: Chuyển hướng về trang Menu");
+        }
+
+        // Initialize Price calculation on load
+        window.onload = function() {
+            calculateTotal();
+        };
+    </script>
+</body>
+</html>

@@ -47,7 +47,7 @@ if ! kill -0 "$$be_pid" 2>/dev/null; then wait "$$be_pid"; else wait "$$fe_pid";
 endef
 
 .DEFAULT_GOAL := help
-.PHONY: help setup up migrate seed seed-thu tai-khoan-dev ma-qr-so-ban psql shell status stop reset swagger swagger-stop check-tz dev be fe check-go check-fe dev-files
+.PHONY: help setup up migrate seed seed-thu tai-khoan-dev ma-qr-so-ban psql shell status stop stop-dev reset swagger swagger-stop check-tz dev be fe check-go check-fe dev-files
 
 help: ## Liệt kê các lệnh
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-12s %s\n", $$1, $$2}'
@@ -112,6 +112,9 @@ shell: ## Vào shell bash bên trong container
 
 status: ## Xem container database có đang chạy không
 	docker compose ps db
+
+stop-dev: ## Dừng backend + frontend của repo này, giữ database chạy
+	@bash scripts/stop-dev.sh
 
 stop: ## Tắt database, GIỮ dữ liệu
 	docker compose stop db

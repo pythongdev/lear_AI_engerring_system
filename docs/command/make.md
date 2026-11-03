@@ -49,6 +49,7 @@ dùng `make stop` khi muốn tắt database và giữ dữ liệu. Có thể ch�
 | Lệnh | Công dụng |
 |---|---|
 | `make dev` | Dựng database rồi chạy cả backend và frontend |
+| `make stop-dev` | Dừng backend và frontend của repo này, giữ database chạy; dùng được từ terminal khác |
 | `make be` | Chạy backend; database phải đã bật |
 | `make fe` | Chạy frontend; cần cài thư viện trước |
 
@@ -181,3 +182,12 @@ như server, tạo người có cờ chủ quán và tài khoản vai owner tron
 
 
 make reset && make setup && make seed-thu
+make tai-khoan-dev
+
+
+make setup
+make seed-thu
+make be               
+make tai-khoan-dev    
+make setup          
+make ma-qr-so-ban

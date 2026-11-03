@@ -176,6 +176,11 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `tongquan/khai_nguoi` | `quay` | `shop-facts.md` §8.6 hàng 6 — POS khai và cập nhật số người thực tế đang làm (lời đóng U-060); ADR-121 điểm 2 (T-197, 2026-10-19) |
 | `khoanchi/ghi` | `chu_quan` | `shop-facts.md` §8.10 — lời đóng U-095 (2026-10-15): chỉ chủ quán ghi khoản chi; phiếu P3A-01 |
 | `khoanchi/sua` | `chu_quan` | `shop-facts.md` §8.10 — lời đóng U-095 (2026-10-15): chỉ chủ quán ghi khoản chi; phiếu P3A-01 |
+| `khoanchi/sua_loai` | `chu_quan` | Chủ repo 2026-10-24, T-248: danh mục khoản con, đổi tên và xoá mềm có lý do. |
+| `khoanchi/xoa_danh_muc` | `chu_quan` | Chủ repo 2026-10-24, T-248: danh mục khoản con, đổi tên và xoá mềm có lý do. |
+| `khoanchi/them_khoan_con` | `chu_quan` | Chủ repo 2026-10-24, T-248: danh mục khoản con, đổi tên và xoá mềm có lý do. |
+| `khoanchi/sua_khoan_con` | `chu_quan` | Chủ repo 2026-10-24, T-248: danh mục khoản con, đổi tên và xoá mềm có lý do. |
+| `khoanchi/xoa` | `chu_quan` | Chủ repo 2026-10-24, T-248: danh mục khoản con, đổi tên và xoá mềm có lý do. |
 | `daotao/gan_huong_dan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |
 | `daotao/sua_huong_dan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |
 | `daotao/an_huong_dan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |
