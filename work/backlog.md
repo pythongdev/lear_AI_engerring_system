@@ -3973,6 +3973,8 @@ Bằng chứng (Claude tự chạy sau vòng sửa): A1 — `python3 chay_thu.py
 
 Còn lại — việc của chủ repo: tạo khoá ba hãng, đặt biến môi trường ngoài repo, điền `bang_gia.json` theo trang giá ngày chạy, chạy theo `HUONG_DAN.md`. Rồi Claude đọc báo cáo trong `ket_qua/`, chủ repo chọn model, Claude ghi vào `U-112`.
 
+Vòng hai 2026-11-04: chủ repo hỏi thử bằng gói trả tháng qua `claude`/`codex` trong terminal; Claude trả lời chế độ ấy chỉ xem sơ bộ chất lượng, không cho số token/tiền và không dùng làm server (điều khoản gói cá nhân, giới hạn lượt, dữ liệu). Chủ repo: *"hãy thêm chế độ này test trước sau đó tôi sẽ mua sau. tiếp tục xây để thành app đã"*, rồi chọn *"Mở, dùng model giả"* — ghi ở ADR-136 *Sửa đổi 2026-11-04*, `U-112`, kế hoạch CHAT §4, đầu sổ CHAT. Codex đang thêm cờ `--cli` vào bộ thử ngoài repo (phiếu `../lean_wt/chat-review/T-286-cli-phieu.md`); Claude chưa duyệt.
+
 [↑ đầu file](#top)
 
 <a id="t-287"></a>

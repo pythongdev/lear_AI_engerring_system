@@ -15,6 +15,7 @@ Lời chặn tick ô chấm công, nên theo Acceptance cuối của CHAT-30 Cla
 (`shop-facts.md` §8.11 điểm 5), chỉ còn chọn nhà cung cấp và model.
 `CHAT-27` · `CHAT-28` · `CHAT-29` loại khỏi lộ trình theo ADR-136 *Sửa đổi* (`U-115`).
 `CHAT-26` chưa mở, phải hỏi lại trước (cũng ADR-136 *Sửa đổi*, suy ra của phiên).
+**Cập nhật 2026-11-04 (T-286):** chủ repo chọn xây trước với **model giả** (ADR-136 *Sửa đổi 2026-11-04*). Các dòng `chờ U-112 (Q112)` bên dưới nay chỉ chặn việc gọi hãng thật; bước kế tiếp là lượt thiết kế nhánh model của `CHAT-02` rồi `CHAT-03` với nhà cung cấp giả lập.
 
 **Chung cho mọi bước.**
 

@@ -201,7 +201,7 @@ U-116 không chặn phần còn lại. Thu lời từng câu là việc của Cl
 
 **Sau lời 2026-11-01 (CHAT-01):** `U-114` · `U-115` · `U-117` đóng; `U-113` đóng (tin báo, điện thoại riêng); `U-112` còn câu model; `U-116` còn mở
 (owner: `docs/product/99-unknowns.md`, `master_plan/shop-facts.md` §8.11). **Mở được:** `CHAT-04` · `CHAT-34` · `CHAT-12` · `CHAT-13` ·
-`CHAT-14` theo ADR-137. **Đóng tới khi chọn model:** `CHAT-03`, `05`…`11`, `15`…`26`. **Loại:** `CHAT-27` · `28` · `29`. **Đóng tới khi có
+`CHAT-14` theo ADR-137. **Đóng tới khi chọn model:** `CHAT-03`, `05`…`11`, `15`…`26` — *sửa 2026-11-04 (T-286, ADR-136 Sửa đổi 2026-11-04): được xây với nhà cung cấp giả lập, chỉ việc gọi hãng thật còn đóng; vẫn sau lượt thiết kế thứ hai của `CHAT-02`*. **Loại:** `CHAT-27` · `28` · `29`. **Đóng tới khi có
 `U-116`:** `CHAT-30`…`32`. `CHAT-26` (đổi giá) phải hỏi lại trước khi mở. Bảng và mục cách đọc tạm dưới đây giữ nguyên làm lịch sử lập kế hoạch.
 
 **Vai thi công:** `C` = Claude thu lời/thiết kế/duyệt; `K` = Codex thi công theo phiếu, Claude viết test

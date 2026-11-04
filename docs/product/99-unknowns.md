@@ -170,7 +170,7 @@ trong sáu câu đụng luật quán đã chốt nên không được suy ra.
   câu model chủ repo chọn *"Chưa chọn"*. Hẹp tiếp 2026-11-03, T-285: chủ repo nêu ba ứng viên *"deep seek, chat gpt plus
   hoặc claude sonet cần kiểm tra thực tế"* và chọn *"Chạy thử qua API cả ba"*; ChatGPT Plus không có API cho backend nên
   ứng viên thứ hai đọc là OpenAI API — Claude nói rõ trong câu hỏi trước khi chủ repo chọn. Khoá API chưa có.) Ai trả lời:
-  chủ repo, sau khi có số đo của lượt thử ba hãng trên dữ liệu giả. Chặn gì: mọi bước gọi model của lane `CHAT`.
+  chủ repo, sau khi có số đo của lượt thử ba hãng trên dữ liệu giả. Chặn gì: mọi lần gọi **hãng thật** của lane `CHAT` (hẹp 2026-11-04, T-286: chủ repo chọn *"Mở, dùng model giả"*, các bước gọi model được xây với nhà cung cấp giả lập, xem ADR-136 *Sửa đổi 2026-11-04*).
 
 **Ngày 2026-10-31, T-278 mở U-111 — đóng 2026-11-01** sau khi chủ repo trả lời hai lượt liên tiếp. Nguyên văn: *"cho
 đang kí bằng gmail không cần duyệt"* (lượt một, trả lời câu *"Gmail chưa có tài khoản người làm sẽ được xử lý thế
