@@ -355,3 +355,97 @@ func TestI013_KhongCoDuongSuaGiaSuat(t *testing.T) {
 		}
 	}
 }
+
+// T-243 · ADR-126 (U-104 đóng 2026-10-24): bán lại món đã ngừng là xoá mốc trên CHÍNH dòng món, có lý do. Tên và thành phần giữ
+// nguyên; lịch sử nằm trong vết — ảnh trước mang mốc cũ, ảnh sau rỗng mốc (I-018); bán lại xong ngừng bán lần nữa được.
+func TestI018_BanLaiGiuLichSu(t *testing.T) {
+	k := dung(t)
+	m := k.menuGia(t)
+	chu := k.nguoi(t, "chủ quán", true)
+	ngung := fmt.Sprintf("/menu-items/%d/discontinuation", m.mon)
+	banLai := fmt.Sprintf("/menu-items/%d/resumption", m.mon)
+
+	// Món chưa ngừng: từ chối, không ghi.
+	truoc, vet := k.anh(t, m), k.soVet(t)
+	tuChoi(t, k.goi(t, "POST", banLai, chu, map[string]any{"reason": "test: bán lại"}), http.StatusConflict, "menu_item_not_discontinued", "")
+	if k.anh(t, m) != truoc || k.soVet(t) != vet {
+		t.Fatal("bán lại món đang bán mà vẫn ghi")
+	}
+
+	if r := k.goi(t, "POST", ngung, chu, map[string]any{"reason": "test: bỏ món"}); r.status != http.StatusOK {
+		t.Fatalf("ngừng bán: muốn 200, nhận %d %v", r.status, r.body)
+	}
+	var moc string
+	if err := k.owner.QueryRow(k.ctx, `SELECT discontinued_at::text FROM shop.menu_item WHERE id = $1`, m.mon).Scan(&moc); err != nil {
+		t.Fatal(err)
+	}
+	var tenTruoc, thanhPhanTruoc string
+	if err := k.owner.QueryRow(k.ctx, `SELECT i.name, (SELECT string_agg(menu_component_id || 'x' || quantity, ',' ORDER BY menu_component_id)
+		FROM shop.menu_item_component WHERE menu_item_id = i.id) FROM shop.menu_item i WHERE i.id = $1`, m.mon).Scan(&tenTruoc, &thanhPhanTruoc); err != nil {
+		t.Fatal(err)
+	}
+
+	// Thiếu lý do: 400 field=reason, không ghi.
+	truoc, vet = k.anh(t, m), k.soVet(t)
+	for _, body := range []map[string]any{{}, {"reason": "   "}} {
+		tuChoi(t, k.goi(t, "POST", banLai, chu, body), http.StatusBadRequest, "invalid_request", "reason")
+	}
+	if k.anh(t, m) != truoc || k.soVet(t) != vet {
+		t.Fatal("thiếu lý do mà vẫn ghi")
+	}
+
+	r := k.goi(t, "POST", banLai, chu, map[string]any{"reason": "test: bán lại"})
+	if r.status != http.StatusOK || r.body["menu_item_id"] != float64(m.mon) {
+		t.Fatalf("bán lại: muốn 200 kèm menu_item_id, nhận %d %v", r.status, r.body)
+	}
+	var conMoc bool
+	var tenSau, thanhPhanSau string
+	if err := k.owner.QueryRow(k.ctx, `SELECT i.discontinued_at IS NOT NULL, i.name, (SELECT string_agg(menu_component_id || 'x' || quantity, ','
+		ORDER BY menu_component_id) FROM shop.menu_item_component WHERE menu_item_id = i.id) FROM shop.menu_item i WHERE i.id = $1`,
+		m.mon).Scan(&conMoc, &tenSau, &thanhPhanSau); err != nil {
+		t.Fatal(err)
+	}
+	if conMoc || tenSau != tenTruoc || thanhPhanSau != thanhPhanTruoc {
+		t.Fatalf("bán lại phải xoá mốc, giữ tên và thành phần: mốc còn=%v tên %q→%q thành phần %q→%q", conMoc, tenTruoc, tenSau, thanhPhanTruoc, thanhPhanSau)
+	}
+	if k.soVet(t) != vet+1 {
+		t.Fatalf("bán lại: muốn đúng một vết mới, có %d", k.soVet(t)-vet)
+	}
+	var nguoi int64
+	var lyDo, mocTruoc, mocSau string
+	if err := k.owner.QueryRow(k.ctx, `SELECT person_id, reason, coalesce(before_image ->> 'discontinued_at', ''),
+		coalesce(after_image ->> 'discontinued_at', '') FROM shop.record_revision
+		WHERE target_table_code = 'menu_item' AND target_row = $1 ORDER BY id DESC LIMIT 1`, m.mon).Scan(&nguoi, &lyDo, &mocTruoc, &mocSau); err != nil {
+		t.Fatalf("bán lại: không có vết: %v", err)
+	}
+	if nguoi != chu || lyDo != "test: bán lại" || mocTruoc == "" || mocSau != "" {
+		t.Fatalf("vết bán lại sai: người %d lý do %q mốc trước %q mốc sau %q (mốc đã đặt %s)", nguoi, lyDo, mocTruoc, mocSau, moc)
+	}
+
+	// Bán lại lần hai: món đang bán ⇒ từ chối. Ngừng bán lần nữa thì được.
+	tuChoi(t, k.goi(t, "POST", banLai, chu, map[string]any{"reason": "test: lần hai"}), http.StatusConflict, "menu_item_not_discontinued", "")
+	if r := k.goi(t, "POST", ngung, chu, map[string]any{"reason": "test: bỏ lần nữa"}); r.status != http.StatusOK {
+		t.Fatalf("ngừng bán sau khi bán lại: muốn 200, nhận %d %v", r.status, r.body)
+	}
+
+	tuChoi(t, k.goi(t, "POST", "/menu-items/9000000000/resumption", chu, map[string]any{"reason": "test"}), http.StatusNotFound, "menu_item_not_found", "")
+}
+
+// Chỉ chủ quán bán lại món (architecture.md §6.1, I-012): người đứng quầy 403, chưa đăng nhập 401, không ghi.
+func TestI012_ChiChuQuanBanLai(t *testing.T) {
+	k := dung(t)
+	m := k.menuGia(t)
+	chu := k.nguoi(t, "chủ quán", true)
+	if r := k.goi(t, "POST", fmt.Sprintf("/menu-items/%d/discontinuation", m.mon), chu, map[string]any{"reason": "test: bỏ món"}); r.status != http.StatusOK {
+		t.Fatalf("ngừng bán: muốn 200, nhận %d %v", r.status, r.body)
+	}
+	a := k.nguoi(t, "A", false)
+	k.vaoQuay(t, a)
+	truoc, vet := k.anh(t, m), k.soVet(t)
+	path := fmt.Sprintf("/menu-items/%d/resumption", m.mon)
+	tuChoi(t, k.goi(t, "POST", path, a, map[string]any{"reason": "test"}), http.StatusForbidden, "owner_only", "")
+	tuChoi(t, k.goi(t, "POST", path, 0, map[string]any{"reason": "test"}), http.StatusUnauthorized, "unauthenticated", "")
+	if k.anh(t, m) != truoc || k.soVet(t) != vet {
+		t.Fatal("lời từ chối mà vẫn ghi")
+	}
+}

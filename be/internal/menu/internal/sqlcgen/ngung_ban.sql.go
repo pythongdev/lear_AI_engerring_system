@@ -19,7 +19,7 @@ type NgungBanRow struct {
 	DiscontinuedAt string
 }
 
-// Cửa menu/ngung_ban (P3-06, lớp chu_quan); đã khoá dòng và kiểm mốc trước khi ghi.
+// Cửa menu/moc_ngung_ban (ADR-126, lớp theo_cua_goi); đã khoá dòng và kiểm mốc trước khi ghi.
 func (q *Queries) NgungBan(ctx context.Context, id int64) (NgungBanRow, error) {
 	row := q.db.QueryRow(ctx, ngungBan, id)
 	var i NgungBanRow

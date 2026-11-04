@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.61.0
+  version: 0.62.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -3198,6 +3198,69 @@ paths:
                 $ref: '#/components/schemas/Error'
         '409':
           description: Món đã ngừng bán (menu_item_discontinued); mốc cũ giữ nguyên.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-items/{menu_item_id}/resumption:
+    post:
+      operationId: resumeMenuItem
+      tags:
+        - menu
+      summary: Bán lại món đã ngừng, giữ nguyên món và lịch sử
+      parameters:
+        - name: menu_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuResumptionRequest'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuResumption'
+        '400':
+          description: Yêu cầu sai hình (invalid_request); field chỉ trường sai nếu xác định được.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Không xác định được người bấm (unauthenticated).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Người bấm không phải chủ quán (owner_only).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Không tồn tại (menu_item_not_found).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Món đang bán (menu_item_not_discontinued); không ghi gì.
           content:
             application/json:
               schema:
@@ -8111,6 +8174,7 @@ components:
         - menu_component_not_found
         - menu_item_component_not_found
         - menu_item_discontinued
+        - menu_item_not_discontinued
         - option_combination_invalid
         - message_recipient_invalid
         - station_message_not_found
@@ -8289,6 +8353,7 @@ components:
         menu_component_not_found: 404
         menu_item_component_not_found: 404
         menu_item_discontinued: 409
+        menu_item_not_discontinued: 409
         option_combination_invalid: 422
         message_recipient_invalid: 422
         station_message_not_found: 404
@@ -8789,6 +8854,23 @@ components:
           format: int64
         discontinued_at:
           $ref: '#/components/schemas/Instant'
+    MenuResumptionRequest:
+      type: object
+      required: [reason]
+      additionalProperties: true
+      properties:
+        reason:
+          type: string
+          minLength: 1
+          description: Sau khi bỏ khoảng trắng đầu cuối phải còn nội dung.
+    MenuResumption:
+      type: object
+      required: [menu_item_id]
+      additionalProperties: false
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
 # Tên từ chối → mã (ADR-082 điểm 5). Mọi tên ở db/migrations/ một dòng: một mã của ErrorCode,
 # internal (không bao giờ là luật người dùng chạm tới) hoặc unreviewed (chưa lát nào xét — chạy như
 # internal_error). Lát dựng cửa chạm một bảng thì xét lại dòng của bảng ấy (01-hop-dong-api.md §4).

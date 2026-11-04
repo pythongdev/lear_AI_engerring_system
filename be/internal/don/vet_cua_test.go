@@ -279,7 +279,9 @@ var cacCaVet = []caVet{
 			c.suaMenu(t, c.chu, "PUT", fmt.Sprintf("/menu-items/%d", id), map[string]any{"name": moi, "reason": "đổi tên món kiểm vết"})
 		}}
 	}},
-	{"menu/ngung_ban", func(t *testing.T, c canh) dichVet {
+	// T-243 (ADR-126 Sửa đổi 2026-11-04): ô discontinued_at nay thuộc cửa nội bộ menu/moc_ngung_ban; ca đi qua cửa ngừng bán công
+	// khai như ca vongdoi/chuyen_viec đi qua cửa bấm mẻ. Vết của đường bán lại: TestI018_BanLaiGiuLichSu (gói menu).
+	{"menu/moc_ngung_ban", func(t *testing.T, c canh) dichVet {
 		id := c.id(t, "INSERT INTO shop.menu_item(name) VALUES ($1) RETURNING id", t.Name())
 		return dichVet{"menu_item", id, c.chu, "discontinued_at", nil, "mốc", func() {
 			c.suaMenu(t, c.chu, "POST", fmt.Sprintf("/menu-items/%d/discontinuation", id), map[string]any{"reason": "ngừng bán kiểm vết"})

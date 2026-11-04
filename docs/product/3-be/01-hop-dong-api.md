@@ -155,6 +155,8 @@ bản ở `HEAD` và đỏ khi file khác mà phiên bản không lớn hơn.
 - **Không phiên bản trong đường dẫn** (không tiền tố kiểu `/v1`). Quán có một backend và một FE, triển
   khai cùng nhau; hai phiên bản đường gọi chạy song song là thứ không ai cần mà phải giữ cả hai.
 
+**T-243 (2026-11-04, theo phiếu Claude):** tăng MINOR `0.61.0` → `0.62.0`; thêm `POST /menu-items/{menu_item_id}/resumption` (`resumeMenuItem`), chủ quán bán lại chính món đã ngừng bằng lý do bắt buộc. Trả `{ menu_item_id }`; món đang bán trả `menu_item_not_discontinued` (409), không ghi. Cửa nội bộ `menu/moc_ngung_ban` sở hữu mốc dùng chung theo ADR-126 *Sửa đổi 2026-11-04*; hợp đồng ngừng bán không đổi. Sinh lại type FE.
+
 **T-223 (2026-11-04, theo phiếu Claude):** tăng MINOR `0.60.0` → `0.61.0`; `POST /orders/{sales_order_id}/departure` ghi `made` → `served` qua chuyển việc rồi chuyển đơn sang `delivering` trong cùng giao dịch; còn `pending` thì từ chối `delivery_jobs_not_made` (409), không đổi gì. Bỏ `delivery_served_mark_undecided`; sinh lại type FE.
 
 **T-246 (2026-10-24, Codex được chủ repo cho phép xuyên tầng, ADR-127):** tăng `0.49.0` → `0.50.0`. `AssignedTask` thêm `due_at` luôn trả, nullable cho việc cũ. `CreateAssignedTask` bắt buộc hạn RFC3339 có offset; `UpdateAssignedTask` nhận tuỳ chọn, bỏ trường giữ nguyên, có trường không cho null/rỗng. Lỗi vẫn dùng `invalid_request`, field `due_at`. Sinh lại type FE.

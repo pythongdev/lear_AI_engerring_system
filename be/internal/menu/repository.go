@@ -63,8 +63,8 @@ func (r repository) suaSoLuong(ctx context.Context, monID, tpID int64, soLuong i
 	return r.q.SuaSoLuong(ctx, sqlcgen.SuaSoLuongParams{MenuItemID: monID, MenuComponentID: tpID, Quantity: soLuong})
 }
 
-func (r repository) ngungBan(ctx context.Context, id int64) (sqlcgen.NgungBanRow, error) {
-	return r.q.NgungBan(ctx, id)
+func datMocNgungBan(ctx context.Context, tx pgx.Tx, id int64) (sqlcgen.NgungBanRow, error) {
+	return sqlcgen.New(tx).NgungBan(ctx, id)
 }
 
 func (r repository) themMon(ctx context.Context, ten string) (Mon, error) {
@@ -142,4 +142,13 @@ func (r repository) taoThanhPhanCoTram(ctx context.Context, tp ThanhPhanGanMoi) 
 }
 func (r repository) ganThanhPhan(ctx context.Context, mon, tp int64, quantity int32) error {
 	return r.q.GanThanhPhan(ctx, sqlcgen.GanThanhPhanParams{MenuItemID: mon, MenuComponentID: tp, Quantity: quantity})
+}
+
+// xoaMocNgungBan dùng giao dịch của cửa gọi, không mở giao dịch mới (ADR-126).
+func xoaMocNgungBan(ctx context.Context, tx pgx.Tx, id int64) (int64, error) {
+	return sqlcgen.New(tx).BanLai(ctx, id)
+}
+
+func (r repository) khoaMonBanLai(ctx context.Context, id int64) (bool, error) {
+	return r.q.KhoaMonBanLai(ctx, id)
 }

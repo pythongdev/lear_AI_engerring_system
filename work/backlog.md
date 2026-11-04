@@ -132,7 +132,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 - [ ] T-246 **Hạn hoàn thành bắt buộc ngày và giờ khi giao việc mới** — L2, DB/API/FE — chủ repo 2026-10-24 cho phép Codex thực hiện xuyên tầng · [chi tiết](#t-246)
 
-- [ ] T-243 **Món đã ngừng bán chưa bán lại được** — chủ repo đóng U-104 (bán lại, giữ món cũ cùng tên · thành phần · lịch sử): cửa mới `POST /menu-items/{menu_item_id}/resumption` có lý do xoá mốc ngừng bán trên chính dòng món (ADR-126), hợp đồng · ma trận quyền · service · test backend, và form *Bán lại* trên trang Sản phẩm — L2 — mở 2026-10-24 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-243)
 - [ ] T-227 **Thanh toán bàn chỉ thu phần đã ra, phần chưa ra huỷ việc trạm** — bấm tiền bánh đã ra để đóng phiên và xoá bàn khỏi bảng; đổi luật tính tiền phiên (`shop-facts.md` §6.1, 2026-10-21) và viết lại `I-002` — L3 (thiết kế duyệt trước code, ADR, chia L1/L2 khi mở) — mở 2026-10-21, U-103 có lời và bắt đầu 2026-10-22 · [chi tiết](#t-227)
 - [ ] T-233 **Trang gọi món của khách hiện không có kiểu nào, chưa giống bản thiết kế menu** — CSS module của T-232 bị luật Turbopack trong `next.config.ts` đọc như CSS thường nên mọi `styles.*` rỗng (F-075); viết lại kiểu bằng một file CSS thường trong phạm vi trang và lớp Tailwind, đối chiếu ảnh chụp với `menu.html` ở hai giao diện; hành vi và test giữ nguyên — L1 — mở 2026-10-23 (chủ repo yêu cầu; Codex làm, Claude duyệt) · [chi tiết](#t-233)
 
@@ -148,6 +147,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-243 **Món đã ngừng bán chưa bán lại được** — L2; 2026-11-04 Codex dựng `POST /menu-items/{id}/resumption` (`menu/ban_lai`, mã `menu_item_not_discontinued`, hợp đồng 0.62.0) qua cửa nội bộ `menu/moc_ngung_ban` giữ ô mốc ngừng bán (ADR-126 *Sửa đổi*), form *Bán lại* trên trang Sản phẩm; Claude viết test trước và duyệt · [chi tiết](#t-243)
 - [x] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — L2; 2026-11-04 Codex sửa cửa `don/roi_quan`: khoá việc của đơn, còn `pending` ⇒ `delivery_jobs_not_made` 409, `made` ⇒ `served` qua `vongdoi.ChuyenViec` rồi Đang giao (hợp đồng 0.61.0, ADR-088 *Sửa đổi*); Claude viết test trước và duyệt · [chi tiết](#t-223)
 - [x] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — L2 (đổi hợp đồng API); 2026-11-04 Codex thêm `Menu.categories` · `MenuItem.menu_category_id` (hợp đồng 0.60.0, câu đọc chỉ SELECT) và hàng thẻ danh mục trên `ThucDonKhach`; Claude viết test trước, sửa một kỳ vọng sai của chính mình và một mẫu sót, duyệt · [chi tiết](#t-237)
 - [x] CHAT-32 **Người làm chưa báo nghỉ bằng mẫu có kết quả rõ** — L2, ADR-138 điểm 7; 2026-11-04 Codex dựng `BaoNghi` trong thẻ *Báo nghỉ* của `OChat` (`/tram` · `/quay` tự báo có thẻ kiểm, `/chu-quan` danh sách 30 ngày với *Đã biết* · *Huỷ*), không model; Claude viết test trước, sửa hai ca mã lạ và duyệt; nhánh báo nghỉ 30…32 đủ ba lát · [mô tả](backlog_CHAT.md#chat-32)
@@ -746,6 +746,28 @@ API, thêm cửa ghi dữ liệu menu; không migration.
 - [ ] Trang Sản phẩm: món ngừng bán có form *Bán lại <tên>* (ô *Lý do bán lại* bắt buộc, nút *Bán lại*), gửi đúng thân `{ reason }`, xong báo
       *Đã bán lại <tên>.* và đọc lại; test FE do Claude viết trước, xanh.
 - [ ] `./scripts/gate.sh` xanh ở clone chính.
+
+**Mở lại 2026-11-04, Claude.** Lần giao 2026-10-24 (worktree `../lean_wt/T-243`, nền `f38f06d`) chưa ra code; nền ấy đã cũ (hợp đồng
+nay 0.61.0, trang Sản phẩm đã đổi). Dựng lại: hai test backend cũ chép nguyên vào `be/internal/menu/menu_test.go` (vẫn đúng ADR-126); test FE
+viết lại theo trang hiện tại trong `san-pham.test.tsx` — khối `T-243 — bán lại món đã ngừng` (bốn ca: thiếu lý do không gửi · gửi đúng thân
+một lần rồi đọc lại; món đang bán không có form; 409 `menu_item_not_discontinued` báo *đang bán* và đọc lại; 400 `field=reason` gắn ô) và ca
+*món ngừng bán … có form bán lại*. Đỏ đúng lý do: backend 404 không mã ở `/resumption` (`chat-review/T-243-do-truoc.log`), FE 4 ca thiếu form
+*Bán lại*. Acceptance giữ như trên; hợp đồng 0.61.0 → 0.62.0. Phiếu `../lean_wt/chat-review/T-243-phieu.md`; worktree `../lean_wt/T-243-v2`,
+nhánh `codex/T-243-v2`, nền `316c826` cộng thay đổi T-223 chưa commit stage sẵn; hai file test tạm rời cây chính.
+
+2026-11-04, T-243 xong. **Codex** thi công (worktree `../lean_wt/T-243-v2`, model `gpt-6-astra`), hai lượt. Lượt 1 dừng đúng: ô
+`menu_item.discontinued_at` đã có chủ `menu/ngung_ban` (Gate 1f), ADR-126 cho cửa bán lại ghi thẳng ô ấy là sai — lỗi thiết kế của Claude; Claude
+chốt **ADR-126 *Sửa đổi 2026-11-04*** (cửa nội bộ `menu/moc_ngung_ban` giữ ô, hai cửa công khai gọi qua nó) và thêm `be/sqlc.yaml` vào scope.
+Lượt 2 xong code, hết hạn mức ở bước build trước khi viết báo cáo; **Claude** duyệt diff thật, tích hợp bằng `git apply`, và sửa một chỗ phiếu
+không lường: khoá ca `menu/ngung_ban` trong `be/internal/don/vet_cua_test.go` thành `menu/moc_ngung_ban` (`TestI018_TapCuaSuaKhopTapCa` đòi mỗi
+thư mục cửa có `UPDATE` một ca vết). File: `be/internal/menu/` (`service.go` `BanLai`, `handler.go`, `repository.go`, `sql/ban_lai/`,
+`sql/moc_ngung_ban/` nhận câu ngừng bán và câu xoá mốc, `sql/ngung_ban/` chỉ còn câu khoá, sqlcgen), `be/sqlc.yaml`, `apierr.go`, `openapi.yaml`
+0.61.0 → 0.62.0 (`resumeMenuItem`), `01-hop-dong-api.md`, hai dòng ma trận ở `02-vai-va-quyen.md`, `schema.ts`, `form-ban-lai.tsx` mới,
+`form-ngung-ban.tsx`, `du-lieu-san-pham.ts`, `san-pham.tsx`, `01-khung-fe.md`. Mã băm hai file test giao không đổi. Bằng chứng (cây chính, Docker):
+`./scripts/gate.sh` exit 0 — `--- PASS: TestI018_BanLaiGiuLichSu`, `TestI012_ChiChuQuanBanLai`, `TestI018_TapCuaSuaKhopTapCa`,
+`TestI018_MoiCuaSuaCoVet/menu/moc_ngung_ban`; `PASS Gate 1f` 121 cửa (`check-write-paths --list`: `discontinued_at` một chủ `menu/moc_ngung_ban`);
+`PASS Gate 1g` 0.62.0; `PASS gate không cổng nào đỏ`; `./scripts/fe-check.sh` exit 0 — `Tests 639 passed (639)`, `fe-check: PASS`. Chưa có người
+duyệt thứ ba. Còn lại: không.
 
 <a id="t-238"></a>
 ### T-238 — Trang Sản phẩm chỉ đổi được tên món, chưa cập nhật được danh mục, giá, trạng thái

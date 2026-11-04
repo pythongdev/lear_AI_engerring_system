@@ -8044,6 +8044,13 @@ phần B, L1 — màn quầy và trang Vận hành. Codex thi công theo phiếu
 `record_revision` đã giữ đủ cái gì · ai · lúc nào; *`DELETE /menu-items/{id}/discontinuation`* — hợp đồng dùng cặp `POST` cho hành động đối
 nhau (`/hiding` · `/unhiding`) và một `DELETE` mang thân lý do là hình lạ.
 
+**Sửa đổi 2026-11-04 (T-223→T-243, Claude; Codex phát hiện lúc thi công) — thay câu ghi của điểm 1.** Ô `menu_item.discontinued_at` đã có
+chủ là cửa `menu/ngung_ban` (Gate 1f), nên cửa bán lại ghi thẳng ô ấy là hai cửa chung một ô (ADR-082). Theo khuôn `vongdoi/chuyen_viec`
+(ADR-090): cửa nội bộ mới **`menu/moc_ngung_ban`** (lớp `theo_cua_goi`) sở hữu ô ấy, hai câu — đặt mốc `now()` và xoá mốc về NULL — dưới
+`be/internal/menu/sql/moc_ngung_ban/`; `menu/ngung_ban` và `menu/ban_lai` thành cửa công khai **không ô riêng**: mỗi cửa khoá dòng, kiểm mốc,
+khai lý do rồi gọi cửa nội bộ trong cùng giao dịch. Hành vi và hợp đồng của cửa ngừng bán không đổi. Ma trận thêm hai dòng (`menu/ban_lai`
+`chu_quan`, `menu/moc_ngung_ban` `theo_cua_goi`). *Bác:* đặt câu xoá mốc trong thư mục của `ngung_ban` — qua gate nhưng ghi sai chủ ô.
+
 
 ## ADR-127 — Hạn hoàn thành của việc giao là instant, bắt buộc ở cửa tạo
 

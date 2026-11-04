@@ -143,6 +143,8 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `menu/an_lua_chon` | `chu_quan` | chủ quán quản lý topping — ẩn và bật lại, một cửa hai đường gọi (`master_plan/shop-facts.md` §8.9, 2026-10-19, T-210) · `I-012` |
 | `menu/sua_thanh_phan` | `chu_quan` | `architecture.md` §6.1 · `I-011` · `I-012` |
 | `menu/ngung_ban` | `chu_quan` | `architecture.md` §6.1 · `03-lat-cat.md` §3.3.4 |
+| `menu/ban_lai` | `chu_quan` | ADR-126 *Sửa đổi 2026-11-04* |
+| `menu/moc_ngung_ban` | `theo_cua_goi` | ADR-126 *Sửa đổi 2026-11-04* |
 | `don/duyet` | `quay` | `05-vong-doi.md` §5.2 — quầy duyệt đơn chờ xác nhận |
 | `don/nha_hen` | `quay` | Phiếu T-142 (thiết kế ADR-091, Claude, 2026-10-09); `shop-facts.md` §5.2 điểm 5 — máy POS nhả đơn điện thoại tới giờ nhắc |
 | `don/roi_quan` | `quay` | `05-vong-doi.md` §5.2 dòng *Đang thực hiện → Đang giao*; `shop-facts.md` §6.7 (U-023) |

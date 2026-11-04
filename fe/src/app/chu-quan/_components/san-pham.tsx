@@ -10,6 +10,7 @@ import { useMenuGia, tienGia } from "./du-lieu-menu-gia";
 import { FormDoiTenMon } from "./form-doi-ten-mon";
 import { FormDanhMucMon } from "./form-danh-muc-mon";
 import { GiaThanhPhanMon } from "./form-gia-thanh-phan";
+import { FormBanLai } from "./form-ban-lai";
 import { FormNgungBan } from "./form-ngung-ban";
 import { FormThemMon } from "./form-them-mon";
 import { AnhSanPham } from "./anh-san-pham";
@@ -118,7 +119,10 @@ export function TrangSanPham() {
               : gia.isError ? <p role="alert">Chưa đọc được thành phần.</p>
               : monGia ? <GiaThanhPhanMon monGia={monGia} /> : <p>Chưa có giá để đổi.</p>}
           </section>
-          <section className="space-y-3"><h2>Ngừng bán</h2><FormNgungBan mon={mon} /></section>
+          <section className="space-y-3"><h2>{mon.discontinued ? "Bán lại" : "Ngừng bán"}</h2>
+            <FormNgungBan mon={mon} />
+            <FormBanLai mon={mon} />
+          </section>
         </>}
       </DialogContent>
     </Dialog>

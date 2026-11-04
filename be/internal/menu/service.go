@@ -1,4 +1,4 @@
-// Package menu giữ bốn cửa sửa menu của chủ quán (P3-06, I-011 · I-012 · I-018).
+// Package menu giữ các cửa sửa menu của chủ quán (P3-06, I-011 · I-012 · I-018).
 // Giá suất không có cửa sửa: nó là kết quả của gia.Tinh.
 package menu
 
@@ -122,7 +122,7 @@ func (s *Service) NgungBan(ctx context.Context, nguoi, id int64, lyDo string) (M
 		if err := repo.khaiLyDo(ctx, strings.TrimSpace(lyDo)); err != nil {
 			return err
 		}
-		row, err := repo.ngungBan(ctx, id)
+		row, err := datMocNgungBan(ctx, tx, id)
 		out = MonNgungBan{MenuItemID: row.ID, DiscontinuedAt: row.DiscontinuedAt}
 		return err
 	})
@@ -331,6 +331,36 @@ func (s *Service) ThemThanhPhanMon(ctx context.Context, nguoi, mon int64, p GanT
 		}
 		out = ThanhPhanSuat{MenuItemID: mon, MenuComponentID: id, Quantity: p.Quantity}
 		return nil
+	})
+	return
+}
+
+var BanLai = authz.Door{Code: "menu/ban_lai", Need: authz.NeedOwner}
+var MocNgungBan = authz.Door{Code: "menu/moc_ngung_ban", Need: authz.NeedCallingDoor}
+
+type MonBanLai struct {
+	MenuItemID int64 `json:"menu_item_id"`
+}
+
+func (s *Service) BanLai(ctx context.Context, nguoi, id int64, lyDo string) (out MonBanLai, err error) {
+	lyDo = strings.TrimSpace(lyDo)
+	if lyDo == "" {
+		return out, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "reason"}
+	}
+	err = authz.Run(ctx, s.pool, nguoi, BanLai, func(tx pgx.Tx) error {
+		repo := newRepository(tx)
+		daNgung, e := repo.khoaMonBanLai(ctx, id)
+		if e := khongThay(e, apierr.CodeMenuItemNotFound); e != nil {
+			return e
+		}
+		if !daNgung {
+			return apierr.Error{Code: apierr.CodeMenuItemNotDiscontinued}
+		}
+		if e := repo.khaiLyDo(ctx, lyDo); e != nil {
+			return e
+		}
+		out.MenuItemID, e = xoaMocNgungBan(ctx, tx, id)
+		return e
 	})
 	return
 }

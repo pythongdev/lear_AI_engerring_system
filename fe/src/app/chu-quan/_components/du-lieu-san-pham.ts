@@ -13,6 +13,7 @@ export type ThemMon = components["schemas"]["MenuItemCreate"];
 export type DoiTenMon = components["schemas"]["MenuItemRename"];
 export type ChuyenDanhMuc = components["schemas"]["AssignMenuItemCategory"];
 export type DoiGiaThanhPhan = components["schemas"]["ComponentPriceChange"];
+export type BanLai = components["schemas"]["MenuResumptionRequest"];
 export type NgungBan = components["schemas"]["MenuDiscontinuationRequest"];
 const khoa = ["menu-categories"] as const;
 
@@ -29,7 +30,7 @@ function useDocLaiSauGhi() {
   const qc = useQueryClient();
   return async (r: ApiResult<unknown>) => {
     if (r.ok || (r.failure.kind === "rejected" &&
-      (r.failure.code.endsWith("_not_found") || ["menu_category_hidden", "menu_item_discontinued"].includes(r.failure.code)))) {
+      (r.failure.code.endsWith("_not_found") || ["menu_category_hidden", "menu_item_discontinued", "menu_item_not_discontinued"].includes(r.failure.code)))) {
       await Promise.all([
         qc.invalidateQueries({ queryKey: khoa }),
         qc.invalidateQueries({ queryKey: ["menu"] }),
@@ -76,12 +77,20 @@ export function useNgungBan(menu_item_id: number) {
     params: { path: { menu_item_id } }, body,
   })), retry: false, onSuccess });
 }
+export function useBanLai(menu_item_id: number) {
+  const api = useApi();
+  const onSuccess = useDocLaiSauGhi();
+  return useMutation({ mutationFn: (body: BanLai) => call(api.POST("/menu-items/{menu_item_id}/resumption", {
+    params: { path: { menu_item_id } }, body,
+  })), retry: false, onSuccess });
+}
 
 export function loiSanPham(failure: ApiFailure) {
   if (failure.kind !== "rejected") return "Chưa xác nhận được kết quả. Hãy đọc lại danh sách để kiểm tra.";
   switch (failure.code) {
     case "menu_item_component_conflict": return "Thành phần đã có trong món.";
     case "menu_item_already_in_category": return "Món đã ở danh mục này.";
+    case "menu_item_not_discontinued": return "Món đang bán rồi. Đang đọc lại danh sách.";
     case "menu_item_discontinued": return "Món đã ngừng bán rồi. Đang đọc lại danh sách.";
     case "menu_component_not_found": return "Thành phần không còn. Đang đọc lại danh sách.";
     case "menu_item_name_conflict": return "Tên món bị trùng. Hãy chọn tên khác.";

@@ -374,13 +374,15 @@ describe("trang sản phẩm — đổi tên món", () => {
     expect(screen.getByRole("dialog", { name: "Cập nhật Bánh cuốn trứng" })).toBeTruthy();
   });
 
-  it("món ngừng bán vẫn đổi tên, chuyển danh mục được; không có phần ngừng bán, không đổi giá ở đây", async () => {
+  it("món ngừng bán vẫn đổi tên, chuyển danh mục được; có form bán lại thay form ngừng bán, không đổi giá ở đây", async () => {
     const goi = moTrang();
     const ngan = await moCapNhat("Bánh cuốn thịt");
     expect(within(ngan).getByRole("form", { name: "Đổi tên Bánh cuốn thịt" })).toBeTruthy();
     expect(within(ngan).getByRole("form", { name: "Chuyển danh mục Bánh cuốn thịt" })).toBeTruthy();
     expect(within(ngan).queryByRole("form", { name: /^Ngừng bán/ })).toBeNull();
-    expect(ngan.textContent ?? "").toMatch(/Món đã ngừng bán\. Chưa có cách bán lại\./);
+    // T-243 (ADR-126 điểm 4): câu "Chưa có cách bán lại" nhường chỗ cho form Bán lại.
+    expect(within(ngan).getByRole("form", { name: "Bán lại Bánh cuốn thịt" })).toBeTruthy();
+    expect(ngan.textContent ?? "").not.toMatch(/Chưa có cách bán lại/);
     expect(ngan.textContent ?? "").toMatch(/không đổi giá ở đây/);
     expect(within(ngan).queryByRole("form", { name: /^Giá gốc/ })).toBeNull();
     expect(soLanThu(goi)).toBe(0);
@@ -556,6 +558,59 @@ describe("trang sản phẩm — ngừng bán", () => {
     fireEvent.click(within(f).getByRole("button", { name: "Ngừng bán" }));
     await waitFor(() => expect(f.textContent ?? "").toMatch(/đã ngừng bán/i));
     await waitFor(() => expect(soLanDoc(goi)).toBe(2));
+  });
+});
+
+// T-243 — bán lại món đã ngừng (ADR-126, U-104 đóng 2026-10-24): POST /menu-items/{id}/resumption thân { reason }. Claude viết
+// TRƯỚC khi có code. Hợp đồng màn: món ngừng bán có form "Bán lại <tên>" (ô "Lý do bán lại" bắt buộc, nút "Bán lại"); món đang bán
+// không có form ấy; xong báo "Đã bán lại <tên>." và đọc lại danh sách cùng giá; 409 menu_item_not_discontinued báo món đang bán
+// và đọc lại; bấm hai lần chỉ một lệnh.
+describe("T-243 — bán lại món đã ngừng", () => {
+  async function formBanLai(ten: string) {
+    const ngan = await moCapNhat(ten);
+    return within(ngan).getByRole("form", { name: `Bán lại ${ten}` });
+  }
+
+  it("I018: thiếu lý do thì không gửi; có lý do thì gửi đúng thân một lần, báo và đọc lại", async () => {
+    const goi = moTrang({ ghi: () => ({ status: 200, body: { menu_item_id: 10 } }) });
+    const f = await formBanLai("Bánh cuốn thịt");
+    fireEvent.click(within(f).getByRole("button", { name: "Bán lại" }));
+    await waitFor(() => expect(oSai(f, "Lý do bán lại")).toBe("true"));
+    go(f, "Lý do bán lại", "   ");
+    fireEvent.click(within(f).getByRole("button", { name: "Bán lại" }));
+    await waitFor(() => expect(oSai(f, "Lý do bán lại")).toBe("true"));
+    expect(ghi(goi)).toEqual([]);
+    go(f, "Lý do bán lại", "  Có hàng lại  ");
+    fireEvent.submit(f); fireEvent.submit(f);
+    expect(await screen.findByText("Đã bán lại Bánh cuốn thịt.")).toBeTruthy();
+    expect(ghi(goi)).toEqual([{ method: "POST", path: "/menu-items/10/resumption", body: { reason: "Có hàng lại" } }]);
+    await waitFor(() => expect(soLanDoc(goi)).toBe(2));
+    await waitFor(() => expect(soLanDocGia(goi)).toBe(2));
+  });
+
+  it("món đang bán không có form bán lại", async () => {
+    moTrang();
+    const ngan = await moCapNhat("Bánh cuốn trứng");
+    expect(within(ngan).queryByRole("form", { name: /^Bán lại/ })).toBeNull();
+    expect(within(ngan).getByRole("form", { name: "Ngừng bán Bánh cuốn trứng" })).toBeTruthy();
+  });
+
+  it("món đã được bán lại ở nơi khác (409 menu_item_not_discontinued): báo món đang bán và đọc lại", async () => {
+    const goi = moTrang({ ghi: () => ({ status: 409, body: { code: "menu_item_not_discontinued" } }) });
+    const f = await formBanLai("Bánh cuốn thịt");
+    go(f, "Lý do bán lại", "Có hàng lại");
+    fireEvent.click(within(f).getByRole("button", { name: "Bán lại" }));
+    await waitFor(() => expect(f.textContent ?? "").toMatch(/đang bán/i));
+    expect(f.textContent ?? "").not.toMatch(/menu_item_not_discontinued/);
+    await waitFor(() => expect(soLanDoc(goi)).toBe(2));
+  });
+
+  it("thiếu lý do ở backend (400 field=reason): lỗi gắn ô Lý do bán lại", async () => {
+    moTrang({ ghi: () => ({ status: 400, body: { code: "invalid_request", field: "reason" } }) });
+    const f = await formBanLai("Bánh cuốn thịt");
+    go(f, "Lý do bán lại", "x");
+    fireEvent.click(within(f).getByRole("button", { name: "Bán lại" }));
+    await waitFor(() => expect(oSai(f, "Lý do bán lại")).toBe("true"));
   });
 });
 

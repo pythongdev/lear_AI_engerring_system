@@ -26,6 +26,7 @@ func Routes(r *gin.Engine, svc *Service) {
 	r.PUT("/menu-options/:menu_option_id/surcharge", h.doiPhuThu)
 	r.PUT("/menu-items/:menu_item_id/components/:menu_component_id", h.suaThanhPhan)
 	r.POST("/menu-items/:menu_item_id/discontinuation", h.ngungBan)
+	r.POST("/menu-items/:menu_item_id/resumption", h.banLai)
 	r.GET("/option-groups", h.docNhom)
 	r.POST("/option-groups/:option_group_id/options", h.themLuaChon)
 	r.POST("/menu-options/:menu_option_id/hiding", h.anLuaChon)
@@ -422,4 +423,22 @@ func (h handler) themThanhPhanMon(c *gin.Context) {
 		MenuComponentID int64 `json:"menu_component_id"`
 		Quantity        int32 `json:"quantity"`
 	}{out.MenuItemID, out.MenuComponentID, out.Quantity})
+}
+
+func (h handler) banLai(c *gin.Context) {
+	id, ok := docID(c, "menu_item_id")
+	if !ok {
+		return
+	}
+	var yc struct {
+		Reason string `json:"reason"`
+	}
+	if !docJSON(c, &yc) {
+		return
+	}
+	if !coLyDo(c, yc.Reason) {
+		return
+	}
+	out, err := h.svc.BanLai(c.Request.Context(), nguoi(c), id, yc.Reason)
+	traVe(c, err, out)
 }

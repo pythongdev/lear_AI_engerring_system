@@ -236,6 +236,7 @@ có nơi dùng thứ hai (**ADR-102** điểm 8) và thêm một dòng ở đây
 | `ChonMonChiTiet` (tầng 3) | `fe/src/app/thuc-don/chon-mon-chi-tiet.tsx` | Bộ chọn nhóm theo menu, số lượng nguyên dương, giá món lẻ theo tổ hợp; thêm vào giỏ nháp chung theo bàn/web, combo áp lựa chọn chung từng suất phù hợp; xác nhận tại chỗ rồi về menu xem giỏ (2026-10-26, chủ repo, T-258) | `/thuc-don/[loai]/[id]` | `T-258` |
 | `useNhapKhach` · `dungLai` | `fe/src/lib/nhap-khach.ts` | Zustand theo `qr:{ma}` và `web`, chỉ mã món/combo, số lượng, lựa chọn và suất; dựng lại với menu hiện tại, bỏ dòng không còn; `xoaHet()` xoá mọi khoá; không lưu bộ nhớ trình duyệt (2026-10-21, theo phiếu Claude) | hai màn khách | `P4-10` |
 | `SoanDon` · `useMenuSoan` (tầng 3) | `fe/src/app/quay/_components/soan-don.tsx` · `du-lieu-soan-don.ts` | hai phiếu dùng chung khuôn gửi một lần, giữ dấu và thân khi chưa rõ kết quả (2026-10-21, theo phiếu Claude) | `/quay/goi-mon` · `/quay/dien-thoai` | `P4-07` |
+| `TrangSanPham` · `FormBanLai` (tầng 3) | `fe/src/app/chu-quan/_components/san-pham.tsx` · `fe/src/app/chu-quan/_components/form-ban-lai.tsx` | Ngăn Cập nhật có form Bán lại cho món đã ngừng, bắt buộc lý do, xong báo và đọc lại danh sách cùng giá (2026-11-04, theo phiếu Claude). | `/chu-quan/san-pham` | `T-243` |
 
 ## 5. Bước sau đọc gì ở đây
 

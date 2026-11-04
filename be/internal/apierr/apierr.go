@@ -166,6 +166,7 @@ const (
 	CodeMenuComponentNotFound     Code = "menu_component_not_found"
 	CodeMenuItemComponentNotFound Code = "menu_item_component_not_found"
 	CodeMenuItemDiscontinued      Code = "menu_item_discontinued"
+	CodeMenuItemNotDiscontinued   Code = "menu_item_not_discontinued"
 	CodeOptionCombinationInvalid  Code = "option_combination_invalid"
 )
 
@@ -315,6 +316,7 @@ var statusOf = map[Code]int{
 	CodeMenuComponentNotFound:     404,
 	CodeMenuItemComponentNotFound: 404,
 	CodeMenuItemDiscontinued:      409,
+	CodeMenuItemNotDiscontinued:   409,
 	CodeOptionCombinationInvalid:  422,
 }
 

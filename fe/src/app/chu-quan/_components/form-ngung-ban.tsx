@@ -35,9 +35,9 @@ export function FormNgungBan({ mon }: { mon: Mon }) {
     } finally { chot.current = false; }
   }
   const message = form.formState.errors.reason?.message;
-  if (mon.discontinued && !daLuu && !loi && !ban) return <p>Món đã ngừng bán. Chưa có cách bán lại.</p>;
+  if (mon.discontinued && !daLuu && !loi && !ban) return <p>Món đã ngừng bán.</p>;
   return <form aria-label={`Ngừng bán ${mon.item_name}`} onSubmit={gui} noValidate className="space-y-3">
-    {mon.discontinued ? <p>Món đã ngừng bán. Chưa có cách bán lại.</p> : <>
+    {mon.discontinued ? <p>Món đã ngừng bán.</p> : <>
       <fieldset disabled={ban}>
         <Field data-invalid={!!message}>
           <FieldLabel htmlFor={id}>Lý do ngừng bán</FieldLabel>
