@@ -87,6 +87,7 @@ Số `n` của `I-0xx/n` là **thứ tự của tập** trong ô *Phép đối c
 | `I-033` | hình trạng thái → `I-033/1` · phiên còn hiệu lực khi không hoạt động → `I-033/2` · trực quầy sai người → `I-033/3` · băm hiện hành → `I-033/4` · vai owner thiếu cờ → `I-033/5` · hoạt động thiếu mật khẩu → `I-033/6` · định danh → `I-033/7` · dấu bản mật khẩu → `I-033/8` · hình phiên → `I-033/9` · hình mã đặt lại → `I-033/10` · sửa phiên kết thúc → `I-033/11` · sửa mã đã dùng → `I-033/12` · người duyệt, khoá hay sửa tài khoản là chủ quán → `I-033/13` (thêm 2026-10-14 ở P2A-15) · mốc phiên quầy ↔ khoảng trực → `I-033/14` · mã đặt lại đã dùng ↔ bản mật khẩu mới và phiên cũ → `I-033/15` (thêm 2026-10-14 ở T-190, hai tập P2A-15 để cho lát backend); vết chung `I-018/1` |
 | `I-034` | mức theo món của combo → `I-034/1` · dòng combo đủ hình → `I-034/2` · dòng con trỏ đúng → `I-034/3` · đủ suất → `I-034/4` · tiền suất bằng mức tại mốc và mức đã chụp → `I-034/5` · mức khoá trong giờ bán → `I-034/6` · giá combo tại mốc → `I-034/7`; tiền đơn là Σ dòng nên *giá combo cộng mức* là `I-034/5` cộng `I-034/7` |
 | `I-038` | khoá ngoại vượt ranh giới → `I-038/1` · người gửi trùng người nhận → `I-038/2` · quyền sửa/xoá tin → `I-038/3` · nội dung/nhãn sai miền → `I-038/4`; sửa tay có vết dùng `I-018/1` |
+| `I-039` | ngày vừa có ô vừa báo nghỉ → `I-039/1` · FK ngoài người → `I-039/2` · quyền sửa/xoá vượt giới hạn → `I-039/3` · người ghi dấu sai quyền → `I-039/4`; sửa có vết dùng `I-018/1` |
 
 Vế mà pha 1 đã nói thẳng là **không có tập** (`I-022` vế ngược, `I-023` vế *không đoán được*, hai vế
 của `I-024`) không có dòng nào ở đây: chúng là kịch bản của `quality/invariants.md`, không phải phép
@@ -108,6 +109,13 @@ Mỗi câu có file lỗi cùng số ở db/reconcile/proof/; tập câu kêu ph
 Vế *tin riêng chỉ người gửi, người nhận hoặc quầy đọc được* là tầng 3, thuộc
 cửa đọc của CHAT-13. Test db/tests/i038_station_message.sql kiểm việc gửi tin
 không đổi nội dung bảng khác; phép đọc dữ liệu tĩnh không thay thế kịch bản ấy.
+
+I-039 (CHAT-30, 2026-11-04): bốn câu trong db/reconcile/i039.sql đọc ngày có
+cả ô công và báo nghỉ còn hiệu lực, ranh giới FK, quyền shop_app và người ghi
+dấu. Mỗi câu có file lỗi cùng số, tập kêu phải đúng tập khai. Cờ chủ quán đọc
+hiện hành; câu thứ tư không tái dựng thời điểm tự huỷ. Test I-039 kiểm luật
+thời điểm, dấu một lần và nội dung bảng khác không đổi; người báo là người
+của phiên và suy loại nghỉ thuộc tầng 3, cửa CHAT-31.
 
 ---
 

@@ -383,3 +383,8 @@ giao dịch tối đa bốn lần. Sau quyền, cùng người và dấu so ngư
 dining_table_id và reply_to_message_id (vắng tương đương null): cùng nội dung trả 200 tin cũ, khác nội dung
 hoặc người gửi trả 409 không lộ tin cũ. Tạo mới trả 201. Đọc id DESC, before_id loại trừ, limit 1–50 mặc định
 20, lấy thêm một tin để xác định next_before_id; read_at là now() database, chu kỳ theo realtime.PollIntervalSeconds.
+
+CHAT-30 (2026-11-04, Claude, ADR-138): 0.57.0 → 0.58.0. Bảng `leave_notice` (bước 43) và trigger chặn ngày nghỉ trên
+`attendance_day` đưa mười lăm tên ràng buộc vào `x-constraint-errors`: khoá chính `internal`, mười bốn tên còn lại
+`unreviewed` vì chưa cửa nào ghi báo nghỉ hay tick ô. CHAT-31 dựng các cửa của ADR-138 điểm 6 thì xét từng tên. Không đường
+gọi hay mã mới.

@@ -76,6 +76,11 @@ câu mệnh đề ở owner.
 
 ## 3. Cái không phải tầng 1 — lược đồ nợ gì, pha 3 nợ gì
 
+Từ bước 43 (CHAT-30, ADR-138), `attendance_day` có thêm trigger BEFORE chặn
+ngày đã có báo nghỉ còn hiệu lực, kể cả làm sống lại ô; hai chiều dùng chung
+khoá giao dịch theo người/ngày. Đây là tầng 1 của I-039, chi tiết ở
+[27-luoc-do-bao-nghi.md](27-luoc-do-bao-nghi.md); các đoạn cũ dưới đây giữ lịch sử lát chấm công.
+
 - **Người tick là chủ quán** là tầng 3. Database chỉ giữ người tick thuộc tập người của quán;
   cửa ghi phải khai đúng người thao tác và xét người ấy. Sửa tay bỏ qua cửa ghi là giới hạn đã biết.
 - **Không ô nào sinh khoản trừ** là tầng 3, kiểm bằng đọc lược đồ như bảng §2. Lát không dựng

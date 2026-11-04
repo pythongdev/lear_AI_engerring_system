@@ -99,7 +99,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] CHAT-30 **Báo nghỉ chưa có luật đầy đủ và chỗ cất riêng** — L2 (thiết kế L3 trước), chủ repo trả lời bốn vế còn thiếu 2026-11-04; ADR-138 đã chốt, `I-039` thêm; Claude viết test trước, giao Codex lát DB · [mô tả](backlog_CHAT.md#chat-30)
 - [ ] T-286 **Chưa có số đo thật để chọn model cho chat** — L1, chủ repo chọn *"Chạy thử qua API cả ba"* 2026-11-03 (`U-112`); Codex dựng bộ thử ngoài repo, Claude duyệt đạt 2026-11-03; chờ chủ repo tạo khoá API và chạy thật · [chi tiết](#t-286)
 - [ ] T-279 **Bản HTML chi tiết món kể chuyện theo cuộn** — L1, chủ repo giao Codex 2026-10-31; dựa trên ý tưởng đầy đủ và mẫu Paris · [chi tiết](#t-279)
 
@@ -151,6 +150,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] CHAT-30 **Báo nghỉ chưa có luật đầy đủ và chỗ cất riêng** — L2 (thiết kế L3), chủ repo trả lời bốn vế và duyệt ADR-138 2026-11-04; Codex dựng `leave_notice` (bước 43, `20261104120000_bao_nghi`), chặn tick hai chiều cùng khoá, bốn câu đối chiếu `I-039`; Claude viết test trước, sửa test I-027, ánh xạ ràng buộc ở hợp đồng 0.58.0 và duyệt; tiếp theo `CHAT-31` · [mô tả](backlog_CHAT.md#chat-30)
 - [x] CHAT-14 **Người canh và dọn chưa có một hộp tin dùng được khi tắt model** — L2, ADR-137 điểm 4 · 7 · 8; 2026-11-04 Codex dựng `HopTin` trong `OChat` (hộp cá nhân ở `/tram`, hộp quầy ở `/quay` · `/chu-quan`, thẻ kiểm trước gửi, *Việc của tôi* không nút); Claude viết test trước, sửa ba lỗi test và duyệt; nhánh không model của ADR-137 đủ năm bước · [mô tả](backlog_CHAT.md#chat-14)
 - [x] CHAT-13 **POS và trạm chưa có cửa gửi, đọc và phản hồi tin đúng người** — L2, ADR-137 điểm 4 · 5 · 6 · 7; 2026-11-04 Codex dựng bốn cửa `/station-messages` (ba cửa ghi `hoptin/quay_gui` · `gui_ve_quay` · `ghi`, hợp đồng 0.57.0, hai mã mới); Claude viết test trước, chốt cửa ghi nội bộ và duyệt; tiếp theo `CHAT-14` · [mô tả](backlog_CHAT.md#chat-13)
 - [x] CHAT-12 **Tin báo trạm chưa có chỗ cất tách khỏi tiến độ** — L2, ADR-137 điểm 3 · 6 · 9; 2026-11-04 Codex dựng bảng chỉ thêm `station_message` (bước 42, `20261103120000_hop_tin`), bốn câu đối chiếu `I-038`; Claude viết test trước, ánh xạ ràng buộc ở hợp đồng 0.56.0 và duyệt; tiếp theo `CHAT-13` · [mô tả](backlog_CHAT.md#chat-12)

@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.57.0
+  version: 0.58.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -8529,11 +8529,26 @@ components:
 # internal (không bao giờ là luật người dùng chạm tới) hoặc unreviewed (chưa lát nào xét — chạy như
 # internal_error). Lát dựng cửa chạm một bảng thì xét lại dòng của bảng ấy (01-hop-dong-api.md §4).
 x-constraint-errors:
+  attendance_day_on_leave_check: unreviewed
   daily_minimum_pkey: internal
   daily_minimum_sale_date_key: internal
   daily_minimum_person_fkey: internal
   daily_minimum_banh_positive_check: invalid_request
   daily_minimum_workers_positive_check: invalid_request
+  leave_notice_acknowledged_by_owner_check: unreviewed
+  leave_notice_acknowledged_by_person_fkey: unreviewed
+  leave_notice_acknowledged_pair_check: unreviewed
+  leave_notice_attendance_ticked_check: unreviewed
+  leave_notice_cancel_allowed_check: unreviewed
+  leave_notice_cancelled_by_person_fkey: unreviewed
+  leave_notice_cancelled_pair_check: unreviewed
+  leave_notice_not_past_check: unreviewed
+  leave_notice_one_live_per_person_day_key: unreviewed
+  leave_notice_person_fkey: unreviewed
+  leave_notice_person_submission_code_key: unreviewed
+  leave_notice_pkey: internal
+  leave_notice_stamps_once_check: unreviewed
+  leave_notice_submission_code_check: unreviewed
   workers_present_declaration_pkey: internal
   workers_present_declaration_person_fkey: internal
   workers_present_declaration_count_positive_check: invalid_request

@@ -231,15 +231,19 @@ BEGIN
          OR (x.relname LIKE 'attendance%' AND y.relname <> 'person'));
   IF n <> 0 THEN RAISE EXCEPTION 'I-027: % khoá ngoại nối ô chấm công với bảng ngoài người', n; END IF;
   -- Một ngoại lệ có tên (T-141): hàm gác người huỷ chỉ ĐỌC person và từ chối, không ghi bảng nào.
+  -- Ngoại lệ thứ hai (CHAT-30, 2026-11-04, ADR-138 điểm 4, I-039): hai hàm chặn ngày đã báo nghỉ chỉ ĐỌC ô hoặc báo nghỉ
+  -- và từ chối; không câu INSERT · UPDATE … SET · DELETE nào, nên vẫn không có đường từ ô tới một khoản trừ.
   SELECT COUNT(*) INTO n FROM pg_proc f JOIN pg_namespace ns ON ns.oid = f.pronamespace
   WHERE ns.nspname = 'shop' AND f.prosrc ILIKE '%attendance%'
-    AND NOT (f.proname = 'attendance_day_cancelled_by_owner' AND f.prosrc !~* '\m(insert|update|delete)\M');
+    AND NOT (f.proname = 'attendance_day_cancelled_by_owner' AND f.prosrc !~* '\m(insert|update|delete)\M')
+    AND NOT (f.proname IN ('attendance_day_on_leave_guard', 'leave_notice_guard')
+             AND f.prosrc !~* '(\minsert\s+into\M|\mdelete\s+from\M|\mupdate\s+[a-z_.]+\s+set\M)');
   IF n <> 0 THEN RAISE EXCEPTION 'I-027: % hàm của schema nhắc tới ô chấm công — một đường đi từ ô tới thứ khác', n; END IF;
   SELECT COUNT(*) INTO n FROM pg_trigger g JOIN pg_class c ON c.oid = g.tgrelid
   JOIN pg_namespace ns ON ns.oid = c.relnamespace JOIN pg_proc f ON f.oid = g.tgfoid
   WHERE ns.nspname = 'shop' AND c.relname LIKE 'attendance%' AND NOT g.tgisinternal
-    AND f.proname NOT IN ('record_revision_capture', 'attendance_day_cancelled_by_owner');
+    AND f.proname NOT IN ('record_revision_capture', 'attendance_day_cancelled_by_owner', 'attendance_day_on_leave_guard');
   IF n <> 0 THEN RAISE EXCEPTION 'I-027: % trigger ngoài trigger vết và trigger gác người huỷ trên ô chấm công', n; END IF;
-  RAISE NOTICE 'I-027 đọc lược đồ — 0 khoá ngoại ngoài ba khoá về người, 0 hàm nhắc tới ô ngoài hàm gác người huỷ (chỉ đọc), 0 trigger ngoài trigger vết và trigger gác ⇒ không đường nào tới một khoản trừ';
+  RAISE NOTICE 'I-027 đọc lược đồ — 0 khoá ngoại ngoài ba khoá về người, 0 hàm nhắc tới ô ngoài hàm gác người huỷ (chỉ đọc), 0 trigger ngoài trigger vết, trigger gác người huỷ và trigger chặn ngày nghỉ ⇒ không đường nào tới một khoản trừ';
   SET CONSTRAINTS ALL IMMEDIATE;
 END $$;

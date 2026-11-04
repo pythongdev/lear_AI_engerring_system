@@ -244,6 +244,18 @@ type HolidayBonu struct {
 	CreatedAt      pgtype.Timestamptz
 }
 
+type LeaveNotice struct {
+	ID                     int64
+	PersonID               int64
+	LeaveDate              pgtype.Date
+	SubmissionCode         string
+	CreatedAt              pgtype.Timestamptz
+	AcknowledgedAt         pgtype.Timestamptz
+	AcknowledgedByPersonID pgtype.Int8
+	CancelledAt            pgtype.Timestamptz
+	CancelledByPersonID    pgtype.Int8
+}
+
 type LoginSession struct {
 	ID            int64
 	AccountID     int64

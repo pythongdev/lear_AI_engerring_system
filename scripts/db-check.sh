@@ -169,6 +169,23 @@ if [ "$n_mig" -gt 0 ]; then
         printf '%s\n' "$out" | tail -12
       fi
     fi
+    if [ "$v" = 20261104120000 ]; then
+      # CHAT-30: test xanh rồi lùi có báo nghỉ phải bị chặn; giao dịch không giữ dữ liệu.
+      if out="$({ echo 'BEGIN; SET search_path = shop;';
+                  cat db/migrations/20261104120000_bao_nghi.up.sql;
+                  cat db/tests/i039_leave_notice.sql;
+                  echo '\echo CHAT30_TEST_GREEN';
+                  cat db/migrations/20261104120000_bao_nghi.down.sql;
+                  echo 'ROLLBACK;'; } | psql_f -f - 2>&1)"; then
+        fail "CHAT-30 đường lùi — không từ chối khi đã có báo nghỉ"
+      elif printf '%s\n' "$out" | grep -q '^CHAT30_TEST_GREEN$' &&
+           printf '%s\n' "$out" | grep -q 'đường lùi từ chối: leave_notice đang giữ báo nghỉ'; then
+        echo "PASS CHAT-30 test I-039 xanh; đường lùi từ chối báo nghỉ đã ghi"
+      else
+        fail "CHAT-30 test I-039 hoặc khoá chặn — lỗi khác điều cần chứng minh:"
+        printf '%s\n' "$out" | tail -12
+      fi
+    fi
     if [ "$v" = 20261029120000 ]; then
       for kind in pending code; do
         if out="$({ echo 'BEGIN; SET search_path = shop;';

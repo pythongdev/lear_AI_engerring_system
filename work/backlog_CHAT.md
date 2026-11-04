@@ -1078,6 +1078,19 @@ does not exist`, đối chiếu báo I-039 chưa có câu; test I-027 và mọi 
 worktree `../lean_wt/CHAT-30`, nhánh `codex/CHAT-30`, nền `387be56`. Test tạm rời cây chính (bản gốc ở worktree và
 `chat-review/CHAT-30-i039_leave_notice.sql`, mã băm ở A1 của phiếu). `CLAUDE.md` §2 thêm `27-luoc-do-bao-nghi.md` khi tích hợp.
 
+2026-11-04, CHAT-30 xong. **Codex** thi công (worktree `../lean_wt/CHAT-30`, nhánh `codex/CHAT-30`, nền `387be56`, model `gpt-6-astra`);
+**Claude** viết test trước, duyệt và tích hợp. File: `db/migrations/20261104120000_bao_nghi.{up,down}.sql`, `db/reconcile/i039.sql` +
+`proof/i039_1…4.sql`, `docs/product/2-db/27-luoc-do-bao-nghi.md`, dòng 43 ở `07-thu-tu-migration.md`, dòng `I-039` ở
+`09-doi-chieu-bat-bien.md`, đoạn ngắn ở `13-luoc-do-cham-cong.md`, khối CHAT-30 trong `scripts/db-check.sh`, 25 file `models.go` sinh lại.
+Codex dừng đúng chỗ ở hai việc ngoài scope, Claude làm: test I-027 cấm mọi hàm và trigger mới nhắc tới ô chấm công — thêm một ngoại lệ
+có tên cho `attendance_day_on_leave_guard` và `leave_notice_guard`, chỉ khi hàm không có câu INSERT · UPDATE … SET · DELETE (cùng khuôn
+ngoại lệ T-141); hợp đồng 0.57.0 → 0.58.0 ánh xạ mười lăm tên ràng buộc (khoá chính `internal`, còn lại `unreviewed` tới CHAT-31) và
+đoạn CHAT-30 ở `01-hop-dong-api.md`. Ghi nhận: vế *không ghi hộ* là tầng 3 (mặc định người của giao dịch không chặn INSERT chỉ định người
+khác) — cửa CHAT-31 phải lấy người từ phiên. Bằng chứng: mã băm test I-039 không đổi (`6c1eb54b…`); `./scripts/gate.sh` trong worktree có
+Docker: test I-039 đủ ca âm/dương, I-027 xanh, `PASS CHAT-30 test I-039 xanh; đường lùi từ chối báo nghỉ đã ghi`, bốn lỗi cài
+`kêu i039_1…4` đúng, db-check 43 bước xuôi · lùi · xuôi lại, be-check PASS, Gate 1g 0.58.0 PASS. Chưa chạy thử hai phiên song song
+thật cho khoá giao dịch (test chỉ kiểm hai trigger cùng gọi khoá); chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---
