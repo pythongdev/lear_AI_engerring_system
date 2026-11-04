@@ -6,7 +6,6 @@ export function loiRaBan(f: ApiFailure) {
   if (f.code.endsWith("_not_found")) return "Dữ liệu không còn. Đang đọc lại bảng.";
   switch (f.code) {
     case "served_quantity_exceeds_made": return "Số ra bàn vượt số đã làm. Đang đọc lại bảng.";
-    case "delivery_served_mark_undecided": return "Chưa có quy tắc ghi ra bàn cho đơn giao tận nơi.";
     case "not_on_counter_duty": return "Bạn chưa đứng quầy. Hãy đứng quầy trước khi ghi ra bàn.";
     case "unauthenticated": return "Phiên đăng nhập đã hết. Hãy đăng nhập lại.";
     case "invalid_request": return "Dữ liệu chưa hợp lệ. Hãy kiểm tra lại.";

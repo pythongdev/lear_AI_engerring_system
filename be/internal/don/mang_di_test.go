@@ -660,12 +660,13 @@ func TestI016_BonHinhMangDiQuaCuaCuaLat(t *testing.T) {
 	}
 	d := n.duyet(t, n.quay, giao)
 	canDat(t, d, http.StatusOK)
-	// P3-10 đổi có chủ ý (ADR-090 điểm 1): duyệt nổ đơn sang Đang thực hiện; rời quán còn việc chưa ra
-	// bàn ⇒ S-6; quầy bấm mẻ và đã ra bàn qua cửa (phucVuHet) rồi mới rời quán.
+	// P3-10 đổi có chủ ý (ADR-090 điểm 1): duyệt nổ đơn sang Đang thực hiện; bếp chưa làm món nào ⇒ rời
+	// quán bị từ chối (ADR-088 Sửa đổi 2026-11-04, T-223); quầy bấm mẻ và đã ra bàn qua cửa (phucVuHet)
+	// rồi mới rời quán — đường "đã làm mà chưa ra" có test riêng bên dưới.
 	if d.chu("status") != "in_progress" || d.body["table_session_id"] != nil {
 		t.Fatalf("duyệt đơn giao: %v", d.body)
 	}
-	canMa(t, n.roiQuan(t, n.quay, giao), http.StatusConflict, "delivery_served_mark_undecided", "")
+	canMa(t, n.roiQuan(t, n.quay, giao), http.StatusConflict, "delivery_jobs_not_made", "")
 	n.phucVuHet(t, n.quay, giao)
 	rq := n.roiQuan(t, n.quay, giao)
 	canDat(t, rq, http.StatusOK)
@@ -738,34 +739,116 @@ func TestI012_CuaNgoaiBanCuaNguoiPhaiDungQuay(t *testing.T) {
 	t.Logf("chủ quán không đứng quầy ⇒ not_on_counter_duty, không người ⇒ unauthenticated, ở hotline và rời quán")
 }
 
-// --- S-6: quầy bấm "đã ra bàn" của đơn giao LÚC NÀO — chưa có lời, cửa không đoán ----------------
+// --- S-6: mốc "đã ra bàn" của đơn giao là lúc rời quán (T-223) ----------------------------------
 
-// Cửa rời quán là chỗ suy luận S-6 đặt mốc ấy (shop-facts.md §7.2). Đơn còn việc trạm chưa ra bàn thì
-// rời quán buộc cửa phải chọn: tự ghi "đã ra bàn" (đoán S-6) hay để lại (đoán ngược) — cửa từ chối kèm
-// mã của chỗ đang mở, không đổi gì.
-func TestI016_RoiQuanKhiConViecTramChuaRaBanBiTuChoi(t *testing.T) {
+// donGiaoDangLam: một đơn giao đã nổ việc, qua web (duyệt) hoặc hotline (lần nhắc đầu, T-142).
+func (n ngoai) donGiaoDangLam(t *testing.T, hotl bool) int64 {
+	t.Helper()
+	if hotl {
+		r := n.hotline(t, n.quay, dauLanGui(t), lienHeHotlineGiao())
+		canDat(t, r, http.StatusCreated)
+		n.denGioLam(t, r.so(t, "sales_order_id"))
+		return r.so(t, "sales_order_id")
+	}
+	r := n.web(t, dauLanGui(t), lienHeGiao())
+	canDat(t, r, http.StatusCreated)
+	canDat(t, n.duyet(t, n.quay, r.so(t, "sales_order_id")), http.StatusOK)
+	return r.so(t, "sales_order_id")
+}
+
+// trangThaiViec: "id:status" của mọi việc trạm của đơn, theo id.
+func (n ngoai) trangThaiViec(t *testing.T, don int64) string {
+	t.Helper()
+	return n.docChu(t, `SELECT coalesce(string_agg(format('%s:%s', id, status), ',' ORDER BY id), '-')
+		FROM shop.station_job WHERE sales_order_id = $1`, don)
+}
+
+// Chủ repo chọn 2026-11-04 (shop-facts.md nhật ký lời, T-223): bếp còn món chưa làm xong thì đơn giao
+// KHÔNG rời quán. Cả lúc chưa làm gì lẫn lúc đã làm gần hết — một việc pending là đủ chặn — và lời từ
+// chối không đổi chữ nào: không đơn, không việc nào sang served.
+func TestI016_RoiQuanKhiBepConMonChuaLamBiTuChoi(t *testing.T) {
 	n := dungNgoai(t)
 	for _, ca := range []struct {
 		ten  string
 		hotl bool
 	}{{"giao (web)", false}, {"hotline giao", true}} {
-		var r traLoi
-		if ca.hotl {
-			r = n.hotline(t, n.quay, dauLanGui(t), lienHeHotlineGiao())
-			n.denGioLam(t, r.so(t, "sales_order_id")) // T-142: đơn đặt trước nổ ở lần nhắc đầu
-		} else {
-			r = n.web(t, dauLanGui(t), lienHeGiao())
-			canDat(t, n.duyet(t, n.quay, r.so(t, "sales_order_id")), http.StatusOK)
-		}
-		don := r.so(t, "sales_order_id")
+		don := n.donGiaoDangLam(t, ca.hotl)
 		// P3-10 đổi có chủ ý (ADR-090 điểm 1): đơn đã nổ, nước chấm là việc của chính lần nổ.
-		viec := n.id(t, `SELECT id FROM shop.station_job WHERE sales_order_id = $1 AND order_line_id IS NULL`, don)
-		truoc := n.anhDon(t, don) + " | " + n.docChu(t, "SELECT status FROM shop.station_job WHERE id = $1", viec)
-		canMa(t, n.roiQuan(t, n.quay, don), http.StatusConflict, "delivery_served_mark_undecided", "")
-		if sau := n.anhDon(t, don) + " | " + n.docChu(t, "SELECT status FROM shop.station_job WHERE id = $1", viec); sau != truoc {
-			t.Fatalf("%s: lời từ chối S-6 mà vẫn đổi: %s → %s", ca.ten, truoc, sau)
+		nuocCham := n.id(t, `SELECT id FROM shop.station_job WHERE sales_order_id = $1 AND order_line_id IS NULL`, don)
+
+		// Chưa làm gì.
+		truoc := n.anhDon(t, don) + " | " + n.trangThaiViec(t, don)
+		canMa(t, n.roiQuan(t, n.quay, don), http.StatusConflict, "delivery_jobs_not_made", "")
+		if sau := n.anhDon(t, don) + " | " + n.trangThaiViec(t, don); sau != truoc {
+			t.Fatalf("%s: từ chối mà vẫn đổi: %s → %s", ca.ten, truoc, sau)
 		}
-		t.Logf("%s %d đang làm, việc nước chấm %d chưa ra bàn ⇒ delivery_served_mark_undecided; %s", ca.ten, don, viec, truoc)
+
+		// Làm hết trừ nước chấm: còn đúng một việc pending vẫn chặn, các việc made giữ made.
+		var lam []int64
+		for _, id := range n.viecCua(t, don, "pending") {
+			if id != nuocCham {
+				lam = append(lam, id)
+			}
+		}
+		if len(lam) == 0 {
+			t.Fatalf("%s: đơn không có việc nào ngoài nước chấm", ca.ten)
+		}
+		canDat(t, n.bamMe(t, n.quay, lam...), http.StatusCreated)
+		truoc = n.anhDon(t, don) + " | " + n.trangThaiViec(t, don)
+		canMa(t, n.roiQuan(t, n.quay, don), http.StatusConflict, "delivery_jobs_not_made", "")
+		if sau := n.anhDon(t, don) + " | " + n.trangThaiViec(t, don); sau != truoc {
+			t.Fatalf("%s: còn nước chấm chưa làm, từ chối mà vẫn đổi: %s → %s", ca.ten, truoc, sau)
+		}
+		if n.trangThaiDon(t, don) != "in_progress" {
+			t.Fatalf("%s: đơn rời quán khi bếp còn món chưa làm", ca.ten)
+		}
+		t.Logf("%s %d: còn việc pending (nước chấm %d) ⇒ delivery_jobs_not_made; %s", ca.ten, don, nuocCham, truoc)
+	}
+}
+
+// S-6 có lời 2026-10-21: quầy bấm "đã ra bàn" của đơn giao lúc đơn rời quán. Bếp đã làm đủ thì chính
+// lần bấm rời quán ghi made → served cho từng việc, cùng giao dịch, vết mang người quầy; việc đã served
+// từ trước giữ nguyên (không vết thứ hai); rồi đơn sang Đang giao.
+func TestI016_RoiQuanGhiDaRaBanChoViecDaLam(t *testing.T) {
+	n := dungNgoai(t)
+	daRa := func(viec int64) int64 {
+		return n.docSo(t, `SELECT count(*) FROM shop.record_revision WHERE target_table_code = 'station_job' AND target_row = $1
+			AND before_image ->> 'status' = 'made' AND after_image ->> 'status' = 'served' AND person_id = $2 AND btrim(reason) <> ''`,
+			viec, n.quay)
+	}
+	for _, ca := range []struct {
+		ten  string
+		hotl bool
+	}{{"giao (web)", false}, {"hotline giao", true}} {
+		don := n.donGiaoDangLam(t, ca.hotl)
+		tat := n.viecCua(t, don, "pending")
+		if len(tat) < 2 {
+			t.Fatalf("%s: cần ít nhất hai việc, có %v", ca.ten, tat)
+		}
+		canDat(t, n.bamMe(t, n.quay, tat...), http.StatusCreated)
+		// Một việc quầy đã bấm "đã ra bàn" từ trước qua cửa ra bàn: rời quán không ghi nó lần hai.
+		truocDo := tat[0]
+		canDat(t, n.raBan(t, n.quay, truocDo), http.StatusOK)
+		if daRa(truocDo) != 1 {
+			t.Fatalf("%s: việc %d chưa served qua cửa ra bàn", ca.ten, truocDo)
+		}
+
+		rq := n.roiQuan(t, n.quay, don)
+		canDat(t, rq, http.StatusOK)
+		if rq.chu("status") != "delivering" || n.trangThaiDon(t, don) != "delivering" {
+			t.Fatalf("%s: rời quán %v, database %s", ca.ten, rq.body, n.trangThaiDon(t, don))
+		}
+		if con := n.docSo(t, `SELECT count(*) FROM shop.station_job WHERE sales_order_id = $1 AND status <> 'served'`, don); con != 0 {
+			t.Fatalf("%s: còn %d việc chưa served sau khi rời quán: %s", ca.ten, con, n.trangThaiViec(t, don))
+		}
+		for _, id := range tat {
+			if daRa(id) != 1 {
+				t.Fatalf("%s: việc %d có %d vết made → served mang người quầy, muốn đúng 1", ca.ten, id, daRa(id))
+			}
+		}
+		canMa(t, n.roiQuan(t, n.quay, don), http.StatusConflict, "order_transition_not_allowed", "")
+		t.Logf("%s %d: %d việc made ⇒ served lúc rời quán (việc %d đã served từ trước giữ một vết); %s",
+			ca.ten, don, len(tat)-1, truocDo, n.trangThaiViec(t, don))
 	}
 }
 

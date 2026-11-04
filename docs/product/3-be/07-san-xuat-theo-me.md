@@ -173,7 +173,7 @@ chép ba ánh xạ công khai mới. Các bảng chỉ đọc như `menu_compone
 | Chỗ trống | Hôm nay | Ai gỡ |
 |---|---|---|
 | ~~**S-5 — bấm đã ra bàn theo đơn vị nào**~~ | **Có lời 2026-10-09:** số cái từng thứ cho một bàn (§3). Còn suy ra của phiên: lượt gọi sớm hơn trước, đơn không bàn bấm theo mã đơn — ADR-090 điểm 4 *Sửa đổi*. | Chủ quán, `shop-facts.md` §5.4. |
-| **S-6 — lúc quầy bấm đã ra bàn cho đơn giao** | Giữ ADR-088: rời quán khi còn việc chưa served bị từ chối bằng `delivery_served_mark_undecided`; không tự phục vụ ở cửa rời quán. | Chủ quán, `shop-facts.md` §7.2. |
+| **S-6 — lúc quầy bấm đã ra bàn cho đơn giao** | Theo ADR-088 sửa đổi: rời quán ghi `made` → `served` qua chuyển việc trong cùng giao dịch; còn `pending` ⇒ `delivery_jobs_not_made` 409, không đổi gì (2026-11-04, T-223, theo phiếu Claude). | Chủ quán, `shop-facts.md` §7.2. |
 | **F-044 — đối chiếu việc chưa làm của đơn huỷ** | Hiểu vế rút nhu cầu là lọc đơn huỷ khỏi bảng đọc; dữ liệu việc vẫn ở lại. | Pha 1 sửa phép đối chiếu, `work/findings.md`. |
 | **Hoàn thành → Huỷ** | Có cặp vòng đời nhưng cửa huỷ trả mã chưa dựng đường hoàn tiền. | Lát đường tiền; không tự bỏ giới hạn. |
 | **Ai huỷ ghi chú** | Quầy theo suy luận của phiên, ADR-090 điểm 6; không diễn đạt thành lời chủ quán. | Claude/chủ quán. |

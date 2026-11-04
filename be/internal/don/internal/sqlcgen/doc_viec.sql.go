@@ -9,13 +9,31 @@ import (
 	"context"
 )
 
-const roiQuanDocViec = `-- name: RoiQuanDocViec :one
-SELECT EXISTS (SELECT 1 FROM station_job WHERE sales_order_id = $1 AND status <> 'served')
+const roiQuanKhoaViec = `-- name: RoiQuanKhoaViec :many
+SELECT id, status FROM station_job WHERE sales_order_id = $1 ORDER BY id FOR UPDATE
 `
 
-func (q *Queries) RoiQuanDocViec(ctx context.Context, salesOrderID int64) (bool, error) {
-	row := q.db.QueryRow(ctx, roiQuanDocViec, salesOrderID)
-	var exists bool
-	err := row.Scan(&exists)
-	return exists, err
+type RoiQuanKhoaViecRow struct {
+	ID     int64
+	Status string
+}
+
+func (q *Queries) RoiQuanKhoaViec(ctx context.Context, salesOrderID int64) ([]RoiQuanKhoaViecRow, error) {
+	rows, err := q.db.Query(ctx, roiQuanKhoaViec, salesOrderID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []RoiQuanKhoaViecRow
+	for rows.Next() {
+		var i RoiQuanKhoaViecRow
+		if err := rows.Scan(&i.ID, &i.Status); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

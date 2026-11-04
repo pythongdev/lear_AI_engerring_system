@@ -498,15 +498,13 @@ func (s *dienScenario) scenario2(t *testing.T) ketScenario {
 		}
 	}
 	dep := fmt.Sprintf("/orders/%d/departure", dA)
-	r := s.postBuoc(t, sc, 10, dep, s.quay, map[string]any{}, http.StatusConflict)
-	canMa(t, r, http.StatusConflict, "delivery_served_mark_undecided", "")
-	// ADR-088: cửa hiện có đòi quầy ghi served trước departure. Ghi rõ lời
-	// từ chối của đường BA, rồi dùng đúng cửa công khai như donGiao; không SQL lách.
-	s.trao(t, sc, 10, dA)
-	r = s.postBuoc(t, sc, 10, dep, s.quay, map[string]any{}, http.StatusOK)
+	// S-6 có lời 2026-10-21 (ADR-088 Sửa đổi 2026-11-04, T-223): bếp đã làm đủ (bước 8) thì chính lần
+	// bấm rời quán ghi "đã ra bàn" cho mọi việc của đơn — quầy không phải bấm ra bàn riêng trước.
+	r := s.postBuoc(t, sc, 10, dep, s.quay, map[string]any{}, http.StatusOK)
 	if r.chu("status") != "delivering" {
 		t.Fatalf("A không đang giao: %v", r.body)
 	}
+	canSoScenario(t, s.docSo(t, "SELECT count(*) FROM shop.station_job WHERE sales_order_id=$1 AND status<>'served'", dA), 0, "rời quán ghi đã ra bàn cho mọi việc")
 	giao := s.nguoi(t, "S2 người giao", false)
 	r = s.postBuoc(t, sc, 11, fmt.Sprintf("/orders/%d/delivered", dA), giao, thu(ta, 0), http.StatusCreated)
 	hdA := r.so(t, "bill_id")

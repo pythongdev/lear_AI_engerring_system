@@ -127,10 +127,10 @@ const (
 	CodeWrongMakeNoteAlreadyCancelled    Code = "wrong_make_note_already_cancelled"
 	CodeServedQuantityExceedsMade        Code = "served_quantity_exceeds_made"
 
-	CodeOrderIntakePaused           Code = "order_intake_paused"
-	CodeOutsideSellingHours         Code = "outside_selling_hours"
-	CodeShopNotSeeingOrders         Code = "shop_not_seeing_orders"
-	CodeDeliveryServedMarkUndecided Code = "delivery_served_mark_undecided"
+	CodeOrderIntakePaused   Code = "order_intake_paused"
+	CodeOutsideSellingHours Code = "outside_selling_hours"
+	CodeShopNotSeeingOrders Code = "shop_not_seeing_orders"
+	CodeDeliveryJobsNotMade Code = "delivery_jobs_not_made"
 
 	CodeSubmissionCodeConflict           Code = "submission_code_conflict"
 	CodeDiningTableNeedsCleaning         Code = "dining_table_needs_cleaning"
@@ -281,10 +281,10 @@ var statusOf = map[Code]int{
 	CodeWrongMakeNoteAlreadyCancelled:    409,
 	CodeServedQuantityExceedsMade:        409,
 
-	CodeOrderIntakePaused:           409,
-	CodeOutsideSellingHours:         409,
-	CodeShopNotSeeingOrders:         409,
-	CodeDeliveryServedMarkUndecided: 409,
+	CodeOrderIntakePaused:   409,
+	CodeOutsideSellingHours: 409,
+	CodeShopNotSeeingOrders: 409,
+	CodeDeliveryJobsNotMade: 409,
 
 	CodeSubmissionCodeConflict:           409,
 	CodeDiningTableNeedsCleaning:         409,

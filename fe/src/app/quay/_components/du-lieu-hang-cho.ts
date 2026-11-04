@@ -46,8 +46,7 @@ export function loiHangCho(f: ApiFailure) {
   if (f.kind === "unexpected") return "Phản hồi không đúng hợp đồng. Chưa xác nhận được kết quả.";
   switch (f.code) {
     case "order_jobs_not_served": return "Đơn còn món chưa ra bàn. Đang đọc lại.";
-    // S-6 (shop-facts §7.2): quán chưa chốt lúc nào bấm "đã ra bàn" cho đơn giao tận nơi; backend từ chối kèm mã này tới khi có lời.
-    case "delivery_served_mark_undecided": return "Chưa rời quán được: quán chưa chốt lúc nào ghi món đã ra cho đơn giao tận nơi. Hãy hỏi chủ quán.";
+    case "delivery_jobs_not_made": return "Chưa rời quán được: bếp còn món chưa làm xong. Xem bảng sản xuất để biết món nào còn thiếu.";
     case "order_transition_not_allowed": return "Đơn đã được xử lý ở nơi khác. Đang đọc lại.";
     case "sales_order_not_found": return "Không còn tìm thấy đơn. Đang đọc lại.";
     case "not_on_counter_duty": return "Bạn phải đứng quầy để thực hiện việc này.";

@@ -122,14 +122,6 @@ describe("màn sản xuất ở quầy — ra bàn", () => {
     await waitFor(() => expect(docBang(goi)).toBeGreaterThan(truoc));
   });
 
-  it("đơn giao tận nơi (409 delivery_served_mark_undecided): bày lời từ chối của backend", async () => {
-    mo(() => ({ status: 409, body: { code: "delivery_served_mark_undecided", message: "x" } }));
-    const { hop } = await moRaBan("Đơn 77");
-    go(hop, "Số cái Bánh cuốn · Thịt", "1");
-    bam(hop);
-    expect(await within(hop).findByText(/đơn giao tận nơi/i)).toBeTruthy();
-  });
-
   it("không đứng quầy (403 not_on_counter_duty): báo theo code", async () => {
     mo(() => ({ status: 403, body: { code: "not_on_counter_duty", message: "x" } }));
     const { hop } = await moRaBan("Bàn 3");

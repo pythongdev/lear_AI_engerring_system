@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.60.0
+  version: 0.61.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -3335,6 +3335,7 @@ paths:
   /orders/{sales_order_id}/departure:
     post:
       operationId: departOrder
+      description: Rời quán ghi đã ra bàn cho các việc đã làm rồi chuyển đơn sang đang giao trong cùng giao dịch; còn việc chưa làm thì từ chối 409 delivery_jobs_not_made, không đổi gì.
       tags:
         - don
       parameters:
@@ -8125,7 +8126,7 @@ components:
         - order_intake_paused
         - outside_selling_hours
         - shop_not_seeing_orders
-        - delivery_served_mark_undecided
+        - delivery_jobs_not_made
         - debt_note_required
         - order_handover_mismatch
         - order_jobs_not_served
@@ -8265,7 +8266,7 @@ components:
         order_intake_paused: 409
         outside_selling_hours: 409
         shop_not_seeing_orders: 409
-        delivery_served_mark_undecided: 409
+        delivery_jobs_not_made: 409
         internal_error: 500
         invalid_request: 400
         unauthenticated: 401

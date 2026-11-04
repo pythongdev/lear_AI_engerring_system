@@ -458,16 +458,26 @@ func (s *Service) RoiQuanDon(ctx context.Context, nguoi int64, id int64) error {
 			}
 			return err
 		}
-		// Kiểm cặp trước S-6; chỉ ChuyenDon sở hữu lần ghi trạng thái.
+		// Kiểm cặp chuyển đơn trước khi xét việc trạm.
 		if err := vongdoi.KiemChuyenDon(status, "delivering", "", handover); err != nil {
 			return err
 		}
-		chuaRaBan, err := repo.roiQuanDocViec(ctx, id)
+		viecs, err := repo.roiQuanKhoaViec(ctx, id)
 		if err != nil {
 			return err
 		}
-		if chuaRaBan {
-			return apierr.Error{Code: apierr.CodeDeliveryServedMarkUndecided}
+		// Kiểm hết việc đã khoá trước khi chuyển; một việc pending chặn cả đơn.
+		for _, v := range viecs {
+			if v.Status == "pending" {
+				return apierr.Error{Code: apierr.CodeDeliveryJobsNotMade}
+			}
+		}
+		for _, v := range viecs {
+			if v.Status == "made" {
+				if err := vongdoi.ChuyenViec(ctx, tx, v.ID, "served"); err != nil {
+					return err
+				}
+			}
 		}
 		return vongdoi.ChuyenDon(ctx, tx, id, "delivering")
 	})

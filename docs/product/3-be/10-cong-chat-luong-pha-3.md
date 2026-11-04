@@ -63,7 +63,7 @@ lời gọi thật lấy từ dòng `t.Logf` của lần chạy **2026-10-13 11:
 | 1–4 | `POST /online-orders` 201 × 2 · `POST /phone-orders` 201 · gửi lại 200 | ba đơn lẻ không phiên, không bàn, kể cả A và C cùng một khách; A · B `pending_confirmation`, **C `confirmed`** |
 | 5–6 | `POST /orders/{id}/approval` × 2 · `POST /orders/{id}/prepayment` 201 | duyệt A · B; trả trước của B ghi lúc quầy nhận tiền, không lúc khách chọn |
 | 7–9 | `POST /preorder-releases` 200 · `GET /production-board` · `POST /production-batches` 201 | C nổ ở mốc nhắc; **mỗi đơn đúng một việc nước chấm**; đóng gói chưa làm đơn nào `completed` |
-| 10 | `POST /orders/{id}/departure` **409 `delivery_served_mark_undecided`** · `POST /served-marks` · `departure` 200 | **S-6** chưa có lời: cửa rời quán **từ chối** khi việc chưa `served` (ADR-088), không đoán; bài diễn bưng qua cửa công khai rồi rời quán ⇒ A `delivering` |
+| 10 | `POST /orders/{id}/departure` **200** | Bếp đã làm đủ ở bước 8; cửa rời quán ghi `made` → `served` qua chuyển việc rồi A `delivering`, cùng giao dịch; còn `pending` thì từ chối `delivery_jobs_not_made` 409 (2026-11-04, T-223, theo phiếu Claude). |
 | 11 | `POST /orders/{id}/delivered` 201 | người đi giao thu tại chỗ khách: hoá đơn A 50.000 tiền mặt, người là người giao |
 | 12–13 | `POST /served-marks` · `POST /orders/{id}/handover` 201 × 2 | B dùng trả trước, **không thu lại** (30.000 chuyển khoản trả trước); C thu 15.000 tại quầy |
 | 14 | gửi lại 200 | ba đơn `completed`; ba hoá đơn, một lần trả trước; chỉ A từng `delivering` |
@@ -155,8 +155,7 @@ không đổi cửa. Câu Telegram của `F-070` thành **U-080** trước khi m
   cửa buộc nó thuộc ngày của sổ và trước giờ hệ thống (`TestYC08_NhapBuTuChoi`). `customer_needed_at` là giờ hẹn, không
   phải mốc tính tiền.
 - [x] **8. Ba scenario đi hết qua API** — §1: bốn test PASS, mỗi bước một lời gọi thật; một ngày bán giả ⇒ *gap_vnd 0*,
-  77 tập đối chiếu rỗng; lỗi cài tách hoá đơn bị bắt. ⚠️ Tick kèm: bước 10 Scenario 2 dừng ở **S-6** (từ chối có mã,
-  xem ô 11); ba tập `I-008` bỏ qua có lý do (§1.4).
+  77 tập đối chiếu rỗng; lỗi cài tách hoá đơn bị bắt. Bước 10 Scenario 2 nay đi thẳng 200, ghi đã ra bàn khi rời quán (2026-11-04, T-223, theo phiếu Claude); ba tập `I-008` bỏ qua có lý do (§1.4).
 - [x] **9. Mỗi phụ thuộc ngoài đã bị cắt thử** — sáu dòng PT ở [`09-realtime-du-phong.md`](09-realtime-du-phong.md),
   lần chạy 2026-10-13: PT-1 `TestI008_KhongLuongQuayThiBaKenhTuBamBiTuChoi` · `TestI008_CoLuongQuayThiNhanDon` ·
   `TestI008_NhieuLuongQuayVaTuChoiSaiLop` PASS; PT-2 `TestI008_PT2_DatabaseMatVaNoiLai` PASS; PT-3 `TestI012_CuaTienCanNguoiCoTen`
@@ -171,8 +170,8 @@ không đổi cửa. Câu Telegram của `F-070` thành **U-080** trước khi m
   (*màn đọc lại*, *màn tự kéo — pha 4*) — không tên component, không route.
 - [x] **11. Không câu nghiệp vụ nào đang mở mà một cửa phải đoán thay** — `docs/product/99-unknowns.md` không còn câu
   nào dưới *Đang mở* (brief 2026-10-13). Bảng §4 của kế hoạch: bấm *đã ra bàn* theo đơn vị nào có lời 2026-10-09; giảm
-  giá cả đơn có lời 2026-10-12 và cửa ở `T-175`; chỉ **S-6** chưa có lời ⇒ cửa rời quán **từ chối** kèm
-  `delivery_served_mark_undecided` (Scenario 2 bước 10 in đúng lời ấy).
+  giá cả đơn có lời 2026-10-12 và cửa ở `T-175`; **S-6** đã có lời: cửa rời quán ghi đã ra bàn cho việc đã làm; còn việc chưa làm thì từ chối
+  `delivery_jobs_not_made`. Scenario 2 bước 10 nay đi thẳng 200 (2026-11-04, T-223, theo phiếu Claude).
 - [x] **12. Hàng `CLAUDE.md` §2 *Hợp đồng API* hết nói *chưa có owner*** — hàng trỏ `docs/product/3-be/openapi.yaml`
   và `01-hop-dong-api.md`; [`../00-index.md`](../00-index.md) kể tên cả mười một file của `3-be/`, kể cả file này.
 
@@ -182,8 +181,8 @@ không đổi cửa. Câu Telegram của `F-070` thành **U-080** trước khi m
 
 - **`F-068`** — ô 1 · ô 2 (`work/findings.md`): test từ chối cho vế tầng 3 của `I-006` · `I-019`; test cắt cho hai vế
   tầng 2 của `I-020` và cắt qua cửa cho vế đồng thời của `I-018`. Lượt chấm không sửa code.
-- **S-6** — đơn giao tận nơi, quầy bấm *đã ra bàn* lúc nào: chủ quán, `master_plan/shop-facts.md` §7.2. Không chặn ô
-  nào (cửa từ chối kèm mã), nhưng Scenario 2 chưa diễn được đúng trình tự BA *trao tại chỗ khách*.
+- **S-6** — đơn giao tận nơi ghi *đã ra bàn* lúc rời quán theo lời chủ quán, `master_plan/shop-facts.md` §7.2.
+  Scenario 2 bước 10 nay đi thẳng 200 khi bếp đã làm đủ (2026-11-04, T-223, theo phiếu Claude).
 - **`F-069`** — lượt rà `P3-14`: `master_plan/prompt-fullstack.md` §3.6 giữ một bề mặt API cũ khác hẳn hợp đồng.
 - **`F-070`** — lượt rà `P3-14`: bốn lời hứa *việc của pha 3* chưa có dòng nào nhận — đứng đầu là **Telegram báo đơn web về
   quầy** (`master_plan/shop-facts.md` §1), pha 3 chỉ dựng SSE; nên thành một câu hỏi cho chủ repo trước khi ký chuyển pha 4.

@@ -239,8 +239,8 @@ func (r repository) roiQuanKhoaDon(ctx context.Context, id int64) (string, *stri
 	return row.Status, chuGo(row.HandoverCode), err
 }
 
-func (r repository) roiQuanDocViec(ctx context.Context, id int64) (bool, error) {
-	return r.q.RoiQuanDocViec(ctx, id)
+func (r repository) roiQuanKhoaViec(ctx context.Context, id int64) ([]sqlcgen.RoiQuanKhoaViecRow, error) {
+	return r.q.RoiQuanKhoaViec(ctx, id)
 }
 
 // Nhập bù dùng cùng các ô INSERT của tao_luot_goi, tạo thẳng phiên đã đóng.

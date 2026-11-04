@@ -159,11 +159,13 @@ describe("hàng chờ quầy — bày đơn và rời quán", () => {
     await waitFor(() => expect(docHang(goi)).toBeGreaterThan(truoc));
   });
 
-  it("rời quán bị chặn vì S-6 chưa có lời (409 delivery_served_mark_undecided): nói rõ, không in mã trơ", async () => {
-    mo(<Page />, () => ({ status: 409, body: { code: "delivery_served_mark_undecided", message: "x" } }));
+  // T-223 (chủ repo chọn 2026-11-04): bếp còn món chưa làm xong thì đơn giao không rời quán; lời chỉ chỗ xem món còn thiếu.
+  it("rời quán bị chặn vì bếp còn món chưa làm (409 delivery_jobs_not_made): nói rõ, không in mã trơ", async () => {
+    mo(<Page />, () => ({ status: 409, body: { code: "delivery_jobs_not_made", message: "x" } }));
     fireEvent.click(within(await screen.findByRole("region", { name: "Đơn đang làm 60" })).getByRole("button", { name: "Rời quán đơn 60" }));
-    expect(await screen.findByText(/chưa chốt lúc nào ghi món đã ra/i)).toBeTruthy();
-    expect(screen.queryByText(/Mã: delivery_served_mark_undecided/)).toBeNull();
+    expect(await screen.findByText(/bếp còn món chưa làm xong/i)).toBeTruthy();
+    expect(screen.getByText(/bảng sản xuất/i)).toBeTruthy();
+    expect(screen.queryByText(/delivery_jobs_not_made/)).toBeNull();
   });
 
   it("/quay có lối vào soạn lượt gọi và đơn điện thoại", async () => {
