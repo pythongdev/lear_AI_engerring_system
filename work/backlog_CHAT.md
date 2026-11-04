@@ -516,6 +516,31 @@ tiến độ; Gate 1f/1g; gate.
 
 **Nhận việc:**
 
+2026-11-04, Claude: bắt đầu. U-113 đã có lời 2026-11-01 nên dòng *Chặn bởi* trên là lịch sử; khách nhắn trực tiếp vẫn
+không mở. Test viết trước `be/internal/hoptin/hop_tin_test.go` (sáu ca `TestI038_*`), chạy đỏ đúng lý do trên database thật
+qua `be-check` với stub `-overlay`: cả sáu dừng ở lời gọi HTTP đầu tiên với 404, 327 test khác xanh. Hợp đồng Claude chốt trong
+đầu file test, trong khung ADR-137: thân hai cửa gửi, 201/200, `message_recipient_invalid` 422 cho người nhận không có ·
+không tài khoản `hoat_dong` · chính người gửi, `station_message_not_found` 404 cho tin trả lời không có hoặc người gửi không
+đọc được, `submission_code_conflict` 409 cho cùng dấu khác nội dung hoặc dấu của người khác (theo §8 hợp đồng), chia trang
+như `customerOrders` (limit 1–50, mặc định 20). Phiếu: `../lean_wt/chat-review/CHAT-13-phieu.md`; worktree `../lean_wt/CHAT-13`,
+nhánh `codex/CHAT-13`.
+
+2026-11-04, Claude (quyết khi Codex dừng đúng chỗ): hai cửa cùng `INSERT station_message` trái Gate 1f (một ô một cửa). Theo khuôn
+`nhandon/bao_mu` → `nhandon/ghi_mu` (ADR-097): ô thêm thuộc cửa nội bộ `hoptin/ghi` lớp `theo_cua_goi`; `hoptin/quay_gui` (`quay`)
+và `hoptin/gui_ve_quay` (`nguoi_quan`) kiểm quyền, người nhận, bàn, tin trả lời và dấu rồi gọi nó trong cùng giao dịch. Ma trận
+ba dòng thay vì hai dòng ADR-137 *Consequences* ghi; không đổi hành vi nên không sửa ADR.
+
+2026-11-04, CHAT-13 xong. **Codex** thi công (worktree `../lean_wt/CHAT-13`, nhánh `codex/CHAT-13`, nền `56f1965`, model
+`gpt-6-astra`, hai vòng: vòng một dừng đúng ở Gate 1f, vòng hai sau quyết định trên); **Claude** viết test trước, duyệt diff và tích
+hợp. File: `be/internal/hoptin/` (`handler.go`, `service.go`, `repository.go`, `sql/` với ô ghi duy nhất ở `sql/ghi/them.sql`,
+`internal/sqlcgen/`, `hop_tin_test.go`), `be/sqlc.yaml`, `be/cmd/server/router.go`, `be/internal/apierr/apierr.go`,
+`docs/product/3-be/openapi.yaml` (0.57.0), `01-hop-dong-api.md`, `02-vai-va-quyen.md`, `fe/src/lib/api/schema.ts`. Khi tích
+hợp Claude sửa: ba dòng ma trận `hoptin/*` bị chèn giữa khối `nhandon/*`; mô tả `sendStationMessageToCounter` chép nhầm câu người
+nhận; hai đường đọc trùng tóm tắt; một dòng trống thừa ở đoạn hợp đồng; sinh lại type FE. Bằng chứng: mã băm test không đổi
+(`e198c7d8…`); Claude chạy `./scripts/gate.sh` cây chính — sáu ca `TestI038_*` của `hoptin` PASS, `be-check` PASS, Gate 1f
+(139 ô, 116 cửa) và 1g (0.57.0) PASS, `PASS gate không cổng nào đỏ`. Chưa có người duyệt thứ ba. Ghi nhận: cửa gửi lại cũng phát
+một tín hiệu `changed` dù không thêm dòng (đi qua `authz.RunAs`); vô hại vì tín hiệu không mang nội dung.
+
 [↑ đầu file](#top)
 
 ---

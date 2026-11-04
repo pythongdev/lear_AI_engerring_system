@@ -92,6 +92,11 @@ kiểm trước khi đọc. Không phiên trả `unauthenticated`; người ngo�
 chủ quán không đứng quầy, trả `not_on_counter_duty`. Chỉ đọc việc trạm và mẻ,
 không ghi dữ liệu; bảng trạm công khai giữ nguyên.
 
+**Cửa đọc hộp tin (CHAT-13, 2026-11-04, phiếu Claude):** `GET /station-messages/mine` thuộc lớp
+`nguoi_quan`, chỉ tin mình gửi hoặc nhận, người lấy từ phiên. `GET /station-messages/counter` thuộc lớp
+`quay_hoac_chu_quan`, đọc mọi tin. Theo ADR-137 điểm 5; cả hai từ chối không phiên hoặc chỉ cookie khách
+bằng `unauthenticated`; người ngoài quầy không phải chủ quán đọc hộp quầy nhận `not_on_counter_duty`.
+
 ## 3. Ma trận cửa × lớp
 
 Mỗi cửa ghi của backend — thư mục `be/internal/<gói>/sql/<cửa>/` (`QC-13`) — có **đúng một** dòng, và
@@ -114,6 +119,9 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `taikhoan/tu_choi` | `chu_quan` | Phiếu T-190, ADR-109; cửa tu_choi |
 | `taikhoan/yeu_cau_dat_lai` | `cong_khai` | Phiếu T-190, ADR-109; cửa yeu_cau_dat_lai |
 | `nguoi/tao_nguoi` | `theo_cua_goi` | ADR-109 — duyệt hoặc khởi tạo gọi trong giao dịch |
+| `hoptin/quay_gui` | `quay` | ADR-137 điểm 4 · 5; CHAT-13; gọi cửa ghi nội bộ theo khuôn ADR-097 |
+| `hoptin/gui_ve_quay` | `nguoi_quan` | ADR-137 điểm 4 · 5; CHAT-13; gọi cửa ghi nội bộ theo khuôn ADR-097 |
+| `hoptin/ghi` | `theo_cua_goi` | ADR-137 điểm 4 · 5; Claude chốt CHAT-13 ngày 2026-11-04 theo khuôn ADR-097; chủ duy nhất của INSERT tin |
 | `nhandon/tam_dung` | `chu_quan` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — tạm dừng cả năm kênh |
 | `nhandon/tiep_tuc` | `chu_quan` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — khép khoảng tạm dừng |
 | `nhandon/bao_mu` | `quay_hoac_chu_quan` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — người khai quán mù; gọi cửa ghi_mu |

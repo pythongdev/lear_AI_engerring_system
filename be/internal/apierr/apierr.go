@@ -15,6 +15,8 @@ import (
 type Code string
 
 const (
+	CodeMessageRecipientInvalid        Code = "message_recipient_invalid"
+	CodeStationMessageNotFound         Code = "station_message_not_found"
 	CodeGoogleLoginDisabled            Code = "google_login_disabled"
 	CodeGoogleTokenInvalid             Code = "google_token_invalid"
 	CodeIdentifierInvalid              Code = "identifier_invalid"
@@ -164,6 +166,8 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
+	CodeMessageRecipientInvalid:        422,
+	CodeStationMessageNotFound:         404,
 	CodeGoogleLoginDisabled:            503,
 	CodeGoogleTokenInvalid:             401,
 	CodeIdentifierInvalid:              400,
@@ -308,6 +312,7 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"station_message_submission_code_key":     CodeSubmissionCodeConflict,
 	"account_contact_check":                   CodeContactRequired,
 	"account_phone_check":                     CodeIdentifierInvalid,
 	"account_phone_key":                       CodePhoneTaken,

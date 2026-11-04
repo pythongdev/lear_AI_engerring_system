@@ -329,3 +329,15 @@ sql:
         package: sqlcgen
         out: internal/khach/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/hoptin/sql
+      - internal/hoptin/sql/quay_gui
+      - internal/hoptin/sql/gui_ve_quay
+      - internal/hoptin/sql/ghi
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/hoptin/internal/sqlcgen
+        sql_package: pgx/v5

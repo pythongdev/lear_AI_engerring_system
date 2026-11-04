@@ -371,3 +371,15 @@ CHAT-12 (2026-11-03, Claude, ADR-137): 0.55.0 → 0.56.0. Bảng chỉ thêm `st
 ràng buộc vào `x-constraint-errors`: khoá chính `internal`, chín tên còn lại `unreviewed` vì chưa cửa nào ghi tin.
 CHAT-13 dựng bốn cửa của ADR-137 điểm 5 thì xét từng tên — người nhận lạ thành `message_recipient_invalid`, mã gửi
 trùng là đường gửi lại an toàn của điểm 6. Không đường gọi hay mã mới.
+
+CHAT-13 (2026-11-04, Codex thi công theo phiếu Claude, ADR-137 điểm 4 · 5 · 6 · 7): 0.56.0 → 0.57.0.
+Thêm bốn đường station-messages, hai mã message_recipient_invalid (422) và station_message_not_found (404).
+Hai cửa công khai kiểm quyền rồi gọi hoptin/ghi trong cùng giao dịch; cửa nội bộ là chủ duy nhất của INSERT,
+Claude chốt theo khuôn ADR-097 ngày 2026-11-04. Không thêm SSE, tín hiệu qua authz.RunAs sau COMMIT.
+Nhận việc: các tên station_message là internal vì hình, người nhận hoạt động và khác người gửi, bàn và
+quyền đọc tin trả lời đã được kiểm trước khi ghi; người gửi lấy từ giao dịch, id do database sinh.
+Riêng station_message_submission_code_key ánh xạ submission_code_conflict; tranh chấp chạy lại toàn bộ
+giao dịch tối đa bốn lần. Sau quyền, cùng người và dấu so người nhận, work_code, body từng byte,
+dining_table_id và reply_to_message_id (vắng tương đương null): cùng nội dung trả 200 tin cũ, khác nội dung
+hoặc người gửi trả 409 không lộ tin cũ. Tạo mới trả 201. Đọc id DESC, before_id loại trừ, limit 1–50 mặc định
+20, lấy thêm một tin để xác định next_before_id; read_at là now() database, chu kỳ theo realtime.PollIntervalSeconds.

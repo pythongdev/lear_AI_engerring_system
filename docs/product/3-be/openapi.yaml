@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.56.0
+  version: 0.57.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -57,6 +57,134 @@ tags:
   - name: ket
     description: Két và ngày bán — tiền đầu ngày, đếm két, khai sổ giấy, ký đối chiếu ngày (06-duong-tien.md).
 paths:
+  /station-messages:
+    post:
+      operationId: sendStationMessage
+      tags: [hoptin]
+      summary: Gửi tin tới một người.
+      description: Lớp quay. Người gửi lấy từ phiên, không nhận từ thân. Xét hình (invalid_request kèm field), quyền, dấu gửi lại, người nhận, bàn, tin trả lời rồi ghi. Người nhận phải có tài khoản hoat_dong và khác người gửi, nếu không trả message_recipient_invalid (422). Bàn không có trả dining_table_not_found (404). Tin trả lời không có hoặc không đọc được trả station_message_not_found (404); ở cửa này quầy đọc mọi tin. Cùng người, dấu và nội dung trả 200 tin cũ; khác người hoặc nội dung trả submission_code_conflict (409), không lộ tin cũ. Body so từng byte, không cắt khoảng trắng. Không phiên người của quán, kể cả chỉ cookie khách, trả unauthenticated. Chỉ tạo tin, không đổi tiến độ; tín hiệu qua cơ chế sau COMMIT hiện có.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendStationMessage'
+      responses:
+        '201':
+          description: Tin mới.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StationMessage'
+        '200':
+          description: Tin đã gửi cùng dấu và nội dung.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StationMessage'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /station-messages/to-counter:
+    post:
+      operationId: sendStationMessageToCounter
+      tags: [hoptin]
+      summary: Gửi tin về quầy.
+      description: Lớp nguoi_quan. Người gửi lấy từ phiên, không nhận từ thân. Không có người nhận; tin về quầy ghi recipient_person_id null. Xét hình (invalid_request kèm field), quyền, dấu gửi lại, bàn, tin trả lời rồi ghi. Bàn không có trả dining_table_not_found (404). Tin trả lời không có hoặc không đọc được trả station_message_not_found (404); ở cửa này chỉ tính tin mình gửi hoặc nhận. Cùng người, dấu và nội dung trả 200 tin cũ; khác người hoặc nội dung trả submission_code_conflict (409), không lộ tin cũ. Body so từng byte, không cắt khoảng trắng. Không phiên người của quán, kể cả chỉ cookie khách, trả unauthenticated. Chỉ tạo tin, không đổi tiến độ; tín hiệu qua cơ chế sau COMMIT hiện có.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendStationMessageToCounter'
+      responses:
+        '201':
+          description: Tin mới.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StationMessage'
+        '200':
+          description: Tin đã gửi cùng dấu và nội dung.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StationMessage'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /station-messages/mine:
+    get:
+      operationId: listMyStationMessages
+      tags: [hoptin]
+      summary: Đọc hộp tin của chính người đang đăng nhập.
+      description: Lớp nguoi_quan. Chỉ tin do chính người của phiên gửi hoặc nhận; không nhận tham số người. Theo id DESC, before_id loại trừ. next_before_id là id cuối trang nếu còn tin cũ hơn, null khi hết. read_at lấy now() database. Không phiên người của quán, kể cả chỉ cookie khách, trả unauthenticated. Hình sai trả invalid_request với field trước khi xét quyền.
+      parameters:
+        - name: before_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: Trang tin, messages rỗng khi không có tin.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StationMessages'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /station-messages/counter:
+    get:
+      operationId: listCounterStationMessages
+      tags: [hoptin]
+      summary: Đọc hộp tin của quầy.
+      description: Lớp quay_hoac_chu_quan. Mọi tin; người ngoài quầy không phải chủ quán nhận not_on_counter_duty. Theo id DESC, before_id loại trừ. next_before_id là id cuối trang nếu còn tin cũ hơn, null khi hết. read_at lấy now() database. Không phiên người của quán, kể cả chỉ cookie khách, trả unauthenticated. Hình sai trả invalid_request với field trước khi xét quyền.
+      parameters:
+        - name: before_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: Trang tin, messages rỗng khi không có tin.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StationMessages'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sale-days/{sale_date}/summary:
     get:
       operationId: getSaleDaySummary
@@ -4333,6 +4461,104 @@ components:
       name: banhcuon_phien
       description: Phiên đăng nhập theo ADR-109; HttpOnly, Secure, SameSite=Strict, hạn 7 ngày.
   schemas:
+    StationWorkCode:
+      type: string
+      enum: [canh, don_ban, trang_banh, gap_banh, khac]
+    SendStationMessage:
+      type: object
+      required: [submission_code, work_code, body, recipient_person_id]
+      properties:
+        submission_code:
+          $ref: '#/components/schemas/SubmissionCode'
+        work_code:
+          $ref: '#/components/schemas/StationWorkCode'
+        body:
+          type: string
+          minLength: 1
+          maxLength: 500
+          pattern: '\S'
+          description: Không chỉ khoảng trắng; giữ nguyên từng byte, đếm ký tự.
+        dining_table_id:
+          type: [integer, 'null']
+          format: int64
+          minimum: 1
+        reply_to_message_id:
+          type: [integer, 'null']
+          format: int64
+          minimum: 1
+        recipient_person_id:
+          type: integer
+          format: int64
+          minimum: 1
+    SendStationMessageToCounter:
+      type: object
+      required: [submission_code, work_code, body]
+      properties:
+        submission_code:
+          $ref: '#/components/schemas/SubmissionCode'
+        work_code:
+          $ref: '#/components/schemas/StationWorkCode'
+        body:
+          type: string
+          minLength: 1
+          maxLength: 500
+          pattern: '\S'
+          description: Không chỉ khoảng trắng; giữ nguyên từng byte, đếm ký tự.
+        dining_table_id:
+          type: [integer, 'null']
+          format: int64
+          minimum: 1
+        reply_to_message_id:
+          type: [integer, 'null']
+          format: int64
+          minimum: 1
+    StationMessage:
+      type: object
+      required: [station_message_id, sender_person_id, sender_name, recipient_person_id, recipient_name, work_code, body, dining_table_id, reply_to_message_id, created_at]
+      properties:
+        station_message_id:
+          type: integer
+          format: int64
+        sender_person_id:
+          type: integer
+          format: int64
+        sender_name:
+          type: string
+        recipient_person_id:
+          type: [integer, 'null']
+          format: int64
+        recipient_name:
+          type: [string, 'null']
+        work_code:
+          $ref: '#/components/schemas/StationWorkCode'
+        body:
+          type: string
+        dining_table_id:
+          type: [integer, 'null']
+          format: int64
+        reply_to_message_id:
+          type: [integer, 'null']
+          format: int64
+        created_at:
+          type: string
+          format: date-time
+    StationMessages:
+      type: object
+      required: [messages, next_before_id, read_at, poll_interval_seconds]
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/StationMessage'
+        next_before_id:
+          type: [integer, 'null']
+          format: int64
+        read_at:
+          type: string
+          format: date-time
+        poll_interval_seconds:
+          type: integer
+          const: 20
     CustomerRegistration:
       type: object
       required: [display_name, password]
@@ -7647,6 +7873,8 @@ components:
         - menu_item_component_not_found
         - menu_item_discontinued
         - option_combination_invalid
+        - message_recipient_invalid
+        - station_message_not_found
         - submission_code_conflict
         - dining_table_needs_cleaning
         - dining_table_not_needing_cleaning
@@ -7818,6 +8046,8 @@ components:
         menu_item_component_not_found: 404
         menu_item_discontinued: 409
         option_combination_invalid: 422
+        message_recipient_invalid: 422
+        station_message_not_found: 404
         submission_code_conflict: 409
         dining_table_needs_cleaning: 409
         dining_table_not_needing_cleaning: 409
@@ -8637,16 +8867,16 @@ x-constraint-errors:
   station_job_transfer_pkey: internal
   station_job_transfer_production_batch_item_fkey: internal
   station_job_transfer_to_station_job_fkey: internal
-  station_message_body_check: unreviewed
-  station_message_different_people_check: unreviewed
-  station_message_dining_table_fkey: unreviewed
+  station_message_body_check: internal
+  station_message_different_people_check: internal
+  station_message_dining_table_fkey: internal
   station_message_pkey: internal
-  station_message_recipient_person_fkey: unreviewed
-  station_message_reply_to_message_fkey: unreviewed
-  station_message_sender_person_fkey: unreviewed
-  station_message_submission_code_check: unreviewed
-  station_message_submission_code_key: unreviewed
-  station_message_work_code_check: unreviewed
+  station_message_recipient_person_fkey: internal
+  station_message_reply_to_message_fkey: internal
+  station_message_sender_person_fkey: internal
+  station_message_submission_code_check: internal
+  station_message_submission_code_key: submission_code_conflict
+  station_message_work_code_check: internal
   supply_day_entry_kind_code_check: internal
   supply_day_entry_measure_nonnegative_finite_check: internal
   supply_day_entry_one_kind_per_item_day_key: supply_day_entry_already_recorded
