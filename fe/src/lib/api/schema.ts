@@ -4,6 +4,75 @@
  */
 
 export interface paths {
+    "/leave-notices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Lớp chu_quan; mọi người, kể cả đã huỷ, leave_date ASC rồi id ASC; không chia trang. Kiểm hình trước quyền; from và to bắt buộc, from ≤ to, to − from ≤ 92 ngày; sai khoảng trả invalid_request với field to. Không phiên hoặc chỉ cookie khách trả unauthenticated, người không phải chủ quán trả owner_only. read_at là now() database. */
+        get: operations["listLeaveNotices"];
+        put?: never;
+        /** @description Lớp nguoi_quan; chỉ báo cho người của phiên, không nhận person_id. Kiểm hình trước quyền, tra dấu trước luật ngày. Cùng người, dấu và ngày trả 200 dòng hiện tại kể cả đã huỷ hoặc ngày đã qua; khác ngày trả submission_code_conflict (409). Dấu duy nhất theo người. Tranh chấp một trong hai khoá duy nhất chạy lại cả giao dịch tối đa bốn lần. Ngày đã qua trả leave_date_in_past (422), trùng ngày còn hiệu lực trả leave_notice_day_taken (409), đã có ô đi làm trả leave_day_attendance_ticked (409). Không phiên hoặc chỉ cookie khách trả unauthenticated (401). */
+        post: operations["createLeaveNotice"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/leave-notices/{leave_notice_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Lớp nguoi_quan. Chủ quán huỷ mọi dòng bất cứ lúc nào; người khác chỉ huỷ dòng mình trước ngày nghỉ theo lịch Việt Nam. Dòng không có hoặc của người khác trả cùng leave_notice_not_found (404); hết hạn trả leave_notice_cancel_closed (422). Đã huỷ trả dòng hiện tại, không ghi lại dấu hay vết. Không thân. Kiểm mã nguyên dương trước quyền; sai trả invalid_request với field leave_notice_id. Không phiên hoặc chỉ cookie khách trả unauthenticated (401). Người và lý do vết do backend cấp. */
+        post: operations["cancelLeaveNotice"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/leave-notices/{leave_notice_id}/acknowledge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Lớp chu_quan, kiểm lớp trước khi tìm dòng; người khác trả owner_only (403). Không có dòng trả leave_notice_not_found (404). Đã biết trả dòng hiện tại, không ghi lại dấu hay vết. Dòng đã huỷ vẫn ghi đã biết được. Không thân. Kiểm mã nguyên dương trước quyền; sai trả invalid_request với field leave_notice_id. Không phiên hoặc chỉ cookie khách trả unauthenticated (401). Người và lý do vết do backend cấp. */
+        post: operations["acknowledgeLeaveNotice"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/leave-notices/mine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Lớp nguoi_quan, chỉ người của phiên; không nhận định danh người từ query, kể cả đã huỷ. id DESC, before_id loại trừ; lấy thêm một dòng để xác định next_before_id, null khi hết. Kiểm hình trước quyền; sai trả invalid_request với field tương ứng. Không phiên hoặc chỉ cookie khách trả unauthenticated (401). read_at là now() database. */
+        get: operations["listMyLeaveNotices"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/station-messages": {
         parameters: {
             query?: never;
@@ -2374,6 +2443,49 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        CreateLeaveNotice: {
+            submission_code: components["schemas"]["SubmissionCode"];
+            /**
+             * Format: date
+             * @description Ngày lịch hợp lệ YYYY-MM-DD.
+             */
+            leave_date: string;
+        };
+        LeaveNotice: {
+            /** Format: int64 */
+            leave_notice_id: number;
+            /** Format: int64 */
+            person_id: number;
+            person_name: string;
+            /** Format: date */
+            leave_date: string;
+            /**
+             * @description bao_truoc khi leave_date trừ ngày lịch Việt Nam của created_at ≥ 3, còn lại dot_xuat; suy trong SQL, không cất.
+             * @enum {string}
+             */
+            notice_kind: "bao_truoc" | "dot_xuat";
+            created_at: components["schemas"]["Instant"];
+            /** Format: date-time */
+            acknowledged_at: string | null;
+            /** Format: int64 */
+            acknowledged_by_person_id: number | null;
+            /** Format: date-time */
+            cancelled_at: string | null;
+            /** Format: int64 */
+            cancelled_by_person_id: number | null;
+            /** @description Chưa huỷ và người đọc là chủ quán, hoặc chính người nghỉ khi ngày lịch Việt Nam hôm nay còn trước leave_date. */
+            can_cancel: boolean;
+        };
+        MyLeaveNotices: {
+            leave_notices: components["schemas"]["LeaveNotice"][];
+            /** Format: int64 */
+            next_before_id: number | null;
+            read_at: components["schemas"]["Instant"];
+        };
+        LeaveNotices: {
+            leave_notices: components["schemas"]["LeaveNotice"][];
+            read_at: components["schemas"]["Instant"];
+        };
         /** @enum {string} */
         StationWorkCode: "canh" | "don_ban" | "trang_banh" | "gap_banh" | "khac";
         SendStationMessage: {
@@ -3994,7 +4106,7 @@ export interface components {
          * @description Mã lỗi công khai. FE quyết hiện gì theo mã, không theo status, không theo chữ. Mã của một luật do lát dựng cửa của luật ấy thêm (01-hop-dong-api.md §3).
          * @enum {string}
          */
-        ErrorCode: "identifier_invalid" | "contact_required" | "phone_taken" | "google_login_disabled" | "google_token_invalid" | "login_failed" | "menu_combo_not_found" | "menu_combo_hidden" | "menu_combo_price_in_sales_hours" | "menu_combo_item_not_found" | "menu_combo_surcharge_in_sales_hours" | "combo_portions_mismatch" | "menu_category_not_found" | "menu_category_hidden" | "menu_category_name_taken" | "menu_item_already_in_category" | "expense_category_not_found" | "expense_not_found" | "expense_item_in_use" | "expense_category_in_use" | "expense_item_name_taken" | "expense_item_not_found" | "supply_item_unit_already_set" | "supply_day_entry_already_recorded" | "supply_item_name_taken" | "supply_day_entry_not_found" | "assigned_task_guide_not_found" | "assigned_task_guide_hidden" | "assigned_task_guide_not_text" | "assigned_task_guide_file_missing" | "file_too_large" | "training_record_not_found" | "training_record_hidden" | "assigned_task_not_found" | "person_not_found" | "assigned_task_hidden" | "assigned_task_already_done" | "assigned_task_not_done" | "supply_item_not_found" | "expense_category_name_taken" | "username_taken" | "email_taken" | "password_too_short" | "invalid_credentials" | "login_temporarily_blocked" | "verification_invalid" | "no_pending_email" | "verification_rate_limited" | "reset_token_invalid" | "account_not_pending" | "account_not_active" | "account_not_locked" | "account_person_is_owner" | "cross_origin_write" | "order_intake_already_paused" | "order_intake_not_paused" | "shop_already_blind" | "shop_not_blind" | "intake_state_changed" | "internal_error" | "invalid_request" | "unauthenticated" | "not_on_counter_duty" | "counter_duty_changed" | "owner_only" | "qr_code_not_current" | "dining_table_not_found" | "qr_code_issue_conflict" | "menu_item_name_conflict" | "menu_item_component_conflict" | "menu_component_name_conflict" | "menu_item_not_found" | "menu_option_not_found" | "option_group_not_found" | "menu_option_name_taken" | "menu_option_hidden" | "menu_option_not_hidden" | "menu_option_is_default" | "menu_component_not_found" | "menu_item_component_not_found" | "menu_item_discontinued" | "option_combination_invalid" | "message_recipient_invalid" | "station_message_not_found" | "submission_code_conflict" | "dining_table_needs_cleaning" | "dining_table_not_needing_cleaning" | "sales_order_not_found" | "table_session_not_found" | "order_transition_not_allowed" | "table_session_transition_not_allowed" | "payment_parts_mismatch" | "debtor_name_mismatch" | "order_intake_paused" | "outside_selling_hours" | "shop_not_seeing_orders" | "delivery_served_mark_undecided" | "debt_note_required" | "order_handover_mismatch" | "order_jobs_not_served" | "prepayment_balance_exceeded" | "bill_not_found" | "prepayment_not_found" | "bill_has_no_debt" | "debt_already_settled" | "debt_overpaid" | "order_not_prepayable" | "prepayment_already_received" | "opening_float_already_declared" | "cash_count_already_recorded" | "sale_day_reconciled" | "cash_day_incomplete" | "sale_day_not_reconciled" | "sale_day_already_reconciled" | "paper_ledger_missing" | "paper_position_already_entered" | "paper_ledger_already_declared" | "paper_entries_pending" | "gap_explanation_required" | "station_job_not_found" | "station_job_transition_not_allowed" | "production_batch_not_found" | "production_batch_already_rolled_back" | "production_batch_has_discarded_jobs" | "production_batch_has_served_units" | "station_job_has_wrong_make_note" | "transfer_source_not_available" | "transfer_target_not_waiting" | "wrong_make_note_not_allowed" | "wrong_make_note_not_found" | "wrong_make_note_already_cancelled" | "served_quantity_exceeds_made";
+        ErrorCode: "leave_date_in_past" | "leave_notice_day_taken" | "leave_day_attendance_ticked" | "leave_notice_not_found" | "leave_notice_cancel_closed" | "identifier_invalid" | "contact_required" | "phone_taken" | "google_login_disabled" | "google_token_invalid" | "login_failed" | "menu_combo_not_found" | "menu_combo_hidden" | "menu_combo_price_in_sales_hours" | "menu_combo_item_not_found" | "menu_combo_surcharge_in_sales_hours" | "combo_portions_mismatch" | "menu_category_not_found" | "menu_category_hidden" | "menu_category_name_taken" | "menu_item_already_in_category" | "expense_category_not_found" | "expense_not_found" | "expense_item_in_use" | "expense_category_in_use" | "expense_item_name_taken" | "expense_item_not_found" | "supply_item_unit_already_set" | "supply_day_entry_already_recorded" | "supply_item_name_taken" | "supply_day_entry_not_found" | "assigned_task_guide_not_found" | "assigned_task_guide_hidden" | "assigned_task_guide_not_text" | "assigned_task_guide_file_missing" | "file_too_large" | "training_record_not_found" | "training_record_hidden" | "assigned_task_not_found" | "person_not_found" | "assigned_task_hidden" | "assigned_task_already_done" | "assigned_task_not_done" | "supply_item_not_found" | "expense_category_name_taken" | "username_taken" | "email_taken" | "password_too_short" | "invalid_credentials" | "login_temporarily_blocked" | "verification_invalid" | "no_pending_email" | "verification_rate_limited" | "reset_token_invalid" | "account_not_pending" | "account_not_active" | "account_not_locked" | "account_person_is_owner" | "cross_origin_write" | "order_intake_already_paused" | "order_intake_not_paused" | "shop_already_blind" | "shop_not_blind" | "intake_state_changed" | "internal_error" | "invalid_request" | "unauthenticated" | "not_on_counter_duty" | "counter_duty_changed" | "owner_only" | "qr_code_not_current" | "dining_table_not_found" | "qr_code_issue_conflict" | "menu_item_name_conflict" | "menu_item_component_conflict" | "menu_component_name_conflict" | "menu_item_not_found" | "menu_option_not_found" | "option_group_not_found" | "menu_option_name_taken" | "menu_option_hidden" | "menu_option_not_hidden" | "menu_option_is_default" | "menu_component_not_found" | "menu_item_component_not_found" | "menu_item_discontinued" | "option_combination_invalid" | "message_recipient_invalid" | "station_message_not_found" | "submission_code_conflict" | "dining_table_needs_cleaning" | "dining_table_not_needing_cleaning" | "sales_order_not_found" | "table_session_not_found" | "order_transition_not_allowed" | "table_session_transition_not_allowed" | "payment_parts_mismatch" | "debtor_name_mismatch" | "order_intake_paused" | "outside_selling_hours" | "shop_not_seeing_orders" | "delivery_served_mark_undecided" | "debt_note_required" | "order_handover_mismatch" | "order_jobs_not_served" | "prepayment_balance_exceeded" | "bill_not_found" | "prepayment_not_found" | "bill_has_no_debt" | "debt_already_settled" | "debt_overpaid" | "order_not_prepayable" | "prepayment_already_received" | "opening_float_already_declared" | "cash_count_already_recorded" | "sale_day_reconciled" | "cash_day_incomplete" | "sale_day_not_reconciled" | "sale_day_already_reconciled" | "paper_ledger_missing" | "paper_position_already_entered" | "paper_ledger_already_declared" | "paper_entries_pending" | "gap_explanation_required" | "station_job_not_found" | "station_job_transition_not_allowed" | "production_batch_not_found" | "production_batch_already_rolled_back" | "production_batch_has_discarded_jobs" | "production_batch_has_served_units" | "station_job_has_wrong_make_note" | "transfer_source_not_available" | "transfer_target_not_waiting" | "wrong_make_note_not_allowed" | "wrong_make_note_not_found" | "wrong_make_note_already_cancelled" | "served_quantity_exceeds_made";
         /** @description Hình lỗi chung của mọi lời từ chối (01-hop-dong-api.md §3). */
         Error: {
             code: components["schemas"]["ErrorCode"];
@@ -4233,6 +4345,174 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    listLeaveNotices: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Kết quả hiện tại. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LeaveNotices"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    createLeaveNotice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateLeaveNotice"];
+            };
+        };
+        responses: {
+            /** @description Kết quả hiện tại. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LeaveNotice"];
+                };
+            };
+            /** @description Dòng mới. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LeaveNotice"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    cancelLeaveNotice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                leave_notice_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Kết quả hiện tại. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LeaveNotice"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    acknowledgeLeaveNotice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                leave_notice_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Kết quả hiện tại. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LeaveNotice"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listMyLeaveNotices: {
+        parameters: {
+            query?: {
+                before_id?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Kết quả hiện tại. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyLeaveNotices"];
+                };
+            };
+            /** @description Lời từ chối theo ErrorCode và x-http-status. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     sendStationMessage: {
         parameters: {
             query?: never;
@@ -9501,6 +9781,7 @@ type ReadonlyArray<T> = [
     unknown[]
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
 export const pathsAccountsGetParametersQueryStatusValues: ReadonlyArray<FlattenedDeepRequired<paths>["/accounts"]["get"]["parameters"]["query"]["status"]> = ["cho_duyet", "hoat_dong", "khoa", "tu_choi"];
+export const leaveNoticeNotice_kindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["LeaveNotice"]["notice_kind"]> = ["bao_truoc", "dot_xuat"];
 export const stationWorkCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["StationWorkCode"]> = ["canh", "don_ban", "trang_banh", "gap_banh", "khac"];
 export const customerOKStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CustomerOK"]["status"]> = ["ok"];
 export const serviceBoardSessionService_groupValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ServiceBoardSession"]["service_group"]> = ["serving", "waiting", "no_order"];
@@ -9534,5 +9815,5 @@ export const refundRequestSource_method_codeValues: ReadonlyArray<FlattenedDeepR
 export const prepaymentReturnRequestMethod_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PrepaymentReturnRequest"]["method_code"]> = ["cash", "transfer"];
 export const paperEntryRequestKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaperEntryRequest"]["kind"]> = ["table", "takeaway"];
 export const paperEntryRequestHandover_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaperEntryRequest"]["handover_code"]> = ["shop_pickup", "door_delivery"];
-export const errorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ErrorCode"]> = ["identifier_invalid", "contact_required", "phone_taken", "google_login_disabled", "google_token_invalid", "login_failed", "menu_combo_not_found", "menu_combo_hidden", "menu_combo_price_in_sales_hours", "menu_combo_item_not_found", "menu_combo_surcharge_in_sales_hours", "combo_portions_mismatch", "menu_category_not_found", "menu_category_hidden", "menu_category_name_taken", "menu_item_already_in_category", "expense_category_not_found", "expense_not_found", "expense_item_in_use", "expense_category_in_use", "expense_item_name_taken", "expense_item_not_found", "supply_item_unit_already_set", "supply_day_entry_already_recorded", "supply_item_name_taken", "supply_day_entry_not_found", "assigned_task_guide_not_found", "assigned_task_guide_hidden", "assigned_task_guide_not_text", "assigned_task_guide_file_missing", "file_too_large", "training_record_not_found", "training_record_hidden", "assigned_task_not_found", "person_not_found", "assigned_task_hidden", "assigned_task_already_done", "assigned_task_not_done", "supply_item_not_found", "expense_category_name_taken", "username_taken", "email_taken", "password_too_short", "invalid_credentials", "login_temporarily_blocked", "verification_invalid", "no_pending_email", "verification_rate_limited", "reset_token_invalid", "account_not_pending", "account_not_active", "account_not_locked", "account_person_is_owner", "cross_origin_write", "order_intake_already_paused", "order_intake_not_paused", "shop_already_blind", "shop_not_blind", "intake_state_changed", "internal_error", "invalid_request", "unauthenticated", "not_on_counter_duty", "counter_duty_changed", "owner_only", "qr_code_not_current", "dining_table_not_found", "qr_code_issue_conflict", "menu_item_name_conflict", "menu_item_component_conflict", "menu_component_name_conflict", "menu_item_not_found", "menu_option_not_found", "option_group_not_found", "menu_option_name_taken", "menu_option_hidden", "menu_option_not_hidden", "menu_option_is_default", "menu_component_not_found", "menu_item_component_not_found", "menu_item_discontinued", "option_combination_invalid", "message_recipient_invalid", "station_message_not_found", "submission_code_conflict", "dining_table_needs_cleaning", "dining_table_not_needing_cleaning", "sales_order_not_found", "table_session_not_found", "order_transition_not_allowed", "table_session_transition_not_allowed", "payment_parts_mismatch", "debtor_name_mismatch", "order_intake_paused", "outside_selling_hours", "shop_not_seeing_orders", "delivery_served_mark_undecided", "debt_note_required", "order_handover_mismatch", "order_jobs_not_served", "prepayment_balance_exceeded", "bill_not_found", "prepayment_not_found", "bill_has_no_debt", "debt_already_settled", "debt_overpaid", "order_not_prepayable", "prepayment_already_received", "opening_float_already_declared", "cash_count_already_recorded", "sale_day_reconciled", "cash_day_incomplete", "sale_day_not_reconciled", "sale_day_already_reconciled", "paper_ledger_missing", "paper_position_already_entered", "paper_ledger_already_declared", "paper_entries_pending", "gap_explanation_required", "station_job_not_found", "station_job_transition_not_allowed", "production_batch_not_found", "production_batch_already_rolled_back", "production_batch_has_discarded_jobs", "production_batch_has_served_units", "station_job_has_wrong_make_note", "transfer_source_not_available", "transfer_target_not_waiting", "wrong_make_note_not_allowed", "wrong_make_note_not_found", "wrong_make_note_already_cancelled", "served_quantity_exceeds_made"];
+export const errorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ErrorCode"]> = ["leave_date_in_past", "leave_notice_day_taken", "leave_day_attendance_ticked", "leave_notice_not_found", "leave_notice_cancel_closed", "identifier_invalid", "contact_required", "phone_taken", "google_login_disabled", "google_token_invalid", "login_failed", "menu_combo_not_found", "menu_combo_hidden", "menu_combo_price_in_sales_hours", "menu_combo_item_not_found", "menu_combo_surcharge_in_sales_hours", "combo_portions_mismatch", "menu_category_not_found", "menu_category_hidden", "menu_category_name_taken", "menu_item_already_in_category", "expense_category_not_found", "expense_not_found", "expense_item_in_use", "expense_category_in_use", "expense_item_name_taken", "expense_item_not_found", "supply_item_unit_already_set", "supply_day_entry_already_recorded", "supply_item_name_taken", "supply_day_entry_not_found", "assigned_task_guide_not_found", "assigned_task_guide_hidden", "assigned_task_guide_not_text", "assigned_task_guide_file_missing", "file_too_large", "training_record_not_found", "training_record_hidden", "assigned_task_not_found", "person_not_found", "assigned_task_hidden", "assigned_task_already_done", "assigned_task_not_done", "supply_item_not_found", "expense_category_name_taken", "username_taken", "email_taken", "password_too_short", "invalid_credentials", "login_temporarily_blocked", "verification_invalid", "no_pending_email", "verification_rate_limited", "reset_token_invalid", "account_not_pending", "account_not_active", "account_not_locked", "account_person_is_owner", "cross_origin_write", "order_intake_already_paused", "order_intake_not_paused", "shop_already_blind", "shop_not_blind", "intake_state_changed", "internal_error", "invalid_request", "unauthenticated", "not_on_counter_duty", "counter_duty_changed", "owner_only", "qr_code_not_current", "dining_table_not_found", "qr_code_issue_conflict", "menu_item_name_conflict", "menu_item_component_conflict", "menu_component_name_conflict", "menu_item_not_found", "menu_option_not_found", "option_group_not_found", "menu_option_name_taken", "menu_option_hidden", "menu_option_not_hidden", "menu_option_is_default", "menu_component_not_found", "menu_item_component_not_found", "menu_item_discontinued", "option_combination_invalid", "message_recipient_invalid", "station_message_not_found", "submission_code_conflict", "dining_table_needs_cleaning", "dining_table_not_needing_cleaning", "sales_order_not_found", "table_session_not_found", "order_transition_not_allowed", "table_session_transition_not_allowed", "payment_parts_mismatch", "debtor_name_mismatch", "order_intake_paused", "outside_selling_hours", "shop_not_seeing_orders", "delivery_served_mark_undecided", "debt_note_required", "order_handover_mismatch", "order_jobs_not_served", "prepayment_balance_exceeded", "bill_not_found", "prepayment_not_found", "bill_has_no_debt", "debt_already_settled", "debt_overpaid", "order_not_prepayable", "prepayment_already_received", "opening_float_already_declared", "cash_count_already_recorded", "sale_day_reconciled", "cash_day_incomplete", "sale_day_not_reconciled", "sale_day_already_reconciled", "paper_ledger_missing", "paper_position_already_entered", "paper_ledger_already_declared", "paper_entries_pending", "gap_explanation_required", "station_job_not_found", "station_job_transition_not_allowed", "production_batch_not_found", "production_batch_already_rolled_back", "production_batch_has_discarded_jobs", "production_batch_has_served_units", "station_job_has_wrong_make_note", "transfer_source_not_available", "transfer_target_not_waiting", "wrong_make_note_not_allowed", "wrong_make_note_not_found", "wrong_make_note_already_cancelled", "served_quantity_exceeds_made"];
 export const itemComponentAddComponentStation_codeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ItemComponentAdd"]["component"]["station_code"]> = ["quay", "trang_banh", "gap_banh", "canh", "don_ban"];

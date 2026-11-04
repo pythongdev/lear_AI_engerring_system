@@ -341,3 +341,15 @@ sql:
         package: sqlcgen
         out: internal/hoptin/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/baonghi/sql
+      - internal/baonghi/sql/bao
+      - internal/baonghi/sql/huy
+      - internal/baonghi/sql/da_biet
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/baonghi/internal/sqlcgen
+        sql_package: pgx/v5

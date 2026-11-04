@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.58.0
+  version: 0.59.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -57,6 +57,170 @@ tags:
   - name: ket
     description: Két và ngày bán — tiền đầu ngày, đếm két, khai sổ giấy, ký đối chiếu ngày (06-duong-tien.md).
 paths:
+  /leave-notices:
+    post:
+      operationId: createLeaveNotice
+      tags: [baonghi]
+      description: >-
+        Lớp nguoi_quan; chỉ báo cho người của phiên, không nhận person_id. Kiểm hình trước quyền,
+        tra dấu trước luật ngày. Cùng người, dấu và ngày trả 200 dòng hiện tại kể cả đã huỷ hoặc ngày đã qua;
+        khác ngày trả submission_code_conflict (409). Dấu duy nhất theo người.
+        Tranh chấp một trong hai khoá duy nhất chạy lại cả giao dịch tối đa bốn lần.
+        Ngày đã qua trả leave_date_in_past (422), trùng ngày còn hiệu lực trả leave_notice_day_taken (409),
+        đã có ô đi làm trả leave_day_attendance_ticked (409). Không phiên hoặc chỉ cookie khách trả unauthenticated (401).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLeaveNotice'
+      responses:
+        '201':
+          description: Dòng mới.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveNotice'
+        '200':
+          description: Kết quả hiện tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveNotice'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: listLeaveNotices
+      tags: [baonghi]
+      description: >-
+        Lớp chu_quan; mọi người, kể cả đã huỷ, leave_date ASC rồi id ASC; không chia trang.
+        Kiểm hình trước quyền; from và to bắt buộc, from ≤ to, to − from ≤ 92 ngày;
+        sai khoảng trả invalid_request với field to. Không phiên hoặc chỉ cookie khách trả unauthenticated,
+        người không phải chủ quán trả owner_only. read_at là now() database.
+      parameters:
+        - in: query
+          name: from
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: to
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Kết quả hiện tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveNotices'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /leave-notices/{leave_notice_id}/cancel:
+    post:
+      operationId: cancelLeaveNotice
+      tags: [baonghi]
+      description: >-
+        Lớp nguoi_quan. Chủ quán huỷ mọi dòng bất cứ lúc nào; người khác chỉ huỷ dòng mình trước ngày nghỉ theo lịch Việt Nam. Dòng không có hoặc của người khác trả cùng leave_notice_not_found (404); hết hạn trả leave_notice_cancel_closed (422). Đã huỷ trả dòng hiện tại, không ghi lại dấu hay vết.
+        Không thân. Kiểm mã nguyên dương trước quyền; sai trả invalid_request với field leave_notice_id.
+        Không phiên hoặc chỉ cookie khách trả unauthenticated (401). Người và lý do vết do backend cấp.
+      parameters:
+        - in: path
+          name: leave_notice_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Kết quả hiện tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveNotice'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /leave-notices/{leave_notice_id}/acknowledge:
+    post:
+      operationId: acknowledgeLeaveNotice
+      tags: [baonghi]
+      description: >-
+        Lớp chu_quan, kiểm lớp trước khi tìm dòng; người khác trả owner_only (403). Không có dòng trả leave_notice_not_found (404). Đã biết trả dòng hiện tại, không ghi lại dấu hay vết. Dòng đã huỷ vẫn ghi đã biết được.
+        Không thân. Kiểm mã nguyên dương trước quyền; sai trả invalid_request với field leave_notice_id.
+        Không phiên hoặc chỉ cookie khách trả unauthenticated (401). Người và lý do vết do backend cấp.
+      parameters:
+        - in: path
+          name: leave_notice_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Kết quả hiện tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveNotice'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /leave-notices/mine:
+    get:
+      operationId: listMyLeaveNotices
+      tags: [baonghi]
+      description: >-
+        Lớp nguoi_quan, chỉ người của phiên; không nhận định danh người từ query, kể cả đã huỷ.
+        id DESC, before_id loại trừ; lấy thêm một dòng để xác định next_before_id, null khi hết.
+        Kiểm hình trước quyền; sai trả invalid_request với field tương ứng.
+        Không phiên hoặc chỉ cookie khách trả unauthenticated (401). read_at là now() database.
+      parameters:
+        - in: query
+          name: before_id
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: Kết quả hiện tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyLeaveNotices'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /station-messages:
     post:
       operationId: sendStationMessage
@@ -4461,6 +4625,75 @@ components:
       name: banhcuon_phien
       description: Phiên đăng nhập theo ADR-109; HttpOnly, Secure, SameSite=Strict, hạn 7 ngày.
   schemas:
+    CreateLeaveNotice:
+      type: object
+      required: [submission_code, leave_date]
+      properties:
+        submission_code:
+          $ref: '#/components/schemas/SubmissionCode'
+        leave_date:
+          type: string
+          format: date
+          description: Ngày lịch hợp lệ YYYY-MM-DD.
+    LeaveNotice:
+      type: object
+      required: [leave_notice_id, person_id, person_name, leave_date, notice_kind, created_at, acknowledged_at, acknowledged_by_person_id, cancelled_at, cancelled_by_person_id, can_cancel]
+      properties:
+        leave_notice_id:
+          type: integer
+          format: int64
+        person_id:
+          type: integer
+          format: int64
+        person_name:
+          type: string
+        leave_date:
+          type: string
+          format: date
+        notice_kind:
+          type: string
+          enum: [bao_truoc, dot_xuat]
+          description: bao_truoc khi leave_date trừ ngày lịch Việt Nam của created_at ≥ 3, còn lại dot_xuat; suy trong SQL, không cất.
+        created_at:
+          $ref: '#/components/schemas/Instant'
+        acknowledged_at:
+          type: [string, 'null']
+          format: date-time
+        acknowledged_by_person_id:
+          type: [integer, 'null']
+          format: int64
+        cancelled_at:
+          type: [string, 'null']
+          format: date-time
+        cancelled_by_person_id:
+          type: [integer, 'null']
+          format: int64
+        can_cancel:
+          type: boolean
+          description: Chưa huỷ và người đọc là chủ quán, hoặc chính người nghỉ khi ngày lịch Việt Nam hôm nay còn trước leave_date.
+    MyLeaveNotices:
+      type: object
+      required: [leave_notices, next_before_id, read_at]
+      properties:
+        leave_notices:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeaveNotice'
+        next_before_id:
+          type: [integer, 'null']
+          format: int64
+        read_at:
+          $ref: '#/components/schemas/Instant'
+    LeaveNotices:
+      type: object
+      required: [leave_notices, read_at]
+      properties:
+        leave_notices:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeaveNotice'
+        read_at:
+          $ref: '#/components/schemas/Instant'
     StationWorkCode:
       type: string
       enum: [canh, don_ban, trang_banh, gap_banh, khac]
@@ -7791,6 +8024,11 @@ components:
         Mã lỗi công khai. FE quyết hiện gì theo mã, không theo status, không theo chữ.
         Mã của một luật do lát dựng cửa của luật ấy thêm (01-hop-dong-api.md §3).
       enum:
+        - leave_date_in_past
+        - leave_notice_day_taken
+        - leave_day_attendance_ticked
+        - leave_notice_not_found
+        - leave_notice_cancel_closed
         - identifier_invalid
         - contact_required
         - phone_taken
@@ -7924,6 +8162,11 @@ components:
         - wrong_make_note_already_cancelled
         - served_quantity_exceeds_made
       x-http-status:
+        leave_date_in_past: 422
+        leave_notice_day_taken: 409
+        leave_day_attendance_ticked: 409
+        leave_notice_not_found: 404
+        leave_notice_cancel_closed: 422
         identifier_invalid: 400
         contact_required: 400
         phone_taken: 409
@@ -8535,20 +8778,20 @@ x-constraint-errors:
   daily_minimum_person_fkey: internal
   daily_minimum_banh_positive_check: invalid_request
   daily_minimum_workers_positive_check: invalid_request
-  leave_notice_acknowledged_by_owner_check: unreviewed
-  leave_notice_acknowledged_by_person_fkey: unreviewed
-  leave_notice_acknowledged_pair_check: unreviewed
-  leave_notice_attendance_ticked_check: unreviewed
-  leave_notice_cancel_allowed_check: unreviewed
-  leave_notice_cancelled_by_person_fkey: unreviewed
-  leave_notice_cancelled_pair_check: unreviewed
-  leave_notice_not_past_check: unreviewed
-  leave_notice_one_live_per_person_day_key: unreviewed
-  leave_notice_person_fkey: unreviewed
-  leave_notice_person_submission_code_key: unreviewed
+  leave_notice_acknowledged_by_owner_check: internal
+  leave_notice_acknowledged_by_person_fkey: internal
+  leave_notice_acknowledged_pair_check: internal
+  leave_notice_attendance_ticked_check: leave_day_attendance_ticked
+  leave_notice_cancel_allowed_check: leave_notice_cancel_closed
+  leave_notice_cancelled_by_person_fkey: internal
+  leave_notice_cancelled_pair_check: internal
+  leave_notice_not_past_check: leave_date_in_past
+  leave_notice_one_live_per_person_day_key: leave_notice_day_taken
+  leave_notice_person_fkey: internal
+  leave_notice_person_submission_code_key: submission_code_conflict
   leave_notice_pkey: internal
-  leave_notice_stamps_once_check: unreviewed
-  leave_notice_submission_code_check: unreviewed
+  leave_notice_stamps_once_check: internal
+  leave_notice_submission_code_check: internal
   workers_present_declaration_pkey: internal
   workers_present_declaration_person_fkey: internal
   workers_present_declaration_count_positive_check: invalid_request

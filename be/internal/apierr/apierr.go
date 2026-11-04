@@ -15,6 +15,11 @@ import (
 type Code string
 
 const (
+	CodeLeaveDateInPast                Code = "leave_date_in_past"
+	CodeLeaveNoticeDayTaken            Code = "leave_notice_day_taken"
+	CodeLeaveDayAttendanceTicked       Code = "leave_day_attendance_ticked"
+	CodeLeaveNoticeNotFound            Code = "leave_notice_not_found"
+	CodeLeaveNoticeCancelClosed        Code = "leave_notice_cancel_closed"
 	CodeMessageRecipientInvalid        Code = "message_recipient_invalid"
 	CodeStationMessageNotFound         Code = "station_message_not_found"
 	CodeGoogleLoginDisabled            Code = "google_login_disabled"
@@ -166,6 +171,11 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
+	CodeLeaveDateInPast:                422,
+	CodeLeaveNoticeDayTaken:            409,
+	CodeLeaveDayAttendanceTicked:       409,
+	CodeLeaveNoticeNotFound:            404,
+	CodeLeaveNoticeCancelClosed:        422,
 	CodeMessageRecipientInvalid:        422,
 	CodeStationMessageNotFound:         404,
 	CodeGoogleLoginDisabled:            503,
@@ -312,19 +322,24 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
-	"station_message_submission_code_key":     CodeSubmissionCodeConflict,
-	"account_contact_check":                   CodeContactRequired,
-	"account_phone_check":                     CodeIdentifierInvalid,
-	"account_phone_key":                       CodePhoneTaken,
-	"customer_account_contact_check":          CodeContactRequired,
-	"customer_account_phone_check":            CodeIdentifierInvalid,
-	"customer_account_phone_key":              CodePhoneTaken,
-	"customer_account_email_check":            CodeIdentifierInvalid,
-	"customer_account_email_key":              CodeEmailTaken,
-	"customer_account_display_name_check":     CodeInvalidRequest,
-	"customer_account_delivery_name_check":    CodeInvalidRequest,
-	"customer_account_delivery_phone_check":   CodeIdentifierInvalid,
-	"customer_account_delivery_address_check": CodeInvalidRequest,
+	"leave_notice_not_past_check":              CodeLeaveDateInPast,
+	"leave_notice_one_live_per_person_day_key": CodeLeaveNoticeDayTaken,
+	"leave_notice_attendance_ticked_check":     CodeLeaveDayAttendanceTicked,
+	"leave_notice_cancel_allowed_check":        CodeLeaveNoticeCancelClosed,
+	"leave_notice_person_submission_code_key":  CodeSubmissionCodeConflict,
+	"station_message_submission_code_key":      CodeSubmissionCodeConflict,
+	"account_contact_check":                    CodeContactRequired,
+	"account_phone_check":                      CodeIdentifierInvalid,
+	"account_phone_key":                        CodePhoneTaken,
+	"customer_account_contact_check":           CodeContactRequired,
+	"customer_account_phone_check":             CodeIdentifierInvalid,
+	"customer_account_phone_key":               CodePhoneTaken,
+	"customer_account_email_check":             CodeIdentifierInvalid,
+	"customer_account_email_key":               CodeEmailTaken,
+	"customer_account_display_name_check":      CodeInvalidRequest,
+	"customer_account_delivery_name_check":     CodeInvalidRequest,
+	"customer_account_delivery_phone_check":    CodeIdentifierInvalid,
+	"customer_account_delivery_address_check":  CodeInvalidRequest,
 
 	"production_batch_no_discarded_jobs_check":         CodeProductionBatchHasDiscardedJobs,
 	"daily_minimum_banh_positive_check":                CodeInvalidRequest,

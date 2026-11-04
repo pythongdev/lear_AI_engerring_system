@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"banhcuon/be/internal/authz"
+	"banhcuon/be/internal/baonghi"
 	"banhcuon/be/internal/combo"
 	"banhcuon/be/internal/danhmuc"
 	"banhcuon/be/internal/daotao"
@@ -379,6 +380,24 @@ var cacCaVet = []caVet{
 		id := c.id(t, "INSERT INTO shop.assigned_task(content,assignee_person_id) VALUES ('test-cũ',$1) RETURNING id", c.chu)
 		return dichVet{"assigned_task", id, c.chu, "hidden_at", nil, "mốc", func() {
 			status, body := c.goi(t, "POST", fmt.Sprintf("/assigned-tasks/%d/hiding", id), c.chu, map[string]any{"reason": "ẩn việc kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	// Hai cửa ghi dấu báo nghỉ (CHAT-31, Claude thêm khi duyệt: TestI018_TapCuaSuaKhopTapCa đòi). Lý do vết do backend
+	// đặt, không nhận từ thân; ngày nghỉ xa hôm nay để chủ quán huỷ hay ghi đã biết đều được.
+	{"baonghi/huy", func(t *testing.T, c canh) dichVet {
+		c.srv = baonghiSrv(t, c)
+		id := c.id(t, "INSERT INTO shop.leave_notice(person_id,leave_date,submission_code) VALUES ($1,(now() AT TIME ZONE 'Asia/Ho_Chi_Minh')::date + 30,$2) RETURNING id", c.chu, t.Name())
+		return dichVet{"leave_notice", id, c.chu, "cancelled_at", nil, "mốc", func() {
+			status, body := c.goi(t, "POST", fmt.Sprintf("/leave-notices/%d/cancel", id), c.chu, nil)
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	{"baonghi/da_biet", func(t *testing.T, c canh) dichVet {
+		c.srv = baonghiSrv(t, c)
+		id := c.id(t, "INSERT INTO shop.leave_notice(person_id,leave_date,submission_code) VALUES ($1,(now() AT TIME ZONE 'Asia/Ho_Chi_Minh')::date + 30,$2) RETURNING id", c.chu, t.Name())
+		return dichVet{"leave_notice", id, c.chu, "acknowledged_at", nil, "mốc", func() {
+			status, body := c.goi(t, "POST", fmt.Sprintf("/leave-notices/%d/acknowledge", id), c.chu, nil)
 			canDat(t, traLoi{status: status, body: body}, 200)
 		}}
 	}},
@@ -789,6 +808,17 @@ func TestI018_TapCuaSuaKhopTapCa(t *testing.T) {
 		t.Fatalf("cửa UPDATE = %v\nca test = %v", keys(updates), keys(cases))
 	}
 	t.Logf("%d cửa UPDATE khớp %d ca", len(updates), len(cases))
+}
+
+// baonghiSrv dựng router riêng cho miền baonghi (CHAT-31), cùng cách nhandonSrv.
+func baonghiSrv(t *testing.T, c canh) *httptest.Server {
+	t.Helper()
+	r := gin.New()
+	r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+	baonghi.Routes(r, baonghi.NewService(c.pool))
+	srv := httptest.NewServer(r)
+	t.Cleanup(srv.Close)
+	return srv
 }
 
 // nhandonSrv dựng router riêng cho miền nhandon, cùng cách ca nguoi/khep_quay dựng miền nguoi.

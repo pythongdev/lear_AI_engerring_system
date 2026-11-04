@@ -1119,6 +1119,30 @@ gate.
 
 **Nhận việc:**
 
+2026-11-04, Claude: bắt đầu, mức **L2**. *Chặn bởi* ở trên là lịch sử: `U-116` có lời (§8.11 điểm 7), thiết kế là ADR-138; lời
+nói **không ghi hộ** nên vế chờ `U-114` không mở. Hợp đồng Claude chốt trong test viết trước `be/internal/baonghi/bao_nghi_test.go`
+(đầu file): năm đường `/leave-notices` — báo (`baonghi/bao`, `nguoi_quan`), huỷ (`baonghi/huy`, `nguoi_quan`), đã biết
+(`baonghi/da_biet`, `chu_quan`), đọc của tôi, đọc theo khoảng ngày (`chu_quan`); năm mã mới `leave_date_in_past` ·
+`leave_notice_day_taken` · `leave_day_attendance_ticked` · `leave_notice_not_found` · `leave_notice_cancel_closed`; mỗi dòng trả
+`notice_kind` và `can_cancel` do backend suy. *Không có duyệt*: lời nói không có từ chối, nên *đã biết* là dấu đã xem, không phải
+trạng thái. *Phiên chọn* (thiết kế cửa, không phải lời quán): huỷ hay đã biết lần hai trả 200 dòng hiện tại không ghi; đã biết dòng
+đã huỷ được; khoảng đọc tối đa 92 ngày. Acceptance A1…A5 ở phiếu `../lean_wt/chat-review/CHAT-31-phieu.md`: test không đổi (mã băm
+`2968a515…`), tám ca `TestI039_*` xanh, ba cửa chỉ ghi `leave_notice`, Gate 1f/1g PASS ở hợp đồng 0.59.0, gate không FAIL ngoài cổng
+Docker. Đỏ đúng lý do: `be-check` với một gói giả rỗng, tám ca dừng ở 404 lời gọi đầu, 27 gói khác xanh
+(`chat-review/CHAT-31-do-truoc.log`). Worktree `../lean_wt/CHAT-31`, nhánh `codex/CHAT-31`, nền `2e26c28`.
+
+2026-11-04, CHAT-31 xong. **Codex** thi công (worktree `../lean_wt/CHAT-31`, nhánh `codex/CHAT-31`, nền `2e26c28`, model `gpt-6-astra`,
+một vòng); **Claude** viết test trước, duyệt và tích hợp; chưa có người duyệt thứ ba. File: gói mới `be/internal/baonghi/` (handler,
+service, repository, `sql/{bao,huy,da_biet}/ghi.sql` và năm câu đọc, sqlcgen), `be/sqlc.yaml`, `be/cmd/server/router.go`,
+`be/internal/apierr/apierr.go` (năm mã, năm dòng `constraintCodes`), `openapi.yaml` 0.58.0 → 0.59.0, đoạn CHAT-31 ở `01-hop-dong-api.md`
+(lý do từng dòng `internal`; `attendance_day_on_leave_check` giữ `unreviewed` vì chưa có cửa tick), ba dòng cửa ghi và đoạn hai đường
+đọc ở `02-vai-va-quyen.md`, `fe/src/lib/api/schema.ts` sinh lại. Khi duyệt Claude thêm hai ca `baonghi/huy` · `baonghi/da_biet` vào
+`be/internal/don/vet_cua_test.go`: `TestI018_TapCuaSuaKhopTapCa` đòi mỗi cửa UPDATE một ca vết, Codex không thấy vì sandbox không có
+Docker. Đọc diff: INSERT không liệt kê `person_id` (không ghi hộ), huỷ và đã biết khoá dòng `FOR UPDATE` rồi mới xét dấu, tranh chấp
+hai khoá duy nhất chạy lại cả giao dịch tối đa bốn lần, lý do vết cố định `baonghi/huy` · `baonghi/da_biet`. Bằng chứng: mã băm test
+không đổi (`2968a515…`); `./scripts/gate.sh` trong worktree có Docker PASS mọi cổng — tám ca `TestI039_*` và hai ca
+`TestI018_MoiCuaSuaCoVet/baonghi/*` xanh, Gate 1f 119 cửa, Gate 1g 0.59.0; `./scripts/fe-check.sh` PASS. Còn lại: `CHAT-32` (mẫu FE).
+
 [↑ đầu file](#top)
 
 ---

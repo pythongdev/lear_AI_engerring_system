@@ -119,6 +119,9 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `taikhoan/tu_choi` | `chu_quan` | Phiếu T-190, ADR-109; cửa tu_choi |
 | `taikhoan/yeu_cau_dat_lai` | `cong_khai` | Phiếu T-190, ADR-109; cửa yeu_cau_dat_lai |
 | `nguoi/tao_nguoi` | `theo_cua_goi` | ADR-109 — duyệt hoặc khởi tạo gọi trong giao dịch |
+| `baonghi/bao` | `nguoi_quan` | ADR-138 điểm 3 · 6; CHAT-31; chỉ báo cho người của phiên |
+| `baonghi/huy` | `nguoi_quan` | ADR-138 điểm 3 · 6; CHAT-31; chủ quán hoặc chính người nghỉ trước ngày nghỉ |
+| `baonghi/da_biet` | `chu_quan` | ADR-138 điểm 3 · 6; CHAT-31; dấu đã xem, không phê duyệt |
 | `hoptin/quay_gui` | `quay` | ADR-137 điểm 4 · 5; CHAT-13; gọi cửa ghi nội bộ theo khuôn ADR-097 |
 | `hoptin/gui_ve_quay` | `nguoi_quan` | ADR-137 điểm 4 · 5; CHAT-13; gọi cửa ghi nội bộ theo khuôn ADR-097 |
 | `hoptin/ghi` | `theo_cua_goi` | ADR-137 điểm 4 · 5; Claude chốt CHAT-13 ngày 2026-11-04 theo khuôn ADR-097; chủ duy nhất của INSERT tin |
@@ -244,3 +247,8 @@ P3A-08 (2026-10-15, phiếu Claude): `GET /supply-stock` chỉ lớp `chu_quan`;
 | `khach/ket_thuc_phien` | `theo_cua_goi` | ADR-131; T-264 |
 
 Hai cửa đọc `GET /customer-sessions/current` và `GET /customer-accounts/current/orders` thuộc lớp `khach`, chỉ đọc phiên khách.
+
+CHAT-31 (2026-11-04, phiếu Claude): `GET /leave-notices/mine` thuộc lớp `nguoi_quan`,
+chỉ người của phiên, kể cả đã huỷ; không nhận định danh người từ tham số.
+`GET /leave-notices` thuộc lớp `chu_quan`, đọc mọi báo nghỉ trong khoảng ngày, kể cả đã huỷ.
+Theo ADR-138 điểm 3 · 6; kiểm hình trước quyền, cả hai trả unauthenticated khi không phiên hoặc chỉ cookie khách.

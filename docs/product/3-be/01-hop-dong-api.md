@@ -388,3 +388,35 @@ CHAT-30 (2026-11-04, Claude, ADR-138): 0.57.0 → 0.58.0. Bảng `leave_notice` 
 `attendance_day` đưa mười lăm tên ràng buộc vào `x-constraint-errors`: khoá chính `internal`, mười bốn tên còn lại
 `unreviewed` vì chưa cửa nào ghi báo nghỉ hay tick ô. CHAT-31 dựng các cửa của ADR-138 điểm 6 thì xét từng tên. Không đường
 gọi hay mã mới.
+
+CHAT-31 (2026-11-04, Codex thi công theo phiếu Claude, ADR-138 điểm 3 · 6): 0.58.0 → 0.59.0.
+Thêm năm đường leave-notices, ba cửa ghi chỉ bảng leave_notice, năm mã mới theo ErrorCode.
+Người nghỉ mặc định actor_person_id() từ phiên, INSERT không chỉ định person_id; không ghi hộ.
+Xét hình → quyền → dấu gửi lại → luật → ghi. Dấu duy nhất theo người; cùng dấu và ngày trả 200 dòng
+hiện tại kể cả đã huỷ hoặc ngày đã qua, khác ngày trả submission_code_conflict. Tạo mới trả 201.
+Tranh chấp leave_notice_person_submission_code_key hoặc leave_notice_one_live_per_person_day_key
+chạy lại cả giao dịch từ quyền tối đa bốn lần, tra dấu trước luật ngày.
+Huỷ/đã biết khoá dòng trước khi xét dấu; đã có dấu trả dòng hiện tại, không UPDATE hay thêm vết.
+Lý do vết cố định baonghi/huy hoặc baonghi/da_biet, người vết lấy từ phiên; không nhận thân.
+
+Nhận việc ánh xạ: leave_notice_not_past_check → leave_date_in_past;
+leave_notice_one_live_per_person_day_key → leave_notice_day_taken;
+leave_notice_attendance_ticked_check → leave_day_attendance_ticked;
+leave_notice_cancel_allowed_check → leave_notice_cancel_closed;
+leave_notice_person_submission_code_key → submission_code_conflict.
+Các dòng internal đã xét:
+- leave_notice_pkey: id do database sinh, không nhận từ người gọi.
+- leave_notice_person_fkey: người nghỉ lấy từ phiên đã kiểm, không nhận person_id.
+- leave_notice_acknowledged_by_person_fkey: người ghi đã biết lấy từ phiên đã kiểm.
+- leave_notice_cancelled_by_person_fkey: người huỷ lấy từ phiên đã kiểm.
+- leave_notice_acknowledged_pair_check: câu UPDATE đặt cả mốc và người; INSERT bỏ cả đôi.
+- leave_notice_cancelled_pair_check: câu UPDATE đặt cả mốc và người; INSERT bỏ cả đôi.
+- leave_notice_stamps_once_check: không sửa thông tin gốc; khoá dòng rồi bỏ qua UPDATE khi đã có dấu.
+- leave_notice_acknowledged_by_owner_check: lớp chu_quan được kiểm trước khi tìm dòng và ghi dấu.
+- leave_notice_submission_code_check: SubmissionCode đã kiểm đúng hình trước quyền.
+attendance_day_on_leave_check giữ unreviewed vì chưa có cửa tick ô.
+
+Đọc của tôi id DESC, before_id loại trừ, limit 1–50 mặc định 20, lấy thêm một dòng để xác định
+next_before_id; đọc chủ quán theo [from, to], cách tối đa 92 ngày, leave_date ASC rồi id ASC.
+Cả hai kể cả đã huỷ, read_at là now() database. notice_kind suy từ ngày lịch Việt Nam của created_at;
+can_cancel tính theo người đọc và ngày lịch Việt Nam trong SQL. Không thêm SSE, dùng authz.RunAs hiện có.
