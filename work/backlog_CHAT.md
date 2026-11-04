@@ -1169,6 +1169,29 @@ người bấm.
 
 **Nhận việc:**
 
+2026-11-04, Claude: bắt đầu, mức **L2**. *Chặn bởi* ở trên là lịch sử: `U-116` có lời (§8.11 điểm 7), lời nói **không ghi hộ** nên vế
+*chủ nhập hộ* (`U-114`) không mở và không có màn nhập hộ. Hợp đồng màn Claude chốt trong test viết trước
+`fe/src/components/shared/bao-nghi.test.tsx` (đầu file), trên năm đường của CHAT-31. *Phiên chọn* (thiết kế màn, không phải lời quán):
+bảng `OChat` tách hai thẻ *Tin nhắn* · *Báo nghỉ*, phần báo nghỉ chỉ dựng và đọc khi chọn thẻ, nên test CHAT-04/CHAT-14 giữ nguyên; `/tram`
+và `/quay` tự báo cho mình, `/chu-quan` chỉ thấy danh sách của nhân viên từ hôm nay tới 30 ngày tới, nút *Đã biết* và *Huỷ*; thẻ kiểm ghi
+*Dự kiến: Báo trước / Đột xuất* là gợi ý FE, danh sách đọc `notice_kind` của backend; huỷ một lần bấm, không thẻ kiểm. Không chữ hứa được
+nghỉ hay lương. Acceptance A1…A5 ở phiếu `../lean_wt/chat-review/CHAT-32-phieu.md`: test không đổi (mã băm `39b975f8…`), test báo nghỉ
+và CHAT-04/CHAT-14 xanh, fe-check PASS, cửa ghi chỉ ba `POST /leave-notices*`, gate không FAIL ngoài cổng Docker. Đỏ đúng lý do: 20 ca
+dừng ở chỗ chưa có `tablist` / thẻ *Báo nghỉ*. Worktree `../lean_wt/CHAT-32`, nhánh `codex/CHAT-32`, nền `5c322f9`; test tạm rời cây
+chính (bản gốc ở worktree và `chat-review/CHAT-32-bao-nghi.test.tsx`).
+
+2026-11-04, CHAT-32 xong. **Codex** thi công (worktree `../lean_wt/CHAT-32`, nhánh `codex/CHAT-32`, nền `5c322f9`, model `gpt-6-astra`);
+hết hạn mức lúc đang chạy build nên không có báo cáo, **Claude** chạy nốt kiểm, duyệt và tích hợp; chưa có người duyệt thứ ba. File:
+`fe/src/components/shared/o-chat.tsx` (hai thẻ, panel *Báo nghỉ* dựng từ lần chọn đầu, chỉ đọc khi đang chọn), mới `bao-nghi.tsx` ·
+`du-lieu-bao-nghi.ts`, dòng `OChat` và dòng mới `BaoNghi` ở `docs/product/4-fe/01-khung-fe.md` §4. **Lỗi test của Claude, Codex phát hiện
+đúng và dừng không sửa:** hai ca *mã khác* dùng mã `ma_la` ngoài hợp đồng, mà `call` phân loại mã ngoài hợp đồng là `unexpected` (chưa rõ
+kết quả, giữ thẻ) — Claude đổi hai ca sang `internal_error` (mã có trong `ErrorCode`), ghi câu sửa ở đầu file; mã băm test mới
+`06c1d250…`. Code của Codex không đổi sau lần sửa ấy. Đọc diff: dấu tạo một lần khi bấm xác nhận đầu và giữ cho *Gửi lại*, chốt chống bấm
+hai lần, huỷ · đã biết luôn đọc lại, ngày lịch `Asia/Ho_Chi_Minh` qua `Intl`, cộng ngày bằng UTC, không chữ hứa hẹn, không kho trình duyệt;
+thẻ chưa có điều hướng mũi tên (chỉ bấm và Tab), để lại. Bằng chứng: ba file test báo nghỉ · hộp tin · vỏ chat 75/75; trong worktree
+`./scripts/fe-check.sh` PASS (631/631 test, lint, kiểu, build, apigen khớp), `./scripts/gate.sh` không cổng đỏ; `grep` cửa ghi chỉ ba
+`POST /leave-notices*`. Còn lại ở lane: nhánh không model (ADR-137, ADR-138) đã đủ; các lát gọi model chờ `U-112`.
+
 [↑ đầu file](#top)
 
 ---

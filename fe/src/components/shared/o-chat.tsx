@@ -4,6 +4,7 @@ import { useId, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import type { Khung } from "@/lib/auth/khung";
+import { BaoNghi } from "./bao-nghi";
 import { HopTin } from "./hop-tin";
 import { usePhien } from "@/lib/auth/session";
 
@@ -23,6 +24,8 @@ function OChatTheoPhien({ khung }: { khung: Khung }) {
 function VoOChat({ khung, personId }: { khung: Khung; personId: number }) {
   const [mo, setMo] = useState(false);
   const [daMo, setDaMo] = useState(false);
+  const [muc, setMuc] = useState("tin");
+  const [daMoBaoNghi, setDaMoBaoNghi] = useState(false);
   const nutMo = useRef<HTMLButtonElement>(null);
   const id = useId();
 
@@ -65,7 +68,16 @@ function VoOChat({ khung, personId }: { khung: Khung; personId: number }) {
               Đóng
             </Button>
           </div>
-          <HopTin khung={khung} personId={personId} mo={mo} />
+          <div role="tablist" aria-label="Mục trò chuyện" className="flex gap-2">
+            <Button type="button" role="tab" id={`${id}-the-tin`} aria-selected={muc === "tin"} aria-controls={`${id}-tin`} onClick={() => setMuc("tin")}>Tin nhắn</Button>
+            <Button type="button" role="tab" id={`${id}-the-nghi`} aria-selected={muc === "nghi"} aria-controls={`${id}-nghi`} onClick={() => { setDaMoBaoNghi(true); setMuc("nghi"); }}>Báo nghỉ</Button>
+          </div>
+          <div role="tabpanel" id={`${id}-tin`} aria-labelledby={`${id}-the-tin`} hidden={muc !== "tin"}>
+            <HopTin khung={khung} personId={personId} mo={mo} />
+          </div>
+          <div role="tabpanel" id={`${id}-nghi`} aria-labelledby={`${id}-the-nghi`} hidden={muc !== "nghi"}>
+            {daMoBaoNghi && <BaoNghi khung={khung} personId={personId} mo={mo && muc === "nghi"} />}
+          </div>
         </section>
       )}
     </>
