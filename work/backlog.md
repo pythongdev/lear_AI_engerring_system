@@ -90,7 +90,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
 [↑ đầu file](#top)
@@ -149,6 +148,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — L2; 2026-11-04 Codex sửa cửa `don/roi_quan`: khoá việc của đơn, còn `pending` ⇒ `delivery_jobs_not_made` 409, `made` ⇒ `served` qua `vongdoi.ChuyenViec` rồi Đang giao (hợp đồng 0.61.0, ADR-088 *Sửa đổi*); Claude viết test trước và duyệt · [chi tiết](#t-223)
 - [x] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — L2 (đổi hợp đồng API); 2026-11-04 Codex thêm `Menu.categories` · `MenuItem.menu_category_id` (hợp đồng 0.60.0, câu đọc chỉ SELECT) và hàng thẻ danh mục trên `ThucDonKhach`; Claude viết test trước, sửa một kỳ vọng sai của chính mình và một mẫu sót, duyệt · [chi tiết](#t-237)
 - [x] CHAT-32 **Người làm chưa báo nghỉ bằng mẫu có kết quả rõ** — L2, ADR-138 điểm 7; 2026-11-04 Codex dựng `BaoNghi` trong thẻ *Báo nghỉ* của `OChat` (`/tram` · `/quay` tự báo có thẻ kiểm, `/chu-quan` danh sách 30 ngày với *Đã biết* · *Huỷ*), không model; Claude viết test trước, sửa hai ca mã lạ và duyệt; nhánh báo nghỉ 30…32 đủ ba lát · [mô tả](backlog_CHAT.md#chat-32)
 - [x] CHAT-31 **Chưa có cửa báo nghỉ nhận đúng người và người duyệt** — L2, ADR-138 điểm 3 · 6; 2026-11-04 Codex dựng gói `baonghi`, năm đường `/leave-notices` (ba cửa ghi `baonghi/bao` · `huy` · `da_biet`, hợp đồng 0.59.0, năm mã mới), người luôn lấy từ phiên; Claude viết test trước, thêm hai ca vết I-018 và duyệt; tiếp theo `CHAT-32` · [mô tả](backlog_CHAT.md#chat-31)
@@ -1148,6 +1148,30 @@ mốc quầy đã bấm để đưa đơn sang Đang giao**. Hôm nay cửa rờ
 việc trạm, và chạm đếm của bảng sản xuất (`I-019` · `I-020`). **Chưa nhận.** Việc của Claude trước khi giao: đọc cửa *ra bàn* hiện có (S-5, số cái
 cho một bàn) để biết ghi `served` cho đơn không có bàn đi đường nào; quyết việc trạm còn `pending` lúc rời quán thì từ chối bằng tên mới hay giữ tên
 cũ (đây là **suy ra** — chủ quán chưa nói đơn giao có được đi khi chưa làm đủ); viết test hồi quy trước; rồi mới giao Codex.
+
+**Mở 2026-11-04, Claude.** Chủ repo chọn *"Từ chối rời quán"* (ghi ở `shop-facts.md` nhật ký lời 2026-11-04). Thiết kế: **ADR-088
+*Sửa đổi 2026-11-04*** — khoá việc của đơn, còn `pending` ⇒ `delivery_jobs_not_made` 409 không đổi gì, `made` ⇒ `served` qua
+`vongdoi.ChuyenViec` cùng giao dịch, rồi chuyển đơn; bỏ `delivery_served_mark_undecided`; hợp đồng 0.60.0 → 0.61.0.
+**Acceptance** (viết trước khi giao): A1 test Claude giao không đổi (mã băm ở phiếu); A2 `TestI016_RoiQuanKhiBepConMonChuaLamBiTuChoi`,
+`TestI016_RoiQuanGhiDaRaBanChoViecDaLam`, `TestI016_BonHinhMangDiQuaCuaCuaLat`, kịch bản 2 bước 10 và mọi test `be/internal/don` khác xanh;
+A3 hai test FE quầy (`goi-mon.test.tsx`, `san-xuat.test.tsx`) xanh, `fe-check` PASS; A4 Gate 1f (cửa rời quán không có câu `UPDATE` riêng
+cho `station_job`) và Gate 1g PASS ở 0.61.0, mã cũ không còn ở `be/` · `fe/src` · `openapi.yaml`; A5 `05-luong-mang-di.md` §4,
+`07-san-xuat-theo-me.md` dòng S-6, `10-cong-chat-luong-pha-3.md` dòng bước 10 nói hành vi mới; A6 gate không FAIL.
+Test viết trước, đỏ đúng lý do (cửa còn trả mã cũ): năm test `be/internal/don` FAIL (`chat-review/T-223-do-truoc.log`), ca FE
+*rời quán bị chặn vì bếp còn món chưa làm* FAIL ở chỗ chưa có lời mới; bỏ ca mã cũ ở `san-xuat.test.tsx` (cửa ra bàn chưa bao giờ trả
+mã ấy). Phiếu `../lean_wt/chat-review/T-223-phieu.md`; worktree `../lean_wt/T-223`, nhánh `codex/T-223`, nền `1254a33`; bốn file test
+tạm rời cây chính (bản ở worktree và `chat-review/T-223/`).
+
+2026-11-04, T-223 xong. **Codex** thi công (worktree `../lean_wt/T-223`, nhánh `codex/T-223`, nền `1254a33`, model `gpt-6-astra`), không dừng chỗ
+nào; **Claude** duyệt diff và tích hợp vào cây chính bằng `git apply`. File: `be/internal/don/` (`service.go` `RoiQuanDon`, `repository.go`,
+`sql/roi_quan/doc_viec.sql` thành `RoiQuanKhoaViec` … `FOR UPDATE`, sqlc sinh lại, hai file test), `be/internal/apierr/apierr.go` (mã mới thay mã
+cũ), `openapi.yaml` 0.60.0 → 0.61.0, đoạn T-223 ở `01-hop-dong-api.md`, `05-luong-mang-di.md` §4, dòng S-6 ở `07-san-xuat-theo-me.md`, bước 10 ở
+`10-cong-chat-luong-pha-3.md`, `fe/src/lib/api/schema.ts`, `du-lieu-hang-cho.ts` (lời mới), `du-lieu-ra-ban.ts` (bỏ case chết), hai test FE quầy.
+Mã băm bốn file test không đổi. Bằng chứng (cây chính, Docker): `./scripts/gate.sh` exit 0 — `--- PASS` cho `TestI016_RoiQuanKhiBepConMonChuaLamBiTuChoi`,
+`TestI016_RoiQuanGhiDaRaBanChoViecDaLam`, `TestI016_BonHinhMangDiQuaCuaCuaLat`, `TestI007_Scenario2_BaDonMangDiBaKenh`, `TestI021_MotNgayDienQuaCuaRa0dLech`;
+`PASS Gate 1f` · `PASS Gate 1g` ở 0.61.0; `PASS gate không cổng nào đỏ`; `./scripts/fe-check.sh` exit 0 — `Tests 635 passed (635)`, `fe-check: PASS`;
+`grep` mã cũ trong `be` · `fe/src` · `openapi.yaml` rỗng. Chưa có người duyệt thứ ba. Còn lại: cửa `sanxuat/ra_ban` vẫn nhận đơn giao trước lúc rời
+quán (ghi ở ADR-088 *Sửa đổi*, *Không đổi*) — chưa ai hỏi có nên chặn.
 
 <a id="t-222"></a>
 ### T-222 — Màn QR chỉ bày nhãn trơ của bàn, `/dat-mon` chưa lên máy tìm kiếm
