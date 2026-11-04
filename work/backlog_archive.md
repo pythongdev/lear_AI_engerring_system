@@ -951,6 +951,19 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-288"></a>
+### T-288 — Ảnh giới thiệu quán dưới tên trên menu bàn
+
+Chủ repo yêu cầu 2026-11-04: đặt ảnh `docs/private/anh/Gemini_Generated_Image_su3m4lsu3m4lsu3m.png` dưới tên quán tại `/ban/3`; bấm ảnh mở trang giới thiệu quán do Codex tạo. Mức L1: giao diện và route đọc tĩnh, không đổi dữ liệu đơn, giá hay hợp đồng API.
+
+Acceptance ghi trước khi sửa: A1 — ảnh được phục vụ công khai và hiện dưới tên quán trên trang `/ban/[ma]`; cả ảnh là liên kết có tên dễ hiểu. A2 — bấm ảnh tới `/gioi-thieu`, trang có nội dung giới thiệu, địa chỉ, giờ bán và số liên hệ từ `master_plan/shop-facts.md` §1, có đường về bàn. A3 — route/component được ghi vào owner FE; `./scripts/gate.sh` không có cổng đỏ do thay đổi này.
+
+Phạm vi (`work/scope/T-288.txt`): `work/backlog.md`, `work/backlog_archive.md`, `docs/product/4-fe/01-khung-fe.md`, `fe/src/app/ban/_components/phieu-khach.tsx`, `fe/src/app/gioi-thieu/`, `fe/public/images/gioi-thieu/`.
+
+Người làm: Codex trên nhánh `P4A-01`; chưa có người duyệt độc lập. Cây đang có thay đổi chưa commit của việc khác; không gộp chúng vào task này. Bằng chứng: `/ban/3` và `/gioi-thieu?ban=3` đều HTTP 200, ảnh công khai HTTP 200 `image/png`; `./scripts/gate.sh` PASS Gate 3, 1b, 1c, 1e–1h, verify, không cổng đỏ. Gate 1d, be, db SKIP do không đổi phạm vi liên quan.
+
+[↑ đầu file](#top)
+
 <a id="t-244"></a>
 ### T-244 — Bảy suất là món thường, chưa phải combo ghép từ món lẻ
 

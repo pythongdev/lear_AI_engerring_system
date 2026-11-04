@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { QrCode } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { dongGui, giaDong, useGiaCombo } from "@/components/shared/bo-soan-mon";
@@ -105,7 +107,10 @@ export function PhieuKhach({ ma, nhan, initialMenu, initialDelivery }: {
     } finally { chot.current = false; setDangGui(false); }
   }
   return <main className="khach-menu min-h-dvh bg-[var(--page)] text-[12px] leading-[1.45] text-[var(--text)]"><div className="phone mx-auto max-w-[472px] bg-[var(--bg)] px-[15px] pb-4">
-    <header data-component="MenuHeader" className="flex min-h-[58px] items-center gap-3 border-b border-[var(--line)]"><div><small className="text-[11px] text-[var(--muted)]">{SITE_NAME}</small>
+    <header data-component="MenuHeader" className="border-b border-[var(--line)] py-3"><div><span className="block text-center text-[26px] font-bold leading-tight tracking-tight text-[var(--text)]">{SITE_NAME}</span>
+    {!web && <Link href={`/gioi-thieu?ban=${encodeURIComponent(ma!)}`} aria-label="Xem giới thiệu về quán Bánh cuốn Bà Thanh" className="mt-2 block overflow-hidden rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]">
+      <Image src="/images/gioi-thieu/banh-cuon-ba-thanh.png" alt="Minh họa đĩa bánh cuốn cùng bát canh và rau ăn kèm" width={1264} height={841} priority className="h-36 w-full object-cover object-center" />
+    </Link>}
     <h1 className="flex items-center gap-2 text-[20px] font-semibold">
       {!web && <QrCode aria-hidden="true" />}
       {web ? "Đặt món" : /^\d+$/.test(nhan?.trim() ?? "") ? `Bàn ${nhan!.trim()}` : nhan}
