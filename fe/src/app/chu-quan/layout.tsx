@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     <KhungTheoVai khung="/chu-quan">
       <ThanhDieuHuong />
       {children}
-      <OChat />
+      <OChat khung="/chu-quan" />
     </KhungTheoVai>
   );
 }

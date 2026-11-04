@@ -150,6 +150,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] CHAT-14 **Người canh và dọn chưa có một hộp tin dùng được khi tắt model** — L2, ADR-137 điểm 4 · 7 · 8; 2026-11-04 Codex dựng `HopTin` trong `OChat` (hộp cá nhân ở `/tram`, hộp quầy ở `/quay` · `/chu-quan`, thẻ kiểm trước gửi, *Việc của tôi* không nút); Claude viết test trước, sửa ba lỗi test và duyệt; nhánh không model của ADR-137 đủ năm bước · [mô tả](backlog_CHAT.md#chat-14)
 - [x] CHAT-13 **POS và trạm chưa có cửa gửi, đọc và phản hồi tin đúng người** — L2, ADR-137 điểm 4 · 5 · 6 · 7; 2026-11-04 Codex dựng bốn cửa `/station-messages` (ba cửa ghi `hoptin/quay_gui` · `gui_ve_quay` · `ghi`, hợp đồng 0.57.0, hai mã mới); Claude viết test trước, chốt cửa ghi nội bộ và duyệt; tiếp theo `CHAT-14` · [mô tả](backlog_CHAT.md#chat-13)
 - [x] CHAT-12 **Tin báo trạm chưa có chỗ cất tách khỏi tiến độ** — L2, ADR-137 điểm 3 · 6 · 9; 2026-11-04 Codex dựng bảng chỉ thêm `station_message` (bước 42, `20261103120000_hop_tin`), bốn câu đối chiếu `I-038`; Claude viết test trước, ánh xạ ràng buộc ở hợp đồng 0.56.0 và duyệt; tiếp theo `CHAT-13` · [mô tả](backlog_CHAT.md#chat-12)
 - [x] CHAT-04 **App chưa có chỗ mở và đóng chat** — L1, ADR-137 điểm 1; 2026-11-04 Codex dựng vỏ `OChat` sau cờ `NEXT_PUBLIC_CHAT_ENABLED` ở ba khung `/quay` · `/tram` · `/chu-quan`, chưa nối model hay cửa ghi; Claude duyệt · [mô tả](backlog_CHAT.md#chat-04)

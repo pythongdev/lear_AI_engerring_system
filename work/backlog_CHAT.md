@@ -579,6 +579,34 @@ gate.
 
 **Nhận việc:**
 
+2026-11-04, Claude: bắt đầu. U-113 đã có lời 2026-11-01 (điện thoại riêng) nên dòng *Chặn bởi* trên là lịch sử; khách tự nhắn
+vẫn không mở. Claude chốt màn trong khung ADR-137: hộp tin nằm trong bảng `OChat`, `OChat` nhận prop `khung`. `/tram` là hộp cá
+nhân (`listMyStationMessages`, gửi `sendStationMessageToCounter`); `/quay` và `/chu-quan` là hộp quầy (`listCounterStationMessages`,
+`listPeople`, gửi `sendStationMessage` — chủ quán không đứng quầy bị backend từ chối, FE bày lời). Cả ba có *Việc của tôi*
+(`listMyAssignedTasks`, không nút). Ô nháp chat của CHAT-04 nhường chỗ cho ô *Nội dung tin* tới khi lane model mở. `listPeople`
+không trả vai hay trạng thái tài khoản nên chưa có gợi ý theo vai; người không hoạt động do backend từ chối. Màn dọn bàn tay chưa có
+ở FE nên tin dọn bàn không có link; tin canh · tráng · gấp trỏ `/quay/san-xuat`, tin khác có bàn trỏ `/quay/goi-mon`. Chỉ trang
+đầu 20 tin. Tên chữ, vai trò ARIA và khoá query chốt ở đầu `fe/src/components/shared/hop-tin.test.tsx`; test viết trước, chạy đỏ
+đúng lý do (34 ca đỏ vì chưa có hộp tin, kể cả các ca CHAT-04 đã sửa theo hợp đồng mới). Phiếu:
+`../lean_wt/chat-review/CHAT-14-phieu.md`; worktree `../lean_wt/CHAT-14`, nhánh `codex/CHAT-14`.
+
+2026-11-04 10:07, Claude: lượt Codex đầu dừng ngay khi đọc phiếu vì hết hạn mức (báo mở lại 10:38), chưa sửa file nào. Script chờ
+`../lean_wt/chat-review/cho-han-muc-chat14.sh` thử lại mỗi 5 phút rồi chạy lại phiếu từ đầu; báo cáo ra `CHAT-14-bao-cao.md` cùng thư
+mục. Hai file test tạm rời cây chính để gate ở đây không đỏ: bản gốc ở worktree và ở `chat-review/CHAT-14-*.test.tsx`
+(mã băm ghi ở A1 của phiếu).
+
+2026-11-04, CHAT-14 xong. **Codex** thi công (worktree `../lean_wt/CHAT-14`, nhánh `codex/CHAT-14`, nền `69a7c38`, model `gpt-6-astra`);
+**Claude** viết test trước, chốt tên màn, duyệt diff và tích hợp. File: `fe/src/components/shared/hop-tin.tsx` · `du-lieu-hop-tin.ts` ·
+`hop-tin.test.tsx`, `o-chat.tsx` · `o-chat.test.tsx`, ba layout (truyền `khung`), hai dòng `OChat` · `HopTin` ở
+`docs/product/4-fe/01-khung-fe.md` §4. Codex dừng đúng chỗ ở ba lỗi của chính test: mock `tin-hieu` trong `o-chat.test.tsx` thiếu
+`tuyChonKeo`, gán biến ngoài component trong `hop-tin.test.tsx` bị luật `react-hooks/globals` chặn, `counter_duty_id: null` trái kiểu
+`Session` (đổi thành `0` như các test khác) — Claude sửa cả ba, không đổi điều test kiểm; mã băm mới `e1464ea6…` · `d4ebb2ec…`.
+Claude chấp nhận hai lựa chọn của Codex: hộp chỉ đọc và kéo khi bảng đang mở (đóng thì ngừng, mở lại đọc ngay); đóng bảng giữ nháp
+và thẻ chưa rõ kết quả, chỉ đổi người mới xoá. Bằng chứng: hai file test 55/55; `./scripts/gate.sh` trong worktree `fe-check: PASS`
+(611 test FE, build biên dịch xong) và lại ở cây chính sau khi chép file: `PASS gate không cổng nào đỏ`. Chưa diễn tay trên điện thoại
+thật với backend thật (model tắt, SSE tắt, gửi mất phản hồi) như dòng *Verify*; chưa có người duyệt thứ ba. Còn lại để sau: chưa có
+dấu báo tin mới khi bảng đóng; chưa gợi ý người nhận theo vai vì `listPeople` không trả vai; chỉ trang đầu 20 tin.
+
 [↑ đầu file](#top)
 
 ---

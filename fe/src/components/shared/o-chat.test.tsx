@@ -15,7 +15,9 @@ const { renderTinHieu } = vi.hoisted(() => ({ renderTinHieu: vi.fn() }));
 vi.mock("@/components/tai-khoan/khung-theo-vai", () => ({
   KhungTheoVai: ({ children }: { children: ReactNode }) => children,
 }));
-vi.mock("@/lib/realtime/tin-hieu", () => ({
+vi.mock("@/lib/realtime/tin-hieu", async (goc) => ({
+  // CHAT-14: hộp tin dùng tuyChonKeo thật.
+  ...(await goc<typeof import("@/lib/realtime/tin-hieu")>()),
   TinHieuProvider: ({ children }: { children: ReactNode }) => {
     renderTinHieu();
     return <div data-testid="tin-hieu">{children}</div>;
@@ -32,7 +34,7 @@ const nguoiA: Session = {
 const nguoiB: Session = { ...nguoiA, person_id: 2, display_name: "Người B" };
 const nhanMo = "Mở trò chuyện";
 const nhanDong = "Đóng trò chuyện";
-const nhanNhap = "Nháp trò chuyện";
+const nhanNhap = "Nội dung tin";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -44,12 +46,18 @@ function traJson(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
 }
 
-function dung(children: ReactNode = <OChat />, phien: () => Session = () => nguoiA) {
+function dung(children: ReactNode = <OChat khung="/tram" />, phien: () => Session = () => nguoiA) {
   const requests: { method: string; path: string }[] = [];
   const fetch = vi.fn(async (request: Request) => {
     const path = new URL(request.url).pathname;
     requests.push({ method: request.method, path });
     if (request.method === "GET" && path === "/api/sessions/current") return traJson(phien());
+    // CHAT-14: hộp tin đọc các đường này khi mở bảng; trả rỗng để vỏ không vướng lỗi đọc.
+    const trangTin = { messages: [], next_before_id: null, read_at: "2026-11-04T10:00:00+07:00", poll_interval_seconds: 20 };
+    if (request.method === "GET" && path.startsWith("/api/station-messages/")) return traJson(trangTin);
+    if (request.method === "GET" && path === "/api/assigned-tasks/mine") return traJson({ assigned_tasks: [] });
+    if (request.method === "GET" && path === "/api/people") return traJson({ people: [] });
+    if (request.method === "GET" && path === "/api/dining-tables") return traJson({ tables: [] });
     return traJson({ code: "unexpected_request" }, 500);
   });
   return { ...render(<ApiProvider fetch={fetch}>{children}</ApiProvider>), requests, fetch };
@@ -68,8 +76,8 @@ describe("CHAT-04 — vỏ ô chat", () => {
     expect(document.activeElement).toBe(screen.getByRole("textbox", { name: nhanNhap }));
     const bang = screen.getByRole("dialog", { name: "Trò chuyện" });
     expect(bang.getAttribute("aria-modal")).toBe("false");
-    expect(within(bang).getByText("Chat chưa nối. Hãy dùng màn thao tác tay.")).toBeTruthy();
-    expect(within(bang).getAllByRole("button")).toEqual([screen.getByRole("button", { name: nhanDong })]);
+    // CHAT-14: bảng giờ chứa hộp tin; nút và chữ của hộp do hop-tin.test.tsx kiểm.
+    expect(within(bang).getByRole("button", { name: nhanDong })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: nhanDong }));
     expect(screen.queryByRole("dialog")).toBeNull();
@@ -84,7 +92,7 @@ describe("CHAT-04 — vỏ ô chat", () => {
 
   it("A1 bảng mở vẫn bấm và gõ ngoài bảng; Esc bên ngoài không đóng chat", async () => {
     const bam = vi.fn();
-    dung(<><OChat /><button onClick={bam}>Nút ngoài</button><input aria-label="Ô ngoài" /></>);
+    dung(<><OChat khung="/tram" /><button onClick={bam}>Nút ngoài</button><input aria-label="Ô ngoài" /></>);
     await moChat();
     fireEvent.click(screen.getByRole("button", { name: "Nút ngoài" }));
     expect(bam).toHaveBeenCalledTimes(1);
@@ -110,7 +118,7 @@ describe("CHAT-04 — vỏ ô chat", () => {
   });
 
   it("phiên đang tải không vẽ gì", () => {
-    const { container } = render(<ApiProvider fetch={() => new Promise<Response>(() => {})}><OChat /></ApiProvider>);
+    const { container } = render(<ApiProvider fetch={() => new Promise<Response>(() => {})}><OChat khung="/tram" /></ApiProvider>);
     expect(container.innerHTML).toBe("");
   });
 
@@ -123,21 +131,25 @@ describe("CHAT-04 — vỏ ô chat", () => {
     }
     const { container } = render(
       <ApiProvider fetch={async () => traJson({ code: status === 401 ? "unauthenticated" : "internal_error" }, status)}>
-        <TheoDoiPhien /><OChat />
+        <TheoDoiPhien /><OChat khung="/tram" />
       </ApiProvider>,
     );
     await waitFor(() => expect(daDoc).toBe(true));
     expect(container.innerHTML).toBe("");
   });
 
-  it("A4 mở, gõ, đóng chỉ gọi GET /sessions/current dùng chung cache phiên", async () => {
+  it("A4 mở, gõ, đóng chỉ đọc phiên dùng chung cache và các đường đọc của hộp tin, không lệnh ghi", async () => {
     function PhienCuaKhung() { usePhien(); return null; }
-    const { requests } = dung(<><PhienCuaKhung /><OChat /></>);
+    const { requests } = dung(<><PhienCuaKhung /><OChat khung="/tram" /></>);
     await moChat();
     fireEvent.change(screen.getByRole("textbox", { name: nhanNhap }), { target: { value: "Nháp chưa gửi" } });
     fireEvent.click(screen.getByRole("button", { name: nhanDong }));
-    // ApiProvider đi qua tiền tố /api của Next, endpoint backend là /sessions/current.
-    expect(requests).toEqual([{ method: "GET", path: "/api/sessions/current" }]);
+    // ApiProvider đi qua tiền tố /api của Next. Sửa 2026-11-04 (CHAT-14): mở bảng đọc hộp tin; vẫn không lệnh ghi nào.
+    expect(requests.filter((r) => r.method !== "GET")).toEqual([]);
+    expect(requests.filter((r) => r.path === "/api/sessions/current")).toHaveLength(1);
+    expect(new Set(requests.map((r) => r.path))).toEqual(new Set([
+      "/api/sessions/current", "/api/station-messages/mine", "/api/assigned-tasks/mine", "/api/dining-tables",
+    ]));
   });
 
   it("A5 gõ nháp không ghi localStorage hay sessionStorage", async () => {
@@ -160,7 +172,7 @@ describe("CHAT-04 — vỏ ô chat", () => {
         void queries.invalidateQueries({ queryKey: KHOA_PHIEN });
       }}>Đổi người</button>;
     }
-    dung(<><OChat /><DoiNguoi /></>, () => nguoi);
+    dung(<><OChat khung="/tram" /><DoiNguoi /></>, () => nguoi);
     await moChat();
     fireEvent.change(screen.getByRole("textbox", { name: nhanNhap }), { target: { value: "Nháp của A" } });
     expect((screen.getByRole("textbox", { name: nhanNhap }) as HTMLInputElement).value).toBe("Nháp của A");

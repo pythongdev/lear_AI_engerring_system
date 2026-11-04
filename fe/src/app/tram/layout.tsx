@@ -13,7 +13,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <BaoMatKetNoi />
         {children}
       </TinHieuProvider>
-      <OChat />
+      <OChat khung="/tram" />
     </KhungTheoVai>
   );
 }

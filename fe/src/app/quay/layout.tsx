@@ -15,7 +15,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <TuNhaDonHen />
         {children}
       </TinHieuProvider>
-      <OChat />
+      <OChat khung="/quay" />
     </KhungTheoVai>
   );
 }
