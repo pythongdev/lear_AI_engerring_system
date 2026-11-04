@@ -33,8 +33,9 @@ export const menuMau: S["Menu"] = {
     menu_item_id: 1, item_name: "Bánh cuốn",
     option_groups: [{ option_group_id: 5, option_group_name: "Nhân", prerequisite_option_ids: [],
       options: [{ menu_option_id: 51, option_name: "Thịt", is_default: true }] }],
-    prices: [{ option_ids: [51], unit_price_vnd: 35000 }],
+    prices: [{ option_ids: [51], unit_price_vnd: 35000 }], menu_category_id: null,
   }],
+  categories: [],
   combos: [],
 };
 

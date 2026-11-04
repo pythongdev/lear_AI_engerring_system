@@ -4228,6 +4228,11 @@ export interface components {
             unit_price_vnd: components["schemas"]["MoneyVnd"];
         };
         MenuItem: {
+            /**
+             * Format: int64
+             * @description Danh mục chưa ẩn của món; null khi chưa xếp hoặc danh mục đã ẩn.
+             */
+            menu_category_id: number | null;
             /** Format: int64 */
             menu_item_id: number;
             item_name: string;
@@ -4235,9 +4240,16 @@ export interface components {
             prices: components["schemas"]["MenuPrice"][];
         };
         Menu: {
+            /** @description Danh mục chưa ẩn có ít nhất một món trong items; theo tên (collation của cột) rồi id; có thể rỗng. */
+            categories: components["schemas"]["MenuSaleCategory"][];
             items: components["schemas"]["MenuItem"][];
             /** @description Combo đang bán — chưa ẩn và mọi món còn bán — theo tên rồi id. Không kê giá mọi tổ hợp như món lẻ (số tổ hợp nhân theo số suất); con số cuối lấy từ POST /price-quotes (ADR-117 điểm 5). */
             combos: components["schemas"]["MenuSaleCombo"][];
+        };
+        MenuSaleCategory: {
+            /** Format: int64 */
+            menu_category_id: number;
+            name: string;
         };
         MenuSaleCombo: {
             /** Format: int64 */

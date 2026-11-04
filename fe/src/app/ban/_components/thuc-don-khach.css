@@ -114,3 +114,8 @@
 @media (prefers-reduced-motion: reduce) {
   .khach-menu .menu-panel, .khach-menu .menu-chip svg, .khach-menu .menu-image img { transition: none; }
 }
+
+.khach-menu .tabs { display: flex; gap: 17px; border-bottom: 1px solid var(--line); overflow: auto; white-space: nowrap; }
+.khach-menu .tabs button { border: 0; border-radius: 0; background: transparent; color: var(--muted); padding: 10px 0; font-size: 12px; }
+.khach-menu .tabs button[aria-pressed=true] { color: var(--accent); border-bottom: 3px solid var(--accent); }
+@media (max-width: 480px) { .khach-menu .tabs { gap: 14px; } }

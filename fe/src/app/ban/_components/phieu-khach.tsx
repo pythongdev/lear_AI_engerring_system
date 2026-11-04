@@ -115,7 +115,7 @@ export function PhieuKhach({ ma, nhan, initialMenu, initialDelivery }: {
     {menu.isError && <p role="alert">Chưa đọc được menu. Đang hiện bản đọc lúc {new Date(menu.dataUpdatedAt).toLocaleTimeString("vi-VN")}. <Button onClick={() => void menu.refetch()}>Đọc lại menu</Button></p>}
     <form onSubmit={(e) => { e.preventDefault(); void gui(); }}>
       <fieldset disabled={dangGui || choGuiLai}>
-        <ThucDonKhach maBan={ma} items={menu.data.items} combos={menu.data.combos} lines={lines} onChange={(ds) => sua(khoaNhap, ds)} quotes={quotesKhach}
+        <ThucDonKhach maBan={ma} items={menu.data.items} categories={menu.data.categories} combos={menu.data.combos} lines={lines} onChange={(ds) => sua(khoaNhap, ds)} quotes={quotesKhach}
           total={duMon && tong.isSuccess && !tong.isFetching ? tong.data.total_vnd : undefined}
           thongTin={web && <div className="space-y-4">
           <fieldset className="flex flex-wrap gap-4"><legend>Cách nhận hàng</legend>

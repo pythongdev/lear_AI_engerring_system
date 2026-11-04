@@ -84,3 +84,26 @@ func (r repository) docComboDangBan(ctx context.Context) ([]comboMenu, error) {
 	err = json.Unmarshal(raw, &out)
 	return out, err
 }
+
+// Chỉ đọc danh mục của đúng tập món đã lấy cho menu; thứ tự theo collation của cột tên.
+func (r repository) docDanhMucMenu(ctx context.Context, items []monMenu) ([]danhMucMenu, error) {
+	ids := make([]int64, 0, len(items))
+	byID := make(map[int64]*monMenu, len(items))
+	for i := range items {
+		ids = append(ids, items[i].MenuItemID)
+		byID[items[i].MenuItemID] = &items[i]
+	}
+	rows, err := r.q.DocDanhMucMenu(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+	categories := make([]danhMucMenu, 0)
+	for _, row := range rows {
+		categoryID := row.MenuCategoryID
+		byID[row.MenuItemID].MenuCategoryID = &categoryID
+		if len(categories) == 0 || categories[len(categories)-1].MenuCategoryID != categoryID {
+			categories = append(categories, danhMucMenu{MenuCategoryID: categoryID, Name: row.Name})
+		}
+	}
+	return categories, nil
+}

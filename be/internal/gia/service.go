@@ -359,9 +359,15 @@ func (s *Service) TinhThu(ctx context.Context, lines []DongYeuCau) (KetQua, erro
 	return out, err
 }
 
+type danhMucMenu struct {
+	MenuCategoryID int64  `json:"menu_category_id"`
+	Name           string `json:"name"`
+}
+
 type menuKetQua struct {
-	Items  []monMenu   `json:"items"`
-	Combos []comboMenu `json:"combos"`
+	Categories []danhMucMenu `json:"categories"`
+	Items      []monMenu     `json:"items"`
+	Combos     []comboMenu   `json:"combos"`
 }
 
 // comboMenu bày combo đang bán: giá combo, món kèm số phần, nhóm tuỳ chọn và mức của từng lựa chọn. Không kê giá mọi
@@ -390,18 +396,22 @@ type giaMenu struct {
 }
 
 type monMenu struct {
-	MenuItemID   int64      `json:"menu_item_id"`
-	ItemName     string     `json:"item_name"`
-	OptionGroups []nhomMenu `json:"option_groups"`
-	Prices       []giaMenu  `json:"prices"`
+	MenuCategoryID *int64     `json:"menu_category_id"`
+	MenuItemID     int64      `json:"menu_item_id"`
+	ItemName       string     `json:"item_name"`
+	OptionGroups   []nhomMenu `json:"option_groups"`
+	Prices         []giaMenu  `json:"prices"`
 }
 
 func (s *Service) DocMenu(ctx context.Context) (menuKetQua, error) {
-	out := menuKetQua{Items: []monMenu{}, Combos: []comboMenu{}}
+	out := menuKetQua{Items: []monMenu{}, Combos: []comboMenu{}, Categories: []danhMucMenu{}}
 	err := postgres.InTx(ctx, s.pool, func(tx pgx.Tx) error {
 		repo := newRepository(tx)
 		items, err := repo.docMonDangBan(ctx)
 		if err != nil {
+			return err
+		}
+		if out.Categories, err = repo.docDanhMucMenu(ctx, items); err != nil {
 			return err
 		}
 		for _, m := range items {

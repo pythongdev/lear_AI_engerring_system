@@ -47,6 +47,7 @@ const mau: MenuCategoryList = {
 
 // Món ngừng bán (10) không có trong GET /menu; giá là số backend trả, trang không cộng.
 const menuMau: Menu = {
+  categories: [],
   items: [
     {
       menu_item_id: 11, item_name: "Bánh cuốn trứng",
@@ -54,9 +55,9 @@ const menuMau: Menu = {
         { menu_option_id: 51, option_name: "Thịt", is_default: true },
         { menu_option_id: 52, option_name: "Chay", is_default: false },
       ] }],
-      prices: [{ option_ids: [51], unit_price_vnd: 35000 }, { option_ids: [52], unit_price_vnd: 30000 }],
+      prices: [{ option_ids: [51], unit_price_vnd: 35000 }, { option_ids: [52], unit_price_vnd: 30000 }], menu_category_id: null,
     },
-    { menu_item_id: 20, item_name: "Chả quế", option_groups: [], prices: [{ option_ids: [], unit_price_vnd: 10000 }] },
+    { menu_item_id: 20, item_name: "Chả quế", option_groups: [], prices: [{ option_ids: [], unit_price_vnd: 10000 }], menu_category_id: null },
   ],
   combos: [],
 };

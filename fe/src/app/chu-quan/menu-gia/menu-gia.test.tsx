@@ -26,8 +26,9 @@ afterEach(cleanup);
 
 // Cố ý không theo chữ cái hay id: màn giữ thứ tự backend.
 const menuMau: Menu = {
+  categories: [],
   items: [
-    { menu_item_id: 2, item_name: "Chả quế", option_groups: [], prices: [{ option_ids: [], unit_price_vnd: 15000 }] },
+    { menu_item_id: 2, item_name: "Chả quế", option_groups: [], prices: [{ option_ids: [], unit_price_vnd: 15000 }], menu_category_id: null },
     {
       menu_item_id: 1, item_name: "Bánh cuốn",
       option_groups: [{
@@ -38,7 +39,7 @@ const menuMau: Menu = {
         ],
       }],
       // Hai số không suy được từ nhau bằng phép cộng nào trên màn: màn phải bày đúng số này.
-      prices: [{ option_ids: [51], unit_price_vnd: 35000 }, { option_ids: [52], unit_price_vnd: 31000 }],
+      prices: [{ option_ids: [51], unit_price_vnd: 35000 }, { option_ids: [52], unit_price_vnd: 31000 }], menu_category_id: null,
     },
   ],
   combos: [],

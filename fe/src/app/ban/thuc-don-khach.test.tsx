@@ -221,7 +221,7 @@ it("canh bánh cuốn nằm cuối món lẻ, nút Rau mặc định Ít rau và
     { option_group_id: 7, option_group_name: "Rau", prerequisite_option_ids: [], options: [
       { menu_option_id: 31, option_name: "Không rau", is_default: false }, { menu_option_id: 32, option_name: "Ít rau", is_default: true },
       { menu_option_id: 33, option_name: "Nhiều rau", is_default: false }] },
-  ], prices: [{ option_ids: [31], unit_price_vnd: 0 }, { option_ids: [32], unit_price_vnd: 0 }, { option_ids: [33], unit_price_vnd: 0 }] }));
+  ], prices: [{ option_ids: [31], unit_price_vnd: 0 }, { option_ids: [32], unit_price_vnd: 0 }, { option_ids: [33], unit_price_vnd: 0 }], menu_category_id: null }));
   const list = screen.getByRole("heading", { name: "MÓN LẺ" }).closest("section")!;
   expect([...list.querySelectorAll("h3")].map((h) => h.textContent)).toEqual(["Bánh cuốn", "Canh", "Canh bánh cuốn"]);
   const nut = within(card("Thêm Canh bánh cuốn")).getByRole("button", { name: "Ít rau" });
@@ -266,7 +266,7 @@ it("nháp cũ gộp cùng tập lựa chọn dù đảo thứ tự; khác món h
       { menu_option_id: 31, option_name: "Ít rau", is_default: true },
       { menu_option_id: 32, option_name: "Nhiều rau", is_default: false },
     ] },
-  ], prices: [{ option_ids: [31], unit_price_vnd: 0 }, { option_ids: [32], unit_price_vnd: 0 }] }));
+  ], prices: [{ option_ids: [31], unit_price_vnd: 0 }, { option_ids: [32], unit_price_vnd: 0 }], menu_category_id: null }));
   expect((dong(1).getByRole("spinbutton") as HTMLInputElement).value).toBe("3");
   expect((dong(2).getByRole("spinbutton") as HTMLInputElement).value).toBe("2");
   expect(dong(3).getByRole("heading", { name: "Canh bánh cuốn" })).toBeTruthy();

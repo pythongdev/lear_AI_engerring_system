@@ -6,15 +6,17 @@ export const CAU_TAM_DUNG = "Quán đang tạm dừng nhận đơn. Bạn vui l�
 export const CAU_MAT_KET_NOI = "Quán tạm chưa nhận đơn qua web. Bạn vui lòng gọi hotline 0382688666 để đặt.";
 export const CAU_NGOAI_GIO = "Quán mở cửa 6h–11h sáng";
 
+// T-237 (2026-11-04, Claude): GET /menu mang `categories` và `menu_category_id` của từng món; mẫu chưa xếp danh mục.
 export const menuMau = {
+  categories: [],
   items: [
     { menu_item_id: 1, item_name: "Bánh cuốn", option_groups: [
       { option_group_id: 5, option_group_name: "Nhân", prerequisite_option_ids: [], options: [
         { menu_option_id: 11, option_name: "Thịt", is_default: true }, { menu_option_id: 12, option_name: "Chay", is_default: false }] },
       { option_group_id: 6, option_group_name: "Lượng nhân", prerequisite_option_ids: [11], options: [
         { menu_option_id: 21, option_name: "Thường", is_default: true }, { menu_option_id: 22, option_name: "Nhiều", is_default: false }] },
-    ], prices: [{ option_ids: [11, 21], unit_price_vnd: 35000 }, { option_ids: [11, 22], unit_price_vnd: 40000 }, { option_ids: [12], unit_price_vnd: 30000 }] },
-    { menu_item_id: 2, item_name: "Canh", option_groups: [], prices: [{ option_ids: [], unit_price_vnd: 10000 }] },
+    ], prices: [{ option_ids: [11, 21], unit_price_vnd: 35000 }, { option_ids: [11, 22], unit_price_vnd: 40000 }, { option_ids: [12], unit_price_vnd: 30000 }], menu_category_id: null },
+    { menu_item_id: 2, item_name: "Canh", option_groups: [], prices: [{ option_ids: [], unit_price_vnd: 10000 }], menu_category_id: null },
   ],
   combos: [],
 };

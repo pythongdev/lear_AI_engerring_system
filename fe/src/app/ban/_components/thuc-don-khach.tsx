@@ -72,13 +72,14 @@ const timTen = (ten: string) => ten.normalize("NFD").replace(/[\u0300-\u036f]/g,
 
 // Ô số lượng bị xoá trống là NaN; đếm như 0 để thẻ và dải giỏ không hiện NaN.
 const so = (d: DongSoan) => Number.isFinite(d.quantity) ? d.quantity : 0;
-export function ThucDonKhach({ items, combos = [], lines, onChange, quotes, total, thongTin, tong, maBan }: {
-  maBan?: string; items: Mon[]; combos?: Combo[]; lines: DongSoan[]; onChange: (lines: DongSoan[]) => void;
+export function ThucDonKhach({ items, combos = [], categories = [], lines, onChange, quotes, total, thongTin, tong, maBan }: {
+  maBan?: string; items: Mon[]; combos?: Combo[]; categories?: components["schemas"]["MenuSaleCategory"][]; lines: DongSoan[]; onChange: (lines: DongSoan[]) => void;
   quotes: ReturnType<typeof useGiaCombo>; total?: number; thongTin: ReactNode; tong: ReactNode;
 }) {
   const chiTiet = (loai: "combo" | "mon", ma: number) => `/thuc-don/${loai}/${ma}${maBan === undefined ? "" : `?ban=${encodeURIComponent(maBan)}`}`;
   const id = useId();
   const summary = useRef<HTMLElement>(null);
+  const [danhMuc, setDanhMuc] = useState<number | "all" | "other" | "combo">("all");
   const [tim, setTim] = useState("");
   const [luaChon, setLuaChon] = useState<Record<string, number[]>>({});
   const [honHop, setHonHop] = useState<Record<number, boolean>>({});
@@ -95,8 +96,21 @@ export function ThucDonKhach({ items, combos = [], lines, onChange, quotes, tota
       })) }));
     } } : undefined} />;
   const sua = (i: number, dong: DongSoan) => onChange(lines.map((d, j) => j === i ? dong : d));
+  const coDanhMuc = categories.length > 0;
+  const the = [
+    { key: "all" as const, name: "Tất cả" },
+    ...categories.map((c) => ({ key: c.menu_category_id, name: c.name })),
+    ...(items.some((m) => m.menu_category_id === null) ? [{ key: "other" as const, name: "Món khác" }] : []),
+    ...(combos.length ? [{ key: "combo" as const, name: "Combo" }] : []),
+  ];
+  const dangChon = coDanhMuc && the.some((t) => t.key === danhMuc) ? danhMuc : "all";
   const monLoc = items.filter((m) => timTen(m.item_name).includes(timTen(tim))).sort((a, b) => cuoiDanhSach(a) - cuoiDanhSach(b));
-  const comboLoc = combos.filter((c) => timTen(c.name).includes(timTen(tim)));
+  const comboLoc = combos.filter((c) => (dangChon === "all" || dangChon === "combo") && timTen(c.name).includes(timTen(tim)));
+  const khoiMon = (coDanhMuc ? [
+    ...categories.map((c) => ({ key: c.menu_category_id, name: c.name, items: monLoc.filter((m) => m.menu_category_id === c.menu_category_id) })),
+    { key: "other" as const, name: "Món khác", items: monLoc.filter((m) => m.menu_category_id === null) },
+  ] : [{ key: "all" as const, name: "MÓN LẺ", items: monLoc }])
+    .filter((k) => k.items.length > 0 && (dangChon === "all" || dangChon === k.key));
   function stepper(ten: string, matches: (d: DongSoan) => boolean, them: () => void, combo = false) {
     const count = lines.filter(matches).reduce((n, d) => n + so(d), 0);
     const cuoi = lines.findLastIndex(matches);
@@ -150,7 +164,10 @@ export function ThucDonKhach({ items, combos = [], lines, onChange, quotes, tota
       <span className="mb-[6px] whitespace-nowrap text-[14px] text-[var(--accent)]">{total === undefined ? "" : tien(total)}</span>
     </div>
     <input data-component="SearchBar" className="my-[14px] h-[34px] w-full rounded-lg border-0 bg-[var(--field)] px-3" type="search" aria-label="Tìm món nhanh" placeholder="🔍   Tìm món nhanh..." value={tim} onChange={(e) => setTim(e.target.value)} />
-    {!monLoc.length && !comboLoc.length && <p>Không có món nào khớp.</p>}
+    {coDanhMuc && <nav aria-label="Danh mục" className="tabs" data-component="CategoryTabs">
+      {the.map((t) => <button type="button" key={t.key} aria-pressed={dangChon === t.key} onClick={() => setDanhMuc(t.key)}>{t.name}</button>)}
+    </nav>}
+    {!khoiMon.length && !comboLoc.length && <p>Không có món nào khớp.</p>}
     {comboLoc.length > 0 && <section data-component="ComboSection" className="menu-section">
       <h2 className="menu-section-title">COMBO</h2>
       {comboLoc.map((combo) => <article className="menu-card" data-component="ComboCard" key={combo.menu_combo_id}>
@@ -169,9 +186,9 @@ export function ThucDonKhach({ items, combos = [], lines, onChange, quotes, tota
         </div>
       </article>)}
     </section>}
-    {monLoc.length > 0 && <section data-component="ProductList" className="menu-section">
-      <h2 className="menu-section-title">MÓN LẺ</h2>
-      {monLoc.map((mon) => <article className="menu-card" data-component="ProductCard" key={mon.menu_item_id}>
+    {khoiMon.map((k) => <section key={k.key} aria-labelledby={coDanhMuc ? `${id}-category-${k.key}` : undefined} data-component="ProductList" className="menu-section">
+      <h2 id={`${id}-category-${k.key}`} className="menu-section-title">{k.name}</h2>
+      {k.items.map((mon) => <article className="menu-card" data-component="ProductCard" key={mon.menu_item_id}>
         <Link href={chiTiet("mon", mon.menu_item_id)} aria-label={`Xem chi tiết món ${mon.item_name}`} className="menu-photo">
           <AnhSanPham ten={mon.item_name} className="menu-image" />
           <span className="menu-photo-caption">Xem chi tiết ảnh</span>
@@ -182,7 +199,7 @@ export function ThucDonKhach({ items, combos = [], lines, onChange, quotes, tota
           {stepper(mon.item_name, (d) => d.mon?.menu_item_id === mon.menu_item_id, () => onChange([...lines, { mon, quantity: 1, is_takeaway: false, option_ids: daChon(`mon-${mon.menu_item_id}`, mon.option_groups) }]))}
         </div>
       </article>)}
-    </section>}
+    </section>)}
     {thongTin}
     <section ref={summary} tabIndex={-1} className="summary mt-3 scroll-mt-16 rounded-[10px] border border-[var(--line)] bg-[var(--card)] p-3" data-component="OrderSummary">
       <h2 className="text-[14px] font-medium">Tóm tắt đơn hàng</h2>

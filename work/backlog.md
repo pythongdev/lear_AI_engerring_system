@@ -98,7 +98,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [ ] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — L2 (đổi hợp đồng API); 2026-11-04 Claude chốt hợp đồng `GET /menu` (`categories`, `menu_category_id`) và màn thẻ danh mục trong test viết trước, giao Codex · [chi tiết](#t-237)
 - [ ] T-286 **Chưa có số đo thật để chọn model cho chat** — L1, chủ repo chọn *"Chạy thử qua API cả ba"* 2026-11-03 (`U-112`); Codex dựng bộ thử ngoài repo, Claude duyệt đạt 2026-11-03; chờ chủ repo tạo khoá API và chạy thật · [chi tiết](#t-286)
 - [ ] T-279 **Bản HTML chi tiết món kể chuyện theo cuộn** — L1, chủ repo giao Codex 2026-10-31; dựa trên ý tưởng đầy đủ và mẫu Paris · [chi tiết](#t-279)
 
@@ -150,6 +149,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — L2 (đổi hợp đồng API); 2026-11-04 Codex thêm `Menu.categories` · `MenuItem.menu_category_id` (hợp đồng 0.60.0, câu đọc chỉ SELECT) và hàng thẻ danh mục trên `ThucDonKhach`; Claude viết test trước, sửa một kỳ vọng sai của chính mình và một mẫu sót, duyệt · [chi tiết](#t-237)
 - [x] CHAT-32 **Người làm chưa báo nghỉ bằng mẫu có kết quả rõ** — L2, ADR-138 điểm 7; 2026-11-04 Codex dựng `BaoNghi` trong thẻ *Báo nghỉ* của `OChat` (`/tram` · `/quay` tự báo có thẻ kiểm, `/chu-quan` danh sách 30 ngày với *Đã biết* · *Huỷ*), không model; Claude viết test trước, sửa hai ca mã lạ và duyệt; nhánh báo nghỉ 30…32 đủ ba lát · [mô tả](backlog_CHAT.md#chat-32)
 - [x] CHAT-31 **Chưa có cửa báo nghỉ nhận đúng người và người duyệt** — L2, ADR-138 điểm 3 · 6; 2026-11-04 Codex dựng gói `baonghi`, năm đường `/leave-notices` (ba cửa ghi `baonghi/bao` · `huy` · `da_biet`, hợp đồng 0.59.0, năm mã mới), người luôn lấy từ phiên; Claude viết test trước, thêm hai ca vết I-018 và duyệt; tiếp theo `CHAT-32` · [mô tả](backlog_CHAT.md#chat-31)
 - [x] CHAT-30 **Báo nghỉ chưa có luật đầy đủ và chỗ cất riêng** — L2 (thiết kế L3), chủ repo trả lời bốn vế và duyệt ADR-138 2026-11-04; Codex dựng `leave_notice` (bước 43, `20261104120000_bao_nghi`), chặn tick hai chiều cùng khoá, bốn câu đối chiếu `I-039`; Claude viết test trước, sửa test I-027, ánh xạ ràng buộc ở hợp đồng 0.58.0 và duyệt; tiếp theo `CHAT-31` · [mô tả](backlog_CHAT.md#chat-30)
@@ -649,6 +649,18 @@ sai lý do — món thử không có thành phần làm hàm giá cả menu lỗ
 ca bố cục cũ xanh. Claude thêm `categories: []` · `menu_category_id: null` vào dữ liệu mẫu `mau-khach.ts`, `thuc-don-khach.test.tsx`,
 `san-pham.test.tsx`, `menu-gia.test.tsx`. Phiếu `../lean_wt/chat-review/T-237-phieu.md`; worktree `../lean_wt/T-237`, nhánh `codex/T-237`, nền
 `6cd0c31`; sáu file tạm rời cây chính (bản ở worktree và `chat-review/T-237/`).
+
+2026-11-04, T-237 xong. **Codex** thi công (worktree `../lean_wt/T-237`, nhánh `codex/T-237`, nền `6cd0c31`, model `gpt-6-astra`); **Claude**
+duyệt và tích hợp vào cây chính bằng `git apply`. File: `be/internal/gia/` (`service.go`, `repository.go`, `sql/doc_danh_muc_menu.sql`,
+`internal/sqlcgen/doc_danh_muc_menu.sql.go`, `menu_danh_muc_test.go`), `openapi.yaml` 0.59.0 → 0.60.0 (`MenuSaleCategory`), đoạn T-237 ở
+`01-hop-dong-api.md`, dòng `GET /menu` ở `03-ham-gia.md`, `fe/src/lib/api/schema.ts`, `ban/_components/` (`thuc-don-khach.tsx` · `.css`,
+`phieu-khach.tsx`), dòng `ThucDonKhach` ở `01-khung-fe.md`, năm file test/mẫu FE. Codex dừng đúng ở hai chỗ, cả hai là lỗi của Claude khi
+viết test trước: (1) ca D3 mong khối COMBO hiện khi tìm "bánh" — tức tìm combo theo tên món bên trong, trái màn cũ (`comboLoc` chỉ tìm tên
+combo) và trái chính hợp đồng màn ở đầu file test; Claude sửa kỳ vọng thành `["Bánh cuốn", "Tóm tắt đơn hàng"]`, có ghi chú trong test;
+(2) mẫu `fe/src/app/quay/san-xuat/mau-san-xuat.ts` sót `categories` · `menu_category_id` (TS2741), Claude thêm và đưa vào scope. Mã băm năm
+file còn lại không đổi so với lúc giao. Bằng chứng (cây chính, Docker): `./scripts/gate.sh` exit 0 — `--- PASS: TestI032_MenuMangDanhMucCuaMon`,
+`PASS Gate 1 be-check`, `PASS Gate 1g` ở 0.60.0, `PASS gate không cổng nào đỏ`; `./scripts/fe-check.sh` exit 0 — `Tests 636 passed (636)`,
+`fe-check: PASS`. Chưa có người duyệt thứ ba. Còn lại: không.
 
 <a id="t-236"></a>
 ### T-236 — Máy phát triển chưa có dữ liệu cho phần lớn các mục của trang chủ quán

@@ -420,3 +420,9 @@ attendance_day_on_leave_check giữ unreviewed vì chưa có cửa tick ô.
 next_before_id; đọc chủ quán theo [from, to], cách tối đa 92 ngày, leave_date ASC rồi id ASC.
 Cả hai kể cả đã huỷ, read_at là now() database. notice_kind suy từ ngày lịch Việt Nam của created_at;
 can_cancel tính theo người đọc và ngày lịch Việt Nam trong SQL. Không thêm SSE, dùng authz.RunAs hiện có.
+
+T-237 (2026-11-04, Codex thi công theo phiếu Claude): 0.59.0 → 0.60.0.
+`GET /menu` thêm `MenuItem.menu_category_id` luôn có mặt, nullable: null khi chưa xếp hoặc danh mục đã ẩn.
+`Menu.categories` bắt buộc, có thể rỗng, dùng `MenuSaleCategory` gồm `menu_category_id`, `name` và không nhận
+trường khác; chỉ danh mục chưa ẩn có món trong `items`, theo tên (collation của cột) rồi id.
+Giữ thứ tự và nội dung cũ của items, combos; không đổi cửa ghi hay `POST /price-quotes`. Sinh lại type FE.

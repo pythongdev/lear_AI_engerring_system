@@ -80,7 +80,7 @@ mốc** với menu (`be/internal/gia/sql/doc_combo.sql`), nên nhập bù ăn gi
 | Đường | Là gì | Ghi gì |
 |---|---|---|
 | `POST /price-quotes` | **tính thử** — khách, quầy, ai cũng gọi được; trường giá gửi kèm bị bỏ (`I-013`) | không |
-| `GET /menu` | món đang bán, nhóm tuỳ chọn (mỗi lựa chọn mang cờ **mặc định** để chọn sẵn — **ADR-094**), và **giá của mọi tổ hợp hợp lệ** — mỗi giá tính bằng `gia.Tinh`. FE nhận kết quả, không nhận công thức (`01-hop-dong-api.md` §5). Thêm **combo đang bán** (chưa ẩn, mọi món còn bán): giá combo, món kèm số phần, nhóm và mức từng lựa chọn — không kê giá mọi tổ hợp của combo vì số tổ hợp nhân theo số suất; con số cuối lấy từ tính thử (**ADR-117** điểm 5) | không |
+| `GET /menu` | món đang bán, nhóm tuỳ chọn (mỗi lựa chọn mang cờ **mặc định** để chọn sẵn — **ADR-094**), và **giá của mọi tổ hợp hợp lệ** — mỗi giá tính bằng `gia.Tinh`. FE nhận kết quả, không nhận công thức (`01-hop-dong-api.md` §5). Thêm **combo đang bán** (chưa ẩn, mọi món còn bán): giá combo, món kèm số phần, nhóm và mức từng lựa chọn — không kê giá mọi tổ hợp của combo vì số tổ hợp nhân theo số suất; con số cuối lấy từ tính thử (**ADR-117** điểm 5). Menu mang danh mục để màn khách nhóm món; giá không đổi (2026-11-04, theo phiếu Claude, T-237) | không |
 | cửa `don/tao_luot_goi` | **ghi một lượt gọi** — gọi `gia.Tinh` trong giao dịch của cửa **trước** mọi câu ghi đơn và dòng đơn, rồi chép đúng kết quả vào dòng đơn và ảnh chụp | `sales_order` · `order_line` · `order_line_component` · `order_line_option` |
 
 Vì cả ba gọi cùng một hàm, con số khách thấy ở tính thử và con số quầy ghi vào đơn chỉ khác được khi

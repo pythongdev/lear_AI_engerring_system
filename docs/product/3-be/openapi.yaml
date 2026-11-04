@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.59.0
+  version: 0.60.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -8542,9 +8542,14 @@ components:
           $ref: '#/components/schemas/MoneyVnd'
     MenuItem:
       type: object
-      required: [menu_item_id, item_name, option_groups, prices]
+      required: [menu_item_id, item_name, option_groups, prices, menu_category_id]
       additionalProperties: false
       properties:
+        menu_category_id:
+          type: integer
+          format: int64
+          nullable: true
+          description: Danh mục chưa ẩn của món; null khi chưa xếp hoặc danh mục đã ẩn.
         menu_item_id:
           type: integer
           format: int64
@@ -8560,9 +8565,14 @@ components:
             $ref: '#/components/schemas/MenuPrice'
     Menu:
       type: object
-      required: [items, combos]
+      required: [items, combos, categories]
       additionalProperties: false
       properties:
+        categories:
+          type: array
+          description: Danh mục chưa ẩn có ít nhất một món trong items; theo tên (collation của cột) rồi id; có thể rỗng.
+          items:
+            $ref: '#/components/schemas/MenuSaleCategory'
         items:
           type: array
           items:
@@ -8574,6 +8584,16 @@ components:
             hợp nhân theo số suất); con số cuối lấy từ POST /price-quotes (ADR-117 điểm 5).
           items:
             $ref: '#/components/schemas/MenuSaleCombo'
+    MenuSaleCategory:
+      type: object
+      required: [menu_category_id, name]
+      additionalProperties: false
+      properties:
+        menu_category_id:
+          type: integer
+          format: int64
+        name:
+          type: string
     MenuSaleCombo:
       type: object
       required: [menu_combo_id, name, price_vnd, items]
