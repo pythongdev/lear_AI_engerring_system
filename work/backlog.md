@@ -90,7 +90,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="ready"></a>
 ## Ready
 
-- [ ] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — thêm danh mục của từng món vào `GET /menu` (hợp đồng, truy vấn, handler) rồi trang khách `/dat-mon`, `/ban/[ma]` nhóm món theo danh mục đọc từ API — L2 (đổi hợp đồng API) — mở 2026-10-23 (chủ repo chọn), làm sau T-236 · [chi tiết](#t-237)
 - [ ] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — S-6 có lời 2026-10-21 (mốc *đã ra bàn* của đơn giao = lúc đơn rời quán), nên cửa `POST /orders/{id}/departure` thôi trả `delivery_served_mark_undecided` và phải ghi mốc ấy trong cùng giao dịch; đổi hợp đồng, cửa ghi, lời quầy — L2 (Claude thiết kế và viết test hồi quy trước) — mở 2026-10-21 · [chi tiết](#t-223)
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 
@@ -99,6 +98,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-237 **Trang gọi món của khách chưa chia món theo danh mục** — L2 (đổi hợp đồng API); 2026-11-04 Claude chốt hợp đồng `GET /menu` (`categories`, `menu_category_id`) và màn thẻ danh mục trong test viết trước, giao Codex · [chi tiết](#t-237)
 - [ ] T-286 **Chưa có số đo thật để chọn model cho chat** — L1, chủ repo chọn *"Chạy thử qua API cả ba"* 2026-11-03 (`U-112`); Codex dựng bộ thử ngoài repo, Claude duyệt đạt 2026-11-03; chờ chủ repo tạo khoá API và chạy thật · [chi tiết](#t-286)
 - [ ] T-279 **Bản HTML chi tiết món kể chuyện theo cuộn** — L1, chủ repo giao Codex 2026-10-31; dựa trên ý tưởng đầy đủ và mẫu Paris · [chi tiết](#t-279)
 
@@ -636,6 +636,19 @@ tiên) — cố ý bỏ vế *không đoán được* của I-023 trên máy dev
 **Yêu cầu:** chủ repo 2026-10-23, cùng lượt T-236: *"để client menu page fetch dữ liệu"*; hỏi lại, chủ repo chọn **chia món theo danh
 mục** đọc từ API. Trang khách đã gọi `GET /menu` nhưng schema `Menu` (`docs/product/3-be/openapi.yaml`) không mang danh mục. **Mức:** L2 —
 đổi hợp đồng API công khai. Claude thiết kế và viết test trước khi giao; Acceptance viết lúc mở, sau khi T-236 xong.
+
+**Mở 2026-11-04, Claude.** Đo lại: schema `Menu` vẫn chỉ có `items`, `combos`; mỗi món nhiều nhất một danh mục (`menu_item_category_menu_item_key`),
+danh mục không có cột thứ tự. *Thiết kế Claude chọn (không phải lời quán):* chỉ thêm, không bỏ — `MenuItem.menu_category_id` (null khi chưa xếp
+hoặc danh mục ẩn) và `Menu.categories` (danh mục chưa ẩn có món đang bán, theo tên rồi id như `GET /menu-categories`), hợp đồng 0.59.0 → 0.60.0.
+Màn khách theo bản thiết kế `khach_hang/menu/menu.html` khối `CategoryTabs`: hàng thẻ *Tất cả* · từng danh mục · *Món khác* · *Combo*, mỗi danh
+mục một khối; chưa có danh mục thì giữ bố cục cũ. Tên *Món khác* cho món chưa xếp là phiên chọn.
+**Acceptance:** A1 sáu file Claude giao không đổi (mã băm ở phiếu); A2 `TestI032_MenuMangDanhMucCuaMon` và test màn
+`fe/src/app/ban/danh-muc-khach.test.tsx` xanh, test khách · đặt món · sản phẩm · menu giá cũ vẫn xanh; A3 fe-check PASS; A4 Gate 1g PASS ở
+0.60.0, câu SQL mới chỉ SELECT; A5 gate không FAIL ngoài cổng Docker. Test viết trước: backend đỏ đúng lý do *menu thiếu categories* (lần đầu đỏ
+sai lý do — món thử không có thành phần làm hàm giá cả menu lỗi 500 và kéo đỏ gói `menu`; đã sửa); màn đỏ 4 ca ở chỗ chưa có `nav Danh mục`,
+ca bố cục cũ xanh. Claude thêm `categories: []` · `menu_category_id: null` vào dữ liệu mẫu `mau-khach.ts`, `thuc-don-khach.test.tsx`,
+`san-pham.test.tsx`, `menu-gia.test.tsx`. Phiếu `../lean_wt/chat-review/T-237-phieu.md`; worktree `../lean_wt/T-237`, nhánh `codex/T-237`, nền
+`6cd0c31`; sáu file tạm rời cây chính (bản ở worktree và `chat-review/T-237/`).
 
 <a id="t-236"></a>
 ### T-236 — Máy phát triển chưa có dữ liệu cho phần lớn các mục của trang chủ quán
