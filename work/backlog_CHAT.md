@@ -1068,6 +1068,16 @@ này.
 
 **Nhận việc:**
 
+2026-11-04, Claude: bắt đầu. Chủ repo trả lời bốn vế còn thiếu của lời báo nghỉ (mốc 3 ngày lịch, ai huỷ, chặn tick ngay khi
+báo, không ghi hộ) — ghi ở `master_plan/shop-facts.md` §8.11 điểm 7 *Lời thêm*. Chưa có cửa tick nào ở backend nên chặn tick
+đặt ở database. Thiết kế cả nhánh 30…32: `docs/decisions.md` ADR-138, **Đề xuất**, chờ chủ repo duyệt trước khi viết test và giao Codex.
+
+2026-11-04, Claude: chủ repo chọn *"Duyệt, giao Codex làm"* — ADR-138 **Đã chốt**, thêm `I-039` ở `quality/invariants.md`. Test viết trước
+`db/tests/i039_leave_notice.sql` (tên ràng buộc chốt ở đầu file), chạy `db-check` đỏ đúng lý do: test dừng ở `relation "leave_notice"
+does not exist`, đối chiếu báo I-039 chưa có câu; test I-027 và mọi test khác xanh. Phiếu `../lean_wt/chat-review/CHAT-30-phieu.md`;
+worktree `../lean_wt/CHAT-30`, nhánh `codex/CHAT-30`, nền `387be56`. Test tạm rời cây chính (bản gốc ở worktree và
+`chat-review/CHAT-30-i039_leave_notice.sql`, mã băm ở A1 của phiếu). `CLAUDE.md` §2 thêm `27-luoc-do-bao-nghi.md` khi tích hợp.
+
 [↑ đầu file](#top)
 
 ---

@@ -1728,3 +1728,22 @@ trùng ⇒ **bị từ chối**. Kịch bản dương: gửi tới một ngườ
 tới bảng tiến độ; ghi tin không đổi số dòng và trạng thái của việc trạm, phiên, việc giao. Test hồi quy `i038_station_message.sql` viết trước lược đồ.
 
 *Viết ở CHAT-02, 2026-11-01, Claude Code.*
+
+### I-039 — Một người một ngày KHÔNG vừa có ô có đi làm còn hiệu lực vừa có báo nghỉ còn hiệu lực; báo nghỉ không đổi ô chấm công nào và không chạm tiền
+
+**Invariant:**
+Lời `master_plan/shop-facts.md` §8.11 điểm 7 (2026-11-03, *Lời thêm* 2026-11-04, chủ repo chọn): nhân viên tự báo nghỉ, máy chặn tick ô
+*có đi làm* ngay khi báo, trừ khi huỷ lần nghỉ; không trả lương ngày nghỉ, không phạt. Thiết kế **ADR-138**. Một dòng `leave_notice` là một
+người nghỉ một ngày, người báo là người nghỉ; không báo cho ngày lịch đã qua (giờ Việt Nam); một người một ngày chỉ một báo nghỉ còn hiệu lực;
+chỉ chủ quán ghi *đã biết*; huỷ là chủ quán, hoặc chính người nghỉ khi hôm nay còn trước ngày nghỉ; dấu *đã biết* và dấu huỷ ghi một lần.
+Bảng chỉ trỏ tới người; không đường nào tới lương, khoản của người hay két.
+
+**Verification:**
+Kịch bản âm: báo cho ngày đã qua; hai báo nghỉ còn hiệu lực cùng người cùng ngày; người thường ghi *đã biết*; người nghỉ huỷ vào ngày nghỉ;
+người khác huỷ; xoá trắng dấu; đổi người hay ngày; tick ô ngày đã báo nghỉ; làm sống lại ô đã huỷ của ngày đã báo nghỉ; báo nghỉ cho ngày
+đã có ô còn hiệu lực ⇒ **bị từ chối**. Kịch bản dương: báo trước, báo cho hôm nay, nghỉ hai ngày, chủ quán ghi *đã biết*, người nghỉ huỷ
+trước ngày, chủ quán huỷ vào ngày nghỉ, báo lại sau huỷ, tick lại sau huỷ. Kiểm ngược: không ngày nào hai sự thật; khoá ngoại chỉ tới người;
+báo nghỉ không đổi bảng tiền, khoản hay đơn nào; hai chiều chặn dùng chung khoá giao dịch. Test hồi quy `i039_leave_notice.sql` viết trước
+lược đồ.
+
+*Viết ở CHAT-30, 2026-11-04, Claude Code.*

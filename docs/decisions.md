@@ -8573,3 +8573,53 @@ giây đủ cho tin không gấp hơn việc POS nhìn màn; *trạng thái đã
 hành mở (`T-109`).
 
 **Applies to:** lane `CHAT` · `CHAT-04` · `CHAT-12` · `CHAT-13` · `CHAT-14` · `CHAT-34`.
+
+## ADR-138 — Báo nghỉ: một bảng riêng, chặn tick ở database, không đường nào tới tiền
+
+**Status:** **Đã chốt** 2026-11-04 — Claude Code thiết kế (CHAT-30 lượt thiết kế, mức **L3**), chủ repo chọn *"Duyệt, giao Codex làm"* trong câu hỏi có sẵn phương án. Phủ `CHAT-30`
+(lược đồ), `CHAT-31` (cửa), `CHAT-32` (mẫu FE); không gọi model.
+
+**Context:** lời `master_plan/shop-facts.md` §8.11 điểm 7 (2026-11-03 và *Lời thêm* 2026-11-04). Nhân viên báo cho chủ quán, đủ 3 ngày
+lịch là báo trước, muộn hơn là nghỉ đột xuất; không có từ chối; không trả lương ngày nghỉ; báo xong là máy chặn tick ô *có đi làm*;
+nhân viên huỷ được tới hết ngày trước ngày nghỉ, chủ quán lúc nào cũng được; không ghi hộ. Ô có đi làm là `attendance_day` (ADR-072,
+`I-027`); hiện chưa có cửa backend nào tick ô, nên chặn chỉ chắc khi đặt ở database. Lương chưa có công thức (§8.7) và không có bảng tiền
+nào đọc ô chấm công.
+
+**Decision:**
+
+1. **Bảng `leave_notice`**, một dòng là một người nghỉ một ngày: `person_id` (mặc định `actor_person_id()` — người báo **là** người nghỉ,
+   một cột nên không có đường ghi hộ), `leave_date`, `submission_code` duy nhất theo người, `created_at`; dấu *đã biết*
+   `acknowledged_at` · `acknowledged_by_person_id`; dấu huỷ `cancelled_at` · `cancelled_by_person_id`. Mỗi cặp dấu có cả hai hoặc
+   không có gì. Không cột lý do, không cột trạng thái, không cột tiền. Nghỉ nhiều ngày là nhiều dòng.
+2. **Loại báo trước / đột xuất không cất**: suy khi đọc từ `leave_date − ngày lịch Asia/Ho_Chi_Minh của created_at ≥ 3`. Một sự kiện,
+   một nơi; không có cột nào lệch với hai mốc.
+3. **Luật ở tầng 1 (trigger, tên từ chối có trong hợp đồng):** một dòng còn hiệu lực cho một người một ngày; `leave_date` không trước
+   ngày lịch hôm nay (giờ Việt Nam) lúc ghi — *phiên chọn*, lời không nói báo nghỉ cho ngày đã qua; chỉ chủ quán ghi *đã biết*; người
+   huỷ là chủ quán, hoặc chính người nghỉ khi ngày lịch lúc huỷ còn trước `leave_date`; dấu *đã biết* và dấu huỷ ghi một lần, không xoá
+   trắng — báo lại là một dòng mới. Vai ghi chỉ được chèn và cập nhật hai cặp dấu; không quyền xoá; vết qua cơ chế sẵn có (QD-50, QD-52).
+4. **Chặn tick hai chiều, cùng khoá:** chèn hay làm sống lại một ô `attendance_day` của người đang có báo nghỉ còn hiệu lực ngày ấy bị
+   từ chối; chèn báo nghỉ cho ngày người ấy đang có ô còn hiệu lực cũng bị từ chối (*phiên chọn*: một ngày không vừa đi làm vừa nghỉ;
+   muốn nghỉ thì chủ quán huỷ ô trước, đúng luật huỷ ô của `U-071`). Hai trigger lấy cùng một khoá giao dịch theo (người, ngày) nên hai
+   phiên chạy song song không lọt qua nhau. Huỷ báo nghỉ thì ô ngày ấy tick lại được.
+5. **Không đường nào tới tiền:** không khoá ngoại, hàm hay view từ `leave_notice` sang lương, khoản của người hay két. *Không trả lương*
+   đến tự nhiên từ việc ngày ấy không có ô; báo nghỉ không tự sinh khoản trừ, không phạt.
+6. **Cửa (CHAT-31):** báo nghỉ cho chính mình (lớp `nguoi_quan`, có dấu gửi lại như ADR-137 điểm 6); huỷ (lớp `nguoi_quan`, luật ở
+   điểm 3); *đã biết* (lớp `chu_quan`). Đọc: báo nghỉ của tôi (`nguoi_quan`), mọi báo nghỉ theo khoảng ngày (`chu_quan`). Mỗi dòng
+   trả loại báo trước / đột xuất do backend suy. Người luôn lấy từ phiên; khách và cookie khách bị từ chối. Tên đường và mã lỗi Claude chốt
+   ở phiếu CHAT-31.
+7. **Mẫu (CHAT-32):** trong `OChat`, không model: chọn ngày, thẻ kiểm nói trước là báo trước hay đột xuất (gợi ý của FE, backend quyết),
+   bấm xác nhận mới gửi; danh sách báo nghỉ của tôi với nút huỷ khi còn được huỷ. Ở `/chu-quan`: danh sách báo nghỉ, nút *Đã biết* và *Huỷ*.
+8. **Bất biến mới `I-039`:** một người một ngày không vừa có ô có đi làm còn hiệu lực vừa có báo nghỉ còn hiệu lực; báo nghỉ không đổi
+   ô chấm công nào và không chạm tiền. Test hồi quy Claude viết trước lược đồ; câu đối chiếu như `db/reconcile/i027.sql`.
+
+**Why:** đặt chặn ở database vì chưa có cửa tick nào để đặt nó, và một cửa sau này quên kiểm cũng không lọt. Suy loại nghỉ khi đọc thay
+vì cất để không có hai bản của một sự thật. Một cột người làm *không ghi hộ* đúng bằng cấu trúc.
+
+**Rejected alternatives:** *cất cột loại nghỉ* — lệch được với mốc ghi; *chỉ chặn ở cửa* — chưa có cửa tick, sửa tay hay cửa mới lọt;
+*cột người nghỉ tách người báo* — mở đường ghi hộ mà lời không cho; *trạng thái chờ duyệt / bị từ chối* — lời nói không có từ chối;
+*cho báo nghỉ đè lên ô đã tick* — một ngày mang hai sự thật trái nhau.
+
+**Consequences:** `attendance_day` thêm một trigger (đổi hành vi của lát `P2A-03`, test `I-027` chạy lại); migration mới có đường lùi
+chặn mất dữ liệu; hợp đồng tăng phiên bản phụ ở CHAT-31; `02-vai-va-quyen.md` thêm ba dòng cửa ghi.
+
+**Applies to:** lane `CHAT` · `CHAT-30` · `CHAT-31` · `CHAT-32`.

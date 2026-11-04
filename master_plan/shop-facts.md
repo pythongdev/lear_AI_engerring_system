@@ -2434,5 +2434,13 @@ entry `T-283`.
    - Ngày nghỉ đã được ghi nhận thì **máy chặn tick** ô *có đi làm* của người ấy, trừ khi huỷ lần nghỉ trước.
 
    *Suy ra của phiên, chưa ai xác nhận (F-004):* *"duyệt"* trong nguyên văn đọc là *ghi nhận đã biết*, vì vế *"Không có
-   từ chối"*. Chưa nói: đếm *3 ngày* từ mốc nào; ai được huỷ một lần nghỉ; nghỉ đột xuất không báo trên máy thì không có
-   bản ghi nào, chủ quán không tick là đủ. Vế *chặn tick* chạm chấm công nên cần thiết kế riêng trước lược đồ.
+   từ chối"*. Nghỉ đột xuất không báo trên máy thì không có bản ghi nào, chủ quán không tick là đủ. Vế *chặn tick* chạm
+   chấm công nên cần thiết kế riêng trước lược đồ.
+
+   **Lời thêm** (chủ repo 2026-11-04, CHAT-30, chọn trong câu hỏi có sẵn phương án):
+   - *Trước 3 ngày* đếm **theo ngày lịch, giờ Việt Nam**: ngày báo cách ngày nghỉ ít nhất 3 ngày lịch (nghỉ thứ Sáu thì
+     báo muộn nhất trong ngày thứ Ba); muộn hơn là nghỉ đột xuất.
+   - **Huỷ một lần báo nghỉ:** nhân viên tự huỷ được tới hết ngày trước ngày nghỉ; chủ quán huỷ được bất cứ lúc nào, kể cả
+     sau ngày nghỉ.
+   - Máy **chặn tick ngay khi nhân viên báo**; nút *đã biết* của chủ quán chỉ ghi lại là chủ đã thấy, không đổi gì khác.
+   - **Không ghi hộ:** chỉ nhân viên báo nghỉ cho chính mình; báo miệng thì chủ quán không tick ngày ấy.

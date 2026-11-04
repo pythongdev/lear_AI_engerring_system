@@ -99,6 +99,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] CHAT-30 **Báo nghỉ chưa có luật đầy đủ và chỗ cất riêng** — L2 (thiết kế L3 trước), chủ repo trả lời bốn vế còn thiếu 2026-11-04; ADR-138 đã chốt, `I-039` thêm; Claude viết test trước, giao Codex lát DB · [mô tả](backlog_CHAT.md#chat-30)
 - [ ] T-286 **Chưa có số đo thật để chọn model cho chat** — L1, chủ repo chọn *"Chạy thử qua API cả ba"* 2026-11-03 (`U-112`); Codex dựng bộ thử ngoài repo, Claude duyệt đạt 2026-11-03; chờ chủ repo tạo khoá API và chạy thật · [chi tiết](#t-286)
 - [ ] T-279 **Bản HTML chi tiết món kể chuyện theo cuộn** — L1, chủ repo giao Codex 2026-10-31; dựa trên ý tưởng đầy đủ và mẫu Paris · [chi tiết](#t-279)
 
