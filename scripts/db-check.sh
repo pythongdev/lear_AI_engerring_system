@@ -186,6 +186,23 @@ if [ "$n_mig" -gt 0 ]; then
         printf '%s\n' "$out" | tail -12
       fi
     fi
+    if [ "$v" = 20261104180000 ]; then
+      # CHAT-35: test xanh rồi lùi có lần gọi phải bị chặn; giao dịch không giữ dữ liệu.
+      if out="$({ echo 'BEGIN; SET search_path = shop;';
+                  cat db/migrations/20261104180000_so_goi_model.up.sql;
+                  cat db/tests/i040_model_call_budget.sql;
+                  echo '\echo CHAT35_TEST_GREEN';
+                  cat db/migrations/20261104180000_so_goi_model.down.sql;
+                  echo 'ROLLBACK;'; } | psql_f -f - 2>&1)"; then
+        fail "CHAT-35 đường lùi — không từ chối khi đã có lần gọi"
+      elif printf '%s\n' "$out" | grep -q '^CHAT35_TEST_GREEN$' &&
+           printf '%s\n' "$out" | grep -q 'đường lùi từ chối: model_call đang giữ lần gọi đã ghi'; then
+        echo "PASS CHAT-35 test I-040 xanh; đường lùi từ chối lần gọi đã ghi"
+      else
+        fail "CHAT-35 test I-040 hoặc khoá chặn — lỗi khác điều cần chứng minh:"
+        printf '%s\n' "$out" | tail -12
+      fi
+    fi
     if [ "$v" = 20261029120000 ]; then
       for kind in pending code; do
         if out="$({ echo 'BEGIN; SET search_path = shop;';

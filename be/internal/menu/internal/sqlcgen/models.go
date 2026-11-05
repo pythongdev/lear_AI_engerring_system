@@ -359,6 +359,18 @@ type MenuOption struct {
 	HiddenByPersonID pgtype.Int8
 }
 
+type ModelCall struct {
+	ID               int64
+	ProviderCode     string
+	ModelCode        string
+	ReservedMicrousd int64
+	CreatedAt        pgtype.Timestamptz
+	SettledAt        pgtype.Timestamptz
+	InputTokenCount  pgtype.Int4
+	OutputTokenCount pgtype.Int4
+	CostMicrousd     pgtype.Int8
+}
+
 type OpeningFloat struct {
 	ID        int64
 	SaleDate  pgtype.Date

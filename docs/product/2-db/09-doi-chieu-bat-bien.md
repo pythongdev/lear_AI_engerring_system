@@ -88,6 +88,7 @@ Số `n` của `I-0xx/n` là **thứ tự của tập** trong ô *Phép đối c
 | `I-034` | mức theo món của combo → `I-034/1` · dòng combo đủ hình → `I-034/2` · dòng con trỏ đúng → `I-034/3` · đủ suất → `I-034/4` · tiền suất bằng mức tại mốc và mức đã chụp → `I-034/5` · mức khoá trong giờ bán → `I-034/6` · giá combo tại mốc → `I-034/7`; tiền đơn là Σ dòng nên *giá combo cộng mức* là `I-034/5` cộng `I-034/7` |
 | `I-038` | khoá ngoại vượt ranh giới → `I-038/1` · người gửi trùng người nhận → `I-038/2` · quyền sửa/xoá tin → `I-038/3` · nội dung/nhãn sai miền → `I-038/4`; sửa tay có vết dùng `I-018/1` |
 | `I-039` | ngày vừa có ô vừa báo nghỉ → `I-039/1` · FK ngoài người → `I-039/2` · quyền sửa/xoá vượt giới hạn → `I-039/3` · người ghi dấu sai quyền → `I-039/4`; sửa có vết dùng `I-018/1` |
+| `I-040` | tổng tháng vượt trần → `I-040/1` · FK → `I-040/2` · quyền ghi/xoá vượt giới hạn → `I-040/3` · chốt trước giữ chỗ hoặc thiếu chi phí → `I-040/4`; sửa có vết dùng `I-018/1` |
 
 Vế mà pha 1 đã nói thẳng là **không có tập** (`I-022` vế ngược, `I-023` vế *không đoán được*, hai vế
 của `I-024`) không có dòng nào ở đây: chúng là kịch bản của `quality/invariants.md`, không phải phép
@@ -116,6 +117,13 @@ dấu. Mỗi câu có file lỗi cùng số, tập kêu phải đúng tập khai
 hiện hành; câu thứ tư không tái dựng thời điểm tự huỷ. Test I-039 kiểm luật
 thời điểm, dấu một lần và nội dung bảng khác không đổi; người báo là người
 của phiên và suy loại nghỉ thuộc tầng 3, cửa CHAT-31.
+
+I-040 (CHAT-35, 2026-11-04): bốn câu trong db/reconcile/i040.sql đọc tổng
+tháng theo giờ Việt Nam (dòng treo tính bằng giữ chỗ), FK, quyền shop_app và
+phần chốt sai mốc/thiếu chi phí. Mỗi câu có file lỗi cùng số, tập kêu đúng
+tập khai. Test I-040 giữ trần ngày, biên tháng, dấu một lần và miền cột;
+không lần gọi nào thiếu giữ chỗ, tính giữ chỗ theo bảng giá cấu hình và chốt
+bằng giữ chỗ khi không biết mức dùng thuộc tầng 3, backend CHAT-03.
 
 ---
 

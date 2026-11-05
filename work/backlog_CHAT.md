@@ -1272,3 +1272,49 @@ thiếu ca cookie khách mà Acceptance dòng 2 đòi; Claude bổ sung trước
 [↑ đầu file](#top)
 
 ---
+
+<a id="chat-35"></a>
+### CHAT-35 — Chưa có sổ gọi model để giữ trần chi phí qua khởi động lại
+
+**Goal:** Dựng lát DB sổ gọi model theo ADR-139 điểm 5 · 6 · 11: một dòng giữ chỗ ghi trước mỗi lần gọi, chốt một lần sau lần
+gọi; database giữ trần tháng và trần ngày khi hai lượt chạy song song. Lát này **trước** `CHAT-03`.
+
+**Đứng trên:** L2, Codex; sau CHAT-02 lượt hai (ADR-139). `docs/product/2-db/01-quy-uoc-du-lieu.md` (QD-03 thêm vai `_microusd`),
+`db/migrations/`, `docs/product/2-db/07-thu-tu-migration.md`; mẫu bảng chỉ thêm: `station_message` (CHAT-12), `leave_notice` (CHAT-30).
+
+**Bẫy:** Dòng chưa chốt phải tính bằng tiền giữ chỗ, không bằng 0. Khoá theo tháng phải chặn hai giao dịch song song cùng đọc tổng
+cũ. Không cột nội dung câu hỏi, người hay phiên. Trần 10 USD là lời §8.11 điểm 5, không phải số phiên tự đặt.
+
+**Chặn bởi:** chủ repo duyệt ADR-139. Không chờ `U-112` hay `U-118` (không gọi hãng nào).
+
+**Acceptance dự kiến:**
+
+- [ ] Ghi giữ chỗ vượt trần tháng hoặc trần ngày bị từ chối ở database, tên từ chối có trong hợp đồng; hai giao dịch song song không
+      cùng lọt qua.
+- [ ] Phần chốt ghi được đúng một lần; không xoá, không sửa giữ chỗ; dòng chưa chốt tính bằng tiền giữ chỗ trong tổng.
+- [ ] Bất biến `I-040` có test hồi quy Claude viết trước, đỏ trước migration; có câu đối chiếu như `db/reconcile/`.
+- [ ] Migration có đường lùi chặn mất dữ liệu (`07-thu-tu-migration.md`).
+
+**Verify:** `./scripts/db-check.sh` qua PostgreSQL thật, ca song song, ca chưa chốt, ca chốt hai lần; Gate 1e; gate.
+
+**Nhận việc:**
+
+2026-11-04, Claude: test `db/tests/i040_model_call_budget.sql` viết trước (SHA-256 `56b6ae80…d8433`), chạy `db-check` trong worktree: đúng
+một FAIL — test I-040, bảng chưa có; 353 phép khác PASS (`../lean_wt/chat-review/CHAT-35-do-truoc.log`). Claude thêm vai `_microusd` vào QD-03.
+Phiếu `../lean_wt/chat-review/CHAT-35-phieu.md` giao Codex, worktree `../lean_wt/CHAT-35`, nhánh `codex/CHAT-35` từ `c442632`, migration
+`20261104180000_so_goi_model` (bước 44), hợp đồng 0.63.0. Script `chay-chat35.sh` chờ hạn mức rồi chạy; báo cáo ra `CHAT-35-bao-cao.md`.
+Việc kế tiếp: Claude duyệt diff, chạy lại gate, thêm dòng §2 `28-luoc-do-so-goi-model.md` vào `CLAUDE.md` khi tích hợp.
+
+2026-11-04, CHAT-35 xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-35`, nhánh `codex/CHAT-35`, nền `c442632`, model `gpt-6-astra`),
+dừng vì hết hạn mức trước khi chạy kiểm và viết báo cáo; **Claude** viết test trước, duyệt diff và tự chạy kiểm. Khi duyệt Claude sửa hai
+chỗ: (1) bỏ dòng `model_call_rollback_check` khỏi hợp đồng — tên chỉ có ở đường lùi, `TestQC10` đỏ; (2) chốt do máy ghi không có người nên
+`record_revision_person_check` nhận `model_call` như các bảng khách (thiết kế ADR-139 chưa lường trước; ghi ở `28-luoc-do-so-goi-model.md`).
+File: migration `20261104180000_so_goi_model`, `db/tests/i040_model_call_budget.sql`, `db/reconcile/i040.sql` + bốn file lỗi,
+`28-luoc-do-so-goi-model.md`, dòng 44 ở `07-thu-tu-migration.md`, `09-doi-chieu-bat-bien.md`, `openapi.yaml` 0.63.0, khối CHAT-35 ở
+`scripts/db-check.sh`, 26 file sqlcgen `models.go`; Claude: `01-quy-uoc-du-lieu.md` (QD-03), `quality/invariants.md` (I-040), `CLAUDE.md` §2.
+Bằng chứng: mã băm test không đổi; `db-check` trong worktree sau sửa: `PASS CHAT-35 test I-040 xanh; đường lùi từ chối lần gọi đã ghi`,
+`PASS kêu i040_1…4`, `db-check: PASS — 44 bước xuôi · lùi · xuôi lại`; be-check đạt ở lượt trước. Chưa có người duyệt thứ ba.
+
+[↑ đầu file](#top)
+
+---

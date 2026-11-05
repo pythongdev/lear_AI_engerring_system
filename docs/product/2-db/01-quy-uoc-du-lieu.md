@@ -138,6 +138,7 @@ cột tiền mang sai hậu tố là một cột mà `QD-20` không bao giờ nh
   | chuỗi băm | hậu tố `_hash` | `QD-61` |
   | bản chụp một dòng (vết cập nhật) — *thêm 2026-09-28, `P2-08`* | hậu tố `_image` | `QD-52` · `10-quy-uoc-code.md` `QC-04` |
   | lượng người gõ, có thể lẻ (sổ nguyên liệu) — *thêm 2026-09-30, `P2A-02`* | hậu tố `_measure` | `10-quy-uoc-code.md` `QC-04` |
+  | chi phí trả dịch vụ ngoài, số nguyên **phần triệu USD**, không phải tiền của quán (sổ gọi model) — *thêm 2026-11-04, `CHAT-35`, ADR-139 điểm 5* | hậu tố `_microusd` | `QD-20` không áp: trần do chủ repo nói bằng USD, quy ra đồng cần tỷ giá chưa ai cho |
 
   Cột trỏ tới bản ghi của **nhiều** bảng khác nhau (ví dụ một vết nói về nhiều loại bản ghi) **không**
   mang hậu tố `_id`, vì nó không có khoá ngoại được (`QD-11`); lát tạo nó đặt tên và ghi lý do.

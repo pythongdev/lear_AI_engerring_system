@@ -1747,3 +1747,23 @@ báo nghỉ không đổi bảng tiền, khoản hay đơn nào; hai chiều ch�
 lược đồ.
 
 *Viết ở CHAT-30, 2026-11-04, Claude Code.*
+
+### I-040 — Chi phí gọi model của một tháng KHÔNG vượt trần; không lần gọi nào tới nhà cung cấp mà không có dòng giữ chỗ ghi trước
+
+**Invariant:**
+Lời `master_plan/shop-facts.md` §8.11 điểm 5 (2026-11-01, chủ repo chọn): trần chi phí model **10 USD/tháng**. Thiết kế **ADR-139** điểm 5 · 6
+(2026-11-04, chủ repo duyệt). Một dòng `model_call` là một lần gọi model, ghi **trước** khi gọi với tiền giữ chỗ, chốt **một lần** sau khi gọi.
+Tổng của một tháng (giờ Việt Nam), tính dòng đã chốt bằng chi phí thật và dòng chưa chốt bằng tiền giữ chỗ, cộng giữ chỗ mới không vượt trần
+tháng; tổng của một ngày không vượt trần ngày (một phần mười trần tháng — *phiên chọn*). Database giữ trần, nên khởi động lại hay hai lượt
+song song không mở lại ngân sách. Sổ không cất nội dung, người hay phiên.
+
+**Verification:**
+Kịch bản âm: giữ chỗ vượt trần ngày khi còn dòng treo; giữ chỗ vượt trần tháng; 23:30 ngày cuối tháng (giờ Việt Nam) tính vào tháng cũ; chốt lại;
+xoá trắng phần chốt; sửa tiền giữ chỗ hay dời mốc ghi; giữ chỗ 0; mã sai khuôn; số token trên dòng chưa chốt; chốt lẻ đôi; chốt trước giữ chỗ;
+số âm; vai ghi tự đặt mốc ghi, sửa giữ chỗ hay xoá ⇒ **bị từ chối**. Kịch bản dương: giữ chỗ rồi chốt bằng vai ghi; chốt thấp mở lại phần dư;
+chạm đúng trần được nhận; tháng mới theo giờ Việt Nam mở ngân sách mới; chốt cao hơn giữ chỗ vẫn ghi đúng sự thật. Kiểm ngược: không tháng nào
+vượt trần; không khoá ngoại; trigger giữ trần lấy khoá giao dịch; không bảng khác đổi. Test hồi quy `i040_model_call_budget.sql` viết trước
+lược đồ. Phép *không lần gọi nào thiếu giữ chỗ* ở tầng backend, test của `CHAT-03`.
+
+*Viết ở CHAT-35, 2026-11-04, Claude Code.*
+
