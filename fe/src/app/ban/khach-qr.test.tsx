@@ -32,7 +32,7 @@ async function mo(ma: string, opts: { tinhThu?: Ghi; gui?: Ghi; qr?: { status: n
   render(<ApiProvider fetch={b.fetch}>{trang}</ApiProvider>);
   return { server, goi: b.goi };
 }
-const nutGui = () => screen.getByRole("button", { name: "Gửi lượt gọi" }) as HTMLButtonElement;
+const nutGui = () => screen.getByRole("button", { name: "Đặt món" }) as HTMLButtonElement;
 const luotXong = { status: 201, body: { sales_order_id: 70, table_session_id: 9, dining_table_id: 3, channel_code: "qr_table", status: "in_progress",
   total_vnd: 71000, lines: [] } };
 

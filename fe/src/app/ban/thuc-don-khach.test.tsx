@@ -244,7 +244,7 @@ it("món không lựa chọn gộp số lượng; xoá dòng gộp bỏ toàn b�
   expect(screen.queryByRole("region", { name: "Dòng 1" })).toBeNull();
   expect(card("Thêm Canh").querySelector("output")?.textContent).toBe("0");
   click("Thêm Canh"); click("Thêm Canh");
-  const gui = screen.getByRole("button", { name: "Gửi lượt gọi" }) as HTMLButtonElement;
+  const gui = screen.getByRole("button", { name: "Đặt món" }) as HTMLButtonElement;
   await waitFor(() => expect(gui.disabled).toBe(false));
   fireEvent.click(gui);
   await waitFor(() => expect(b.goi.find((g) => g.path === "/qr-codes/test-menu/orders")?.body?.lines).toEqual([

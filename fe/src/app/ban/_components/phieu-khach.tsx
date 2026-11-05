@@ -140,7 +140,7 @@ export function PhieuKhach({ ma, nhan, initialMenu, initialDelivery }: {
       </fieldset>
       <button data-component="CartBottomBar" className="mt-3 flex h-[52px] w-full items-center justify-between gap-2 rounded-xl border-0 bg-[var(--accent)] px-3 text-[15px] text-[#fff]" type="submit" disabled={dangGui || (!choGuiLai && !hopLe)}>
         <span aria-hidden="true" className="rounded-md bg-[#ff9a4d] px-[9px] py-[3px] text-[12px]">{lines.reduce((n, d) => n + (Number.isFinite(d.quantity) ? d.quantity : 0), 0)}</span>
-        <span>{dangGui ? "Đang gửi…" : choGuiLai ? "Gửi lại" : web ? "Đặt đơn" : "Gửi lượt gọi"}</span>
+        <span>{dangGui ? "Đang gửi…" : choGuiLai ? "Gửi lại" : web ? "Đặt đơn" : "Đặt món"}</span>
         <span aria-hidden="true">{duMon && tong.isSuccess && !tong.isFetching ? tien(tong.data.total_vnd) : ""}</span>
       </button>
     </form>
