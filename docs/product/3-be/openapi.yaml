@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.64.0
+  version: 0.65.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -16,6 +16,8 @@ security:
   - PersonIdentity: []
 # Nhóm trong Swagger UI = gói miền dưới be/internal/ đăng ký đường gọi ấy (chỉ để đọc, không phải luật).
 tags:
+  - name: troly
+    description: Hỏi đáp công khai chỉ đọc.
   - name: tongket
     description: Tổng kết một ngày bán, chỉ chủ quán (P3A-10).
   - name: tongquan
@@ -2495,6 +2497,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /chat/turns:
+    post:
+      operationId: askChat
+      tags: [troly]
+      security: []
+      summary: Hỏi công khai với nguồn đọc của chính lượt này
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatTurnRequest'
+      responses:
+        '200':
+          description: Câu trả lời hoặc trạng thái suy giảm; mở trang menu khi suy giảm.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatTurnResponse'
+        '400':
+          description: Yêu cầu sai hình (invalid_request); field là question hoặc history nếu xác định được.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Lỗi hệ thống (internal_error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /menu:
     get:
       operationId: getMenu
@@ -4689,6 +4722,46 @@ components:
       name: banhcuon_phien
       description: Phiên đăng nhập theo ADR-109; HttpOnly, Secure, SameSite=Strict, hạn 7 ngày.
   schemas:
+    ChatTurnRequest:
+      type: object
+      required: [question]
+      properties:
+        question:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: Không được chỉ chứa khoảng trắng.
+        history:
+          type: array
+          maxItems: 12
+          items:
+            type: object
+            required: [role, text]
+            properties:
+              role:
+                type: string
+                enum: [user, assistant]
+              text:
+                type: string
+    ChatTurnResponse:
+      type: object
+      required: [answer, sources, degraded_reason]
+      properties:
+        answer:
+          type: [string, 'null']
+        sources:
+          type: array
+          items:
+            type: object
+            required: [tool, read_at]
+            properties:
+              tool:
+                type: string
+              read_at:
+                $ref: '#/components/schemas/Instant'
+        degraded_reason:
+          type: [string, 'null']
+          enum: [tat, het_ngan_sach, qua_han, qua_so_lan, loi_hang, null]
     CreateLeaveNotice:
       type: object
       required: [submission_code, leave_date]

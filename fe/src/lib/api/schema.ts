@@ -1374,6 +1374,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/chat/turns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Hỏi công khai với nguồn đọc của chính lượt này */
+        post: operations["askChat"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/menu": {
         parameters: {
             query?: never;
@@ -2461,6 +2478,24 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        ChatTurnRequest: {
+            /** @description Không được chỉ chứa khoảng trắng. */
+            question: string;
+            history?: {
+                /** @enum {string} */
+                role: "user" | "assistant";
+                text: string;
+            }[];
+        };
+        ChatTurnResponse: {
+            answer: string | null;
+            sources: {
+                tool: string;
+                read_at: components["schemas"]["Instant"];
+            }[];
+            /** @enum {string|null} */
+            degraded_reason: "tat" | "het_ngan_sach" | "qua_han" | "qua_so_lan" | "loi_hang" | null;
+        };
         CreateLeaveNotice: {
             submission_code: components["schemas"]["SubmissionCode"];
             /**
@@ -7190,6 +7225,48 @@ export interface operations {
             };
         };
     };
+    askChat: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChatTurnRequest"];
+            };
+        };
+        responses: {
+            /** @description Câu trả lời hoặc trạng thái suy giảm; mở trang menu khi suy giảm. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatTurnResponse"];
+                };
+            };
+            /** @description Yêu cầu sai hình (invalid_request); field là question hoặc history nếu xác định được. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Lỗi hệ thống (internal_error). */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     getMenu: {
         parameters: {
             query?: never;
@@ -9901,6 +9978,7 @@ type ReadonlyArray<T> = [
     unknown[]
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
 export const pathsAccountsGetParametersQueryStatusValues: ReadonlyArray<FlattenedDeepRequired<paths>["/accounts"]["get"]["parameters"]["query"]["status"]> = ["cho_duyet", "hoat_dong", "khoa", "tu_choi"];
+export const chatTurnRequestHistoryRoleValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ChatTurnRequest"]["history"]["role"]> = ["user", "assistant"];
 export const leaveNoticeNotice_kindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["LeaveNotice"]["notice_kind"]> = ["bao_truoc", "dot_xuat"];
 export const stationWorkCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["StationWorkCode"]> = ["canh", "don_ban", "trang_banh", "gap_banh", "khac"];
 export const customerOKStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CustomerOK"]["status"]> = ["ok"];

@@ -277,6 +277,20 @@ gate. Chưa mở khách thật.
 
 **Nhận việc:**
 
+2026-11-05, Claude: ngưỡng *quá cũ* chốt ở ADR-139 điểm 8 (chính lượt ấy, không cache). Test `be/internal/troly/hoi_test.go` viết trước
+(SHA-256 `c3af4287…eff9`), đỏ vì chưa có `troly.Routes`; chốt `POST /chat/turns` (`askChat`, công khai), thân `question` · `history`, trả
+`answer` · `sources` · `degraded_reason`, hai công cụ `doc_menu` (= `GET /menu`) · `tinh_gia` (= `POST /price-quotes`). Thông tin quán ngoài menu
+chưa có nguồn công khai nên chưa có công cụ — trợ lý nói chưa biết. Phiếu `../lean_wt/chat-review/CHAT-05-phieu.md` giao Codex, worktree
+`../lean_wt/CHAT-05`, nhánh `codex/CHAT-05` từ `c442632` cộng CHAT-02/35/03 chưa commit, hợp đồng 0.65.0. Việc kế tiếp: Claude duyệt.
+
+2026-11-05, CHAT-05 xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-05`, nhánh `codex/CHAT-05`, model `gpt-6-astra`, một lượt); **Claude**
+viết test trước, duyệt diff, tự chạy gate (sandbox Codex không tới Docker). File: `be/internal/troly/` (`handler.go` `POST /chat/turns`,
+`cong_cu.go` `doc_menu` · `tinh_gia` gọi đúng `gia.Service.DocMenu` · `TinhThu`, `nha_gia_mac_dinh.go` cho server khi `CHAT_MODEL_PROVIDER=gia`,
+`handler_test.go` của Codex — hai ca không cần database, `hoi_test.go` của Claude), `be/cmd/server/main.go` · `router.go` (cấu hình chat truyền vào
+router; vắng thì tắt), `openapi.yaml` 0.65.0 (`askChat`), `fe/src/lib/api/schema.ts`. Bằng chứng: mã băm hai test Claude không đổi; `./scripts/gate.sh`
+trong worktree (gồm CHAT-35 · CHAT-03): `PASS gate không cổng nào đỏ`, 18 test `TestI040_*` · `TestI041_*` · `TestI042_*` PASS, `be-check` ·
+`db-check` PASS. Chưa có giao diện (CHAT-07) và chưa bộ kiểm chữ (CHAT-06); chưa mở cho khách thật. Chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---

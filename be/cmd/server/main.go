@@ -13,7 +13,8 @@ import (
 )
 
 func main() {
-	if _, err := troly.DocCauHinh(os.Getenv); err != nil {
+	chat, err := troly.DocCauHinh(os.Getenv)
+	if err != nil {
 		log.Fatal(err)
 	}
 	dsn := os.Getenv("BANHCUON_DATABASE_URL")
@@ -40,6 +41,6 @@ func main() {
 		log.Fatal(err)
 	}
 	defer pool.Close()
-	server := http.Server{Addr: addr, Handler: newRouter(pool, taikhoan.NewAuthenticator(pool))}
+	server := http.Server{Addr: addr, Handler: newRouter(pool, taikhoan.NewAuthenticator(pool), chat)}
 	log.Fatal(server.ListenAndServe())
 }

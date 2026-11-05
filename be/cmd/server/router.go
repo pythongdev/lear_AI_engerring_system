@@ -6,6 +6,7 @@ import (
 	"banhcuon/be/internal/taikhoan"
 	"banhcuon/be/internal/tongket"
 	"banhcuon/be/internal/tongquan"
+	"banhcuon/be/internal/troly"
 	"net/http"
 	"os"
 	"strings"
@@ -37,11 +38,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func newRouter(pool *pgxpool.Pool, auth authz.Authenticator) *gin.Engine {
-	return routerWithRealtime(pool, auth, realtime.New(0))
+func newRouter(pool *pgxpool.Pool, auth authz.Authenticator, chat ...troly.CauHinh) *gin.Engine {
+	return routerWithRealtime(pool, auth, realtime.New(0), chat...)
 }
 
-func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtime.Broker) *gin.Engine {
+func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtime.Broker, chat ...troly.CauHinh) *gin.Engine {
 	r := gin.New()
 	r.Use(middleware.CungNguon(os.Getenv("BANHCUON_ORIGIN")))
 	r.Use(middleware.Realtime(b))
@@ -54,7 +55,17 @@ func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtim
 	tongket.Routes(r, tongket.NewService(pool))
 	menu.Routes(r, menu.NewService(pool))
 	qr.Routes(r, qr.NewService(pool))
-	gia.Routes(r, gia.NewService(pool))
+	giaService := gia.NewService(pool)
+	gia.Routes(r, giaService)
+	var config troly.CauHinh
+	if len(chat) > 0 {
+		config = chat[0]
+	}
+	var nha troly.NhaCungCap
+	if config.NhaCungCap == "gia" {
+		nha = troly.MoiNhaGiaMacDinh()
+	}
+	troly.Routes(r, troly.MoiLop(pool, config, nha), giaService)
 	ban.Routes(r, ban.NewService(pool))
 	phien.Routes(r, phien.NewService(pool))
 	nguoi.Routes(r, nguoi.NewService(pool))
