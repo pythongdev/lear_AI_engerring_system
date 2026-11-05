@@ -171,6 +171,11 @@ trong sáu câu đụng luật quán đã chốt nên không được suy ra.
   hoặc claude sonet cần kiểm tra thực tế"* và chọn *"Chạy thử qua API cả ba"*; ChatGPT Plus không có API cho backend nên
   ứng viên thứ hai đọc là OpenAI API — Claude nói rõ trong câu hỏi trước khi chủ repo chọn. Khoá API chưa có.) Ai trả lời:
   chủ repo, sau khi có số đo của lượt thử ba hãng trên dữ liệu giả. Chặn gì: mọi lần gọi **hãng thật** của lane `CHAT` (hẹp 2026-11-04, T-286: chủ repo chọn *"Mở, dùng model giả"*, các bước gọi model được xây với nhà cung cấp giả lập, xem ADR-136 *Sửa đổi 2026-11-04*).
+<a id="u-118"></a>
+- **U-118** — Khách hay nhân viên **tự gõ** tên người, địa chỉ hay thông tin riêng vào ô chat thì máy có được gửi nguyên câu ấy ra dịch vụ AI
+  ngoài không? (Mở 2026-11-04, Claude, CHAT-02 lượt hai.) Lời §8.11 điểm 5 cấm gửi dữ liệu cá nhân ra ngoài; bộ lọc của ADR-139 điểm 7 ẩn được
+  số điện thoại và địa chỉ thư, **không** nhận ra tên hay địa chỉ gõ tự do. Ai trả lời: chủ repo (chấp nhận chỗ hở, hay chỉ cho dùng model
+  chạy trong máy quán, hay chặn câu nghi có tên). Chặn gì: cắm hãng thật vào lane `CHAT`; không chặn thi công với nhà cung cấp giả.
 
 **Ngày 2026-10-31, T-278 mở U-111 — đóng 2026-11-01** sau khi chủ repo trả lời hai lượt liên tiếp. Nguyên văn: *"cho
 đang kí bằng gmail không cần duyệt"* (lượt một, trả lời câu *"Gmail chưa có tài khoản người làm sẽ được xử lý thế

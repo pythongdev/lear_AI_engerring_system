@@ -97,8 +97,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [x] T-296 **Tài khoản dev không đăng nhập được bằng tên trong hướng dẫn** — L1, chủ repo yêu cầu 2026-11-05 tạo tài khoản cho mọi nhân viên và lệnh make chạy lại; sửa lệnh hiện có theo email đăng nhập của API, cập nhật bảng tài khoản; gate xanh · [chi tiết](#t-296)
-
 - [ ] T-286 **Chưa có số đo thật để chọn model cho chat** — L1, chủ repo chọn *"Chạy thử qua API cả ba"* 2026-11-03 (`U-112`); Codex dựng bộ thử ngoài repo, Claude duyệt đạt 2026-11-03; chờ chủ repo tạo khoá API và chạy thật · [chi tiết](#t-286)
 - [ ] T-279 **Bản HTML chi tiết món kể chuyện theo cuộn** — L1, chủ repo giao Codex 2026-10-31; dựa trên ý tưởng đầy đủ và mẫu Paris · [chi tiết](#t-279)
 
@@ -164,7 +162,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 - [x] T-287 **Gate 1b đỏ vì 109 đường chết có sẵn** — L1, 2026-11-03; Codex bỏ dấu đường dẫn ở 19 bản thiết kế và thêm năm dòng ignore có chủ, Claude duyệt; Gate 1b xanh · [chi tiết](#t-287)
 - [x] T-285 **Ghi lời báo nghỉ và ba ứng viên model** — L1, chủ repo trả lời 2026-11-03; đóng `U-116`, hẹp `U-112`; lời mới thay vế nghỉ đột xuất của `C30` · [chi tiết](#t-285)
 - [x] T-284 **Sổ CHAT còn Acceptance trái ADR-137, kế hoạch và luật dữ liệu cá nhân** — L1, 2026-11-03; Codex sửa 17 chỗ của `work/backlog_CHAT.md` theo phiếu, Claude duyệt; giữ 13/14 lỗi của đợt kiểm · [chi tiết](#t-284)
-- [x] CHAT-02 **Thiết kế nhánh chat không model** — L3, chủ repo duyệt ADR-137 2026-11-01; lượt nhánh model làm sau khi có `U-112` · [mô tả](backlog_CHAT.md#chat-02)
+- [x] CHAT-02 **Thiết kế nhánh chat không model, rồi nhánh model phần chỉ đọc** — L3, chủ repo duyệt ADR-137 2026-11-01; lượt hai: chủ repo duyệt ADR-139 2026-11-04 (lớp model, sổ ngân sách `CHAT-35`, dữ liệu gửi ra, mở `U-118`); thẻ lệnh ghi để lượt ba · [mô tả](backlog_CHAT.md#chat-02)
 - [x] CHAT-01 **Thu lời và duyệt ADR-136** — L3, chủ repo duyệt 2026-11-01; đóng `U-113` · `U-114` · `U-115` · `U-117`, hẹp `U-112`; `U-116` còn mở (sửa 2026-11-03, T-284: dòng cũ ghi nhầm `U-113` là hẹp) · [mô tả](backlog_CHAT.md#chat-01)
 - [x] T-283 **Tính năng chat với app chưa có kế hoạch và sổ việc riêng** — L1 (chỉ tài liệu kế hoạch; tính năng là L3), chủ repo yêu cầu 2026-11-01, Codex soạn, Claude duyệt · [chi tiết](#t-283)
 - [x] T-277 **Hiệu ứng khi ảnh món xuất hiện trong trang thử menu** — L1, Claude làm, chủ repo yêu cầu 2026-10-31 · [chi tiết](#t-277)
@@ -545,19 +543,6 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
-
-<a id="t-296"></a>
-### T-296 — Sửa lệnh và hướng dẫn tài khoản dev theo đường đăng nhập hiện tại
-
-Chủ repo yêu cầu 2026-11-05 tạo tài khoản cho tất cả nhân viên để thử `/dang-nhap`, ghi tại `docs/command/tai-khoan-dev.md` và có lệnh make dùng lại. `make tai-khoan-dev` đã có từ T-240; database làm việc hiện có bốn người làm cùng bốn tài khoản hoạt động. Hợp đồng `/sessions` hiện nhận email hoặc số điện thoại ở `identifier`, nên tên đăng nhập cũ trong bảng bị từ chối `identifier_invalid`; script cũng dùng trường `username` khi đăng nhập chủ quán để duyệt tài khoản mới.
-
-Acceptance ghi trước khi sửa: A1 — bảng tài khoản nêu đúng email và mật khẩu cho cả bốn nhân viên cùng chủ quán. A2 — `make tai-khoan-dev` chạy lại an toàn và nhánh tạo mới dùng email để đăng nhập chủ quán. A3 — cả năm cặp email/mật khẩu đăng nhập `POST /sessions` nhận 201. A4 — chạy `./scripts/gate.sh` và đọc kết quả.
-
-Phạm vi (`work/scope/T-296.txt`): `work/backlog.md`, `db/seed/tai-khoan-dev.sh`, `docs/command/tai-khoan-dev.md`, `docs/command/make.md`. Không sửa hợp đồng, backend, migration hay dữ liệu mồi.
-
-Kết quả: database làm việc đã có `chu` và bốn tài khoản nhân viên `quay`, `trang`, `gap`, `canh` ở trạng thái hoạt động. `make tai-khoan-dev` chạy lại thành công, cả năm dòng báo đã có và bỏ qua. Năm cặp email/mật khẩu trong bảng mới gọi `POST /sessions` đều nhận HTTP 201. Script tạo mới nay gửi `identifier: chu@quan.test` khi đăng nhập chủ quán; `bash -n` và `git diff --check` đạt. `./scripts/gate.sh` chạy trực tiếp: Gate 3, 1b…1h và Gate 1 đều PASS, cuối cùng `PASS gate`; Gate 3 có NOTE về file chưa theo dõi của việc khác. Người làm: Codex trên nhánh `P4A-01`; chưa có người duyệt độc lập. Scope giữ đến lúc chủ repo commit.
-
-[↑ đầu file](#top)
 
 <a id="t-242"></a>
 ### T-242 — Menu chưa có bánh trứng bán rời, trang Sản phẩm xếp mọi món vào một danh mục

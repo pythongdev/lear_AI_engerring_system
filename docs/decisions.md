@@ -8648,3 +8648,68 @@ vì cất để không có hai bản của một sự thật. Một cột ngư�
 chặn mất dữ liệu; hợp đồng tăng phiên bản phụ ở CHAT-31; `02-vai-va-quyen.md` thêm ba dòng cửa ghi.
 
 **Applies to:** lane `CHAT` · `CHAT-30` · `CHAT-31` · `CHAT-32`.
+
+## ADR-139 — Nhánh chat có model, phần chỉ đọc: lớp gọi model, sổ ngân sách, dữ liệu gửi ra ngoài
+
+**Status:** **Đã chốt** 2026-11-04 — Claude Code thiết kế (CHAT-02 lượt hai, mức **L3**), chủ repo chọn *"Duyệt, giao Codex làm"* trong câu hỏi có sẵn phương án. Phủ lát lược đồ mới `CHAT-35`
+(sổ gọi model), `CHAT-03` (lớp model) và các lát chỉ đọc `CHAT-05`…`CHAT-09`. Thẻ xác nhận lệnh ghi (`CHAT-10`, `CHAT-11`, nhóm
+`CHAT-15`…`CHAT-25`) thiết kế ở lượt ba, không ở đây.
+
+**Context:** ADR-136 điểm 2 · 3 · 5 · 7 và *Sửa đổi 2026-11-04* (xây với nhà cung cấp giả, chưa gọi hãng thật); `master_plan/shop-facts.md`
+§8.11 điểm 5 (trần **10 USD/tháng**, không gửi tên, số điện thoại, địa chỉ khách hay tên nhân viên ra ngoài); kế hoạch CHAT §6–§7. Đo
+2026-11-04: backend chưa có dòng nào về model; bộ thử ngoài repo của `T-286` chạy giao thức gọi công cụ bằng JSON trên 18 ca.
+
+**Decision:**
+
+1. **Một gói `troly`, một giao diện nhà cung cấp:** nhận lời hệ thống, lịch sử đã lọc, danh sách công cụ, trần đầu ra; trả chữ hoặc lời
+   gọi công cụ, kèm số token vào và ra. Trong repo chỉ có hai cài đặt: `tat` (mặc định, không gọi gì, lượt trả suy giảm) và `gia` (giả lập
+   cục bộ, kịch bản do test đặt, có bảng giá giả để sổ ngân sách chạy thật). Chọn bằng biến `CHAT_MODEL_PROVIDER`; giá trị khác hai giá trị
+   ấy thì server từ chối khởi động. Hãng thật chỉ thêm sau `U-112` và `U-118`.
+2. **Một lượt hỏi là một yêu cầu HTTP; server không giữ hội thoại.** Trình duyệt gửi câu mới kèm tối đa 6 lượt trước, chỉ chữ của người dùng
+   và chữ trợ lý; server không nhận kết quả công cụ hay lời hệ thống từ trình duyệt. Không bảng hội thoại, không log nội dung, nên không có hạn
+   lưu dữ liệu riêng phải giữ; đổi người là mất như ADR-137 điểm 1. *Phiên chọn.*
+3. **Vòng công cụ có trần:** tối đa 4 lần gọi model mỗi lượt, 800 token đầu ra mỗi lần, câu người dùng 1–500 ký tự, hạn 20 giây mỗi lần gọi
+   và 45 giây mỗi lượt. Lỗi hãng, quá hạn hay sai khuôn thì dừng lượt, **không thử lại**. Đóng chat là huỷ yêu cầu HTTP, huỷ lần gọi đang chờ.
+   Các con số là *phiên chọn*; đổi bằng sửa ADR này.
+4. **Không giao dịch database nào mở trong lúc chờ model.** Mỗi công cụ đọc trong giao dịch chỉ đọc của riêng nó, đóng trước khi kết quả tới
+   model; giữ chỗ và chốt ngân sách là hai giao dịch ngắn riêng. Phép chứng minh: test với nhà giả dừng giữa lần gọi, đọc `pg_stat_activity`
+   không thấy kết nối nào của app ở trạng thái `idle in transaction`.
+5. **Sổ gọi model — lát `CHAT-35`, trước `CHAT-03`:** bảng chỉ thêm, một dòng mỗi lần gọi, ghi **trước** khi gọi: tháng và ngày tính theo
+   giờ Việt Nam, nhà cung cấp, model, tiền giữ chỗ (đầu vào ước tính + 800 token đầu ra, theo bảng giá cấu hình). Sau lần gọi ghi **một lần**
+   phần chốt: token vào, token ra, chi phí thật, mốc chốt. Chi phí cất số nguyên **phần triệu USD**, vai cột mới hậu tố `_microusd` ở
+   `QD-03`, vì trần được nói bằng USD và quy ra đồng cần một tỷ giá chưa ai cho. Không cột nội dung, không người, không phiên.
+6. **Kiểm ngân sách trước mỗi lần gọi**, trong giao dịch ngắn có khoá theo tháng: tổng của tháng (chi phí chốt, hoặc tiền giữ chỗ khi dòng
+   chưa chốt) cộng giữ chỗ mới không vượt trần tháng; tổng của ngày không vượt **trần ngày = một phần mười trần tháng** (*phiên chọn*: một
+   người phá chỉ đốt được một ngày, không cần định danh ai). Không qua thì không gọi, lượt trả suy giảm. Dòng chưa chốt (server chết giữa
+   chừng, lỗi không có số dùng) tính bằng tiền giữ chỗ mãi mãi, nên khởi động lại không mở lại ngân sách. Không có bảng giá cho model đang
+   cấu hình thì không gọi. Trần tháng 10 USD là lời §8.11; cấu hình chỉ được hạ, không được nâng.
+7. **Dữ liệu gửi ra (G6), hai lớp.** (a) Công cụ trả **danh sách trường được phép**: không trường nào là tên, số điện thoại, địa chỉ khách hay
+   tên nhân viên; người làm được nói bằng vai hay trạm, đơn bằng số đơn. (b) Câu người dùng gõ qua bộ lọc trước khi tới nhà cung cấp: số điện
+   thoại Việt Nam và địa chỉ thư thay bằng `[đã ẩn]`. Bộ lọc không nhận ra tên người hay địa chỉ gõ tự do; chỗ hở ấy là `U-118`, chặn việc
+   cắm hãng thật, không chặn thi công với nhà giả. Nhà giả giữ lại đúng gói nó nhận để test G6 đọc.
+8. **Nguồn đọc không có cache.** Mỗi lượt đọc lại; mỗi kết quả công cụ mang `read_at`; câu trả lời có số thì kèm danh sách nguồn và mốc đọc
+   để FE hiện. Ngưỡng *quá cũ* của `CHAT-05` và `CHAT-08` là **chính lượt ấy**: kết quả công cụ không dùng sang lượt sau và không cất ở đâu
+   (RB-3). Nguồn lỗi thì công cụ trả lỗi và trợ lý nói chưa biết.
+9. **Danh sách công cụ theo phiên.** Không phiên hoặc phiên khách: chỉ công cụ đọc công khai (`CHAT-05`: món đang bán và giá qua
+   `docs/product/3-be/03-ham-gia.md`). Phiên người làm: thêm công cụ đọc gọi đúng service của cửa `GET` mà lớp của người ấy qua được
+   (`CHAT-08`, danh sách chốt ở phiếu). Công cụ chạy dưới chính phiên, `authz` kiểm như màn tay, không câu SQL riêng. **Lượt này không có công
+   cụ ghi nào.**
+10. **Một đường hỏi** (`CHAT-05`): lớp `cong_khai`, tự chọn danh sách công cụ theo phiên nếu có. Không ghi dữ liệu nghiệp vụ; sổ gọi model
+    ghi qua hai cửa ghi nội bộ. Trả câu trả lời và nguồn, hoặc trạng thái suy giảm có mã lý do (tắt, hết ngân sách, quá hạn, lỗi hãng) và đường
+    về màn tay. Tên đường, tên cửa và mã lỗi Claude chốt ở phiếu, ghi vào `openapi.yaml`.
+11. **Bất biến mới `I-040`:** chi phí gọi model của một tháng (dòng chưa chốt tính bằng tiền giữ chỗ) không vượt trần; không lần gọi nào tới
+    nhà cung cấp mà không có dòng giữ chỗ ghi trước. Test hồi quy Claude viết trước lược đồ `CHAT-35`.
+12. **Phụ thuộc ngoài** ghi vào `docs/product/1-system-design/01-ranh-gioi-he-thong.md` ở `CHAT-03`: model có đường suy giảm *tắt thì về màn tay*.
+
+**Why:** đếm ngân sách trong database và giữ chỗ trước khi gọi là cách duy nhất để khởi động lại hay hai lượt song song không vượt trần.
+Không giữ hội thoại ở server thì không phải trả lời câu hạn lưu và xoá dữ liệu riêng mà chưa ai yêu cầu. Lọc ở hai lớp vì công cụ thì ta kiểm
+được trường, còn chữ người gõ thì không.
+
+**Rejected alternatives:** *đếm trong bộ nhớ* — khởi động lại mở lại trần; *lưu hội thoại ở server* — thêm dữ liệu riêng phải giữ hạn và xoá;
+*trần theo người* — phải cất định danh người gọi, khách không đăng nhập; *quy chi phí ra đồng* — cần tỷ giá; *thử lại tự động* — một lỗi tính
+phí hai lần; *gửi nguyên câu người gõ* — trái §8.11 điểm 5 khi khách gõ số điện thoại.
+
+**Consequences:** thêm một bảng và một vai cột ở `QD-03`; hợp đồng thêm một đường ở `CHAT-05`; eval `CHAT-06` trên nhà giả chỉ chứng minh luồng,
+phải chạy lại khi có model thật (ADR-136 *Sửa đổi 2026-11-04*).
+
+**Applies to:** lane `CHAT` · `CHAT-35` · `CHAT-03` · `CHAT-05`…`CHAT-09` · `U-112` · `U-118`.

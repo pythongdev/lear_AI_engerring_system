@@ -118,15 +118,15 @@ thiết kế.
       lời thì giữ nhánh đóng.
 - [x] Luồng tin riêng không phát nội dung vào SSE công khai; không dựng hàng đợi hay cache nghiệp vụ.
 
-**Lượt hai — chưa làm, chờ `U-112`**
+**Lượt hai — xong 2026-11-04, ADR-139 (phần chỉ đọc)**
 
-- [ ] Có ánh xạ công cụ → cửa/lớp; phần chưa có cửa và phần bị cấm không được vào danh sách thực thi.
+- [x] Có ánh xạ công cụ → cửa/lớp cho phần đọc (ADR-139 điểm 9); danh sách công cụ đọc của người làm chốt ở phiếu CHAT-08.
 - [ ] Thiết kế thẻ ghi rõ gắn phiên/thân lệnh, đổi nội dung phải xác nhận lại, quyền kiểm lại, chống bấm lặp hoặc từ
-      chối gửi lại.
-- [ ] Có giới hạn dữ liệu gửi ngoài, lịch sử/log, hạn chờ, token/lượt và trần tháng; nếu bộ đếm/thẻ cần chỗ cất mới
-      thì có lát DB trước BE.
-- [ ] Thiết kế cách lọc dữ liệu cá nhân khỏi kết quả công cụ trước khi gửi hãng (G6), và chốt ngưỡng *quá cũ*
-      của từng nguồn đọc dùng ở CHAT-05.
+      chối gửi lại. — **để lượt ba**, trước CHAT-10.
+- [x] Có giới hạn dữ liệu gửi ngoài, lịch sử/log, hạn chờ, token/lượt và trần tháng; bộ đếm cần chỗ cất mới nên có lát
+      DB `CHAT-35` trước BE (ADR-139 điểm 2 · 3 · 5 · 6).
+- [x] Thiết kế cách lọc dữ liệu cá nhân khỏi kết quả công cụ trước khi gửi hãng (G6), và chốt ngưỡng *quá cũ*
+      của từng nguồn đọc dùng ở CHAT-05 (ADR-139 điểm 7 · 8; chỗ hở chữ gõ tự do là `U-118`).
 
 **Verify:** Claude duyệt từng tình huống với owner và test từ chối dự kiến; đối chiếu ranh giới DB/BE/FE; gate tài
 liệu.
@@ -135,6 +135,8 @@ liệu.
 
 2026-11-01, Claude thiết kế lượt một (ADR-137), chủ repo duyệt; lượt hai chưa làm.
 Ghi bổ sung 2026-11-03, T-284.
+2026-11-04, Claude thiết kế lượt hai (ADR-139, phần chỉ đọc), chủ repo chọn *"Duyệt, giao Codex làm"*; mở `U-118`, thêm
+lát `CHAT-35`. Chưa có người duyệt thứ ba. Thẻ lệnh ghi còn lại cho lượt ba.
 
 [↑ đầu file](#top)
 
