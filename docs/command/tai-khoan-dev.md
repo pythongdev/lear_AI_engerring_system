@@ -8,13 +8,16 @@ Các tài khoản dưới đây chỉ có trong database **làm việc** trên m
 thống* ở [make.md](make.md)). Mở bằng `localhost`, không mở bằng `127.0.0.1`, vì backend chặn lệnh
 ghi đến từ origin khác.
 
-| Tên đăng nhập | Mật khẩu | Vai | Gắn với người | Màn vào |
+| Email để đăng nhập | Mật khẩu | Vai | Gắn với người | Màn vào |
 |---|---|---|---|---|
-| `chu` | `chuquan123` | chủ quán (`owner`) | Chủ quán (dev) | `/chu-quan` |
-| `quay` | `quay1234` | đứng quầy (`quay`) | Người đứng quầy | `/quay` |
-| `trang` | `trang1234` | tráng bánh (`trang_banh`) | Người tráng bánh | `/tram` |
-| `gap` | `gap12345` | gấp bánh (`gap_banh`) | Người gấp bánh | `/tram` |
-| `canh` | `canh1234` | canh và dọn (`canh_don_ban`) | Người canh & dọn | `/tram` |
+| `chu@quan.test` | `chuquan123` | chủ quán (`owner`) | Chủ quán (dev) | `/chu-quan` |
+| `quay@quan.test` | `quay1234` | đứng quầy (`quay`) | Người đứng quầy | `/quay` |
+| `trang@quan.test` | `trang1234` | tráng bánh (`trang_banh`) | Người tráng bánh | `/tram` |
+| `gap@quan.test` | `gap12345` | gấp bánh (`gap_banh`) | Người gấp bánh | `/tram` |
+| `canh@quan.test` | `canh1234` | canh và dọn (`canh_don_ban`) | Người canh & dọn | `/tram` |
+
+Trang đăng nhập nhận email hoặc số điện thoại; các tên ngắn `chu`, `quay`, `trang`, `gap`, `canh`
+là tên tài khoản trong database, không phải giá trị nhập vào ô đăng nhập.
 
 Bốn tài khoản theo vai được gắn vào bốn người có sẵn trong dữ liệu mồi, nên lịch sử chấm công,
 giao việc và đào tạo của những người đó hiện ra đúng tên. Database dựng trước 2026-10-23 có thể còn hai
@@ -52,7 +55,7 @@ Trong cửa sổ khác, cũng ở gốc repo:
 make tai-khoan-dev
 ```
 
-Chạy lại an toàn: tài khoản có cùng tên đăng nhập sẽ được bỏ qua, không đổi mật khẩu hay vai.
+Chạy lại an toàn: tài khoản có cùng tên ngắn sẽ được bỏ qua, không đổi mật khẩu hay vai.
 Lệnh lấy bốn người không phải chủ quán, sắp theo id, rồi lần lượt gắn với `quay`, `trang`, `gap`,
 `canh`; tên hiển thị lấy từ database. Nếu số người không phải chủ quán khác 4, lệnh dừng và báo rõ.
 Cuối lệnh có bảng tên đăng nhập và trạng thái tạo mới hoặc bỏ qua.

@@ -71,7 +71,7 @@ while IFS= read -r person; do
     continue
   fi
   if [[ "$logged_in" == false ]]; then
-    post /sessions '{"username":"chu","password":"chuquan123"}'
+    post /sessions '{"identifier":"chu@quan.test","password":"chuquan123"}'
     logged_in=true
   fi
   post /accounts "{\"username\":\"$username\",\"email\":\"$username@quan.test\",\"display_name\":$name_json,\"password\":\"$password\"}"

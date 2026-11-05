@@ -97,6 +97,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-296 **Tài khoản dev không đăng nhập được bằng tên trong hướng dẫn** — L1, chủ repo yêu cầu 2026-11-05 tạo tài khoản cho mọi nhân viên và lệnh make chạy lại; sửa lệnh hiện có theo email đăng nhập của API, cập nhật bảng tài khoản; gate xanh · [chi tiết](#t-296)
+
 - [ ] T-286 **Chưa có số đo thật để chọn model cho chat** — L1, chủ repo chọn *"Chạy thử qua API cả ba"* 2026-11-03 (`U-112`); Codex dựng bộ thử ngoài repo, Claude duyệt đạt 2026-11-03; chờ chủ repo tạo khoá API và chạy thật · [chi tiết](#t-286)
 - [ ] T-279 **Bản HTML chi tiết món kể chuyện theo cuộn** — L1, chủ repo giao Codex 2026-10-31; dựa trên ý tưởng đầy đủ và mẫu Paris · [chi tiết](#t-279)
 
@@ -543,6 +545,19 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-296"></a>
+### T-296 — Sửa lệnh và hướng dẫn tài khoản dev theo đường đăng nhập hiện tại
+
+Chủ repo yêu cầu 2026-11-05 tạo tài khoản cho tất cả nhân viên để thử `/dang-nhap`, ghi tại `docs/command/tai-khoan-dev.md` và có lệnh make dùng lại. `make tai-khoan-dev` đã có từ T-240; database làm việc hiện có bốn người làm cùng bốn tài khoản hoạt động. Hợp đồng `/sessions` hiện nhận email hoặc số điện thoại ở `identifier`, nên tên đăng nhập cũ trong bảng bị từ chối `identifier_invalid`; script cũng dùng trường `username` khi đăng nhập chủ quán để duyệt tài khoản mới.
+
+Acceptance ghi trước khi sửa: A1 — bảng tài khoản nêu đúng email và mật khẩu cho cả bốn nhân viên cùng chủ quán. A2 — `make tai-khoan-dev` chạy lại an toàn và nhánh tạo mới dùng email để đăng nhập chủ quán. A3 — cả năm cặp email/mật khẩu đăng nhập `POST /sessions` nhận 201. A4 — chạy `./scripts/gate.sh` và đọc kết quả.
+
+Phạm vi (`work/scope/T-296.txt`): `work/backlog.md`, `db/seed/tai-khoan-dev.sh`, `docs/command/tai-khoan-dev.md`, `docs/command/make.md`. Không sửa hợp đồng, backend, migration hay dữ liệu mồi.
+
+Kết quả: database làm việc đã có `chu` và bốn tài khoản nhân viên `quay`, `trang`, `gap`, `canh` ở trạng thái hoạt động. `make tai-khoan-dev` chạy lại thành công, cả năm dòng báo đã có và bỏ qua. Năm cặp email/mật khẩu trong bảng mới gọi `POST /sessions` đều nhận HTTP 201. Script tạo mới nay gửi `identifier: chu@quan.test` khi đăng nhập chủ quán; `bash -n` và `git diff --check` đạt. `./scripts/gate.sh` chạy trực tiếp: Gate 3, 1b…1h và Gate 1 đều PASS, cuối cùng `PASS gate`; Gate 3 có NOTE về file chưa theo dõi của việc khác. Người làm: Codex trên nhánh `P4A-01`; chưa có người duyệt độc lập. Scope giữ đến lúc chủ repo commit.
+
+[↑ đầu file](#top)
 
 <a id="t-242"></a>
 ### T-242 — Menu chưa có bánh trứng bán rời, trang Sản phẩm xếp mọi món vào một danh mục
