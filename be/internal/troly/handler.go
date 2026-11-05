@@ -51,7 +51,7 @@ func Routes(r *gin.Engine, lop *Lop, menu *gia.Service) {
 				history = append(history, Tin{Vai: *item.Role, Chu: *item.Text})
 			}
 		}
-		result, err := lop.Luot(c.Request.Context(), *question, history, congCuCongKhai(menu))
+		result, err := lop.Luot(c.Request.Context(), *question, history, CongCuCongKhai(menu))
 		if err != nil {
 			var e apierr.Error
 			if !errors.As(err, &e) {

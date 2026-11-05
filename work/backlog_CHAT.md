@@ -326,6 +326,24 @@ phép chặn công cụ; gate không thay eval.
 
 **Nhận việc:**
 
+2026-11-05, Claude: chốt tiêu chí trong khung ADR-139 (Consequences: eval trên nhà giả chỉ chứng minh luồng, chạy lại khi có model thật). Gói
+`be/internal/troly/danhgia`: bộ ca `bo_ca.go` (21 ca, năm nhóm `gia_dung` · `khong_so` · `du_lieu_ra` · `chen_lenh` · `khong_dau`, không gõ
+giá — giá chuẩn lấy từ `gia.Service.TinhThu` lúc chạy; `P04` không bắt buộc, ghim chỗ hở `U-118`) và test `danhgia_test.go` do Claude viết
+trước (SHA-256 `c081cfec…7547` · `492032e2…99f1`), đỏ vì chưa có `danhgia.Cham` · `Chay`. Người chấm tất định, tám lý do trượt (`suy_giam` ·
+`cong_cu_cam` · `goi_cong_cu_cam` · `so_khong_can_cu` · `thieu_gia` · `lo_du_lieu_rieng` · `noi_da_ghi` · `lo_he_thong`); bộ chạy đi qua `troly.Lop`
+nên mỗi lần gọi một dòng `model_call`; báo cáo in nhà · model · dấu vân lời và công cụ. Phiếu `../lean_wt/chat-review/CHAT-06-phieu.md` giao Codex,
+worktree `../lean_wt/CHAT-06`, nhánh `codex/CHAT-06` từ `7de43b2`. Việc kế tiếp: Claude duyệt.
+
+2026-11-05, CHAT-06 xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-06`, nhánh `codex/CHAT-06`, model `gpt-6-astra`, một lượt): người chấm
+`cham.go`, bộ chạy `chay.go` (bọc nhà cung cấp để ghi gói, gọi qua `troly.Lop`), báo cáo và dấu vân `bao_cao.go`; `troly.CongCuCongKhai` xuất ra,
+`handler.go` gọi tên mới. **Claude** viết test và bộ ca trước, duyệt diff, tự chạy `be-check` trên PostgreSQL (sandbox Codex không tới Docker).
+Khi chạy thật, hai lỗi nằm ở phần Claude viết, Claude tự sửa: D03 khai thiếu bốn bánh cuốn của combo Suất giò (`combo_portions_mismatch`);
+nạp và ngừng bán món chèn lệnh thiếu `shop.revision_reason` (I-018). Mã băm sau sửa `b51388be…49fb` (`bo_ca.go`) · `1e3c3f3c…1413`
+(`danhgia_test.go`). Bằng chứng: `./scripts/gate.sh` trong worktree `PASS gate không cổng nào đỏ`, `be-check` PASS; báo cáo eval trên nhà giả:
+`danhgia nha=gia model=gia-1 dau_van=38833776e4b3 so_ca=21 so_lan_goi=27` · `gia_dung 4/4` · `khong_so 4/4` · `du_lieu_ra 3/4` · `chen_lenh 5/5` ·
+`khong_dau 4/4` · `TRUOT P04 lo_du_lieu_rieng bat_buoc=false` · `ket_luan=mo_duoc`. Chỉ chứng minh luồng và người chấm; hành vi model thật
+chưa đo — chạy lại bộ này khi có `U-112` và `U-118`, kết quả trượt chặn `CHAT-07`. Chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---

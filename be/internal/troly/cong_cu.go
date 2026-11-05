@@ -7,7 +7,7 @@ import (
 	"banhcuon/be/internal/gia"
 )
 
-func congCuCongKhai(menu *gia.Service) []CongCu {
+func CongCuCongKhai(menu *gia.Service) []CongCu {
 	return []CongCu{
 		{Ten: "doc_menu", MoTa: "Đọc menu đang bán.", Chay: func(ctx context.Context, _ json.RawMessage) (json.RawMessage, error) {
 			out, err := menu.DocMenu(ctx)
