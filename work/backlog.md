@@ -147,6 +147,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-299 **Chạy `make dev` thường không thấy nút chat** — L1, xong 2026-11-05; `Makefile` mặc định máy dev `NEXT_PUBLIC_CHAT_ENABLED ?= true` · `CHAT_MODEL_PROVIDER ?= gia`, đặt trống hay `tat` để tắt; Codex làm, Claude duyệt, `make -n` và gate đạt · [chi tiết](#t-299)
 - [x] CHAT-07 **Ô chat công khai chưa nối hỏi đáp đã qua kiểm** — L1, chủ repo yêu cầu 2026-11-05; Codex dựng `HoiQuan` (`askChat`, huỷ khi đóng, suy giảm có link `/dat-mon`), `OChatKhach` ở layout gốc cho mọi trang khách và thẻ *Hỏi quán* trong `OChat` ở ba khung, cùng cờ tắt mặc định; Claude duyệt, sửa test ba thẻ của CHAT-32; fe-check 669/669 và gate đạt; chưa diễn trên trình duyệt · [mô tả](backlog_CHAT.md#chat-07)
 - [x] T-296 **Tài khoản dev không đăng nhập được bằng tên trong hướng dẫn** — L1, chủ repo yêu cầu 2026-11-05 tạo tài khoản cho mọi nhân viên và lệnh make chạy lại; sửa lệnh hiện có theo email đăng nhập của API, cập nhật bảng tài khoản; gate xanh · [chi tiết](#t-296)
 
@@ -549,6 +550,19 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-299"></a>
+### T-299 — Chạy `make dev` thường không thấy nút chat
+
+Chủ repo báo 2026-11-05, sau commit `9654d68` của CHAT-07: *"sao tôi chưa nhìn thấy biểu tượng chat ấn vào để hiện ra ô chat"*, rồi chọn *"yêu cầu Codex làm, bạn kiểm tra"*. Claude đo cùng ngày: máy dev đang chạy `make dev` với `NEXT_PUBLIC_CHAT_ENABLED` và `CHAT_MODEL_PROVIDER` trống, nên `OChat` · `OChatKhach` đúng thiết kế giấu nút (cờ chỉ bật khi bằng `"true"`). Code không lỗi; mặc định của máy dev chưa hợp với việc chủ repo tự thử. Mức **L1**: chỉ đổi mặc định của `Makefile` (QC-08, chỉ máy phát triển; bộ kiểm không đi qua nó), không đổi cờ trong code nên bản build thật vẫn tắt chat khi không đặt biến (ADR-137 *Sửa đổi 2026-11-05*).
+
+Acceptance ghi trước khi giao: A1 — `make dev` (và `make fe`, `make be`) không đặt biến thì frontend nhận `NEXT_PUBLIC_CHAT_ENABLED=true`, backend nhận `CHAT_MODEL_PROVIDER=gia`; bằng chứng `make -n`. A2 — đặt biến trống hay giá trị khác thì giá trị ấy thắng (`NEXT_PUBLIC_CHAT_ENABLED= make dev` tắt chat). A3 — `docs/command/make.md` ghi mặc định mới và cách tắt. A4 — chạy frontend với mặc định mới, HTML trang `/dat-mon` có nút "Hỏi quán". A5 — `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-299.txt`): `Makefile`, `docs/command/make.md`, `docs/decisions.md`, `work/backlog.md`.
+
+Bàn giao 2026-11-05: **Codex** thực hiện (worktree `../lean_wt/T-299`, nhánh `codex/T-299`, nền `9654d68`, model `gpt-6-astra`, một lượt): hai dòng `?=` ở `Makefile`, hai dòng bảng và ví dụ tắt chat ở `docs/command/make.md`. **Claude** duyệt diff, ghi dòng ADR-137, tự chạy lại ở cây chính sau `git apply`: `make -n fe` ra `NEXT_PUBLIC_CHAT_ENABLED="true"`, `make -n be` ra `CHAT_MODEL_PROVIDER="gia"`, đặt trống / `tat` thì giá trị ấy thắng, `make -n dev` mang cả hai; `./scripts/gate.sh` `PASS gate không cổng nào đỏ`. A4 Claude kiểm bằng frontend phụ cổng 3100 có cờ bật (worktree CHAT-07): HTML `/dat-mon`, `/`, `/khach/dang-nhap` đều có nút "Hỏi quán"; frontend cổng 3000 của chủ repo (chạy trước khi đổi, cờ trống) không có. Còn lại: chủ repo khởi động lại `make dev` để máy nhận mặc định mới. Chưa có người duyệt thứ ba.
+
+[↑ đầu file](#top)
 
 <a id="t-296"></a>
 ### T-296 — Sửa lệnh và hướng dẫn tài khoản dev theo đường đăng nhập hiện tại

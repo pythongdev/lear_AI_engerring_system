@@ -17,6 +17,8 @@ SHOP_TZ := $(shell grep -m1 '^| Múi giờ |' master_plan/shop-facts.md | grep -
 PSQL    := docker compose exec -e PGTZ=$(SHOP_TZ) db psql -X -U shop_owner -d banhcuon
 
 DB_PORT ?= 5433
+NEXT_PUBLIC_CHAT_ENABLED ?= true
+CHAT_MODEL_PROVIDER ?= gia
 BANHCUON_DATABASE_URL ?= postgres://shop_app:shop_app_dev@127.0.0.1:$(DB_PORT)/banhcuon?sslmode=disable
 BANHCUON_SHOP_TZ ?= $(SHOP_TZ)
 BANHCUON_ORIGIN ?= http://localhost:3000

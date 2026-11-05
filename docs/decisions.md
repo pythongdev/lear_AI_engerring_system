@@ -8604,6 +8604,8 @@ hành mở (`T-109`).
 `/chu-quan` (ba khung ấy giữ `OChat`), chứa phần hỏi đáp `HoiQuan` gọi `askChat`; `OChat` thêm thẻ *Hỏi quán* dùng cùng `HoiQuan`. Cùng
 cờ `NEXT_PUBLIC_CHAT_ENABLED`, vẫn tắt mặc định — ADR-136 *Sửa đổi 2026-11-04* giữ nguyên: khách thật chưa dùng trước khi `CHAT-06` chạy
 lại trên model thật. *Suy ra của phiên:* người làm hỏi qua thẻ ấy chỉ có công cụ đọc công khai cho tới `CHAT-08` (ADR-139 điểm 9).
+Cùng ngày (`T-299`, chủ repo không thấy nút sau `make dev`): **máy dev** bật chat mặc định — `Makefile` đặt `NEXT_PUBLIC_CHAT_ENABLED ?= true`,
+`CHAT_MODEL_PROVIDER ?= gia`; cờ trong code không đổi, nên mọi lần chạy không qua `Makefile` vẫn tắt chat khi không đặt biến.
 
 ## ADR-138 — Báo nghỉ: một bảng riêng, chặn tick ở database, không đường nào tới tiền
 
