@@ -216,3 +216,32 @@ describe.each([
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 });
+
+describe("CHAT-07 — thẻ Hỏi quán", () => {
+  it("thẻ thứ ba mở lười, focus câu hỏi, giữ nháp khi đổi thẻ", async () => {
+    dung(); await moChat();
+    expect(screen.queryByRole("textbox", { name: "Câu hỏi", hidden: true })).toBeNull();
+    expect(screen.getAllByRole("tab").map((t) => t.textContent)).toEqual(["Tin nhắn", "Báo nghỉ", "Hỏi quán"]);
+    fireEvent.click(screen.getByRole("tab", { name: "Hỏi quán" }));
+    const input = screen.getByRole("textbox", { name: "Câu hỏi" }); expect(document.activeElement).toBe(input);
+    fireEvent.change(input, { target: { value: "Nháp hỏi" } });
+    fireEvent.click(screen.getByRole("tab", { name: "Tin nhắn" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Hỏi quán" }));
+    expect((screen.getByRole("textbox", { name: "Câu hỏi" }) as HTMLTextAreaElement).value).toBe("Nháp hỏi");
+  });
+  it("đổi thẻ huỷ hỏi đang chờ và bỏ phản hồi muộn", async () => {
+    const { fetch } = dung(); await moChat();
+    let tra!: (r: Response) => void; let signal!: AbortSignal;
+    const goc = fetch.getMockImplementation()!;
+    fetch.mockImplementation((r: Request) => {
+      if (new URL(r.url).pathname === "/api/chat/turns") { signal = r.signal; return new Promise((resolve) => { tra = resolve; }); }
+      return goc(r);
+    });
+    fireEvent.click(screen.getByRole("tab", { name: "Hỏi quán" }));
+    fireEvent.change(screen.getByRole("textbox", { name: "Câu hỏi" }), { target: { value: "Hỏi thử" } });
+    fireEvent.click(screen.getByRole("button", { name: "Hỏi" })); await waitFor(() => expect(signal).toBeTruthy());
+    fireEvent.click(screen.getByRole("tab", { name: "Tin nhắn" })); expect(signal.aborted).toBe(true);
+    await act(async () => { tra(traJson({ answer: "Câu muộn", sources: [], degraded_reason: null })); });
+    fireEvent.click(screen.getByRole("tab", { name: "Hỏi quán" })); expect(screen.queryByText("Câu muộn")).toBeNull();
+  });
+});

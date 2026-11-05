@@ -5,6 +5,7 @@ import { useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { Khung } from "@/lib/auth/khung";
 import { BaoNghi } from "./bao-nghi";
+import { HoiQuan } from "./hoi-quan";
 import { HopTin } from "./hop-tin";
 import { usePhien } from "@/lib/auth/session";
 
@@ -25,6 +26,7 @@ function VoOChat({ khung, personId }: { khung: Khung; personId: number }) {
   const [mo, setMo] = useState(false);
   const [daMo, setDaMo] = useState(false);
   const [muc, setMuc] = useState("tin");
+  const [daMoHoi, setDaMoHoi] = useState(false);
   const [daMoBaoNghi, setDaMoBaoNghi] = useState(false);
   const nutMo = useRef<HTMLButtonElement>(null);
   const id = useId();
@@ -68,15 +70,19 @@ function VoOChat({ khung, personId }: { khung: Khung; personId: number }) {
               Đóng
             </Button>
           </div>
-          <div role="tablist" aria-label="Mục trò chuyện" className="flex gap-2">
+          <div role="tablist" aria-label="Mục trò chuyện" className="flex flex-wrap gap-2">
             <Button type="button" role="tab" id={`${id}-the-tin`} aria-selected={muc === "tin"} aria-controls={`${id}-tin`} onClick={() => setMuc("tin")}>Tin nhắn</Button>
             <Button type="button" role="tab" id={`${id}-the-nghi`} aria-selected={muc === "nghi"} aria-controls={`${id}-nghi`} onClick={() => { setDaMoBaoNghi(true); setMuc("nghi"); }}>Báo nghỉ</Button>
+            <Button type="button" role="tab" id={`${id}-the-hoi`} aria-selected={muc === "hoi"} aria-controls={`${id}-hoi`} onClick={() => { setDaMoHoi(true); setMuc("hoi"); }}>Hỏi quán</Button>
           </div>
           <div role="tabpanel" id={`${id}-tin`} aria-labelledby={`${id}-the-tin`} hidden={muc !== "tin"}>
             <HopTin khung={khung} personId={personId} mo={mo} />
           </div>
           <div role="tabpanel" id={`${id}-nghi`} aria-labelledby={`${id}-the-nghi`} hidden={muc !== "nghi"}>
             {daMoBaoNghi && <BaoNghi khung={khung} personId={personId} mo={mo && muc === "nghi"} />}
+          </div>
+          <div role="tabpanel" id={`${id}-hoi`} aria-labelledby={`${id}-the-hoi`} hidden={muc !== "hoi"}>
+            {daMoHoi && <HoiQuan mo={mo && muc === "hoi"} />}
           </div>
         </section>
       )}

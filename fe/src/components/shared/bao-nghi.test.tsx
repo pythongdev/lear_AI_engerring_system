@@ -156,12 +156,12 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.unstubAllEnvs(); });
 
 describe("CHAT-32 — thẻ Báo nghỉ trong bảng chat", () => {
-  it("B1 bảng có hai thẻ, Tin nhắn chọn sẵn; báo nghỉ chỉ đọc khi chọn thẻ; đổi thẻ giữ nháp tin", async () => {
+  it("B1 bảng có ba thẻ (CHAT-07 thêm Hỏi quán), Tin nhắn chọn sẵn; báo nghỉ chỉ đọc khi chọn thẻ; đổi thẻ giữ nháp tin", async () => {
     const { goi } = dung(<OChat khung="/tram" />, { phien: () => lan });
     const bang = await moBang();
     const ds = within(bang).getByRole("tablist", { name: "Mục trò chuyện" });
     const nutThe = within(ds).getAllByRole("tab");
-    expect(nutThe.map((t) => t.textContent?.trim())).toEqual(["Tin nhắn", "Báo nghỉ"]);
+    expect(nutThe.map((t) => t.textContent?.trim())).toEqual(["Tin nhắn", "Báo nghỉ", "Hỏi quán"]);
     expect(nutThe[0].getAttribute("aria-selected")).toBe("true");
     expect(nutThe[1].getAttribute("aria-selected")).toBe("false");
     await screen.findByText("Chưa có tin.");

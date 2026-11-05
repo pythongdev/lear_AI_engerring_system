@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ApiProvider } from "@/lib/api/provider";
 import { SITE_DESCRIPTION, SITE_NAME, siteUrl } from "@/lib/seo";
+import { OChatKhach } from "@/components/shared/o-chat-khach";
 import { ChuyenGiaoDien } from "@/components/shared/chuyen-giao-dien";
 import { scriptGiaoDien } from "@/lib/giao-dien";
 import "./globals.css";
@@ -28,7 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: scriptGiaoDien }} />
       </head>
       <body>
-        <ApiProvider>{children}</ApiProvider>
+        <ApiProvider>{children}<OChatKhach /></ApiProvider>
         <ChuyenGiaoDien noi />
       </body>
     </html>

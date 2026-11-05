@@ -353,6 +353,28 @@ khách chỉ đọc sau eval; gate.
 
 **Nhận việc:**
 
+2026-11-05, Claude: chủ repo yêu cầu ô chat ở mọi trang khách và trang nội bộ để tự thử, rồi chọn *"yêu cầu Codex làm, bạn kiểm tra"*. Mức
+**L1** (chỉ đọc, sau cờ). Quyết định của Claude, ghi ở ADR-137 *Sửa đổi 2026-11-05*: (1) `HoiQuan` tầng 2 `fe/src/components/shared/hoi-quan.tsx`
+gọi `askChat`, lịch sử tối đa 6 lượt chỉ ở state, huỷ yêu cầu khi đóng bảng, bày nguồn và mốc đọc, mỗi `degraded_reason` một lời kèm link
+*Xem thực đơn* tới `/dat-mon`; (2) `OChatKhach` tầng 2 `fe/src/components/shared/o-chat-khach.tsx` gắn ở `fe/src/app/layout.tsx`, ẩn trên `/quay` · `/tram` ·
+`/chu-quan`, khoá state theo `customer_account_id`; (3) `OChat` thêm thẻ thứ ba *Hỏi quán*; (4) `Makefile` truyền `CHAT_MODEL_PROVIDER`.
+Cùng cờ `NEXT_PUBLIC_CHAT_ENABLED`, tắt mặc định; nhà `gia` trả câu cố định nên lần thử chỉ chứng minh luồng. Acceptance ghi trước khi giao:
+A1 test mới của `HoiQuan` · `OChatKhach` và test cũ `o-chat.test.tsx` xanh; A2 không đường ghi, không bộ nhớ trình duyệt (grep);
+A3 bốn trạng thái suy giảm và lỗi mạng không bày câu trả lời giả; A4 đóng bảng huỷ yêu cầu, phản hồi muộn không hiện; A5 cờ tắt thì không nút ở
+trang nào; A6 `./scripts/gate.sh` xanh. Phiếu `../lean_wt/chat-review/CHAT-07-phieu.md`, worktree `../lean_wt/CHAT-07`, nhánh `codex/CHAT-07`
+từ `b9f8829`. Việc kế tiếp: Claude duyệt.
+
+2026-11-05, CHAT-07 xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-07`, nhánh `codex/CHAT-07`, nền `b9f8829`, model `gpt-6-astra`, một lượt);
+**Claude** chọn tên, chỗ gắn, lời từng trạng thái và duyệt. File: `hoi-quan.tsx` · `hoi-quan.test.tsx` · `o-chat-khach.tsx` · `o-chat-khach.test.tsx`
+(mới, `fe/src/components/shared/`), `o-chat.tsx` · `o-chat.test.tsx` (thêm thẻ, test chỉ thêm dòng), `fe/src/app/layout.tsx`, `Makefile`
+(`CHAT_MODEL_PROVIDER`), `docs/command/make.md`, `docs/product/4-fe/01-khung-fe.md` §4. Codex dừng đúng khi `bao-nghi.test.tsx` (ca B1 của
+CHAT-32, khoá hai thẻ) đỏ vì thẻ thứ ba, file ngoài scope Claude khai — sót của Claude; Claude mở scope và sửa kỳ vọng thành ba thẻ. Ca quá giờ
+`goi-mon.test.tsx` Codex gặp chạy riêng xanh 13/13, cả bộ chạy lại xanh: do máy tải nặng. Bằng chứng do Claude chạy trong worktree:
+`./scripts/fe-check.sh` `fe-check: PASS` (669/669 test, build biên dịch được), `./scripts/gate.sh` `PASS gate không cổng nào đỏ`; cây chính sau
+`git apply` gate cũng xanh, riêng `fe-check` ở cây chính đỏ vì `thuc-don-khach.tsx` của task khác đang dở. Chưa diễn trên trình duyệt với
+backend thật (chủ repo tự thử: `CHAT_MODEL_PROVIDER=gia NEXT_PUBLIC_CHAT_ENABLED=true make dev`); nhà `gia` trả câu cố định, nên chưa đo chất lượng
+trả lời — vẫn chờ `U-112` · `U-118` và chạy lại `CHAT-06` trước khi mở cho khách thật. Chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---

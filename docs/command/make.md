@@ -57,6 +57,8 @@ Các giá trị mặc định dưới đây có thể ghi đè bằng `VAR=… m
 
 | Biến | Mặc định / ý nghĩa |
 |---|---|
+| `NEXT_PUBLIC_CHAT_ENABLED` | trống; `true` mới hiện ô chat ở mọi trang |
+| `CHAT_MODEL_PROVIDER` | trống = `tat`; `gia` = model giả cục bộ trả câu cố định |
 | `DB_PORT` | `5433`, cổng database trên máy; truyền cả cho Docker Compose |
 | `BANHCUON_DATABASE_URL` | `postgres://shop_app:shop_app_dev@127.0.0.1:$(DB_PORT)/banhcuon?sslmode=disable`; vai và mật khẩu phát triển trong `db/init/` |
 | `BANHCUON_SHOP_TZ` | `$(SHOP_TZ)`, đọc từ nguồn múi giờ đã có trong Makefile |
@@ -72,6 +74,7 @@ Ví dụ đổi cổng database, hoặc đổi đồng bộ cổng backend và f
 mà server Go và Next đã hỗ trợ:
 
 ```bash
+CHAT_MODEL_PROVIDER=gia NEXT_PUBLIC_CHAT_ENABLED=true make dev
 DB_PORT=5434 make dev
 BANHCUON_ADDR=:9090 BANHCUON_BE_URL=http://127.0.0.1:9090 \
   PORT=3001 BANHCUON_ORIGIN=http://localhost:3001 make dev

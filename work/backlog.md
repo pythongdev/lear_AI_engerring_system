@@ -147,6 +147,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] CHAT-07 **Ô chat công khai chưa nối hỏi đáp đã qua kiểm** — L1, chủ repo yêu cầu 2026-11-05; Codex dựng `HoiQuan` (`askChat`, huỷ khi đóng, suy giảm có link `/dat-mon`), `OChatKhach` ở layout gốc cho mọi trang khách và thẻ *Hỏi quán* trong `OChat` ở ba khung, cùng cờ tắt mặc định; Claude duyệt, sửa test ba thẻ của CHAT-32; fe-check 669/669 và gate đạt; chưa diễn trên trình duyệt · [mô tả](backlog_CHAT.md#chat-07)
 - [x] T-296 **Tài khoản dev không đăng nhập được bằng tên trong hướng dẫn** — L1, chủ repo yêu cầu 2026-11-05 tạo tài khoản cho mọi nhân viên và lệnh make chạy lại; sửa lệnh hiện có theo email đăng nhập của API, cập nhật bảng tài khoản; gate xanh · [chi tiết](#t-296)
 
 - [x] CHAT-05 **Khách chưa có đường hỏi quán chỉ đọc có nguồn** — L2, ADR-139 điểm 8 · 9 · 10; 2026-11-05 Codex dựng `POST /chat/turns` (`askChat`, công khai, hợp đồng 0.65.0) với hai công cụ đọc `doc_menu` · `tinh_gia` gọi đúng service của `GET /menu` · `POST /price-quotes`, nhà giả mặc định cho server; Claude viết test trước và duyệt; chưa giao diện, chưa mở khách thật; tiếp theo `CHAT-06` · [mô tả](backlog_CHAT.md#chat-05)
