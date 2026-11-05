@@ -33,6 +33,7 @@ async function mo(ma: string, opts: { tinhThu?: Ghi; gui?: Ghi; qr?: { status: n
   return { server, goi: b.goi };
 }
 const nutGui = () => screen.getByRole("button", { name: "Đặt món" }) as HTMLButtonElement;
+const xacNhanDatMon = () => { fireEvent.click(nutGui()); fireEvent.click(screen.getByRole("button", { name: "Đồng ý đặt món" })); };
 const luotXong = { status: 201, body: { sales_order_id: 70, table_session_id: 9, dining_table_id: 3, channel_code: "qr_table", status: "in_progress",
   total_vnd: 71000, lines: [] } };
 
@@ -67,6 +68,28 @@ describe("khách QR tại bàn — lấy trước ở server", () => {
 });
 
 describe("khách QR tại bàn — giỏ, tổng tính thử, gửi", () => {
+  it("xem lại đơn: huỷ giữ giỏ và không gửi; đồng ý mới gửi đúng một lần", async () => {
+    const { goi } = await mo("ma-xac-nhan", { gui: () => luotXong });
+    fireEvent.click(screen.getByRole("button", { name: "Thêm Canh" }));
+    fireEvent.click(screen.getByRole("button", { name: "Thêm Bánh cuốn" }));
+    await waitFor(() => expect(nutGui().disabled).toBe(false));
+    fireEvent.click(nutGui());
+    const hop = screen.getByRole("dialog", { name: "Xác nhận đặt món" });
+    expect(within(hop).getByText("Bàn 3")).toBeTruthy();
+    expect(within(hop).getByText("Canh")).toBeTruthy();
+    expect(within(hop).getByText("Bánh cuốn")).toBeTruthy();
+    expect(within(hop).getAllByText("×1")).toHaveLength(2);
+    expect(within(hop).getByText("Nhân: Thịt · Lượng nhân: Vừa")).toBeTruthy();
+    expect(within(hop).getByText("52.000đ")).toBeTruthy();
+    expect(guiDi(goi)).toHaveLength(0);
+    fireEvent.click(within(hop).getByRole("button", { name: "Không đồng ý" }));
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.getByRole("region", { name: "Dòng 1" })).toBeTruthy();
+    expect(guiDi(goi)).toHaveLength(0);
+    xacNhanDatMon();
+    await waitFor(() => expect(guiDi(goi)).toHaveLength(1));
+  });
+
   it("tổng là total_vnd của POST /price-quotes cho cả giỏ; thân tính thử không giá, không mang về; đổi giỏ thì tính lại", async () => {
     const { goi } = await mo("ma-b1");
     fireEvent.click(screen.getByRole("button", { name: "Thêm Bánh cuốn" }));
@@ -94,7 +117,7 @@ describe("khách QR tại bàn — giỏ, tổng tính thử, gửi", () => {
     expect(nutGui().disabled).toBe(true);
     await act(async () => xong(baoGia(41000)));
     await waitFor(() => expect(nutGui().disabled).toBe(false));
-    fireEvent.click(nutGui());
+    xacNhanDatMon();
     expect(await screen.findByText("Đã gửi lượt gọi · tổng 71.000đ")).toBeTruthy();
     const [g] = guiDi(goi);
     expect(g.path).toBe("/qr-codes/ma-c1/orders");
@@ -109,7 +132,7 @@ describe("khách QR tại bàn — giỏ, tổng tính thử, gửi", () => {
     for (let i = 0; i < 2; i++) {
       fireEvent.click(screen.getByRole("button", { name: "Thêm Canh" }));
       await waitFor(() => expect(nutGui().disabled).toBe(false));
-      fireEvent.click(nutGui());
+      xacNhanDatMon();
       await waitFor(() => expect(guiDi(goi)).toHaveLength(i + 1));
       await screen.findByText("Đã gửi lượt gọi · tổng 71.000đ");
     }
@@ -121,7 +144,7 @@ describe("khách QR tại bàn — giỏ, tổng tính thử, gửi", () => {
     const { goi } = await mo("ma-d1", { gui: (_g, lan) => (lan === 1 ? "mat-mang" : new Promise<TraLoi>((r) => { xong = r; })) });
     fireEvent.click(screen.getByRole("button", { name: "Thêm Canh" }));
     await waitFor(() => expect(nutGui().disabled).toBe(false));
-    fireEvent.click(nutGui());
+    xacNhanDatMon();
     expect(await screen.findByText(/Chưa xác nhận được kết quả/)).toBeTruthy();
     await new Promise((r) => setTimeout(r, 50));
     expect(guiDi(goi)).toHaveLength(1);
@@ -146,7 +169,7 @@ describe("khách QR tại bàn — giỏ, tổng tính thử, gửi", () => {
       await mo(`ma-e-${code}`, { gui: () => ({ status, body: { code, message: "x" } }) });
       fireEvent.click(screen.getByRole("button", { name: "Thêm Canh" }));
       await waitFor(() => expect(nutGui().disabled).toBe(false));
-      fireEvent.click(nutGui());
+      xacNhanDatMon();
       expect(await screen.findByText(chu)).toBeTruthy();
       expect(screen.queryByText(new RegExp(`Mã: ${code}`))).toBeNull();
       expect(screen.getByRole("region", { name: "Dòng 1" })).toBeTruthy();

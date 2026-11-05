@@ -147,6 +147,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-302 **Khách xem lại đơn trước khi đặt tại bàn** — L2, xong 2026-11-05; huỷ giữ giỏ, đồng ý mới gửi, kiểm thử 35/35 · [chi tiết](backlog_archive.md#t-302)
+
 - [x] T-300 **Nút chat của khách là chữ nhỏ, khó thấy và đè nút món** — L1, xong 2026-11-05; nút nổi tròn cam *Trợ lý bánh cuốn* góc phải dưới, bấm lại để đóng; Codex làm, Claude duyệt; fe-check 672/672, gate và ảnh chụp Playwright đạt · [chi tiết](#t-300)
 - [x] T-299 **Chạy `make dev` thường không thấy nút chat** — L1, xong 2026-11-05; `Makefile` mặc định máy dev `NEXT_PUBLIC_CHAT_ENABLED ?= true` · `CHAT_MODEL_PROVIDER ?= gia`, đặt trống hay `tat` để tắt; Codex làm, Claude duyệt, `make -n` và gate đạt · [chi tiết](#t-299)
 - [x] CHAT-07 **Ô chat công khai chưa nối hỏi đáp đã qua kiểm** — L1, chủ repo yêu cầu 2026-11-05; Codex dựng `HoiQuan` (`askChat`, huỷ khi đóng, suy giảm có link `/dat-mon`), `OChatKhach` ở layout gốc cho mọi trang khách và thẻ *Hỏi quán* trong `OChat` ở ba khung, cùng cờ tắt mặc định; Claude duyệt, sửa test ba thẻ của CHAT-32; fe-check 669/669 và gate đạt; chưa diễn trên trình duyệt · [mô tả](backlog_CHAT.md#chat-07)

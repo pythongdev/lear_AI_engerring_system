@@ -8,6 +8,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { dongGui, giaDong, useGiaCombo } from "@/components/shared/bo-soan-mon";
 import { tien } from "@/components/shared/dong-mon-da-ghi";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { call } from "@/lib/api/client";
 import { useApi } from "@/lib/api/provider";
@@ -59,6 +60,7 @@ export function PhieuKhach({ ma, nhan, initialMenu, initialDelivery }: {
   const [loi, setLoi] = useState<string | null>(null);
   const [dangGui, setDangGui] = useState(false);
   const [choGuiLai, setChoGuiLai] = useState(false);
+  const [xacNhan, setXacNhan] = useState(false);
   const chot = useRef(false);
   const phieu = useRef<Phieu | null>(null);
   const duThongTin = !web || !!(cach && sdt.trim() && (cach === "delivery" ? diaChi.trim() : gioCan));
@@ -118,7 +120,7 @@ export function PhieuKhach({ ma, nhan, initialMenu, initialDelivery }: {
     {bao && <p role="status">{bao}</p>}
     {loi && <p role="alert">{loi}</p>}
     {menu.isError && <p role="alert">Chưa đọc được menu. Đang hiện bản đọc lúc {new Date(menu.dataUpdatedAt).toLocaleTimeString("vi-VN")}. <Button onClick={() => void menu.refetch()}>Đọc lại menu</Button></p>}
-    <form onSubmit={(e) => { e.preventDefault(); void gui(); }}>
+    <form onSubmit={(e) => { e.preventDefault(); if (choGuiLai || web) void gui(); else if (hopLe) setXacNhan(true); }}>
       <fieldset disabled={dangGui || choGuiLai}>
         <ThucDonKhach maBan={ma} items={menu.data.items} categories={menu.data.categories} combos={menu.data.combos} lines={lines} onChange={(ds) => sua(khoaNhap, ds)} quotes={quotesKhach}
           total={duMon && tong.isSuccess && !tong.isFetching ? tong.data.total_vnd : undefined}
@@ -144,5 +146,28 @@ export function PhieuKhach({ ma, nhan, initialMenu, initialDelivery }: {
         <span aria-hidden="true">{duMon && tong.isSuccess && !tong.isFetching ? tien(tong.data.total_vnd) : ""}</span>
       </button>
     </form>
+    {!web && <Dialog open={xacNhan} onOpenChange={setXacNhan}>
+      <DialogContent showCloseButton={false} className="max-h-[85dvh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Xác nhận đặt món</DialogTitle>
+          <DialogDescription>Vui lòng xem lại món và tổng tiền trước khi gửi cho quán.</DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3 text-sm">
+          <p className="font-semibold">{/^\d+$/.test(nhan?.trim() ?? "") ? `Bàn ${nhan!.trim()}` : nhan}</p>
+          <ul className="divide-y divide-[var(--line)]">{lines.map((dong, i) => <li key={i} className="py-2">
+            <div className="flex justify-between gap-3"><span>{dong.combo ? dong.combo.name : dong.mon.item_name}</span><strong>×{dong.quantity}</strong></div>
+            {(dong.combo ? dong.portions : [dong]).map((suat, j) => {
+              const chon = suat.mon.option_groups.flatMap((nhom) => nhom.options.filter((o) => suat.option_ids.includes(o.menu_option_id)).map((o) => `${nhom.option_group_name}: ${nhom.option_group_name === "Lượng nhân" && o.option_name === "Thường" ? "Vừa" : nhom.option_group_name === "Lượng nhân" && o.option_name === "Nhiều nhân" ? "Nhiều" : o.option_name}`));
+              return chon.length > 0 && <p key={j} className="text-xs text-[var(--muted)]">{dong.combo ? `${suat.mon.item_name} · ` : ""}{chon.join(" · ")}</p>;
+            })}
+          </li>)}</ul>
+          <p className="flex justify-between border-t border-[var(--line)] pt-3 font-semibold"><span>Tổng tạm tính</span><span>{tong.isSuccess && !tong.isFetching ? tien(tong.data.total_vnd) : "Đang tính…"}</span></p>
+        </div>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={() => setXacNhan(false)}>Không đồng ý</Button>
+          <Button type="button" disabled={!hopLe || dangGui} onClick={() => { setXacNhan(false); void gui(); }}>Đồng ý đặt món</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>}
   </div></main>;
 }

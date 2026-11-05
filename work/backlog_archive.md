@@ -951,6 +951,18 @@ Chi tiết từng task ở [**Chi tiết — việc cần làm**](backlog.md#chi
 <a id="chi-tiet-da-xong"></a>
 ## Chi tiết — việc đã xong
 
+<a id="t-302"></a>
+### T-302 — Khách xem lại đơn trước khi đặt tại bàn
+
+Chủ repo yêu cầu 2026-11-05 kiểm tra nút Đặt món tại `/ban/3` và thêm pop up tổng hợp để khách đồng ý hoặc không; sau khi nghe ranh giới L2, chủ repo cho Codex toàn quyền thực hiện. Màn này không có nút Thanh toán, nên bước xác nhận gắn với nút Đặt món; thanh toán thực tế không đổi. Mức L2 vì việc đổi thời điểm gửi có thể tạo hoặc bỏ sót đơn đã lưu.
+
+Acceptance ghi trước khi sửa: A1 — nút Đặt món chỉ mở hộp xem lại bàn, từng dòng món, số lượng, lựa chọn và tổng báo giá mới nhất; chưa gọi API tạo đơn. A2 — Không đồng ý đóng hộp, giữ nguyên giỏ, không gọi API tạo đơn; Đồng ý gửi đúng một lần qua luồng cũ, giữ dấu gửi lại khi mất phản hồi. A3 — đơn web `/dat-mon` giữ nguyên luồng; kiểm thử QR/web và gate toàn repo đạt.
+
+Phạm vi (`work/scope/T-302.txt`): `work/backlog.md`, `work/backlog_archive.md`, `docs/product/4-fe/01-khung-fe.md`, `fe/src/app/ban/_components/phieu-khach.tsx`, `fe/src/app/ban/khach-qr.test.tsx`, `fe/src/app/ban/thuc-don-khach.test.tsx`. Người làm: Codex trên nhánh `P4A-01`; các thay đổi sẵn của việc khác ở file kiểm thử và backlog cần được tách khi commit.
+
+Kết quả: Trang QR hiện hộp xác nhận có bàn, từng món, số lượng, lựa chọn và tổng từ báo giá API. Không đồng ý đóng hộp mà giữ giỏ và không tạo đơn; Đồng ý mới gọi API qua luồng giữ dấu cũ. Trang web không đổi. Ba bộ kiểm thử QR, giỏ món và đơn web đạt 35/35; `npx tsc --noEmit` đạt. Gate lần đầu đạt toàn bộ cổng đã chạy; kết quả gate cuối được báo khi bàn giao. Chưa kiểm bằng trình duyệt thật; chưa có người duyệt độc lập.
+
+
 <a id="t-288"></a>
 ### T-288 — Ảnh giới thiệu quán dưới tên trên menu bàn
 

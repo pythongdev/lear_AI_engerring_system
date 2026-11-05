@@ -247,6 +247,7 @@ it("món không lựa chọn gộp số lượng; xoá dòng gộp bỏ toàn b�
   const gui = screen.getByRole("button", { name: "Đặt món" }) as HTMLButtonElement;
   await waitFor(() => expect(gui.disabled).toBe(false));
   fireEvent.click(gui);
+  fireEvent.click(screen.getByRole("button", { name: "Đồng ý đặt món" }));
   await waitFor(() => expect(b.goi.find((g) => g.path === "/qr-codes/test-menu/orders")?.body?.lines).toEqual([
     { menu_item_id: 2, quantity: 2, option_ids: [] },
   ]));
