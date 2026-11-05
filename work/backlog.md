@@ -147,6 +147,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-300 **Nút chat của khách là chữ nhỏ, khó thấy và đè nút món** — L1, xong 2026-11-05; nút nổi tròn cam *Trợ lý bánh cuốn* góc phải dưới, bấm lại để đóng; Codex làm, Claude duyệt; fe-check 672/672, gate và ảnh chụp Playwright đạt · [chi tiết](#t-300)
 - [x] T-299 **Chạy `make dev` thường không thấy nút chat** — L1, xong 2026-11-05; `Makefile` mặc định máy dev `NEXT_PUBLIC_CHAT_ENABLED ?= true` · `CHAT_MODEL_PROVIDER ?= gia`, đặt trống hay `tat` để tắt; Codex làm, Claude duyệt, `make -n` và gate đạt · [chi tiết](#t-299)
 - [x] CHAT-07 **Ô chat công khai chưa nối hỏi đáp đã qua kiểm** — L1, chủ repo yêu cầu 2026-11-05; Codex dựng `HoiQuan` (`askChat`, huỷ khi đóng, suy giảm có link `/dat-mon`), `OChatKhach` ở layout gốc cho mọi trang khách và thẻ *Hỏi quán* trong `OChat` ở ba khung, cùng cờ tắt mặc định; Claude duyệt, sửa test ba thẻ của CHAT-32; fe-check 669/669 và gate đạt; chưa diễn trên trình duyệt · [mô tả](backlog_CHAT.md#chat-07)
 - [x] T-296 **Tài khoản dev không đăng nhập được bằng tên trong hướng dẫn** — L1, chủ repo yêu cầu 2026-11-05 tạo tài khoản cho mọi nhân viên và lệnh make chạy lại; sửa lệnh hiện có theo email đăng nhập của API, cập nhật bảng tài khoản; gate xanh · [chi tiết](#t-296)
@@ -550,6 +551,21 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-300"></a>
+### T-300 — Nút chat của khách là chữ nhỏ, khó thấy và đè nút món
+
+Chủ repo báo 2026-11-05 không thấy nút chat ở `/ban/3`. Claude đo cùng ngày bằng Playwright trên máy dev của chủ repo: nút "Hỏi quán" của `OChatKhach` có, hiện, không bị che, hỏi được và nhận câu của model giả kèm nguồn; nhưng nó là nút chữ đen nhỏ (80×32 px), không giống biểu tượng chat, và ở bề ngang 390 px đè lên nút "+" của thẻ món. Lựa chọn nút chữ là của Claude ở phiếu CHAT-07. Chủ repo yêu cầu: *"hãy làm nút bấm trợ lý bánh cuốn floating button phải dưới bên phải"*. Mức **L1**, chỉ đổi vỏ giao diện; `HoiQuan`, cờ, đường gọi giữ nguyên.
+
+Quyết định của Claude: nút nổi tròn 56 px màu cam của quán `#EA6A0C`, biểu tượng `MessageCircle` (lucide-react) chữ trắng, tên truy cập "Trợ lý bánh cuốn", góc phải dưới có tính vùng an toàn điện thoại; bấm lần nữa thì đóng; khi mở đổi biểu tượng thành `X`. Bảng mang tiêu đề "Trợ lý bánh cuốn", nằm ngay trên nút. Khung nội bộ (`OChat`) không đổi trong lượt này.
+
+Acceptance ghi trước khi giao: A1 — trang khách có một nút nổi tròn tên "Trợ lý bánh cuốn" ở góc phải dưới, có biểu tượng, không còn nút chữ "Hỏi quán"; A2 — bấm mở bảng "Trợ lý bánh cuốn", bấm lại hay nút Đóng hay Esc đều đóng và trả focus về nút; A3 — cờ tắt, đường nội bộ, đổi tài khoản khách giữ đúng hành vi CHAT-07 (test cũ đổi tên, không bỏ ca); A4 — ảnh chụp Playwright 1280 px và 390 px trên máy dev cho thấy nút tròn cam và bảng mở không tràn ngang; A5 — `./scripts/fe-check.sh` và `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-300.txt`): `fe/src/components/shared/o-chat-khach.tsx`, `fe/src/components/shared/o-chat-khach.test.tsx`, `docs/product/4-fe/01-khung-fe.md`, `work/backlog.md`.
+
+Bàn giao 2026-11-05: **Codex** thực hiện (worktree `../lean_wt/T-300`, nhánh `codex/T-300`, nền `0c08241`, model `gpt-6-astra`, một lượt): nút `<button>` gốc tròn 56 px, `MessageCircle` ↔ `X`, bấm lại đóng; test 6 → 9 ca, không bỏ ca nào. Build treo trong sandbox Codex nên **Claude** tự chạy trong worktree: `./scripts/fe-check.sh` `fe-check: PASS` (672/672 test, build biên dịch được), `./scripts/gate.sh` `PASS gate không cổng nào đỏ`. A4 Claude chụp bằng Playwright trên máy dev của chủ repo sau `git apply`, `/ban/3`: nút 56×56 ở (1208, 728) với bề ngang 1280 và (318, 772) với 390, không còn nút "Hỏi quán", mở · hỏi · nhận câu model giả kèm nguồn, bấm lại đóng, không tràn ngang. Còn lại, đúng bản chất nút nổi: khi cuộn, nút có lúc che phần góc phải dưới của thẻ món (nút "+"); khách cuộn thêm là bấm được. Chưa có người duyệt thứ ba.
+
+[↑ đầu file](#top)
 
 <a id="t-299"></a>
 ### T-299 — Chạy `make dev` thường không thấy nút chat

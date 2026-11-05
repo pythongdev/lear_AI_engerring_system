@@ -27,21 +27,21 @@ function dung(chat: (r: Request) => Promise<Response> = async () => json(answer)
 async function mo() {
   // Đợi phiên ổn định trước khi gõ; nút không đợi phiên.
   await waitFor(() => expect(screen.getByRole("button", { name: "Đổi người" }).getAttribute("data-phien")).toBe("san-sang"));
-  const button = screen.getByRole("button", { name: "Hỏi quán" }); fireEvent.click(button); return button;
+  const button = screen.getByRole("button", { name: "Trợ lý bánh cuốn" }); fireEvent.click(button); return button;
 }
 function hoi() { fireEvent.change(screen.getByRole("textbox"), { target: { value: "Câu hỏi cũ" } }); fireEvent.click(screen.getByRole("button", { name: "Hỏi" })); }
 
 describe("CHAT-07 OChatKhach", () => {
-  it.each([undefined, "", "false", "1"])("cờ %s tắt không có nút Hỏi quán", (flag) => {
+  it.each([undefined, "", "false", "1"])("cờ %s tắt không có nút Trợ lý bánh cuốn", (flag) => {
     vi.stubEnv("NEXT_PUBLIC_CHAT_ENABLED", flag); const { fetch } = dung(undefined, 2, false);
-    expect(screen.queryByRole("button", { name: "Hỏi quán" })).toBeNull(); expect(fetch).not.toHaveBeenCalled();
+    expect(screen.queryByRole("button", { name: "Trợ lý bánh cuốn" })).toBeNull(); expect(fetch).not.toHaveBeenCalled();
   });
   it.each(["/quay/goi-mon", "/tram", "/chu-quan/van-hanh"])("đường nội bộ %s không vẽ vỏ khách", (path) => {
-    route.path = path; const { fetch } = dung(undefined, 2, false); expect(screen.queryByRole("button", { name: "Hỏi quán" })).toBeNull(); expect(fetch).not.toHaveBeenCalled();
+    route.path = path; const { fetch } = dung(undefined, 2, false); expect(screen.queryByRole("button", { name: "Trợ lý bánh cuốn" })).toBeNull(); expect(fetch).not.toHaveBeenCalled();
   });
   it("không chờ phiên mới bày nút, mở lần đầu mới dựng", () => {
     render(<ApiProvider fetch={() => new Promise(() => {})}><OChatKhach /></ApiProvider>);
-    expect(screen.getByRole("button", { name: "Hỏi quán" })).toBeTruthy(); expect(screen.queryByRole("textbox", { hidden: true })).toBeNull();
+    expect(screen.getByRole("button", { name: "Trợ lý bánh cuốn" })).toBeTruthy(); expect(screen.queryByRole("textbox", { hidden: true })).toBeNull();
   });
   it("mở focus Câu hỏi, Esc trả focus, đóng chỉ ẩn giữ hội thoại; vỏ giới hạn chiều rộng", async () => {
     dung(); const button = await mo(); const input = screen.getByRole("textbox", { name: "Câu hỏi" });
@@ -50,7 +50,44 @@ describe("CHAT-07 OChatKhach", () => {
     hoi(); await screen.findByText(answer.answer); fireEvent.keyDown(input, { key: "Escape" });
     expect(screen.queryByRole("dialog")).toBeNull(); expect(document.activeElement).toBe(button);
     fireEvent.click(button); expect(screen.getByText(answer.answer)).toBeTruthy(); expect(document.activeElement).toBe(input);
-    fireEvent.click(screen.getByRole("button", { name: "Đóng hỏi quán" })); expect(document.activeElement).toBe(button);
+    fireEvent.click(screen.getByRole("button", { name: "Đóng trợ lý bánh cuốn" })); expect(document.activeElement).toBe(button);
+  });
+  it("nút nổi tròn có tên truy cập và biểu tượng, thay nút Hỏi quán", () => {
+    dung();
+    const button = screen.getByRole("button", { name: "Trợ lý bánh cuốn" });
+    expect(button.getAttribute("aria-label")).toBe("Trợ lý bánh cuốn");
+    expect(button.getAttribute("title")).toBe("Trợ lý bánh cuốn");
+    expect(button.classList.contains("rounded-full")).toBe(true);
+    expect(button.classList.contains("fixed")).toBe(true);
+    expect(button.querySelectorAll("svg")).toHaveLength(1);
+    expect(button.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true");
+    expect(screen.queryByRole("button", { name: "Hỏi quán" })).toBeNull();
+  });
+  it("bấm nút lần hai ẩn bảng, trả focus và giữ hội thoại khi mở lại", async () => {
+    dung(); const button = await mo();
+    const dialog = screen.getByRole("dialog", { name: "Trợ lý bánh cuốn" });
+    expect(button.getAttribute("aria-expanded")).toBe("true");
+    expect(button.getAttribute("aria-controls")).toBe(dialog.id);
+    expect(button.querySelector("svg")?.classList.contains("lucide-x")).toBe(true);
+    hoi(); await screen.findByText(answer.answer);
+    fireEvent.click(button);
+    expect(dialog.hidden).toBe(true);
+    expect(button.getAttribute("aria-expanded")).toBe("false");
+    expect(document.activeElement).toBe(button);
+    expect(button.querySelector("svg")?.classList.contains("lucide-message-circle")).toBe(true);
+    fireEvent.click(button);
+    expect(dialog.hidden).toBe(false);
+    expect(screen.getByText(answer.answer)).toBeTruthy();
+    expect(document.activeElement).toBe(screen.getByRole("textbox", { name: "Câu hỏi" }));
+  });
+  it("bấm lại nút nổi khi chờ câu trả lời huỷ signal", async () => {
+    let signal!: AbortSignal;
+    dung((r) => { signal = r.signal; return new Promise(() => {}); });
+    const button = await mo(); hoi();
+    await waitFor(() => expect(signal).toBeTruthy());
+    fireEvent.click(button);
+    expect(signal.aborted).toBe(true);
+    expect(screen.getByRole("dialog", { hidden: true }).hidden).toBe(true);
   });
   it.each([2, null])("đổi customer_account_id sang %s hoặc đăng xuất mất hội thoại", async (next) => {
     dung(undefined, next); await mo(); hoi(); await screen.findByText(answer.answer);
@@ -61,7 +98,7 @@ describe("CHAT-07 OChatKhach", () => {
     let tra!: (r: Response) => void; let signal!: AbortSignal;
     dung((r) => { signal = r.signal; return new Promise((resolve) => { tra = resolve; }); });
     await mo(); hoi(); await waitFor(() => expect(signal).toBeTruthy());
-    fireEvent.click(screen.getByRole("button", { name: "Đóng hỏi quán" })); expect(signal.aborted).toBe(true);
+    fireEvent.click(screen.getByRole("button", { name: "Đóng trợ lý bánh cuốn" })); expect(signal.aborted).toBe(true);
     await act(async () => { tra(json(answer)); }); await mo();
     expect(screen.queryByText(answer.answer)).toBeNull(); expect(screen.queryByRole("alert")).toBeNull();
     expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe("Câu hỏi cũ");
