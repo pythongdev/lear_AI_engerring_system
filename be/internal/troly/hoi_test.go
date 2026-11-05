@@ -2,7 +2,7 @@
 // handler; Codex làm cho xanh, không sửa điều kiện kiểm.
 //
 // Hợp đồng Claude chốt trong test này (2026-11-05, trong khung ADR-139):
-//   - troly.Routes(r *gin.Engine, lop *troly.Lop, menu *gia.Service) đăng ký POST /chat/turns (operationId askChat, security: []).
+//   - troly.Routes(r *gin.Engine, lop *troly.Lop, menu *gia.Service, noiBo *troly.NguonNoiBo — thêm ở CHAT-08, nil ⇒ chỉ công khai) đăng ký POST /chat/turns (operationId askChat, security: []).
 //   - Thân: {"question": string, "history": [{"role": "user"|"assistant", "text": string}]} — history có thể vắng.
 //     Sai hình ⇒ 400 invalid_request, field "question" hoặc "history"; JSON hỏng ⇒ 400 invalid_request.
 //   - Trả 200: {"answer": string|null, "sources": [{"tool": string, "read_at": RFC3339}], "degraded_reason": string|null}.
@@ -42,7 +42,7 @@ func moDuongHoi(t *testing.T, ncc string, nha troly.NhaCungCap) duongHoi {
 	r := gin.New()
 	svc := gia.NewService(k.pool)
 	gia.Routes(r, svc)
-	troly.Routes(r, troly.MoiLop(k.pool, cauHinh(t, ncc, 0), nha), svc)
+	troly.Routes(r, troly.MoiLop(k.pool, cauHinh(t, ncc, 0), nha), svc, nil)
 	srv := httptest.NewServer(r)
 	t.Cleanup(srv.Close)
 	return duongHoi{k, srv}

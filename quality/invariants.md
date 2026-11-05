@@ -1798,3 +1798,19 @@ giây; huỷ context giữa lần gọi ⇒ lượt dừng, dòng được chố
 `idle in transaction`. Test hồi quy `be/internal/troly/lop_test.go` (`TestI042_*`) viết trước gói.
 
 *Viết ở CHAT-03, 2026-11-05, Claude Code.*
+
+### I-043 — Công cụ đọc nội bộ của chat CHỈ mở theo lớp của người trong phiên, chạy dưới chính người ấy, và KHÔNG đưa tên hay id người tới model
+
+**Invariant:**
+Thiết kế **ADR-139** điểm 7(a) · 9 và *Sửa đổi 2026-11-06* (CHAT-08, Claude Code); lời `master_plan/shop-facts.md` §8.11 điểm 5. Không phiên,
+phiên khách, hoặc người không có thật: chỉ hai công cụ công khai của `CHAT-05`. Phiên người làm: thêm công cụ đọc của cửa `GET` mà lớp của người
+ấy qua được, gọi đúng service của cửa ấy với chính người của phiên; quyền kiểm lại khi công cụ chạy, nên rời quầy giữa lượt thì công cụ trả lỗi,
+không kết quả. Kết quả công cụ chỉ mang trường trong danh sách được phép của nó: không tên, không id người.
+
+**Verification:**
+Kịch bản âm: không cookie, cookie khách, mã khách đặt vào cookie người làm ⇒ gói tới model chỉ kể `doc_menu` · `tinh_gia`; người đứng quầy rời
+quầy rồi công cụ chạy ⇒ `not_on_counter_duty`, không kết quả; nguồn mang tên người đem ra và người khai ⇒ kết quả công cụ không còn tên ấy, không
+khoá nào ngoài danh sách được phép. Kịch bản dương: người ngoài quầy, người đứng quầy, chủ quán nhận đúng danh sách theo lớp; số tới model bằng
+số của cửa `GET` cùng người. Test hồi quy trong `be/internal/troly/` (`TestI043_*`) viết trước code.
+
+*Viết ở CHAT-08, 2026-11-06, Claude Code.*

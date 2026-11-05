@@ -147,6 +147,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] CHAT-08 **Người làm chưa hỏi được số theo bàn và theo quyền bằng chat** — L2, ADR-139 điểm 7 · 9 và *Sửa đổi 2026-11-06*; 2026-11-06 Codex dựng `NguonNoiBo` với ba công cụ đọc theo lớp (`doc_bang_tram` · `doc_bang_phuc_vu` · `doc_tong_quan`) và phép chiếu bỏ tên, id người, hợp đồng 0.66.0; Claude viết test trước (`I-043`), sửa hai sót của mình và duyệt; be-check, eval CHAT-06 và gate đạt; chưa có FE (CHAT-09) · [mô tả](backlog_CHAT.md#chat-08)
+
 - [x] T-302 **Khách xem lại đơn trước khi đặt tại bàn** — L2, xong 2026-11-05; huỷ giữ giỏ, đồng ý mới gửi, kiểm thử 35/35 · [chi tiết](backlog_archive.md#t-302)
 
 - [x] T-300 **Nút chat của khách là chữ nhỏ, khó thấy và đè nút món** — L1, xong 2026-11-05; nút nổi tròn cam *Trợ lý bánh cuốn* góc phải dưới, bấm lại để đóng; Codex làm, Claude duyệt; fe-check 672/672, gate và ảnh chụp Playwright đạt · [chi tiết](#t-300)

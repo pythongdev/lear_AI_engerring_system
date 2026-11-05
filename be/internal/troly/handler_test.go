@@ -15,7 +15,7 @@ import (
 func TestI041_DuongHoiKiemHinhKhongCanDB(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
-	troly.Routes(r, troly.MoiLop(nil, troly.CauHinh{NhaCungCap: "tat"}, nil), nil)
+	troly.Routes(r, troly.MoiLop(nil, troly.CauHinh{NhaCungCap: "tat"}, nil), nil, nil)
 	for _, tc := range []struct{ body, field string }{
 		{`{"question":1}`, "question"},
 		{`{"question":null}`, "question"},

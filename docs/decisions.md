@@ -8721,3 +8721,13 @@ phí hai lần; *gửi nguyên câu người gõ* — trái §8.11 điểm 5 khi
 phải chạy lại khi có model thật (ADR-136 *Sửa đổi 2026-11-04*).
 
 **Applies to:** lane `CHAT` · `CHAT-35` · `CHAT-03` · `CHAT-05`…`CHAT-09` · `U-112` · `U-118`.
+
+**Sửa đổi 2026-11-06 (CHAT-08, Claude Code, trong khung điểm 7 · 9 — không đổi quyết định):** danh sách công cụ đọc nội bộ mà điểm 9 để
+*chốt ở phiếu*. Phiên người làm nhận công khai cộng `doc_bang_tram` (`getProductionBoard`, công khai, lọc `station_code`, trả đúng thân cửa);
+qua lớp `quay_hoac_chu_quan` thêm `doc_bang_phuc_vu` (`getServiceBoard`); qua lớp `chu_quan` thêm `doc_tong_quan` (`getOwnerOverview`). Lớp
+đọc bằng `authz` như màn tay lúc dựng danh sách, và **kiểm lại** ở giao dịch của chính công cụ khi model gọi. Hai công cụ có người được
+chiếu qua danh sách trường được phép (điểm 7(a)): bảng phục vụ bỏ `serve_history` (mang tên người đem ra) và số tiền; tổng quan bỏ
+`person_id` · `person_name`. Cookie khách không mở công cụ nội bộ. **Chưa đưa** — lý do của phiên, mở lại ở bước sau nếu cần:
+`getSaleDaySummary` (danh sách nhân viên, doanh thu ngày), `listAssignedTasks` · `listMyAssignedTasks` (chữ tự do do người gõ, có thể mang
+tên — chỗ hở `U-118`), `counterStationJobs` (trùng số của bảng trạm), `getSupplyStock` (tổng quan đã có phần thiếu nguyên liệu),
+`getDiningTables` (bảng phục vụ đã có bàn trống). Bất biến `I-043`.

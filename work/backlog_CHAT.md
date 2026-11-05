@@ -423,6 +423,28 @@ gate.
 
 **Nhận việc:**
 
+2026-11-06, Claude: chủ repo yêu cầu *"làm tiếp, yêu cầu Codex làm, bạn kiểm tra"*. Mức **L2** (đọc theo quyền, dữ liệu gửi ra). Danh sách
+công cụ chốt ở ADR-139 *Sửa đổi 2026-11-06*, bất biến mới `I-043`: người làm thêm `doc_bang_tram`; lớp `quay_hoac_chu_quan` thêm
+`doc_bang_phuc_vu`; lớp `chu_quan` thêm `doc_tong_quan`; bảng phục vụ và tổng quan chiếu qua danh sách trường được phép, bỏ tên và id người.
+Năm cửa đọc khác chưa đưa, lý do ở ADR. Hợp đồng chốt trong test Claude viết trước: `troly.MoiNguonNoiBo` · `(*NguonNoiBo).CongCu` ·
+`troly.ChieuBangPhucVu` · `troly.ChieuTongQuan`, `troly.Routes` thêm tham số `noiBo`. Test `chieu_test.go` (không cần database, SHA-256
+`9c2dd8a8…67ee`) và `noi_bo_test.go` (PostgreSQL, `1f5714a7…8afe08`), hai test cũ chỉ thêm `nil` vào `Routes`; đỏ vì chưa có code.
+Acceptance ghi trước khi giao: A1 bốn test `TestI043_*` xanh và mọi test cũ của `troly` · `danhgia` xanh; A2 không câu SQL mới trong `troly`,
+công cụ gọi đúng service của cửa `GET`; A3 `askChat` ở `openapi.yaml` nói danh sách công cụ theo phiên, hợp đồng lên 0.66.0; A4 server gắn
+nguồn nội bộ; A5 eval `CHAT-06` chạy lại vẫn `ket_luan=mo_duoc`; A6 `./scripts/gate.sh` xanh. Phiếu `../lean_wt/chat-review/CHAT-08-phieu.md`,
+worktree `../lean_wt/CHAT-08`, nhánh `codex/CHAT-08` từ `5c265a4` cộng `CHAT-06` chưa commit (stage sẵn). Việc kế tiếp: Claude duyệt.
+
+2026-11-06, CHAT-08 xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-08`, nhánh `codex/CHAT-08`, model `gpt-6-astra`, một lượt):
+`noi_bo.go` (`NguonNoiBo`, đọc lớp bằng ba lần `authz.ReadAs`, ba công cụ gọi `sanxuat.DocGom` · `tongquan.DocBang` · `tongquan.Doc` dưới người
+của phiên), `chieu.go` (struct riêng chỉ có trường được phép), `handler.go` lấy người qua `middleware.Nguoi`, `router.go` gắn nguồn, `askChat`
+ở `openapi.yaml` thêm mô tả, hợp đồng 0.66.0. **Claude** viết test, duyệt diff và chạy gate trên PostgreSQL. Codex dừng đúng ở hai sót của Claude,
+Claude tự sửa: `noi_bo_test.go` thừa import `context` (SHA-256 sau sửa `69ea9d3b…add9`), và worktree thiếu scope `CHAT-06`; khi chạy thật thêm
+sót thứ ba — scope chưa có `fe/src/lib/api/schema.ts` mà hợp đồng đổi thì phải sinh lại, Claude thêm vào scope và chạy `npm run gen:api`.
+Bằng chứng trong worktree: năm test `TestI043_*` PASS, `be-check` `PASS mọi test backend qua PostgreSQL thật đều đạt`, eval `CHAT-06` chạy lại
+`dau_van=38833776e4b3` · `ket_luan=mo_duoc` (danh sách công khai không đổi, P04 vẫn trượt ghim `U-118`), `./scripts/gate.sh`
+`PASS gate không cổng nào đỏ`. Nhà giả mặc định vẫn chỉ gọi `doc_menu`, nên trên `make dev` chưa thấy số nội bộ; phần màn hình là `CHAT-09`.
+Năm cửa đọc chưa đưa (lý do ở ADR-139 *Sửa đổi 2026-11-06*). Chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---

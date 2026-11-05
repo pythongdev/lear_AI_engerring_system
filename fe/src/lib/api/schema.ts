@@ -1383,7 +1383,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Hỏi công khai với nguồn đọc của chính lượt này */
+        /**
+         * Hỏi với công cụ đọc do backend chọn theo phiên người làm
+         * @description Backend chọn danh sách công cụ theo lớp quyền của người trong phiên người làm. Không có phiên người làm hoặc chỉ có phiên khách thì chỉ dùng công cụ công khai. Công cụ nội bộ gọi service đọc dưới chính người của phiên, kiểm lại quyền khi chạy; kết quả được giới hạn trường được phép và chỉ dùng trong chính lượt này.
+         */
         post: operations["askChat"];
         delete?: never;
         options?: never;

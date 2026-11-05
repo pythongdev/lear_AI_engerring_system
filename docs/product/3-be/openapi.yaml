@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.65.0
+  version: 0.66.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -2502,7 +2502,12 @@ paths:
       operationId: askChat
       tags: [troly]
       security: []
-      summary: Hỏi công khai với nguồn đọc của chính lượt này
+      summary: Hỏi với công cụ đọc do backend chọn theo phiên người làm
+      description: >-
+        Backend chọn danh sách công cụ theo lớp quyền của người trong phiên người làm.
+        Không có phiên người làm hoặc chỉ có phiên khách thì chỉ dùng công cụ công khai.
+        Công cụ nội bộ gọi service đọc dưới chính người của phiên, kiểm lại quyền khi chạy;
+        kết quả được giới hạn trường được phép và chỉ dùng trong chính lượt này.
       requestBody:
         required: true
         content:

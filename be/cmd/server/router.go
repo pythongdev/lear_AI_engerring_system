@@ -65,7 +65,7 @@ func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtim
 	if config.NhaCungCap == "gia" {
 		nha = troly.MoiNhaGiaMacDinh()
 	}
-	troly.Routes(r, troly.MoiLop(pool, config, nha), giaService)
+	troly.Routes(r, troly.MoiLop(pool, config, nha), giaService, troly.MoiNguonNoiBo(pool))
 	ban.Routes(r, ban.NewService(pool))
 	phien.Routes(r, phien.NewService(pool))
 	nguoi.Routes(r, nguoi.NewService(pool))

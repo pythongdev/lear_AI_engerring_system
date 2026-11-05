@@ -9,11 +9,12 @@ import (
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/gia"
+	"banhcuon/be/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
-// Routes đăng ký đường hỏi chỉ đọc công khai.
-func Routes(r *gin.Engine, lop *Lop, menu *gia.Service) {
+// Routes đăng ký đường hỏi chỉ đọc, chọn công cụ theo phiên người làm.
+func Routes(r *gin.Engine, lop *Lop, menu *gia.Service, noiBo *NguonNoiBo) {
 	r.POST("/chat/turns", func(c *gin.Context) {
 		invalid := func(field string) {
 			apierr.Write(c.Writer, apierr.Error{Code: apierr.CodeInvalidRequest, Field: field})
@@ -51,7 +52,12 @@ func Routes(r *gin.Engine, lop *Lop, menu *gia.Service) {
 				history = append(history, Tin{Vai: *item.Role, Chu: *item.Text})
 			}
 		}
-		result, err := lop.Luot(c.Request.Context(), *question, history, CongCuCongKhai(menu))
+		nguoi, _ := middleware.Nguoi(c)
+		congCu, err := noiBo.CongCu(c.Request.Context(), nguoi, menu)
+		var result KetQua
+		if err == nil {
+			result, err = lop.Luot(c.Request.Context(), *question, history, congCu)
+		}
 		if err != nil {
 			var e apierr.Error
 			if !errors.As(err, &e) {
