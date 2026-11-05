@@ -34,6 +34,7 @@ import (
 	"banhcuon/be/internal/platform/realtime"
 	"banhcuon/be/internal/taikhoan"
 	"banhcuon/be/internal/testhelper"
+	"banhcuon/be/internal/troly"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 )
@@ -684,6 +685,33 @@ var cacCaVet = []caVet{
 		_, _, don, _ := c.phienDangPhucVu(t, "việc")
 		id := c.viec(t, don, "pending")[0]
 		return dichVet{"station_job", id, c.quay, "status", "pending", "made", func() { canDat(t, c.bamMe(t, c.quay, id), http.StatusCreated) }}
+	}},
+	// Chốt sổ gọi model do máy ghi, không người của quán (ADR-139 điểm 5; Claude thêm 2026-11-05 khi duyệt CHAT-03).
+	// Nhà giả dừng giữa lần gọi để chụp dòng lúc chưa chốt; goi() thả nhà giả và đợi lượt chốt xong.
+	{"troly/chot", func(t *testing.T, c canh) dichVet {
+		moc := c.docSo(t, "SELECT coalesce(max(id),0) FROM shop.model_call")
+		dangCho, choDi, xong := make(chan struct{}), make(chan struct{}), make(chan struct{})
+		gia := troly.MoiNhaGia(func(ctx context.Context, _ troly.GoiModel) (troly.PhanHoi, error) {
+			close(dangCho)
+			<-choDi
+			return troly.PhanHoi{Chu: "ok", TokenVao: 1, TokenRa: 1, BietMucDung: true}, nil
+		})
+		ch, err := troly.DocCauHinh(func(k string) string {
+			if k == "CHAT_MODEL_PROVIDER" {
+				return "gia"
+			}
+			return ""
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		go func() {
+			defer close(xong)
+			_, _ = troly.MoiLop(c.pool, ch, gia).Luot(c.ctx, "Kiểm vết chốt sổ gọi model", nil, nil)
+		}()
+		<-dangCho
+		id := c.docSo(t, "SELECT id FROM shop.model_call WHERE id > $1 AND settled_at IS NULL ORDER BY id LIMIT 1", moc)
+		return dichVet{"model_call", id, 0, "settled_at", nil, "mốc", func() { close(choDi); <-xong }}
 	}},
 }
 

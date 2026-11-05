@@ -172,6 +172,33 @@ liệu cá nhân.
 
 **Nhận việc:**
 
+2026-11-04, Claude: test `be/internal/troly/lop_test.go` viết trước (SHA-256 `d4e6f441…9d8c`), đỏ vì chưa có gói `troly`; đầu file chốt
+tên kiểu, cách tính giữ chỗ và chốt, mã suy giảm `tat` · `het_ngan_sach` · `qua_han` · `qua_so_lan` · `loi_hang`, hai cửa nội bộ
+`troly/giu_cho` · `troly/chot` lớp `cong_khai`, phụ thuộc mới PT-9. Phiếu `../lean_wt/chat-review/CHAT-03-phieu.md` giao Codex, worktree
+`../lean_wt/CHAT-03`, nhánh `codex/CHAT-03` từ `c442632` cộng CHAT-35 và CHAT-02 chưa commit, hợp đồng 0.64.0. Việc kế tiếp: Claude duyệt.
+
+2026-11-05, Claude: lượt một Codex dừng sau `cau_hinh.go` · `kieu.go` · `nha_gia.go`, kiểm cấu hình ở `main.go` và PT-9, vì ba lỗi của phiếu
+Claude mà Codex chỉ đúng: trần ngày theo cấu hình (một phần mười trần tháng hạ) chặn cả hai lượt ở test song song; tên `TestCHAT03_*` trái QC-17
+và file chưa `gofmt`; A5 quét cả test. Claude sửa: backend chỉ kiểm trần tháng cấu hình, trần ngày do database giữ; thêm `I-041` (ranh giới dữ
+liệu gửi ra và công cụ) · `I-042` (đường suy giảm) vào `quality/invariants.md`, đổi tên test sang `TestI040_*` · `TestI041_*` · `TestI042_*`
+(SHA-256 mới `93bf0106…daae`); A5 bỏ file test. Sandbox Codex không tới Docker — `be-check` do Claude chạy. Lượt hai đang chạy
+(`chay-chat03-luot2.sh`, báo cáo `CHAT-03-bao-cao-luot2.md`).
+
+2026-11-05, CHAT-03 xong phần thi công. **Codex** thực hiện (worktree `../lean_wt/CHAT-03`, nhánh `codex/CHAT-03`, nền `c442632` + CHAT-35/02
+chưa commit, model `gpt-6-astra`, hai lượt); **Claude** viết test trước, duyệt diff, tự chạy `be-check`. Lượt hai Codex dừng đúng ở Gate 1f: bộ
+đọc chưa hiểu `GRANT INSERT (cột…)` của migration CHAT-35. Khi duyệt Claude sửa ba chỗ: (1) `scripts/check-write-paths.sh` nhận `GRANT INSERT
+(cột…)` trao lại ô thêm, `REVOKE INSERT` sau đó rút lại, đi theo RENAME — ba ca mới ở `check-write-paths.test.sh`; (2) cửa `troly/chot` khai lý do
+sát câu sửa (`sql/khai_ly_do.sql`) như cửa khách — trigger vết nghiêm từ chối khi thiếu; (3) ca `troly/chot` trong `TestI018_MoiCuaSuaCoVet`
+(`be/internal/don/vet_cua_test.go`), vì `TestI018_TapCuaSuaKhopTapCa` đòi mỗi cửa sửa có ca vết. File: `be/internal/troly/` (gói, `sql/`, sqlcgen,
+`lop_test.go`), `be/sqlc.yaml`, `be/cmd/server/main.go`, `02-vai-va-quyen.md` (hai dòng), `openapi.yaml` 0.64.0 (`model_call_*` → `internal`),
+`01-ranh-gioi-he-thong.md` (PT-9), hai file Gate 1f, `vet_cua_test.go`; Claude: `I-041` · `I-042` ở `quality/invariants.md`. Bằng chứng: mã băm test
+không đổi; `be-check` trong worktree: 11 test `TestI040_*` · `TestI041_*` · `TestI042_*` PASS, `TestI018_MoiCuaSuaCoVet/troly/chot` PASS,
+`TestI018_TapCuaSuaKhopTapCa` PASS, `be-check: PASS — mọi test backend qua PostgreSQL thật đều đạt`; A4 server thoát mã 1 với
+`CHAT_MODEL_PROVIDER=openai`; A5 grep không ra dòng nào. Chưa có đường HTTP (CHAT-05). Chưa có người duyệt thứ ba.
+Gate cây chính sau tích hợp còn đỏ hai chỗ Claude bỏ sót, sửa cùng ngày: QC-14 đòi `service.go` ở gói có sqlcgen ⇒ `lop.go` đổi tên thành
+`service.go`, nội dung giữ nguyên; bộ đối chiếu đòi câu hay dòng §2.1 cho `I-041` · `I-042` ⇒ hai dòng ở `09-doi-chieu-bat-bien.md` §2.1, lý do (D)
+giữ ở tầng 3; khuôn §2.1 chỉ có trạng thái *chưa có lát* nên ghi `work/findings.md` **F-077** (Open).
+
 [↑ đầu file](#top)
 
 ---

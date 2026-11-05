@@ -147,6 +147,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] CHAT-03 **Chưa có lớp gọi model tắt được và giữ được trần chi phí** — L2, ADR-139 điểm 1…4 · 6 · 7 · 12; 2026-11-05 Codex dựng gói `troly` (cấu hình `tat`/`gia`, vòng công cụ tối đa 4 lần, giữ chỗ trước mỗi lần gọi qua `troly/giu_cho`, chốt qua `troly/chot`, bộ lọc số điện thoại · thư, hợp đồng 0.64.0, PT-9); Claude viết test trước, thêm `I-041` · `I-042`, sửa Gate 1f nhận `GRANT INSERT (cột…)` và duyệt; `F-077` mở · [mô tả](backlog_CHAT.md#chat-03)
 - [x] CHAT-35 **Chưa có sổ gọi model để giữ trần chi phí qua khởi động lại** — L2, ADR-139 điểm 5 · 6 · 11; 2026-11-05 Codex dựng `model_call` (bước 44, `20261104180000_so_goi_model`), trigger giữ trần tháng 10 USD · ngày 1 USD dưới khoá giao dịch, chốt một lần, quyền ghi theo cột, bốn câu đối chiếu `I-040`, hợp đồng 0.63.0; Claude viết test trước, sửa vết người rỗng và duyệt · [mô tả](backlog_CHAT.md#chat-35)
 - [x] T-288 **Ảnh giới thiệu quán dưới tên trên menu bàn** — L1, 2026-11-04; Codex thêm ảnh mở `/gioi-thieu`, trang có đường về bàn; gate xanh · [chi tiết](backlog_archive.md#t-288)
 - [x] T-243 **Món đã ngừng bán chưa bán lại được** — L2; 2026-11-04 Codex dựng `POST /menu-items/{id}/resumption` (`menu/ban_lai`, mã `menu_item_not_discontinued`, hợp đồng 0.62.0) qua cửa nội bộ `menu/moc_ngung_ban` giữ ô mốc ngừng bán (ADR-126 *Sửa đổi*), form *Bán lại* trên trang Sản phẩm; Claude viết test trước và duyệt · [chi tiết](#t-243)

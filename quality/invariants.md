@@ -1767,3 +1767,34 @@ lược đồ. Phép *không lần gọi nào thiếu giữ chỗ* ở tầng ba
 
 *Viết ở CHAT-35, 2026-11-04, Claude Code.*
 
+### I-041 — Gói gửi ra dịch vụ model KHÔNG mang số điện thoại hay địa chỉ thư; model KHÔNG chạy được thứ backend không đưa
+
+**Invariant:**
+Lời `master_plan/shop-facts.md` §8.11 điểm 5 (2026-11-01, chủ repo chọn): không gửi dữ liệu cá nhân ra dịch vụ AI ngoài. Thiết kế **ADR-136**
+điểm 3 và **ADR-139** điểm 2 · 7 · 9 (2026-11-04, chủ repo duyệt). Chữ người gõ và mọi tin lịch sử đi qua bộ lọc trước khi dựng gói: số điện
+thoại Việt Nam và địa chỉ thư thành `[đã ẩn]`; số ngắn (giá, số lượng, số bàn) giữ nguyên. Lịch sử từ trình duyệt chỉ là chữ của người dùng và
+trợ lý, có trần độ dài. Model chỉ gọi được công cụ trong danh sách backend chọn cho lượt; tên ngoài danh sách không chạy gì, chỉ trả lỗi về model.
+*Bộ lọc không nhận ra tên người hay địa chỉ gõ tự do — chỗ hở ấy là `U-118`, chặn việc cắm hãng thật.*
+
+**Verification:**
+Kịch bản âm: câu và lịch sử mang số điện thoại nhiều khuôn và địa chỉ thư ⇒ gói tới nhà cung cấp không còn chuỗi nào; câu rỗng, quá 500 ký tự,
+lịch sử quá 12 tin hay vai lạ ⇒ **bị từ chối** trước khi gọi; model đòi công cụ ngoài danh sách ⇒ không công cụ nào chạy. Kịch bản dương: số
+ngắn giữ nguyên; đúng 500 ký tự và 12 tin được nhận; gói chỉ kể công cụ backend đưa. Test hồi quy `be/internal/troly/lop_test.go`
+(`TestI041_*`) viết trước gói.
+
+*Viết ở CHAT-03, 2026-11-05, Claude Code.*
+
+### I-042 — Model tắt, chậm hay lỗi KHÔNG giữ giao dịch database, KHÔNG thử lại ngầm và KHÔNG chặn việc nào của quán
+
+**Invariant:**
+Thiết kế **ADR-136** điểm 7 và **ADR-139** điểm 1 · 3 · 4 (2026-11-04, chủ repo duyệt); phụ thuộc ngoài PT-9 ở
+`docs/product/1-system-design/01-ranh-gioi-he-thong.md`. Tắt thì không gọi và không ghi sổ. Lỗi hãng, quá hạn hay đóng chat thì lượt dừng ngay,
+không gọi lại, và dòng giữ chỗ vẫn được chốt (bằng tiền giữ chỗ khi không biết mức dùng). Trong lúc chờ nhà cung cấp, không kết nối nào của app
+giữ giao dịch mở. Lượt trả trạng thái suy giảm có mã, không trả lỗi làm hỏng màn tay.
+
+**Verification:**
+Kịch bản: cấu hình tắt ⇒ suy giảm `tat`, không dòng sổ; hãng trả lỗi ⇒ `loi_hang`, đúng một lần gọi; quá hạn mỗi lần gọi ⇒ `qua_han` trong vài
+giây; huỷ context giữa lần gọi ⇒ lượt dừng, dòng được chốt; nhà giả dừng giữa lần gọi ⇒ `pg_stat_activity` không có kết nối nào của vai app ở
+`idle in transaction`. Test hồi quy `be/internal/troly/lop_test.go` (`TestI042_*`) viết trước gói.
+
+*Viết ở CHAT-03, 2026-11-05, Claude Code.*

@@ -124,6 +124,8 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `baonghi/da_biet` | `chu_quan` | ADR-138 điểm 3 · 6; CHAT-31; dấu đã xem, không phê duyệt |
 | `hoptin/quay_gui` | `quay` | ADR-137 điểm 4 · 5; CHAT-13; gọi cửa ghi nội bộ theo khuôn ADR-097 |
 | `hoptin/gui_ve_quay` | `nguoi_quan` | ADR-137 điểm 4 · 5; CHAT-13; gọi cửa ghi nội bộ theo khuôn ADR-097 |
+| `troly/giu_cho` | `cong_khai` | ADR-139 điểm 5 · 6; CHAT-03; cửa nội bộ không có đường gọi, chỉ gói troly gọi; lượt khách không có phiên |
+| `troly/chot` | `cong_khai` | ADR-139 điểm 5 · 6; CHAT-03; cửa nội bộ không có đường gọi, chỉ gói troly gọi; lượt khách không có phiên |
 | `hoptin/ghi` | `theo_cua_goi` | ADR-137 điểm 4 · 5; Claude chốt CHAT-13 ngày 2026-11-04 theo khuôn ADR-097; chủ duy nhất của INSERT tin |
 | `nhandon/tam_dung` | `chu_quan` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — tạm dừng cả năm kênh |
 | `nhandon/tiep_tuc` | `chu_quan` | ADR-097, phiếu P3-12 (Claude, 2026-10-12) — khép khoảng tạm dừng |

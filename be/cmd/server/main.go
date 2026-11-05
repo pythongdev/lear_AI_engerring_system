@@ -8,10 +8,14 @@ import (
 
 	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/taikhoan"
+	"banhcuon/be/internal/troly"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	if _, err := troly.DocCauHinh(os.Getenv); err != nil {
+		log.Fatal(err)
+	}
 	dsn := os.Getenv("BANHCUON_DATABASE_URL")
 	if dsn == "" {
 		log.Fatal("thiếu BANHCUON_DATABASE_URL")

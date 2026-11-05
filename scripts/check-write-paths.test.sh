@@ -352,6 +352,28 @@ UPDATE column_granted SET a = 'x';
 EOF
 check "REVOKE sau GRANT cột rút cả quyền cột" 1 "thuộc migration" "$(run "$c")"
 
+c="$(base cap_lai_them_cot)"
+put "$c/mig/20260102000000_b.up.sql" <<'EOF'
+CREATE TABLE insert_granted (id bigint, a text, created_at timestamptz);
+REVOKE INSERT, UPDATE, DELETE ON insert_granted FROM shop_app;
+GRANT INSERT (a) ON insert_granted TO shop_app;
+EOF
+put "$c/be/internal/order/sql/restricted/insert.sql" <<'EOF'
+INSERT INTO insert_granted (a) VALUES ('x');
+EOF
+check "GRANT INSERT (cột) sau REVOKE trao lại ô thêm" 0 "PASS" "$(run "$c")"
+put "$c/mig/20260103000000_c.up.sql" <<'EOF'
+REVOKE INSERT ON insert_granted FROM shop_app;
+EOF
+check "REVOKE INSERT sau GRANT INSERT cột rút lại ô thêm" 1 "insert_granted thêm thuộc migration" "$(run "$c")"
+put "$c/mig/20260103000000_c.up.sql" <<'EOF'
+ALTER TABLE insert_granted RENAME TO insert_renamed;
+EOF
+put "$c/be/internal/order/sql/restricted/insert.sql" <<'EOF'
+INSERT INTO insert_renamed (a) VALUES ('x');
+EOF
+check "GRANT INSERT cột đi theo RENAME" 0 "PASS" "$(run "$c")"
+
 c="$(base ham_sua)"
 put "$c/mig/20260102000000_b.up.sql" <<'EOF'
 CREATE TABLE function_owned (id bigint);

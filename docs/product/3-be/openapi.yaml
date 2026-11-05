@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.63.0
+  version: 0.64.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -8876,17 +8876,17 @@ components:
 # internal_error). Lát dựng cửa chạm một bảng thì xét lại dòng của bảng ấy (01-hop-dong-api.md §4).
 x-constraint-errors:
   model_call_pkey: internal
-  model_call_provider_code_check: unreviewed
-  model_call_model_code_check: unreviewed
-  model_call_reserved_check: unreviewed
-  model_call_cost_check: unreviewed
-  model_call_token_count_check: unreviewed
-  model_call_settlement_pair_check: unreviewed
-  model_call_tokens_settled_check: unreviewed
-  model_call_settled_after_check: unreviewed
-  model_call_settle_once_check: unreviewed
-  model_call_month_budget_check: unreviewed
-  model_call_day_budget_check: unreviewed
+  model_call_provider_code_check: internal
+  model_call_model_code_check: internal
+  model_call_reserved_check: internal
+  model_call_cost_check: internal
+  model_call_token_count_check: internal
+  model_call_settlement_pair_check: internal
+  model_call_tokens_settled_check: internal
+  model_call_settled_after_check: internal
+  model_call_settle_once_check: internal
+  model_call_month_budget_check: internal
+  model_call_day_budget_check: internal
   attendance_day_on_leave_check: unreviewed
   daily_minimum_pkey: internal
   daily_minimum_sale_date_key: internal

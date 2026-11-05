@@ -8,7 +8,8 @@
 #   *.up.sql theo tên: CREATE/DROP/RENAME xác định bảng còn tồn tại; bảng được
 #   ghi trong thân hàm $$ thuộc migration; REVOKE INSERT/UPDATE FROM shop_app
 #   giữ riêng loại ghi ấy; GRANT UPDATE (cột…) TO shop_app đứng sau trao lại
-#   đúng các cột ấy, REVOKE đứng sau nữa rút cả quyền cột (như PostgreSQL). --list in bảng<TAB>loại<TAB>cột hoặc -<TAB>gói/cửa.
+#   đúng các cột ấy, REVOKE đứng sau nữa rút cả quyền cột (như PostgreSQL); GRANT INSERT (cột…)
+#   trao lại ô thêm của bảng, database giữ cột nào (CHAT-35). --list in bảng<TAB>loại<TAB>cột hoặc -<TAB>gói/cửa.
 #   sqlc.yaml theo đúng khuôn ADR-093: mỗi mục một miền, đủ sql/ và các cửa;
 #   mọi .sql dưới internal/<miền>/sql/ có một annotation và một câu (từ T-165
 #   không còn miền chưa chuyển). Không chạy sqlc.
@@ -42,7 +43,7 @@ use File::Find;
 binmode STDOUT, ':encoding(UTF-8)';
 my ($be, $mig, $flag) = @ARGV;
 $be =~ s{/+$}{};
-my (%tables, %owned, %granted, %cells, %doors);
+my (%tables, %owned, %granted, %granted_ins, %cells, %doors);
 my ($failed, $files) = (0, 0);
 my $id = qr/[a-z_][a-z0-9_]*/i;
 my $target = qr/$id(?:\s*\.\s*$id)?/;
@@ -129,27 +130,34 @@ for my $f (@migrations) {
         |ALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?($target)\s+RENAME\s+TO\s+($id)
         |CREATE\s+(?:OR\s+REPLACE\s+)?FUNCTION\b(?:(?!\$\$).)*\$\$(.*?)\$\$
         |REVOKE\s+([^;]+?)\s+ON\s+(?:TABLE\s+)?([^;]+?)\s+FROM\s+shop_app\b
-        |GRANT\s+UPDATE\s*\(([^)]+)\)\s+ON\s+(?:TABLE\s+)?($target)\s+TO\s+shop_app\b
+        |GRANT\s+(INSERT|UPDATE)\s*\(([^)]+)\)\s+ON\s+(?:TABLE\s+)?($target)\s+TO\s+shop_app\b
     )/gixs) {
-        my ($create, $drop, $old, $new, $body, $rights, $names, $cols, $grant_on) = ($1, $2, $3, $4, $5, $6, $7, $8, $9);
+        my ($create, $drop, $old, $new, $body, $rights, $names, $grant_kind, $cols, $grant_on) = ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
         if (defined $create) { $tables{table_name($create)} = 1; }
         elsif (defined $drop) {
             $drop =~ s/\s+(CASCADE|RESTRICT)\s*$//i;
-            for (split /,/, $drop) { my $t = table_name($_); delete $tables{$t}; delete $owned{$t}; delete $granted{$t}; }
+            for (split /,/, $drop) { my $t = table_name($_); delete $tables{$t}; delete $owned{$t}; delete $granted{$t}; delete $granted_ins{$t}; }
         } elsif (defined $old) {
             ($old, $new) = (table_name($old), table_name($new));
             delete $tables{$old}; $tables{$new} = 1;
             $owned{$new} = delete $owned{$old} if exists $owned{$old};
             $granted{$new} = delete $granted{$old} if exists $granted{$old};
+            $granted_ins{$new} = delete $granted_ins{$old} if exists $granted_ins{$old};
         } elsif (defined $body) {
             while ($body =~ /\b(?:INSERT\s+INTO|UPDATE(?:\s+ONLY)?)\s+($target)/gi) {
                 $owned{table_name($1)}{'*'} = 1;
             }
+        } elsif (defined $cols && uc $grant_kind eq 'INSERT') {
+            # Thêm theo cột: database giữ cột nào được ghi; ô thêm của bảng trở lại cửa (CHAT-35).
+            $granted_ins{table_name($grant_on)} = 1;
         } elsif (defined $cols) {
             $granted{table_name($grant_on)}{lc $_} = 1 for split /\s*,\s*/, $cols =~ s/^\s+|\s+$//gr;
         } else {
             for my $t (split /,/, $names) {
-                $owned{table_name($t)}{'thêm'} = 1 if $rights =~ /\bINSERT\b/i;
+                if ($rights =~ /\bINSERT\b/i) {
+                    $owned{table_name($t)}{'thêm'} = 1;
+                    delete $granted_ins{table_name($t)};
+                }
                 if ($rights =~ /\bUPDATE\b/i) {
                     $owned{table_name($t)}{'sửa'} = 1;
                     delete $granted{table_name($t)};
@@ -161,7 +169,7 @@ for my $f (@migrations) {
 sub add_cell {
     my ($f, $line, $door, $table, $kind, $col) = @_;
     if (!$tables{$table}) { error_at($f, $line, "không nhận ra bảng đích $table"); }
-    my $regranted = $kind eq 'sửa' && $granted{$table}{$col};
+    my $regranted = ($kind eq 'sửa' && $granted{$table}{$col}) || ($kind eq 'thêm' && $granted_ins{$table});
     if ($owned{$table}{'*'} || ($owned{$table}{$kind} && !$regranted)) { error_at($f, $line, "ô $table $kind thuộc migration"); }
     $cells{join("\t", $table, $kind, $col)}{$door} = "$f:$line";
 }

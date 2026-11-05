@@ -355,3 +355,14 @@ sql:
         package: sqlcgen
         out: internal/baonghi/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/troly/sql
+      - internal/troly/sql/giu_cho
+      - internal/troly/sql/chot
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/troly/internal/sqlcgen
+        sql_package: pgx/v5

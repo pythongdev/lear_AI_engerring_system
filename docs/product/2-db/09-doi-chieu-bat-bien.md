@@ -210,8 +210,10 @@ của mệnh đề ấy trong cùng thay đổi.
 
 | Mệnh đề | Trạng thái | Vì sao | Ai nợ |
 |---|---|---|---|
+| `I-041` | chưa có lát | (D) gói gửi model và danh sách công cụ không được cất ở đâu (ADR-139 điểm 2 · 5) — không có dữ liệu để đọc; giữ ở tầng 3 bằng `TestI041_*` trong `be/internal/troly/` | không ai — tầng 3, test backend; khuôn trạng thái chưa có chỗ cho (D), xem `work/findings.md` F-077 |
+| `I-042` | chưa có lát | (D) giao dịch mở lúc chờ model, thử lại và suy giảm là hành vi, không phải dữ liệu; giữ ở tầng 3 bằng `TestI042_*` trong `be/internal/troly/` | không ai — tầng 3, test backend; khuôn trạng thái chưa có chỗ cho (D), xem `work/findings.md` F-077 |
 
-Danh sách này rỗng; T-263 (2026-10-27) đã có đủ bốn câu cho I-035 theo phiếu lược đồ.
+T-263 (2026-10-27) đã có đủ bốn câu cho I-035 theo phiếu lược đồ. Hai dòng trên thêm 2026-11-05 (Claude, CHAT-03).
 
 ---
 

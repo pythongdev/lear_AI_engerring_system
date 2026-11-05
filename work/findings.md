@@ -5187,3 +5187,25 @@ Next.js trong một task riêng (đổi dependency `fe/`, chạy lại `fe-check
 
 **Status:**
 Resolved
+
+### F-077 — Khuôn §2.1 của bộ đối chiếu chỉ nhận *chưa có lát*, không có trạng thái cho bất biến thuần hành vi (lý do D)
+
+**Problem:**
+Đo 2026-11-05 (Claude Code, CHAT-03): `I-041` (gói gửi model không mang dữ liệu riêng, model chỉ chạy công cụ backend đưa) và `I-042` (model lỗi
+không giữ giao dịch, không thử lại) là tính chất của hành vi backend, không có dữ liệu nào để câu SQL đọc — đúng lý do **(D)** mà chính
+`docs/product/2-db/09-doi-chieu-bat-bien.md` §2 nêu. Nhưng `scripts/reconcile.sh` chỉ nhận dòng §2.1 có trạng thái `chưa có lát`, nên gate đỏ
+*"I-041 chưa có câu ở db/reconcile/"* cho tới khi có dòng ấy. Phiên phải ghi `chưa có lát` cho một mệnh đề đã có lát và sẽ không bao giờ có câu.
+
+**Impact:**
+Trạng thái trên dòng nói sai sự thật (*chưa có lát* ⇒ người đọc chờ một câu SQL sẽ không đến). Mỗi bất biến hành vi về sau (lane chat còn nhiều)
+lặp lại cùng chỗ lệch.
+
+**Decision / Fix:**
+Chưa sửa. Tạm ghi hai dòng `chưa có lát` kèm *vì sao* nêu rõ (D) và chỗ giữ ở tầng 3 (`TestI041_*` · `TestI042_*`). Cách sửa thật: thêm một trạng
+thái cho (D) vào khuôn §2.1 và `scripts/reconcile.sh` (in `NOTE`, không đỏ, đòi chỉ tên test tầng 3) — một task L1 riêng, Claude giao.
+
+**Related task:**
+`CHAT-03`
+
+**Status:**
+Open

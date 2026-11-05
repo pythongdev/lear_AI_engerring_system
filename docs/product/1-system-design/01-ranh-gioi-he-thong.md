@@ -44,7 +44,7 @@ luôn là **người đứng quầy**, không phải một trạm bếp nào.
 
 ---
 
-## 2. Phụ thuộc ngoài — bảy thứ nằm ngoài hệ thống mà hệ thống đang dựa vào
+## 2. Phụ thuộc ngoài — chín thứ nằm ngoài hệ thống mà hệ thống đang dựa vào
 
 **Sáu** là **phép đếm của lượt này (2026-09-04), không phải một quyết định** — gặp thứ thứ bảy thì
 thêm vào đây kèm một dòng ở §3, đừng tự thiết kế quanh nó (`work/findings.md` **F-003**, cùng luật
@@ -55,6 +55,8 @@ với `architecture.md` §8).
 *Thêm **PT-8** 2026-10-28 (T-267, Claude Code) khi khách được đăng nhập bằng nút Google (**ADR-132**); phép đếm thành tám.*
 
 *Mở rộng **PT-7** 2026-10-29 (T-270, Claude Code, **ADR-133**): dịch vụ thư nay gửi cả thư xác nhận Gmail của khách. Mất thư thì Gmail khách cứ ở trạng thái chờ; khách vẫn dùng bằng phiên đang mở và số điện thoại, không ai phải bù.*
+
+*Thêm **PT-9** 2026-11-04 (CHAT-03, theo **ADR-139** điểm 12, chủ repo duyệt): dịch vụ model ngôn ngữ; phép đếm thành chín.*
 
 Mã `PT-x` là **nhãn cục bộ của file này**, để §3 và các bước sau (**P1-08** · **P1-10** · **P1-11**)
 trỏ được vào đúng một dòng. Nó không phải một mã dùng chung của repo.
@@ -69,6 +71,7 @@ trỏ được vào đúng một dòng. Nó không phải một mã dùng chung 
 | **PT-6** | **Sổ giấy** — quy trình của **người**, không phải một tính năng | ngày mất điện, doanh thu chỉ tồn tại trên giấy cho tới lúc nhập bù; và nó là nguồn đối soát **thứ nhất** | `shop-facts.md` §6.11 · §6.10 (chủ quán chốt 2026-09-02 · 2026-09-01) |
 | **PT-7** | **Dịch vụ gửi thư đặt lại mật khẩu** (SMTP; tên dịch vụ là cấu hình triển khai) | người làm quên mật khẩu **tự đặt lại** qua thư tới Gmail của mình | `shop-facts.md` §8.8 (lời đóng `U-088`, 2026-10-14) · `docs/decisions.md` **ADR-109** điểm 8–9 (chủ repo duyệt 2026-10-14) |
 | **PT-8** | **Google Identity Services và khoá ký công khai của Google** (đường cụ thể: **ADR-132** điểm 2–3) | **khách** bấm một nút để đăng ký và đăng nhập bằng tài khoản Google đang mở trên trình duyệt | `shop-facts.md` §8.8 *lượt bốn* (chủ repo chọn 2026-10-28) · `docs/decisions.md` **ADR-132** |
+| **PT-9** | **Dịch vụ model ngôn ngữ** (chưa chọn hãng, `U-112`) | trợ lý chat trả lời từ công cụ đọc; hiện chỉ dùng nhà cung cấp giả cục bộ theo ADR-136 *Sửa đổi 2026-11-04* | **ADR-139** điểm 12, chủ repo duyệt 2026-11-04 |
 
 **PT-1 và PT-2 không phải một thứ**, và chỗ khác nhau của chúng là chỗ dễ thiết kế sai nhất:
 
@@ -112,6 +115,7 @@ thêm dòng.
 | **PT-6** | Bảng đối soát cuối ngày phải đọc được ***"còn N lượt bán trên giấy chưa nhập"*** — không có dòng ấy thì ngưỡng **0đ** báo lệch mà lý do chỉ là *chưa gõ xong* (§6.11) | **POS hoặc chủ quán** — người giữ sổ cũng là người nhập lại (§6.11) | **Ngay khi có thể** (§6.11). Doanh thu của lượt nhập bù rơi vào **ngày quán bán**, không phải ngày gõ (chủ quán chốt 2026-09-04, `U-032`) ⇒ **ngày còn lượt chưa nhập là ngày chưa đối soát xong** (`docs/decisions.md` **ADR-037**). **Ai chấm lại con số ấy: POS hoặc chủ quán, cuối buổi bán hàng** (chủ quán chốt 2026-09-06, `U-037`, đóng) |
 | **PT-7** | **Không dừng bán, không ai bị khoá ngoài máy vì thư.** Mọi thứ khác chạy; chỉ người quên mật khẩu không tự đặt lại được. Người ấy báo chủ quán | **Chủ quán** — khoá rồi mở lại tài khoản kèm một **mật khẩu tạm**, người làm phải đổi ở lần đăng nhập kế (**ADR-109** điểm 9) | **Ngay khi người làm báo**; dịch vụ thư sống lại thì đường tự đặt lại dùng tiếp, không có gì phải nhập bù |
 | **PT-8** | **Không dừng bán, không ai bị khoá ngoài máy.** Chỉ nút Google hỏng; khách đặt món không cần đăng nhập (ADR-131 điểm 5), hoặc đăng nhập bằng mật khẩu nếu đã đặt. Người làm không dùng Google nên không ai ở quầy bị ảnh hưởng | **Không ai** — không có gì để bù | **Không có** — Google sống lại thì nút dùng tiếp |
+| **PT-9** | **Không dừng bán.** Ô chat nói thẳng và chỉ sang màn tay khi dịch vụ hỏng, chậm, tắt hoặc hết ngân sách | **Không ai bù** | **Không có gì nhập bù** |
 
 **Sáu dòng đầu KHÔNG cùng một loại: ba dòng là lời chốt, một dòng chốt một nửa, hai dòng là SUY
 RA** (dòng **PT-7** thêm 2026-10-14 xếp ở cuối bảng dưới). Trộn hai loại ấy vào nhau đúng là chỗ `work/findings.md` **F-004** đã ghi, và `CLAUDE.md` §7.2
@@ -125,6 +129,7 @@ RA** (dòng **PT-7** thêm 2026-10-14 xếp ở cuối bảng dưới). Trộn h
 | **PT-4** | **suy ra** | chủ quán chốt tin nhắn báo có **là** nguồn thứ ba (§6.10, 2026-09-01), nhưng **chưa ai hỏi** mất nó thì làm gì. Dòng suy giảm ở đây chỉ là hệ quả bắt buộc của hai luật đang đứng: đối soát **chia theo phương thức** (§6.10) và **không có nút *"đóng ca dù lệch"*** (`architecture.md` §6.4 luật 3) |
 | **PT-5** | **suy ra** | *"hệ thống báo đơn mới về quầy"* và *"người đứng quầy là người nhìn thấy đơn đầu tiên"* là lời chốt (`03-lat-cat.md` §3.2.1 bước 6); *"mất đường báo thì quầy tự mở danh sách"* là **suy ra** — nó đứng được vì đơn chưa duyệt **không sinh việc ở trạm nào** (`shop-facts.md` §6.2), nên chỗ hỏng chỉ nằm ở **khách chờ** |
 | **PT-7** | **thiết kế được duyệt** | *người làm tự đặt lại qua Gmail* là lời chốt (`shop-facts.md` §8.8, lượt hai 2026-10-14); *mất thư thì chủ quán khoá, mở lại kèm mật khẩu tạm* là **suy ra** của phiên, chủ repo xác nhận cùng lần duyệt **ADR-109** (2026-10-14) — chưa hỏi chủ quán |
+| **PT-9** | **thiết kế được duyệt** | **ADR-139** điểm 12; chủ repo duyệt 2026-11-04 |
 
 **Hai dòng suy ra không được đọc như một lời chốt**, và cách kiểm chúng cũng là cách của quán chứ
 không phải của máy: hỏi chủ quán *"hôm nào điện thoại anh không nhận được tin nhắn ngân hàng, tối
