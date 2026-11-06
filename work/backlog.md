@@ -97,6 +97,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-306 **Đơn QR mới hiện ngay trên trang Vận hành đang mở** — L1, xong 2026-11-06; nhận tín hiệu sau khi khách đồng ý đặt món và đọc lại bảng từ backend; test 17/17 và gate đạt · [chi tiết](#t-306)
+
 - [ ] T-286 **Chưa có số đo thật để chọn model cho chat** — L1, chủ repo chọn *"Chạy thử qua API cả ba"* 2026-11-03 (`U-112`); Codex dựng bộ thử ngoài repo, Claude duyệt đạt 2026-11-03; chờ chủ repo tạo khoá API và chạy thật · [chi tiết](#t-286)
 - [ ] T-279 **Bản HTML chi tiết món kể chuyện theo cuộn** — L1, chủ repo giao Codex 2026-10-31; dựa trên ý tưởng đầy đủ và mẫu Paris · [chi tiết](#t-279)
 
@@ -556,6 +558,20 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-306"></a>
+### T-306 — Đơn QR mới hiện ngay trên trang Vận hành đang mở
+
+Chủ repo yêu cầu 2026-11-05: khi khách ở `/ban/3` bấm Đồng ý đặt món, thông tin lượt gọi mới cần cập nhật trên `/chu-quan/van-hanh`. Mức L1 vì dùng lại cửa ghi QR, cửa đọc Vận hành và luồng tín hiệu đã có; không đổi dữ liệu, giá hay hợp đồng API.
+
+Acceptance trước sửa: A1 — trang Vận hành đang mở nhận `changed` sau lượt gọi QR và đọc lại `GET /service-board`, hiện số món/bàn mới từ backend mà không cần bấm Đọc lại; A2 — `heartbeat` không đọc lại, mất luồng có cảnh báo và nối lại sẽ đọc lại; A3 — rời trang đóng luồng, không tạo thêm lời gọi ghi đơn; A4 — `./scripts/gate.sh` đạt.
+
+Phạm vi (`work/scope/T-306.txt`): `work/backlog.md`, `docs/product/4-fe/01-khung-fe.md`, `fe/src/app/chu-quan/_components/van-hanh.tsx`, `fe/src/app/chu-quan/van-hanh/van-hanh.test.tsx`. Codex làm trên nhánh `P4A-01`; chưa có người duyệt độc lập. Cây chung đang có thay đổi chưa commit của việc khác; chỉ đưa hunk của T-306 vào lần bàn giao.
+
+Bàn giao 2026-11-06: `TrangVanHanh` dùng `TinHieuProvider` trên `GET /production-board/events` — luồng cùng broker nhận `changed` sau khi đơn QR được ghi; `hello`/`changed` làm mất hiệu lực query để đọc lại `GET /service-board`. `heartbeat` chỉ giữ luồng sống; đứt luồng hiện cảnh báo, tự nối lại; rời trang huỷ luồng. Không thêm cửa ghi đơn. Test trang Vận hành đạt 17/17, gồm ca bàn 3 xuất hiện sau `changed`, `heartbeat` không đọc lại, đứt/nối lại và huỷ khi rời trang. `./scripts/gate.sh` exit 0: Gate 3, 1b, 1c, 1e, 1f, 1g, 1h và Gate 1 verify PASS; Gate 1d, be, db SKIP theo điều kiện; NOTE về file chưa theo dõi của việc khác. Chưa thử đặt một đơn thật trên cặp trang đang chạy và chưa có người duyệt độc lập. Cây chung có nhiều hunk chưa commit của các task khác, kể cả `work/backlog.md`; lần commit cần tách đúng hunk T-306.
+
+[↑ đầu file](#top)
+
 
 <a id="t-300"></a>
 ### T-300 — Nút chat của khách là chữ nhỏ, khó thấy và đè nút món

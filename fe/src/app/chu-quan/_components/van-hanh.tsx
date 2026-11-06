@@ -11,6 +11,7 @@ import { useApi } from "@/lib/api/provider";
 import type { components } from "@/lib/api/schema";
 import { loiRaBan } from "@/app/quay/san-xuat/du-lieu-ra-ban";
 import { call, type ApiFailure, type ApiResult } from "@/lib/api/client";
+import { BaoMatKetNoi, TinHieuProvider } from "@/lib/realtime/tin-hieu";
 import { cotVanHanh, tenCot, type CotVanHanh, type ThuVanHanh } from "./cot-van-hanh";
 import { useBangVanHanh, loiVanHanh, type BangVanHanh } from "./du-lieu-van-hanh";
 
@@ -239,6 +240,13 @@ function NoiDung({ data, demRa }: { data: BangVanHanh; demRa?: (chon: ChonDemRa)
   </>;
 }
 export function TrangVanHanh() {
+  return <TinHieuProvider duong="/production-board/events">
+    <BaoMatKetNoi />
+    <NoiDungTrangVanHanh />
+  </TinHieuProvider>;
+}
+
+function NoiDungTrangVanHanh() {
   const query = useBangVanHanh();
   const phien = usePhien();
   const duocGhi = !phien.isError && !!phien.data?.ok && phien.data.data.counter_duty_id != null;

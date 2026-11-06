@@ -1,11 +1,13 @@
-import { cleanup, fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { voiBackend } from "@/components/tai-khoan/test-utils";
+import { ApiProvider } from "@/lib/api/provider";
 import { cotVanHanh, type ThuVanHanh } from "../_components/cot-van-hanh";
 import type { BangVanHanh } from "../_components/du-lieu-van-hanh";
 import Page, { metadata } from "./page";
 
-afterEach(() => { cleanup(); vi.restoreAllMocks(); });
+type Luong = { gui: (event: string) => void; dong: () => void; signal: AbortSignal };
+let luong: Luong[] = [];
+afterEach(() => { cleanup(); vi.restoreAllMocks(); luong = []; });
 const thu = (component_name: string, nhan?: string, extra: Partial<ThuVanHanh> = {}): ThuVanHanh => ({
   menu_component_id: 81, component_name, filling_option_ids: [], options: nhan ? [{ option_group_name: "Nhân", option_name: nhan }] : [],
   extra_filling: false, ordered: 13, served: 6, missing: 7, ...extra,
@@ -23,7 +25,26 @@ const data: BangVanHanh = {
 };
 function mo(doc: (n: number) => { status: number; body: unknown } = () => ({ status: 200, body: data })) {
   let n = 0;
-  return voiBackend(<Page />, (g) => g.path === "/sessions/current" ? { status: 401, body: { code: "unauthenticated" } } : doc(++n));
+  const goi: { method: string; path: string; body: unknown }[] = [];
+  const fetch = async (req: Request) => {
+    const path = new URL(req.url).pathname.replace(/^\/api/, "");
+    const raw = await req.text();
+    goi.push({ method: req.method, path, body: raw ? JSON.parse(raw) : undefined });
+    if (path === "/production-board/events") {
+      let controller!: ReadableStreamDefaultController<Uint8Array>;
+      const stream = new ReadableStream<Uint8Array>({ start(c) { controller = c; } });
+      luong.push({
+        signal: req.signal,
+        gui(event) { controller.enqueue(new TextEncoder().encode(`event: ${event}\ndata: {"read_at":"2025-02-03T03:17:29Z"}\n\n`)); },
+        dong() { controller.close(); },
+      });
+      return new Response(stream, { status: 200, headers: { "content-type": "text/event-stream" } });
+    }
+    const r = path === "/sessions/current" ? { status: 401, body: { code: "unauthenticated" } } : doc(++n);
+    return new Response(JSON.stringify(r.body), { status: r.status, headers: { "content-type": "application/json" } });
+  };
+  render(<ApiProvider fetch={fetch}><Page /></ApiProvider>);
+  return goi;
 }
 const bang = async () => within(await screen.findByRole("region", { name: "Bảng tổng thiếu" }));
 const cells = (r: HTMLElement) => within(r).getAllByRole("cell").map((x) => x.textContent);
@@ -31,6 +52,44 @@ const nut = (name: string) => screen.getByRole("button", { name });
 const vungAn = (b: HTMLElement) => document.getElementById(b.getAttribute("aria-controls")!)!;
 
 describe("Vận hành", () => {
+  it("đơn QR mới phát changed thì đọc lại service-board và hiện bàn cùng số món; heartbeat không đọc", async () => {
+    const moi = { ...data, sessions: [...data.sessions, phien(3, "waiting", "3", [thu("Bánh cuốn", "Thịt", { ordered: 2, served: 0, missing: 2 })])] };
+    const goi = mo((n) => ({ status: 200, body: n === 1 ? data : moi }));
+    await bang();
+    await waitFor(() => expect(luong).toHaveLength(1));
+    const soDoc = () => goi.filter((g) => g.path === "/service-board").length;
+    expect(soDoc()).toBe(1);
+    await act(async () => luong[0].gui("heartbeat"));
+    expect(soDoc()).toBe(1);
+    await act(async () => luong[0].gui("changed"));
+    await waitFor(() => expect(soDoc()).toBe(2));
+    const b = within(screen.getByRole("region", { name: "Cộng thử ghép đơn" }));
+    const banMoi = b.getByRole("checkbox", { name: "3 · 79.123đ" }).closest(".choice");
+    expect(banMoi?.textContent).toContain("Thịt: 2");
+    expect(goi.every((g) => g.method === "GET")).toBe(true);
+  });
+  it("luồng đứt báo mất kết nối; nối lại nhận hello thì đọc bảng mới", async () => {
+    const moi = { ...data, sessions: [...data.sessions, phien(3, "waiting", "3")] };
+    const goi = mo((n) => ({ status: 200, body: n === 1 ? data : moi }));
+    await bang();
+    await waitFor(() => expect(luong).toHaveLength(1));
+    await act(async () => luong[0].dong());
+    expect((await screen.findByRole("alert")).textContent).toContain("Mất kết nối trực tiếp");
+    await waitFor(() => expect(luong).toHaveLength(2), { timeout: 2500 });
+    await act(async () => luong[1].gui("hello"));
+    await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
+    expect(screen.getByRole("checkbox", { name: "3 · 79.123đ" })).toBeTruthy();
+    expect(goi.filter((g) => g.path === "/service-board")).toHaveLength(2);
+  });
+  it("rời trang huỷ luồng và không tạo lời gọi ghi đơn", async () => {
+    const goi = mo();
+    await bang();
+    await waitFor(() => expect(luong).toHaveLength(1));
+    const signal = luong[0].signal;
+    cleanup();
+    expect(signal.aborted).toBe(true);
+    expect(goi.every((g) => g.method === "GET")).toBe(true);
+  });
   it("ánh xạ mỗi thứ đúng một cột, giữ chính xác tên và không giấu Khác", async () => {
     expect(items.map(cotVanHanh)).toEqual([{ cot: "Thịt", dong: "" }, { cot: "Mộc nhĩ", dong: "" }, { cot: "Chay", dong: "" }, { cot: "Trứng", dong: "tái" }, { cot: "Trứng", dong: "chín" }, { cot: "Canh", dong: "" }, { cot: "Khác", dong: "Giò" }]);
     for (const i of [thu("Bánh cuốn ", "Thịt"), thu("Bánh cuốn", "Thit"), thu("Bánh cuốn", " Thịt"), thu("Món đổi tên"), thu("Nước chấm")]) expect(cotVanHanh(i).cot).toBe("Khác");
@@ -67,7 +126,7 @@ describe("Vận hành", () => {
     expect(cells(b.getAllByRole("row").at(-1)!)[0]).toBe("14+11*");
     expect(b.getByText("+11").className).toContain("them"); expect(screen.getByText("Đã chọn 1 bàn.")).toBeTruthy();
     fireEvent.click(nut("Bỏ chọn hết")); expect(b.queryByRole("button", { name: "C" })).toBeNull(); expect(screen.getByText("Đã chọn 0 bàn.")).toBeTruthy();
-    expect(g.map(({ method, path }) => ({ method, path }))).toEqual([{ method: "GET", path: "/service-board" }, { method: "GET", path: "/sessions/current" }]);
+    expect(g.filter(({ path }) => path !== "/production-board/events").map(({ method, path }) => ({ method, path }))).toEqual([{ method: "GET", path: "/service-board" }, { method: "GET", path: "/sessions/current" }]);
     expect(set).not.toHaveBeenCalled(); expect(remove).not.toHaveBeenCalled(); expect(clear).not.toHaveBeenCalled();
   });
   it("đọc lại bỏ tick phiên hết waiting và không tự chọn lại khi nó quay về", async () => {
