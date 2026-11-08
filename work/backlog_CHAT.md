@@ -513,6 +513,24 @@ chuyển sang `CHAT-11` và test sẵn có của từng cửa, vì chat không c
 
 **Nhận việc:**
 
+2026-11-08, Claude: chủ repo duyệt ADR-140 (*"Duyệt, giao Codex làm"*). Mức **L2** (đổi hợp đồng `askChat`, bất biến mới). Đo trên `0411354`:
+`Lop.Luot` chỉ biết công cụ đọc; `Routes` không có đường đưa công cụ ghi. Hợp đồng ở đầu `be/internal/troly/de_xuat_test.go` (SHA-256
+`5b6bd944…ef2e` khi giao), đỏ trước code vì chưa có `troly.CongCuGhi`. *Phiên chọn của Claude trong khung ADR-140:* `LuotCoGhi` mới, `Luot` giữ
+nguyên để test cũ không đổi; `proposal` không vào `required` để mock FE cũ còn hợp kiểu; tên trùng giữa hai danh sách là lỗi, không gọi model.
+Acceptance ghi trước khi giao: A1 test mới và cũ không sửa; A2 build · vet sạch; A3 không SQL, không cửa, không đường gọi mới, danh sách bản chạy
+rỗng; A4 hợp đồng 0.68.0 có `ChatProposal`; A5 `./scripts/be-check.sh` (Claude chạy) và `./scripts/gate.sh` xanh. Worktree `../lean_wt/CHAT-10`,
+nhánh `codex/CHAT-10` từ `0411354`.
+
+2026-11-08, CHAT-10 xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-10`, nhánh `codex/CHAT-10`, nền `0411354`, model `gpt-6-astra`, một lượt):
+`kieu.go` (`CongCuGhi` · `DeXuat` · `DongDeXuat` · `NguonGhi` · `CauDeXuat`), `service.go` (`LuotCoGhi`, kiểm tên trùng trước khi giữ chỗ, dừng lượt sau đề
+xuất), `noi_bo.go` (`CongCuGhi` rỗng), `handler.go` (`ghiThem`, khoá `proposal`), `openapi.yaml` 0.68.0 có `ChatProposal`, đoạn sổ ở `01-hop-dong-api.md`.
+Codex dừng đúng ở hai sót của Claude: `I-044` chưa có trong worktree (QC-17 đỏ), và không sinh được `schema.ts` vì thiếu `node_modules`. **Claude** duyệt
+diff (không SQL, không `authz.Door`, không đường gọi mới; hàm dựng là lời gọi duy nhất ở nhánh ghi), đưa patch về cây chính, sinh lại
+`fe/src/lib/api/schema.ts` bằng `npm --prefix fe run gen:api`. Sót thứ ba của Claude: `TestI041_DuongHoiKiemHinhKhongCanDB` (CHAT-05) so nguyên chuỗi thân
+nên đỏ khi thân có khoá `proposal`; Claude thêm `"proposal":null` vào chuỗi mong đợi, đúng ADR-140 điểm 3, không đổi điều kiện nào khác. `de_xuat_test.go`
+khớp SHA-256 phiếu. Bằng chứng ở cây chính: `./scripts/be-check.sh` `be-check: PASS — mọi test backend qua PostgreSQL thật đều đạt`, sáu `TestI044_*` PASS.
+**Còn lại:** `CHAT-11` (thẻ FE theo ADR-140 điểm 5 · 6) chưa mở; chưa nhóm ghi nào có công cụ; chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---

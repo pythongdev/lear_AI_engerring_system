@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"math"
 	"math/big"
 	"strings"
@@ -85,6 +86,15 @@ func (l *Lop) chot(id, tien int64, ph PhanHoi) error {
 	})
 }
 func (l *Lop) Luot(ctx context.Context, cau string, lichSu []Tin, congCu []CongCu) (KetQua, error) {
+	return l.LuotCoGhi(ctx, cau, lichSu, congCu, nil)
+}
+
+func laDoiTuongJSON(raw json.RawMessage) bool {
+	var doiTuong map[string]json.RawMessage
+	return json.Unmarshal(raw, &doiTuong) == nil && doiTuong != nil
+}
+
+func (l *Lop) LuotCoGhi(ctx context.Context, cau string, lichSu []Tin, congCu []CongCu, congCuGhi []CongCuGhi) (KetQua, error) {
 	var kq KetQua
 	if strings.TrimSpace(cau) == "" || !utf8.ValidString(cau) || utf8.RuneCountInString(cau) > 500 {
 		return kq, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "question"}
@@ -96,6 +106,20 @@ func (l *Lop) Luot(ctx context.Context, cau string, lichSu []Tin, congCu []CongC
 		if (t.Vai != "user" && t.Vai != "assistant") || !utf8.ValidString(t.Chu) {
 			return kq, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "history"}
 		}
+	}
+	tenCongCu := make([]string, 0, len(congCu)+len(congCuGhi))
+	for _, c := range congCu {
+		tenCongCu = append(tenCongCu, c.Ten)
+	}
+	for _, c := range congCuGhi {
+		tenCongCu = append(tenCongCu, c.Ten)
+	}
+	daCo := make(map[string]bool, len(tenCongCu))
+	for _, ten := range tenCongCu {
+		if daCo[ten] {
+			return kq, fmt.Errorf("tên công cụ trùng: %s", ten)
+		}
+		daCo[ten] = true
 	}
 	suy := func(ma string) (KetQua, error) { kq.Chu = ""; kq.SuyGiam = ma; return kq, nil }
 	if l.cauHinh.NhaCungCap == "tat" || l.cauHinh.NhaCungCap == "" {
@@ -110,14 +134,11 @@ func (l *Lop) Luot(ctx context.Context, cau string, lichSu []Tin, congCu []CongC
 	}
 	ctx, huy := context.WithTimeout(ctx, l.HanMoiLuot)
 	defer huy()
-	g := GoiModel{HeThong: HeThong, TranDauRa: 800}
+	g := GoiModel{HeThong: HeThong, TranDauRa: 800, CongCu: tenCongCu}
 	for _, t := range lichSu {
 		g.LichSu = append(g.LichSu, Tin{Vai: t.Vai, Chu: anRieng(t.Chu)})
 	}
 	g.LichSu = append(g.LichSu, Tin{Vai: "user", Chu: anRieng(cau)})
-	for _, c := range congCu {
-		g.CongCu = append(g.CongCu, c.Ten)
-	}
 	for lan := 0; lan < 4; lan++ {
 		if ctx.Err() != nil {
 			return suy("qua_han")
@@ -171,10 +192,34 @@ func (l *Lop) Luot(ctx context.Context, cau string, lichSu []Tin, congCu []CongC
 		if ph.Chu != "" || ph.GoiCongCu.Ten == "" || !json.Valid(ph.GoiCongCu.ThamSo) {
 			return suy("loi_hang")
 		}
+		b := BuocCongCu{LoiGoi: *ph.GoiCongCu, Loi: "cong_cu_khong_co"}
+		for _, c := range congCuGhi {
+			if c.Ten != b.LoiGoi.Ten {
+				continue
+			}
+			b.Loi = "loi_cong_cu"
+			if c.DeXuat == nil || c.OperationID == "" {
+				break
+			}
+			deXuat, e := c.DeXuat(ctx, append(json.RawMessage(nil), b.LoiGoi.ThamSo...))
+			if e != nil || !laDoiTuongJSON(deXuat.Than) {
+				break
+			}
+			if deXuat.ThamSoDuong == nil {
+				deXuat.ThamSoDuong = json.RawMessage(`{}`)
+			} else if !laDoiTuongJSON(deXuat.ThamSoDuong) {
+				break
+			}
+			deXuat.CongCu = c.Ten
+			deXuat.OperationID = c.OperationID
+			kq.Chu = CauDeXuat
+			kq.DeXuat = &deXuat
+			kq.Nguon = []Nguon{{CongCu: c.Ten, DocLuc: time.Now()}}
+			return kq, nil
+		}
 		if lan == 3 {
 			return suy("qua_so_lan")
 		}
-		b := BuocCongCu{LoiGoi: *ph.GoiCongCu, Loi: "cong_cu_khong_co"}
 		for _, c := range congCu {
 			if c.Ten != b.LoiGoi.Ten {
 				continue

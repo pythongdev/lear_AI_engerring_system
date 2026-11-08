@@ -1385,7 +1385,7 @@ export interface paths {
         put?: never;
         /**
          * Hỏi với công cụ đọc do backend chọn theo phiên người làm
-         * @description Backend chọn danh sách công cụ theo lớp quyền của người trong phiên người làm. Không có phiên người làm hoặc chỉ có phiên khách thì chỉ dùng công cụ công khai. Công cụ nội bộ gọi service đọc dưới chính người của phiên, kiểm lại quyền khi chạy; kết quả được giới hạn trường được phép và chỉ dùng trong chính lượt này.
+         * @description Backend chọn danh sách công cụ theo lớp quyền của người trong phiên người làm. Không có phiên người làm hoặc chỉ có phiên khách thì chỉ dùng công cụ công khai. Công cụ nội bộ gọi service đọc dưới chính người của phiên, kiểm lại quyền khi chạy; kết quả được giới hạn trường được phép và chỉ dùng trong chính lượt này. Công cụ ghi chỉ dựng đề xuất rồi dừng lượt với câu cố định, không ghi dữ liệu nghiệp vụ; bản chạy chưa mở nhóm công cụ ghi nào (ADR-140).
          */
         post: operations["askChat"];
         delete?: never;
@@ -2501,6 +2501,30 @@ export interface components {
             }[];
             /** @enum {string|null} */
             degraded_reason: "tat" | "het_ngan_sach" | "qua_han" | "qua_so_lan" | "loi_hang" | null;
+            /** @description Backend luôn trả null hoặc đề xuất chưa thực thi; không bắt buộc để tương thích mock FE cũ. */
+            proposal?: components["schemas"]["ChatProposal"] | null;
+        };
+        /** @description Đề xuất theo ADR-140; xác nhận ở FE sẽ gọi cửa màn tay có sẵn, không có cửa ghi riêng cho chat. */
+        ChatProposal: {
+            /** @description Tên công cụ do backend đặt. */
+            tool: string;
+            /** @description operationId của cửa màn tay do backend đặt. */
+            operation_id: string;
+            /** @description Tham số đường của cửa màn tay; đối tượng rỗng khi không có. */
+            path_params: {
+                [key: string]: unknown;
+            };
+            /** @description Thân lệnh đề xuất, chưa được thực thi. */
+            body: {
+                [key: string]: unknown;
+            };
+            lines: {
+                label: string;
+                value: string;
+                source: string;
+                read_at: components["schemas"]["Instant"];
+            }[];
+            needs_choice: string[];
         };
         CreateLeaveNotice: {
             submission_code: components["schemas"]["SubmissionCode"];
@@ -7244,7 +7268,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Câu trả lời hoặc trạng thái suy giảm; mở trang menu khi suy giảm. */
+            /** @description Câu trả lời kèm đề xuất nếu có, hoặc trạng thái suy giảm; mở trang menu khi suy giảm. */
             200: {
                 headers: {
                     [name: string]: unknown;

@@ -38,7 +38,7 @@ func TestI041_DuongHoiKiemHinhKhongCanDB(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, httptest.NewRequest("POST", "/chat/turns", strings.NewReader(`{"question":"hỏi","history":[]}`)))
-	if w.Code != 200 || w.Body.String() != `{"answer":null,"sources":[],"degraded_reason":"tat"}` {
+	if w.Code != 200 || w.Body.String() != `{"answer":null,"sources":[],"degraded_reason":"tat","proposal":null}` {
 		t.Fatalf("%d %s", w.Code, w.Body.String())
 	}
 }

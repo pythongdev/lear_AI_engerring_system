@@ -97,6 +97,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] CHAT-10 **Lời model chưa có ranh giới giữa đề xuất và thực thi** — L2, ADR-140, xong 2026-11-08; Claude viết test trước, Codex dựng khung công cụ ghi chỉ sinh đề xuất (`LuotCoGhi`, danh sách rỗng ở bản chạy) và `proposal` của `askChat`, hợp đồng 0.68.0; be-check đạt; tiếp theo `CHAT-11` (thẻ FE) · [mô tả](backlog_CHAT.md#chat-10)
+
 - [x] CHAT-02 **Lượt ba: thẻ lệnh ghi chưa có thiết kế nên CHAT-10 chưa giao được** — L3, xong 2026-11-08; Claude soạn ADR-140 (thẻ chỉ là đề xuất, người bấm gọi đúng cửa màn tay, không đường ghi mới, model không điền người), chủ repo chọn *"Duyệt, giao Codex làm"*; thêm `I-044` · [mô tả](backlog_CHAT.md#chat-02)
 
 - [x] T-306 **Đơn QR mới hiện ngay trên trang Vận hành đang mở** — L1, xong 2026-11-06; nhận tín hiệu sau khi khách đồng ý đặt món và đọc lại bảng từ backend; test 17/17 và gate đạt · [chi tiết](#t-306)

@@ -13,8 +13,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Routes đăng ký đường hỏi chỉ đọc, chọn công cụ theo phiên người làm.
-func Routes(r *gin.Engine, lop *Lop, menu *gia.Service, noiBo *NguonNoiBo) {
+// Routes đăng ký đường hỏi, chọn công cụ theo phiên; công cụ ghi chỉ sinh đề xuất.
+func Routes(r *gin.Engine, lop *Lop, menu *gia.Service, noiBo *NguonNoiBo, ghiThem ...NguonGhi) {
 	r.POST("/chat/turns", func(c *gin.Context) {
 		invalid := func(field string) {
 			apierr.Write(c.Writer, apierr.Error{Code: apierr.CodeInvalidRequest, Field: field})
@@ -53,10 +53,25 @@ func Routes(r *gin.Engine, lop *Lop, menu *gia.Service, noiBo *NguonNoiBo) {
 			}
 		}
 		nguoi, _ := middleware.Nguoi(c)
-		congCu, err := noiBo.CongCu(c.Request.Context(), nguoi, menu)
+		ctx := c.Request.Context()
+		congCu, err := noiBo.CongCu(ctx, nguoi, menu)
+		var congCuGhi []CongCuGhi
+		if err == nil {
+			congCuGhi, err = noiBo.CongCuGhi(ctx, nguoi)
+		}
+		if err == nil {
+			for _, nguon := range ghiThem {
+				var them []CongCuGhi
+				them, err = nguon(ctx, nguoi)
+				if err != nil {
+					break
+				}
+				congCuGhi = append(congCuGhi, them...)
+			}
+		}
 		var result KetQua
 		if err == nil {
-			result, err = lop.Luot(c.Request.Context(), *question, history, congCu)
+			result, err = lop.LuotCoGhi(ctx, *question, history, congCu, congCuGhi)
 		}
 		if err != nil {
 			var e apierr.Error
@@ -70,10 +85,25 @@ func Routes(r *gin.Engine, lop *Lop, menu *gia.Service, noiBo *NguonNoiBo) {
 			Tool   string `json:"tool"`
 			ReadAt string `json:"read_at"`
 		}
+		type proposalLine struct {
+			Label  string `json:"label"`
+			Value  string `json:"value"`
+			Source string `json:"source"`
+			ReadAt string `json:"read_at"`
+		}
+		type proposal struct {
+			Tool        string          `json:"tool"`
+			OperationID string          `json:"operation_id"`
+			PathParams  json.RawMessage `json:"path_params"`
+			Body        json.RawMessage `json:"body"`
+			Lines       []proposalLine  `json:"lines"`
+			NeedsChoice []string        `json:"needs_choice"`
+		}
 		out := struct {
-			Answer         *string  `json:"answer"`
-			Sources        []source `json:"sources"`
-			DegradedReason *string  `json:"degraded_reason"`
+			Answer         *string   `json:"answer"`
+			Sources        []source  `json:"sources"`
+			DegradedReason *string   `json:"degraded_reason"`
+			Proposal       *proposal `json:"proposal"`
 		}{Sources: make([]source, 0, len(result.Nguon))}
 		if result.SuyGiam != "" {
 			out.DegradedReason = &result.SuyGiam
@@ -82,6 +112,17 @@ func Routes(r *gin.Engine, lop *Lop, menu *gia.Service, noiBo *NguonNoiBo) {
 		}
 		for _, s := range result.Nguon {
 			out.Sources = append(out.Sources, source{Tool: s.CongCu, ReadAt: s.DocLuc.Format(time.RFC3339Nano)})
+		}
+		if p := result.DeXuat; p != nil {
+			out.Proposal = &proposal{
+				Tool: p.CongCu, OperationID: p.OperationID, PathParams: p.ThamSoDuong, Body: p.Than,
+				Lines: make([]proposalLine, 0, len(p.Dong)), NeedsChoice: append([]string{}, p.CanChon...),
+			}
+			for _, d := range p.Dong {
+				out.Proposal.Lines = append(out.Proposal.Lines, proposalLine{
+					Label: d.Nhan, Value: d.GiaTri, Source: d.CongCu, ReadAt: d.DocLuc.Format(time.RFC3339Nano),
+				})
+			}
 		}
 		c.JSON(http.StatusOK, out)
 	})

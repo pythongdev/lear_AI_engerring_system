@@ -25,6 +25,11 @@ func MoiNguonNoiBo(pool *pgxpool.Pool) *NguonNoiBo {
 	return &NguonNoiBo{pool: pool, tongQuan: tongquan.NewService(pool), sanXuat: sanxuat.NewService(pool)}
 }
 
+// CongCuGhi luôn rỗng, kể cả receiver nil: bản chạy chưa mở nhóm ghi nào (ADR-140).
+func (*NguonNoiBo) CongCuGhi(context.Context, int64) ([]CongCuGhi, error) {
+	return nil, nil
+}
+
 // CongCu đóng từng giao dịch kiểm lớp trước khi trả danh sách cho lượt gọi model.
 func (n *NguonNoiBo) CongCu(ctx context.Context, nguoi int64, menu *gia.Service) ([]CongCu, error) {
 	cc := CongCuCongKhai(menu)
