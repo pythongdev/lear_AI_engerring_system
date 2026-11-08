@@ -145,6 +145,8 @@ ràng buộc nghĩa là gì với người dùng; người đoán đúng là lá
 
 ## 7. Phiên bản
 
+**T-308 (2026-11-06, chủ repo):** tăng MINOR `0.66.0` → `0.67.0`; mở lớp `quay_hoac_chu_quan` cho `GET /counter/events`, `GET /counter/queue`, duyệt/từ chối đơn chờ xác nhận và ghi đã đem ra. Không đổi hình dữ liệu; sinh lại type FE. Trang Vận hành của chủ quán giữ luồng nhận đơn theo ADR-097 sửa đổi.
+
 `info.version` theo dạng `MAJOR.MINOR.PATCH`; **mỗi lượt đổi `openapi.yaml` tăng nó** — Gate 1g so với
 bản ở `HEAD` và đỏ khi file khác mà phiên bản không lớn hơn.
 

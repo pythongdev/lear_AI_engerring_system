@@ -933,15 +933,17 @@ func TestI012_CuaTaiBanPhaiDungQuay(t *testing.T) {
 		st   int
 	}{{c.chu, "not_on_counter_duty", http.StatusForbidden}, {0, "unauthenticated", http.StatusUnauthorized}} {
 		canMa(t, c.datHo(t, nguoi.id, ban, dauLanGui(t), c.dong(false)), nguoi.st, nguoi.code, "")
-		canMa(t, c.duyet(t, nguoi.id, q.so(t, "sales_order_id")), nguoi.st, nguoi.code, "")
-		canMa(t, c.tuChoi(t, nguoi.id, q.so(t, "sales_order_id")), nguoi.st, nguoi.code, "")
+		if nguoi.id == 0 { // T-308: chủ quán không đứng quầy được duyệt/từ chối đơn chờ.
+			canMa(t, c.duyet(t, nguoi.id, q.so(t, "sales_order_id")), nguoi.st, nguoi.code, "")
+			canMa(t, c.tuChoi(t, nguoi.id, q.so(t, "sales_order_id")), nguoi.st, nguoi.code, "")
+		}
 		canMa(t, c.tinhTien(t, nguoi.id, phien), nguoi.st, nguoi.code, "")
 		canMa(t, c.dongPhien(t, nguoi.id, phien, 0, 0, 0, ""), nguoi.st, nguoi.code, "")
 	}
 	if c.anhPhien(t, phien) != truoc {
 		t.Fatal("lời từ chối của quyền mà phiên đã đổi")
 	}
-	t.Logf("chủ quán không đứng quầy ⇒ not_on_counter_duty, không người ⇒ unauthenticated, ở năm cửa; %s", truoc)
+	t.Logf("chủ quán không đứng quầy vẫn bị chặn ở cửa tạo hộ, tính tiền và đóng; không người bị chặn ở cả năm cửa; %s", truoc)
 }
 
 // Mọi đường gọi của lát có thật trên mux: một 404/405 KHÔNG mang mã là đường thiếu; lời từ chối có

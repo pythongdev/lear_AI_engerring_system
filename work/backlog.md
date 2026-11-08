@@ -149,6 +149,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="done"></a>
 ## Done
 
+- [x] T-308 **Chủ quán nhận và xử lý đơn mới trên trang Vận hành** — L2, xong 2026-11-08; chủ quán xem món của đơn chờ, duyệt hay từ chối ngay trên Vận hành, trang mở được tính là quán nhìn thấy đơn; Codex làm, Claude duyệt, chủ repo xác nhận luật; be-check, test FE 342/342 và gate đạt · [chi tiết](#t-308)
 - [x] CHAT-08 **Người làm chưa hỏi được số theo bàn và theo quyền bằng chat** — L2, ADR-139 điểm 7 · 9 và *Sửa đổi 2026-11-06*; 2026-11-06 Codex dựng `NguonNoiBo` với ba công cụ đọc theo lớp (`doc_bang_tram` · `doc_bang_phuc_vu` · `doc_tong_quan`) và phép chiếu bỏ tên, id người, hợp đồng 0.66.0; Claude viết test trước (`I-043`), sửa hai sót của mình và duyệt; be-check, eval CHAT-06 và gate đạt; chưa có FE (CHAT-09) · [mô tả](backlog_CHAT.md#chat-08)
 
 - [x] T-302 **Khách xem lại đơn trước khi đặt tại bàn** — L2, xong 2026-11-05; huỷ giữ giỏ, đồng ý mới gửi, kiểm thử 35/35 · [chi tiết](backlog_archive.md#t-302)
@@ -558,6 +559,26 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-308"></a>
+### T-308 — Chủ quán nhận và xử lý đơn mới trên trang Vận hành
+
+Chủ repo yêu cầu 2026-11-06: `/chu-quan/van-hanh` cũng nhận được đơn mới và chủ quán có quyền điều hành. Chủ repo cho phép Codex làm cả phần vượt L1. Phạm vi diễn giải theo ngữ cảnh đơn QR tại bàn: khi chủ quán giữ trang Vận hành mở, quán được xem là còn nhìn thấy đơn; trang hiện hàng chờ và cho chủ quán duyệt, từ chối đơn, mở lại nhận đơn nếu đang mù, ghi đem ra cho bàn. Những cửa tiền và quản trị quầy khác giữ quyền riêng đã chốt. Mức L2 vì đổi điều kiện I-008, quyền cửa ghi và hợp đồng API. Nhánh thi công `codex/T-308`, nền `9eb7d73`, worktree riêng để không chạm thay đổi chưa commit ở cây chính; chưa có người duyệt độc lập.
+
+Acceptance viết trước sửa: A1 — chủ quán không đứng quầy mở trang Vận hành được tính là một người đang nhìn thấy đơn, nhận `changed` và đọc lại hàng chờ cùng bảng bàn; nếu không có luồng quầy hoặc chủ quán thì đơn khách vẫn bị chặn theo I-008. A2 — hàng chờ hiện rõ đơn QR, bàn, món và tổng từ backend; chủ quán duyệt/từ chối bằng cửa hiện có, kết quả đọc lại; người không có quyền vẫn bị từ chối. A3 — chủ quán thấy trạng thái mù và có thể bấm mở lại, không tự mở; có thể ghi đem ra tại màn như người đứng quầy. A4 — hợp đồng, ma trận quyền và quyết định về tín hiệu khớp code; test backend, FE và `./scripts/gate.sh` đạt.
+
+Phạm vi: `work/scope/T-308.txt`. Bàn giao thi công 2026-11-07 (Codex):
+
+- A1: `GET /counter/events` và `GET /counter/queue` nhận chủ quán không đứng quầy. Trang Vận hành giữ luồng nhận đơn và đọc lại hàng chờ cùng bảng bàn khi có `hello`/`changed`. `TestI008_LuongChuQuanVanHanhDuocTinhLaNhinThayDon` và `TestI008_NhieuLuongQuayChuQuanVaTuChoiSaiLop` kiểm PostgreSQL thật: chủ quán một mình vẫn được tính là nhìn thấy, người sai lớp bị từ chối, đóng hết luồng thì đơn QR lại bị chặn.
+- A2: hàng chờ hiện bàn, dòng món và tổng tiền từ backend; chủ quán duyệt/từ chối bằng cửa có vết, đọc lại sau ghi. `TestI012_ChuQuanVanHanhDuyetTuChoiVaGhiDemRa` kiểm đúng người trong `record_revision`, người ngoài quầy bị từ chối; test FE kiểm thao tác duyệt và hộp xác nhận từ chối.
+- A3: trang hiện `blind_since` và nút mở lại qua cửa `nhandon/mo_lai`; không tự mở. Chủ quán bấm ghi đã đem ra bằng cửa `sanxuat/ra_ban`; test backend kiểm quyền và vết, test FE kiểm chủ quán không đứng quầy có nút, người không có quyền chỉ được xem.
+- A4: OpenAPI lên `0.67.0`, ma trận quyền, ADR-097, I-008/I-012 và tài liệu màn đã khớp. `npm test -- --run` đạt 679/679, `npm run build` đạt. `./scripts/gate.sh` exit 0: Gate 3, 1b–1h, Gate 1 backend trên PostgreSQL thật và verify PASS; Gate 1 db SKIP vì không đổi database. Gate 7/7b kiểm thủ công khi bàn giao commit.
+
+Kiểm trực tiếp 2026-11-08 (Codex, máy phát triển): chạy `make dev` từ worktree T-308; hai URL `/ban/3` và `/chu-quan/van-hanh` trả HTTP 200. Tài khoản chủ quán **không đứng quầy** mở `GET /counter/events` qua Next và nhận `hello`/`changed`; bấm mở lại khoảng mù cũ bằng `POST /shop-blind/reopening`. Gửi một lượt QR bàn 3, món Bánh cuốn ×1 giá 4.000đ qua chính tầng Next ⇒ HTTP 201, `pending_confirmation`; `GET /counter/queue` của chủ quán đọc đúng bàn, món, tiền và `blind_since: null`; luồng nhận thêm `changed`. Chủ quán duyệt ⇒ HTTP 200, hàng chờ rỗng và `GET /service-board` có hai phần việc của bàn 3. Dùng cửa quầy huỷ đơn **thử** số 3, đóng phiên 0đ và dọn bàn; bàn 3 trở lại trống, không còn phiên mở. `./scripts/gate.sh` chạy lại với Docker 2026-11-08, exit 0: Gate 3, 1b–1h, backend PostgreSQL thật và verify PASS; DB SKIP vì không đổi lược đồ. Worktree này đang phục vụ localhost; chưa tích hợp vào cây chính, chưa commit, chưa có người duyệt độc lập.
+
+Duyệt và tích hợp 2026-11-08 (Claude): chủ repo báo đặt món ở `/ban/3` rồi đồng ý mà `/chu-quan/van-hanh` không hiện món. Nguyên nhân: đơn QR vào ở *Chờ xác nhận*, chưa sinh việc ở trạm (shop-facts §6 quy tắc 2) nên bảng Vận hành không có món; bản sửa T-308 nằm ở worktree riêng, chưa về cây chính, app chạy từ cây chính không có nó. Chủ repo chọn *"Duyệt và tích hợp T-308"*, xác nhận luật Codex viết ở `master_plan/shop-facts.md` (dòng sổ thay đổi 2026-11-08) và ADR-097 *Sửa đổi*. Claude đọc diff: bốn cửa nới sang `quay_hoac_chu_quan` (hàng chờ, luồng nhận đơn, duyệt, từ chối, ra bàn), cửa huỷ sau xác nhận giữ `quay`; một broker chung nên đổi trang sang `/counter/events` không mất tín hiệu tiến độ bếp. Claude tự chạy `./scripts/gate.sh` trong worktree, exit 0, be-check PostgreSQL thật PASS gồm `TestI008_LuongChuQuanVanHanhDuocTinhLaNhinThayDon`, `TestI008_NhieuLuongQuayChuQuanVaTuChoiSaiLop`, `TestI012_ChuQuanVanHanhDuyetTuChoiVaGhiDemRa`; `npx vitest run src/app/chu-quan` 342/342. Không lỗi phải gửi lại Codex. Đưa về cây chính bằng patch, chạy lại gate ở cây chính.
+
+[↑ đầu file](#top)
 
 <a id="t-306"></a>
 ### T-306 — Đơn QR mới hiện ngay trên trang Vận hành đang mở

@@ -18,7 +18,7 @@ import (
 
 var BamMe = authz.Door{Code: "sanxuat/bam_me", Need: authz.NeedCounter}
 var LuiMe = authz.Door{Code: "sanxuat/lui_me", Need: authz.NeedCounter}
-var RaBan = authz.Door{Code: "sanxuat/ra_ban", Need: authz.NeedCounter}
+var RaBan = authz.Door{Code: "sanxuat/ra_ban", Need: authz.NeedCounterOrOwner}
 var Chuyen = authz.Door{Code: "sanxuat/chuyen", Need: authz.NeedCounter}
 var GhiLamSai = authz.Door{Code: "sanxuat/ghi_lam_sai", Need: authz.NeedCounter}
 var HuyGhiLamSai = authz.Door{Code: "sanxuat/huy_ghi_lam_sai", Need: authz.NeedCounter}

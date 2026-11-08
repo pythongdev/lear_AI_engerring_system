@@ -483,18 +483,20 @@ func TestI008_MatDayVanDocDuocDonDaNhan(t *testing.T) {
 		t.Fatal(b)
 	}
 }
-func TestI008_NhieuLuongQuayVaTuChoiSaiLop(t *testing.T) {
+func TestI008_NhieuLuongQuayChuQuanVaTuChoiSaiLop(t *testing.T) {
 	f := rtSetup(t, time.Hour)
-	for _, person := range []int64{f.ownerID, f.outsider} {
-		_, b := f.request("GET", "/counter/events", person, nil, 403)
-		rtCode(t, b, "not_on_counter_duty")
-	}
-	_, b := f.request("GET", "/counter/events", 0, nil, 401)
+	_, b := f.request("GET", "/counter/events", f.outsider, nil, 403)
+	rtCode(t, b, "not_on_counter_duty")
+	_, b = f.request("GET", "/counter/events", 0, nil, 401)
 	rtCode(t, b, "unauthenticated")
 	s1 := f.stream("/counter/events", f.counter)
-	s2 := f.stream("/counter/events", f.counter)
+	s2 := f.stream("/counter/events", f.ownerID)
+	s3 := f.stream("/counter/events", f.counter)
 	s1.body.Close()
 	<-s1.done
+	f.order("qr_table", 201)
+	s3.body.Close()
+	<-s3.done
 	f.order("qr_table", 201)
 	f.closeCounter(s2)
 	f.order("qr_table", 409)

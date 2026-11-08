@@ -2,7 +2,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testi
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiProvider } from "@/lib/api/provider";
 import { cotVanHanh, type ThuVanHanh } from "../_components/cot-van-hanh";
-import type { BangVanHanh } from "../_components/du-lieu-van-hanh";
+import type { BangVanHanh, HangChoChuQuan } from "../_components/du-lieu-van-hanh";
 import Page, { metadata } from "./page";
 
 type Luong = { gui: (event: string) => void; dong: () => void; signal: AbortSignal };
@@ -23,14 +23,16 @@ const data: BangVanHanh = {
   empty_tables: [{ dining_table_id: 51, label: "F" }],
   serve_history: [hist("2025-02-03T03:16:12Z", "Món mới"), hist("2025-02-03T03:16:12Z", "Món cùng lần"), hist("2025-02-03T02:11:03Z", "Món cũ")],
 };
-function mo(doc: (n: number) => { status: number; body: unknown } = () => ({ status: 200, body: data })) {
-  let n = 0;
+const hangRong: HangChoChuQuan = { read_at: data.read_at, poll_interval_seconds: 20, paused_since: null, blind_since: null, orders: [], active_orders: [] };
+function mo(doc: (n: number) => { status: number; body: unknown } = () => ({ status: 200, body: data }),
+  docHang: (n: number) => { status: number; body: unknown } = () => ({ status: 200, body: hangRong }), chu = false) {
+  let n = 0, hn = 0;
   const goi: { method: string; path: string; body: unknown }[] = [];
   const fetch = async (req: Request) => {
     const path = new URL(req.url).pathname.replace(/^\/api/, "");
     const raw = await req.text();
     goi.push({ method: req.method, path, body: raw ? JSON.parse(raw) : undefined });
-    if (path === "/production-board/events") {
+    if (path === "/counter/events") {
       let controller!: ReadableStreamDefaultController<Uint8Array>;
       const stream = new ReadableStream<Uint8Array>({ start(c) { controller = c; } });
       luong.push({
@@ -40,7 +42,9 @@ function mo(doc: (n: number) => { status: number; body: unknown } = () => ({ sta
       });
       return new Response(stream, { status: 200, headers: { "content-type": "text/event-stream" } });
     }
-    const r = path === "/sessions/current" ? { status: 401, body: { code: "unauthenticated" } } : doc(++n);
+    const r = path === "/sessions/current" ? chu ? { status: 200, body: { is_owner: true, counter_duty_id: null } } : { status: 401, body: { code: "unauthenticated" } }
+      : path === "/counter/queue" ? docHang(++hn)
+        : req.method === "POST" ? { status: 200, body: {} } : doc(++n);
     return new Response(JSON.stringify(r.body), { status: r.status, headers: { "content-type": "application/json" } });
   };
   render(<ApiProvider fetch={fetch}><Page /></ApiProvider>);
@@ -52,6 +56,36 @@ const nut = (name: string) => screen.getByRole("button", { name });
 const vungAn = (b: HTMLElement) => document.getElementById(b.getAttribute("aria-controls")!)!;
 
 describe("Vận hành", () => {
+  it("chủ quán không đứng quầy thấy đơn QR, duyệt rồi đọc lại; luồng nhận đơn là counter/events", async () => {
+    const don: HangChoChuQuan["orders"][number] = { sales_order_id: 77, channel_code: "qr_table", dining_table_id: 3,
+      created_at: data.read_at, customer_phone: null, customer_needed_at: null, total_vnd: 8000,
+      lines: [{ menu_item_id: 1, item_name: "Bánh cuốn", quantity: 2, unit_price_vnd: 4000, line_total_vnd: 8000, components: [], options: [] }] };
+    const ban3 = { ...data, sessions: [...data.sessions, phien(3, "waiting", "3")] };
+    const goi = mo(() => ({ status: 200, body: ban3 }), (n) => ({ status: 200, body: n === 1 ? { ...hangRong, orders: [don] } : hangRong }), true);
+    await bang();
+    const vung = within(await screen.findByRole("region", { name: "Đơn chờ chủ quán xử lý" }));
+    expect((await vung.findByRole("article", { name: "Đơn 77" })).textContent).toContain("Bàn 3");
+    expect(vung.getByText(/Bánh cuốn ·/).textContent).toContain("Số lượng 2");
+    await waitFor(() => expect(luong).toHaveLength(1));
+    expect(goi.some((g) => g.path === "/counter/events")).toBe(true);
+    fireEvent.click(vung.getByRole("button", { name: "Duyệt đơn 77" }));
+    await waitFor(() => expect(goi.some((g) => g.method === "POST" && g.path === "/orders/77/approval")).toBe(true));
+    await waitFor(() => expect(vung.getByText("Không có đơn chờ xác nhận.")).toBeTruthy());
+    expect(screen.getByRole("button", { name: /Đem ra D/ })).toBeTruthy();
+  });
+  it("chủ quán mở lại trạng thái mù bằng nút và từ chối đơn qua bước xác nhận", async () => {
+    const don: HangChoChuQuan["orders"][number] = { sales_order_id: 78, channel_code: "pickup", dining_table_id: null,
+      created_at: data.read_at, customer_phone: "0900", customer_needed_at: null, total_vnd: 0, lines: [] };
+    const goi = mo(undefined, (n) => ({ status: 200, body: n === 1 ? { ...hangRong, blind_since: data.read_at, orders: [don] } : { ...hangRong, orders: [don] } }), true);
+    await bang();
+    const vung = within(screen.getByRole("region", { name: "Đơn chờ chủ quán xử lý" }));
+    fireEvent.click(await vung.findByRole("button", { name: "Mở lại nhận đơn" }));
+    await waitFor(() => expect(goi.some((g) => g.path === "/shop-blind/reopening" && g.method === "POST")).toBe(true));
+    fireEvent.click(vung.getByRole("button", { name: "Từ chối đơn 78" }));
+    expect(goi.some((g) => g.path === "/orders/78/rejection")).toBe(false);
+    fireEvent.click(screen.getByRole("button", { name: "Xác nhận từ chối" }));
+    await waitFor(() => expect(goi.some((g) => g.path === "/orders/78/rejection" && g.method === "POST")).toBe(true));
+  });
   it("đơn QR mới phát changed thì đọc lại service-board và hiện bàn cùng số món; heartbeat không đọc", async () => {
     const moi = { ...data, sessions: [...data.sessions, phien(3, "waiting", "3", [thu("Bánh cuốn", "Thịt", { ordered: 2, served: 0, missing: 2 })])] };
     const goi = mo((n) => ({ status: 200, body: n === 1 ? data : moi }));
@@ -126,7 +160,7 @@ describe("Vận hành", () => {
     expect(cells(b.getAllByRole("row").at(-1)!)[0]).toBe("14+11*");
     expect(b.getByText("+11").className).toContain("them"); expect(screen.getByText("Đã chọn 1 bàn.")).toBeTruthy();
     fireEvent.click(nut("Bỏ chọn hết")); expect(b.queryByRole("button", { name: "C" })).toBeNull(); expect(screen.getByText("Đã chọn 0 bàn.")).toBeTruthy();
-    expect(g.filter(({ path }) => path !== "/production-board/events").map(({ method, path }) => ({ method, path }))).toEqual([{ method: "GET", path: "/service-board" }, { method: "GET", path: "/sessions/current" }]);
+    expect(g.filter(({ path }) => path !== "/counter/events").map(({ method, path }) => ({ method, path })).sort((a, b) => a.path.localeCompare(b.path))).toEqual([{ method: "GET", path: "/counter/queue" }, { method: "GET", path: "/service-board" }, { method: "GET", path: "/sessions/current" }].sort((a, b) => a.path.localeCompare(b.path)));
     expect(set).not.toHaveBeenCalled(); expect(remove).not.toHaveBeenCalled(); expect(clear).not.toHaveBeenCalled();
   });
   it("đọc lại bỏ tick phiên hết waiting và không tự chọn lại khi nó quay về", async () => {
@@ -164,7 +198,7 @@ describe("Vận hành", () => {
   it.each([['unauthenticated', 'đăng nhập lại'], ['not_on_counter_duty', 'not_on_counter_duty']])("lỗi đầu %s có Alert, không khối dữ liệu", async (code, text) => {
     mo(() => ({ status: 403, body: { code } })); const a = await screen.findByRole("alert");
     expect(a.textContent).toContain("Chưa đọc được tình hình bàn"); expect(a.textContent).toContain(text);
-    expect(screen.queryByRole("region")).toBeNull();
+    expect(screen.queryByRole("region", { name: "Bảng tổng thiếu" })).toBeNull();
   });
   it("dữ liệu rỗng có ba câu rỗng, không lỗi", async () => {
     mo(() => ({ status: 200, body: { ...data, sessions: [], empty_tables: [], serve_history: [] } }));
@@ -181,7 +215,7 @@ describe("Vận hành", () => {
     expect(values.length).toBeGreaterThan(5);
     expect(values.every((v) => ["79.123đ", "23.123đ", "46.246đ", "158.246đ"].includes(v))).toBe(true);
     expect(screen.getAllByRole("button").every((b) => !/[\d.]+đ/.test(b.textContent!))).toBe(true);
-    expect(document.body.textContent).toContain("Chỉ người đang đứng quầy ghi được đem ra. Bạn chưa đứng quầy nên các ô chỉ để xem.");
+    expect(document.body.textContent).toContain("Chỉ chủ quán hoặc người đang đứng quầy ghi được đem ra. Các ô này chỉ để xem.");
   });
   it("không đánh dấu nhiều khi không thiếu, Khác hiện cả khi chỉ có ở phiên no_order", async () => {
     mo(() => ({ status: 200, body: { ...data, sessions: [phien(21, "serving", "A", [thu("Bánh cuốn", "Thịt", { extra_filling: true, missing: 0, served: 13 })]), phien(41, "no_order", "E", [thu("Giò")])] } }));

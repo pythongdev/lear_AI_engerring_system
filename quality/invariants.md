@@ -258,8 +258,9 @@ Kịch bản ưu tiên: 08:00 — trong giờ bán — chủ quán bật tạm d
 bị từ chối; tắt tạm dừng thì đặt lại được ngay. Kịch bản mất kết nối: 08:00, quán mất mạng
 trong khi hệ thống vẫn sống, **chủ quán chưa bấm tắt qua 5G** ⇒ ba kênh khách tự bấm (`delivery`, `pickup`, `qr_table`) **bị từ
 chối** và khách thấy **một dòng thông báo**, trong khi `staff_pos` và `phone_preorder` **không** bị
-chặn — quán vẫn nhận đơn qua hotline và ghi giấy; có mạng lại thì ba kênh kia mở lại **khi POS bấm
-nút mở** (chủ quán chốt 2026-09-16 — **không** tự mở lại), và
+chặn — quán vẫn nhận đơn qua hotline và ghi giấy; có mạng lại thì ba kênh kia mở lại **khi người
+đứng quầy hoặc chủ quán bấm nút mở** (chủ quán chốt 2026-09-16 — **không** tự mở lại; T-308 mở
+quyền cho chủ quán trên trang Vận hành 2026-11-06), và
 **không tạo đơn trong cả khoảng quán không nhìn thấy đơn mới, kể cả trước lúc
 chủ quán bấm tắt** (U-061, chủ quán chốt 2026-09-27). Kiểm tiếp: chủ quán bấm
 tắt qua 5G, khôi phục mạng nhưng chưa bấm mở ⇒ ba kênh vẫn dừng. Kịch bản không chạm đơn cũ: nhận một đơn giao tận
@@ -418,10 +419,12 @@ mỗi vết trả lời đủ bốn câu: **cái gì đổi**, **bao nhiêu**, *
 thao tác chạm tiền, tính tới 2026-09-01: **duyệt** đơn (`shop-facts.md` §6.2) · **huỷ** đơn (§6.13)
 · **hoàn tiền** (§6.4) · **ghi nợ** lúc đóng phiên và **thu nợ** về sau (§6.14) · **xác nhận đã
 nhận tiền** cho cả hai phương thức (§6.3) · **ghép bàn** (§6.16) · chủ quán **đổi giá** hoặc **đổi
-thành phần suất** (§6.17). Mọi thao tác trong danh sách đi qua **đúng một cửa: máy POS ở quầy**
-(`docs/product/0-ba/ban-hang/` §2.4, §4.6, §4.8), trừ hai ca đã chốt tên người khác: **người đi giao** bấm *đã
-giao + đã thu tiền* tại chỗ khách (§6.7), và **chủ quán** bấm đổi giá / đổi thành phần suất trên
-mặt quản trị (§6.17).
+thành phần suất** (§6.17). Mọi thao tác trong danh sách đi qua **đường ghi có xác thực và vết**:
+máy POS ở quầy (`docs/product/0-ba/ban-hang/` §2.4, §4.6, §4.8); **chủ quán** còn được duyệt
+hoặc từ chối đơn *Chờ xác nhận* trên trang Vận hành (T-308, chủ repo 2026-11-06), đổi giá hoặc
+thành phần suất trên mặt quản trị (§6.17); **người đi giao** bấm *đã giao + đã thu tiền* tại chỗ
+khách (§6.7). Chủ quán từ chối đơn chưa duyệt khác với huỷ đơn đã xác nhận: quyền huỷ sau xác
+nhận vẫn gắn với người đứng quầy (§6.13).
 
 **Why:**
 Đây là điều kiện để đối soát cuối ngày tồn tại được. `shop-facts.md` §6.10 lấy ngưỡng lệch là
@@ -442,10 +445,12 @@ thao tác phải đọc ra đủ bốn câu (cái gì, bao nhiêu, ai, mấy gi�
 (`docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.8); thiếu lý do cũng là hỏng, vì không có luật cứng nào thay được nó. Kịch
 bản đối soát: dựng một ngày có **ghi nợ + thu nợ cũ + một lần hoàn + một lần chủ quán đổi giá giữa
 buổi** ⇒ bảng đối soát cuối ngày giải thích được **từng** chỗ lệch bằng đúng một thao tác có tên
-(`docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.9). Kịch bản âm: không tồn tại đường nào đổi tiền mà không qua POS ở quầy,
-ngoài hai ca đã chốt ở trên.
+(`docs/product/0-ba/ban-hang/04-gia-thanh-toan.md` §4.9). Kịch bản âm: không tồn tại đường nào đổi tiền mà không qua
+các đường ghi có xác thực và vết ở trên; chủ quán duyệt hoặc từ chối đơn chờ xác nhận và ghi
+*đã ra bàn* từ trang Vận hành vẫn phải để lại đúng người và thời điểm.
 
-*Phát hiện ở BA-06, 2026-09-01.*
+*Phát hiện ở BA-06, 2026-09-01. Sửa phạm vi đường bấm của chủ quán ở T-308, 2026-11-07;
+yêu cầu vết không đổi.*
 
 ### I-013 — Giá mọi dòng đơn do hệ thống tính lại; giá do khách gửi lên không bao giờ được dùng
 
@@ -460,7 +465,7 @@ bảng thành phần, không phải đọc một con số nằm sẵn cạnh tê
 **Why:**
 `shop-facts.md` §4.6 quy tắc 9 nói thẳng hậu quả: nhận giá do khách gửi nghĩa là **có ngày khách
 đặt được món 0đ**. Ba kênh khách tự bấm — QR tại bàn, Delivery, Pickup — đều gửi dữ liệu từ máy
-của khách, nên đây không phải rủi ro lý thuyết. Bước quầy duyệt (§6.2) **không** đỡ được: nó chặn
+của khách, nên đây không phải rủi ro lý thuyết. Bước duyệt của quầy hoặc chủ quán (§6.2) **không** đỡ được: nó chặn
 đơn ảo, không ai đứng đó cộng lại tiền từng dòng. Và vì giá một suất là **tổng thành phần**, đọc
 một con số có sẵn cũng hỏng theo cách thứ hai: chủ quán đổi giá một cái bánh thì con số nằm sẵn ấy
 không tự đúng lại (`docs/product/0-ba/ban-hang/03-lat-cat.md` §3.3.2).
@@ -1043,8 +1048,8 @@ sinh bằng gì: đó là cơ chế của pha sau.
 Mã đoán được, hay lộ mà không đổi được, thì một người **đã từng ngồi quán** gọi món ghi vào hoá đơn
 **bàn khác**, và bàn ấy trả cho thứ mình không gọi — hoặc cãi với quầy lúc tính tiền, đúng lúc đông
 khách. Đó là mất tiền ở **phiên bàn**, cùng loại với thu thiếu của `I-002`: một lượt gọi đứng sai đơn
-vị tính tiền. Lớp người đang có là **quầy duyệt** mọi đơn QR (`shop-facts.md` §6 quy tắc 2), nhưng
-quầy duyệt theo **số bàn trên đơn**, không biết ai đang cầm điện thoại — nên quầy chặn được đơn vào
+vị tính tiền. Lớp người đang có là **quầy hoặc chủ quán duyệt** mọi đơn QR (`shop-facts.md` §6 quy tắc 2), nhưng
+người duyệt theo **số bàn trên đơn**, không biết ai đang cầm điện thoại — nên họ chặn được đơn vào
 một bàn **đang trống**, không chặn được đơn vào một bàn **đang có khách** gọi thật. Bằng chứng từ dự
 án cũ, không phải dữ kiện quán này (`work/proposals/from_old_project/data_base/nghien-cuu.md` §2.1): mã
 sinh bằng một hàm dựa trên thời gian cho cả loạt bàn cùng lúc ⇒ có một mã là suy ra các mã kia; và

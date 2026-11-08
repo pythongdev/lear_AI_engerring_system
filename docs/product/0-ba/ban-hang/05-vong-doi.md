@@ -60,8 +60,8 @@ khoản hoàn rơi vào **ngày hoàn**, không sửa lại ngày bán.
 | *(chưa có đơn)* | Khách bấm gửi trên web hoặc QR tại bàn; hoặc quầy nhập xong một đơn đặt hộ / đơn hotline | **Mới** | *Khách* (QR tại bàn, Delivery, Pickup) hoặc *người đứng quầy* (Staff POS, Đặt trước qua hotline) |
 | Mới | Đơn thuộc kênh **phải duyệt**: QR tại bàn, Delivery, Pickup | **Chờ xác nhận** | *Hệ thống*, theo kênh (`shop-facts.md` §6.2) |
 | Mới | Đơn thuộc kênh **không phải duyệt**: Staff POS, Đặt trước qua hotline | **Đã xác nhận** | *Hệ thống*, theo kênh (§2.2) |
-| Chờ xác nhận | Quầy duyệt đơn | **Đã xác nhận** | *Người đứng quầy* (§3.1.1 bước 5, §3.2.1 bước 7) |
-| Chờ xác nhận | Quầy từ chối đơn | **Huỷ** | *Người đứng quầy* (`shop-facts.md` §6.13) |
+| Chờ xác nhận | Duyệt đơn | **Đã xác nhận** | *Người đứng quầy hoặc chủ quán* (`shop-facts.md` §6.2, sửa đổi 2026-11-06) |
+| Chờ xác nhận | Từ chối đơn | **Huỷ** | *Người đứng quầy hoặc chủ quán* (`shop-facts.md` §6.13, sửa đổi 2026-11-06) |
 | Đã xác nhận | Hệ thống nổ đơn thành việc của từng trạm theo thành phần của suất (§3.1.5) | **Đang thực hiện** | *Hệ thống* |
 | Đã xác nhận | Quầy huỷ đơn — ví dụ khách đặt hotline đổi ý, tới quán ngồi ăn (§2.4) | **Huỷ** | *Người đứng quầy* |
 | Đang thực hiện | **Mọi** việc trạm của đơn đã ra tới tay khách: bưng ra bàn, hoặc đóng gói và trao cho khách tới lấy | **Hoàn thành** | *Người đứng quầy*, trên POS (chủ quán chốt 2026-09-01, `shop-facts.md` §5.4) |

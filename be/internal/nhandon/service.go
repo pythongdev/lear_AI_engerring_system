@@ -82,7 +82,7 @@ func (s *Service) Bam(ctx context.Context, personID int64, door authz.Door) (jso
 }
 func (s *Service) HangCho(ctx context.Context, personID int64) (json.RawMessage, error) {
 	var out json.RawMessage
-	err := authz.Read(ctx, s.pool, personID, authz.NeedCounter, func(tx pgx.Tx) error {
+	err := authz.Read(ctx, s.pool, personID, authz.NeedCounterOrOwner, func(tx pgx.Tx) error {
 		var err error
 		out, err = newRepository(tx).hangCho(ctx)
 		return err
@@ -92,7 +92,7 @@ func (s *Service) HangCho(ctx context.Context, personID int64) (json.RawMessage,
 func (s *Service) MoLuong(ctx context.Context, personID int64) (time.Time, bool, error) {
 	var at time.Time
 	var blind bool
-	err := authz.Read(ctx, s.pool, personID, authz.NeedCounter, func(tx pgx.Tx) error {
+	err := authz.Read(ctx, s.pool, personID, authz.NeedCounterOrOwner, func(tx pgx.Tx) error {
 		r := newRepository(tx)
 		var err error
 		if at, err = r.dongHo(ctx); err != nil {

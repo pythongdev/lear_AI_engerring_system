@@ -25,8 +25,8 @@ import (
 )
 
 var TaoLuotGoi = authz.Door{Code: "don/tao_luot_goi", Need: authz.NeedCounterOrCustomer}
-var Duyet = authz.Door{Code: "don/duyet", Need: authz.NeedCounter}
-var TuChoi = authz.Door{Code: "don/tu_choi", Need: authz.NeedCounter}
+var Duyet = authz.Door{Code: "don/duyet", Need: authz.NeedCounterOrOwner}
+var TuChoi = authz.Door{Code: "don/tu_choi", Need: authz.NeedCounterOrOwner}
 var Huy = authz.Door{Code: "don/huy", Need: authz.NeedCounter}
 var RoiQuan = authz.Door{Code: "don/roi_quan", Need: authz.NeedCounter}
 var NhaHen = authz.Door{Code: "don/nha_hen", Need: authz.NeedCounter}

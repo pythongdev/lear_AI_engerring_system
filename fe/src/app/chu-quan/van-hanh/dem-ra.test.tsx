@@ -1,4 +1,4 @@
-// T-228 — test viết trước bởi Claude (2026-10-21). Người thi công làm cho xanh, không sửa file này; thấy sai thì báo.
+// T-228 — test viết trước bởi Claude (2026-10-21); T-308 mở quyền ghi cho chủ quán không đứng quầy.
 import { cleanup, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { voiBackend, type GoiDen } from "@/components/tai-khoan/test-utils";
@@ -35,12 +35,12 @@ const board = { read_at: "2025-02-03T03:17:30Z", poll_interval_seconds: 20 as co
   hang("trang_banh", thit, [part(21, 3), part(22, 5)]), hang("gap_banh", thit, [part(21, 2)]),
   hang("trang_banh", thitNhieu, [part(21, 2)]), hang("gap_banh", thitNhieu, [part(21, 2)]),
 ] };
-const phienDangNhap = (counter_duty_id: number | null) => ({ person_id: 7, display_name: "Chủ", role_code: "chu_quan", is_owner: true, must_change_password: false, counter_duty_id });
+const phienDangNhap = (counter_duty_id: number | null, is_owner: boolean) => ({ person_id: 7, display_name: "Chủ", role_code: "chu_quan", is_owner, must_change_password: false, counter_duty_id });
 
 type TraLoi = { status: number; body?: unknown };
-function mo({ quay = 3 as number | null, bang = () => ({ status: 200, body: board }) as TraLoi, ghi = () => ({ status: 200, body: { station_job_ids: [1, 2, 3, 4], completed_order_ids: [] } }) as TraLoi } = {}) {
+function mo({ quay = 3 as number | null, chu = true, bang = () => ({ status: 200, body: board }) as TraLoi, ghi = () => ({ status: 200, body: { station_job_ids: [1, 2, 3, 4], completed_order_ids: [] } }) as TraLoi } = {}) {
   return voiBackend(<Page />, (g: GoiDen): TraLoi => {
-    if (g.path === "/sessions/current") return { status: 200, body: phienDangNhap(quay) };
+    if (g.path === "/sessions/current") return { status: 200, body: phienDangNhap(quay, chu) };
     if (g.path === "/service-board") return { status: 200, body: data };
     if (g.path === "/production-board") return bang();
     if (g.path === "/served-marks") return ghi();
@@ -61,9 +61,14 @@ describe("Vận hành — bấm ô số ghi đã đem ra (T-228)", () => {
     for (const ten of ["Đem ra Bàn 01 · Thịt", "Đem ra Bàn 01 · Thịt nhiều", "Đem ra Bàn 01 · Trứng tái"]) expect(b.getByRole("button", { name: ten })).toBeTruthy();
     expect(screen.getByText("Bấm vào một ô số để báo đã đem ra.")).toBeTruthy();
   });
-  it("không đứng quầy: không nút số, có câu nói rõ vì sao, không gọi cửa ghi", async () => {
+  it("chủ quán không đứng quầy vẫn có nút ghi đem ra", async () => {
     const g = mo({ quay: null }); const b = await vung();
-    await waitFor(() => expect(screen.getByText(/Chỉ người đang đứng quầy ghi được đem ra/)).toBeTruthy());
+    await waitFor(() => expect(b.getByRole("button", { name: "Đem ra Bàn 01 · Thịt" })).toBeTruthy());
+    expect(posts(g)).toHaveLength(0);
+  });
+  it("người không phải chủ quán và không đứng quầy chỉ được xem", async () => {
+    const g = mo({ quay: null, chu: false }); const b = await vung();
+    await waitFor(() => expect(screen.getByText(/Chỉ chủ quán hoặc người đang đứng quầy ghi được đem ra/)).toBeTruthy());
     expect(b.queryAllByRole("button", { name: /^Đem ra / })).toHaveLength(0);
     expect(posts(g)).toHaveLength(0);
   });

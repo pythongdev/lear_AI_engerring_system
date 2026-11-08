@@ -513,8 +513,11 @@ Hai luật chạy xuyên cả hai luồng, nhớ trước khi đọc sơ đồ:
 
 - **Mặc định thu tiền lúc TRAO HÀNG.** Tiền mặt hoặc VietQR, khách chọn. Riêng **đơn mang đi**,
   khách được chọn **trả trước** — nhánh tuỳ chọn, luật đầy đủ ở §6.3.
-- **Đơn do KHÁCH tự gửi phải được quầy duyệt; đơn do NHÂN VIÊN nhập thì không.** Bước duyệt tồn tại
+- **Đơn do KHÁCH tự gửi phải được người đứng quầy hoặc chủ quán duyệt; đơn do NHÂN VIÊN nhập thì không.** Bước duyệt tồn tại
   để chống đơn ảo — nhân viên nhập thì đã có người chịu trách nhiệm rồi.
+  **Sửa đổi 2026-11-06, chủ repo:** chủ quán cũng cần nhận được đơn và có quyền điều hành tại trang Vận hành.
+  Phần mở quyền duyệt hoặc từ chối đơn chờ xác nhận là cách triển khai của T-308; các quyền huỷ đơn
+  đã xác nhận, hoàn tiền và thu tiền vẫn theo luật riêng ở §6.13 và §6.4.
 
 ### 5.1 Luồng ăn tại bàn — `qr_table`, `staff_pos`
 
@@ -779,6 +782,9 @@ U-024). Hai câu này khép nốt bảng bốn con số:
   trả lời **ai**; lần hỏi 2026-09-01 trả lời thẳng: **pos**. ⇒ **Cả hai mốc của một suất — làm
   xong, và ra tới bàn — đều do người đứng quầy bấm.** Ba trạm bếp vẫn không bấm gì; U-009 nguyên
   vẹn, vì nó là luật về **bếp**, không phải luật về quầy.
+  **Sửa đổi 2026-11-06, chủ repo:** chủ quán điều hành trên trang Vận hành nên cũng được bấm
+  *đã bưng ra bàn* cho một bàn. Đây là mở quyền trên cùng cửa có vết, không mở nút *đã làm xong*
+  theo mẻ hay các cửa tiền của quầy.
 - **"Đã bưng ra bàn" bấm theo SỐ CÁI của từng thứ, cho MỘT bàn** (chủ quán chốt **2026-10-09**,
   trả lời **S-5**; chủ repo chuyển lời trong hội thoại P3-10) — nguyên văn *"pos sẽ bấm số lượng
   hàng hoá đem ra sau đó pos sẽ bấm đã bưng ra bàn"*; vế *đếm theo gì, cho ai* chọn trong câu hỏi có
@@ -888,7 +894,7 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
      một phần — thì **không thu suất đó** (chủ repo chọn 2026-10-22, nguyên văn *"Không thu suất
      đó"*): chỉ suất đã ra hết mới vào hoá đơn, phần đã bưng của suất dở quán chịu. Tới khi T-227 xong, máy vẫn thu đủ mọi phần đã gọi
      (`docs/product/3-be/04-luong-tai-ban.md` §4).
-2. **Đơn do KHÁCH tự gửi phải được quầy duyệt trước khi xuống bếp; đơn do NHÂN VIÊN nhập thì
+2. **Đơn do KHÁCH tự gửi phải được người đứng quầy hoặc chủ quán duyệt trước khi xuống bếp; đơn do NHÂN VIÊN nhập thì
    không.** Phải duyệt: `qr_table`, `delivery`, `pickup`. Không cần duyệt: `staff_pos`,
    `phone_preorder`. Lý do là mục đích của bước duyệt — chặn đơn ảo — chỉ có nghĩa với đơn không
    ai chịu trách nhiệm. Đơn chưa duyệt **không sinh việc ở bất kỳ trạm nào**.
@@ -1092,10 +1098,10 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
 
     Thêm bất kỳ thứ nào trong bốn thứ trên là **đổi phạm vi, quyền chủ quán**.
 
-13. **Chỉ người đứng quầy được huỷ một đơn** (chủ quán chốt 2026-08-30) — bấm trên máy POS ở quầy.
+13. **Chỉ người đứng quầy được huỷ một đơn đã xác nhận** (chủ quán chốt 2026-08-30) — bấm trên máy POS ở quầy.
     Nhân viên ở bốn trạm còn lại (`trang_banh`, `gap_banh`, `canh`, `don_ban`) **không** huỷ được
     đơn, kể cả đơn của chính việc mình đang làm.
-    **Quyền huỷ gắn với CHỖ ĐỨNG, không gắn với chức vụ** (chủ quán chốt 2026-08-30). Hai ca của
+    **Quyền huỷ đơn đã xác nhận gắn với CHỖ ĐỨNG, không gắn với chức vụ** (chủ quán chốt 2026-08-30). Hai ca của
     chính chủ quán:
 
     | Chủ quán… | Huỷ đơn thế nào |
@@ -1103,12 +1109,19 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
     | **đang đứng quầy** | tự bấm — lúc đó chủ quán làm đúng việc của trạm `quay` (§3) |
     | **không đứng quầy** | **nhờ người đứng quầy bấm trên POS** — không có đường huỷ riêng nào khác |
 
-    Chức vụ không mở thêm cửa nào. **Mọi lần huỷ đều đi qua đúng một cửa: máy POS ở quầy**, nên
+    Chức vụ không mở thêm cửa huỷ đơn đã xác nhận. **Mọi lần huỷ sau xác nhận đều đi qua đúng một cửa: máy POS ở quầy**, nên
     lần huỷ nào cũng có đúng một người đứng tên.
 
-    Quyền này đi đôi với hai luật đã có: quầy là nơi **duyệt** đơn (§6.2) và là nơi **quyết định
-    hoàn tiền** (§6.4). Cùng một người chịu trách nhiệm cho cả ba việc chạm tiền, nên đối soát
-    cuối ngày (§6.10) luôn truy được về một người.
+    **Sửa đổi 2026-11-06, chủ repo:** riêng đơn còn *Chờ xác nhận*, chủ quán trên trang Vận hành
+    có thể duyệt hoặc từ chối. Từ chối đơn chưa duyệt dùng cửa riêng; luật chỉ người đứng quầy
+    **huỷ đơn đã xác nhận** ở trên vẫn giữ nguyên. Chủ quán được báo đơn mới trên trang Vận hành;
+    một kết nối sống của trang này là dấu hiệu quán đang nhìn thấy đơn mới, cùng với kết nối quầy.
+    Đây là cách triển khai T-308 của lời chủ repo *"chủ quán cũng cần nhận được và có quyền điều hành"*;
+    không suy ra quyền thu hoặc hoàn tiền.
+
+    Quyền này đi đôi với hai luật đã có: quầy hoặc chủ quán **duyệt** đơn (§6.2), còn quầy
+    **quyết định hoàn tiền** (§6.4). Mỗi thao tác chạm tiền phải ghi người thực sự bấm để đối
+    soát cuối ngày (§6.10) truy được về người đó.
 
 14. **Khách không trả được thì quán CHO NỢ; đóng phiên trên POS phải ghi AI nợ và nợ BAO NHIÊU**
     (chủ quán chốt 2026-08-31, trả lời U-007). Đây là đường chính thức cho ca khách rời quán mà
@@ -1581,6 +1594,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-11-01 | Chủ repo trả lời `U-111` hai lượt trong hội thoại (T-278): *"cho đang kí bằng gmail không cần duyệt"* rồi *"Dùng ngay như khách; chủ quán cấp quyền làm việc khi cần"*; chủ repo mở nút Google cho **cả hai trang** (`/dang-nhap` và `/khach/dang-nhap`). Thay vế 1 lượt bốn ở chỗ *"chỉ trang khách"*; Google không tự tạo tài khoản `account`, Gmail chưa có vai làm việc đi về không gian khách. Xem **ADR-135** | §8.8 (lượt sáu) |
 | 2026-11-01 | Chủ repo chọn trong câu hỏi có sẵn phương án (CHAT-01, lane chat): trạm *xác nhận* trên chat **chỉ là tin báo**, POS vẫn ghi tiến độ; chủ quán **không vượt** luật quầy qua chat; **việc chạm tiền không làm qua chat**; khách đặt qua chat **chỉ giao · đến lấy, không bắt đăng nhập**, không nhắn POS. Nhân viên dùng **điện thoại riêng**. Đóng `U-113` · `U-114` · `U-115` · `U-117`, hẹp `U-112`. Xem **ADR-136** | §8.11 |
 | 2026-11-04 | Chủ repo chọn trong câu hỏi có sẵn (T-223): đơn **giao tận nơi** còn món bếp **chưa làm xong** thì **từ chối rời quán**, báo rõ món nào chưa xong (*lời chọn*, phương án do Claude viết sẵn). *Suy ra của Claude, nằm trong câu hỏi, chưa được nói riêng:* món đã làm xong được ghi *"đã ra bàn"* đúng lúc rời quán; món đã huỷ hoặc bỏ không chặn đơn rời quán | §5.4 · §6.7 |
+| 2026-11-08 | Chủ repo chọn trong câu hỏi có sẵn phương án (T-308): *"Duyệt và tích hợp T-308"* — xác nhận cách triển khai Codex viết cho lời 2026-11-06 *"chủ quán cũng cần nhận được đơn và có quyền điều hành"*: trên trang Vận hành chủ quán **duyệt hoặc từ chối** đơn *Chờ xác nhận*, ghi *đã ra bàn*, bấm **mở lại** nhận đơn; **trang Vận hành của chủ quán đang mở được tính là quán nhìn thấy đơn** (I-008). Huỷ đơn đã xác nhận, hoàn tiền, thu tiền vẫn chỉ ở quầy. Xem **ADR-097** *Sửa đổi* | §5.4 · §6 quy tắc 2 · 13 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **hai mục, tính tới 2026-10-23**
 
@@ -2416,7 +2430,7 @@ quán dc ghi"*). Một khoản chi — mọi loại, kể cả loại trả từ
 **Chủ repo chọn trong câu hỏi có sẵn phương án; chưa có xác nhận lời đến từ chủ quán.** Mong muốn gốc: `work/backlog.md`
 entry `T-283`.
 
-1. Nhân viên trạm *xác nhận* trên chat **chỉ là tin báo**. POS vẫn là nơi duy nhất ghi tiến độ; §5.4 và ADR-011 không đổi.
+1. Nhân viên trạm *xác nhận* trên chat **chỉ là tin báo**. Tiến độ vẫn do người điều hành ghi trên màn tay, không ghi qua chat; §5.4 và ADR-011 không đổi. T-308 (2026-11-06) mở riêng thao tác ghi *đã ra bàn* cho chủ quán trên trang Vận hành.
 2. *Chủ quán có tất cả các quyền* **không vượt** luật §6.13: chat kiểm quyền đúng như màn tay.
 3. Việc **chạm tiền** (thu, huỷ, hoàn, ghi nợ, giảm giá, đối soát) **không** làm qua chat; chat chỉ dẫn sang màn tay.
 4. Khách đặt qua chat: **chỉ giao · đến lấy, không bắt đăng nhập**; đơn vẫn qua POS duyệt (§6.2); khách chỉ nói với trợ lý.

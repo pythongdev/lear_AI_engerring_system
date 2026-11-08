@@ -4,7 +4,7 @@
 Pha 3 · bước `P3-12` · viết 2026-10-12 (Claude thiết kế, Codex thi công; chờ Claude duyệt).
 Thiết kế: ADR-097 trong phiếu giao việc; bản ADR ở cây chính do Claude giữ.
 **Sửa điểm 5 ngày 2026-10-12, Claude trả lời trong phiên:** mốc bắt đầu khoảng mù mới lấy mốc
-muộn hơn giữa lần luồng quầy cuối đóng/khởi động và lần khoảng mù gần nhất khép, chặn trên bởi `now()`.
+muộn hơn giữa lần luồng nhận đơn cuối đóng/khởi động và lần khoảng mù gần nhất khép, chặn trên bởi `now()`.
 
 **File này sở hữu:** cách backend nối SSE, tín hiệu sau COMMIT, đường kéo và các cửa ngừng nhận đơn;
 ánh xạ từ chối của lát; bảng cắt thử phụ thuộc.
@@ -37,9 +37,9 @@ Tạm dừng chặn cả năm kênh; quán mù chỉ chặn `qr_table`, `deliver
 Dấu gửi lại đúng vẫn trả đơn đã có, không ghi khoảng mù vì không tạo đơn mới.
 
 `cmd/server` tiêm cùng một bộ phát vào miền đơn, quầy, sản xuất và middleware.
-Bộ phát giữ số luồng quầy đã qua lớp `quay`; luồng trạm, yêu cầu `HEAD`, người sai lớp đều không tăng số này.
+Bộ phát giữ số luồng nhận đơn đã qua lớp `quay_hoac_chu_quan` từ quầy hoặc trang Vận hành của chủ quán (T-308, 2026-11-06); luồng trạm, yêu cầu `HEAD`, người sai lớp đều không tăng số này.
 Kiểm lớp tại lúc nối theo `authz.Read`, dùng cùng cách kiểm của cửa ghi; giao dịch đọc không phát tín hiệu.
-Lúc số luồng quầy về không, bộ phát giữ mốc đóng cuối; lúc khởi động, số luồng bằng không và mốc là lúc khởi động.
+Lúc số luồng nhận đơn về không, bộ phát giữ mốc đóng cuối; lúc khởi động, số luồng bằng không và mốc là lúc khởi động.
 Không có cửa sổ cho phép nhận đơn sau khi số luồng đã về không.
 
 Khi tới điều kiện quán mù mà không có luồng, giao dịch tạo đơn lùi trước. Cửa chạy một giao dịch riêng,
@@ -56,7 +56,7 @@ Không có đơn bị từ chối trong lần mất luồng thì không tạo kh
 
 ## 3. Hai luồng, hai đường đọc
 
-`GET /production-board/events` công khai như bảng trạm; `GET /counter/events` qua lớp `quay`.
+`GET /production-board/events` công khai như bảng trạm; `GET /counter/events` qua lớp `quay_hoac_chu_quan` (T-308).
 Luồng gửi `hello` ngay khi nối, `changed` khi cửa ghi commit, `heartbeat` mỗi 10 giây.
 Payload chỉ là `read_at` của database, không có số lượng hay dữ liệu nghiệp vụ. Luồng quầy vừa nối
 mà có khoảng mù mở gửi thêm `changed`; màn đọc lại sẽ thấy `blind_since`.
@@ -69,7 +69,7 @@ Bộ phát gộp tín hiệu đang chờ của mỗi màn vào tối đa một d
 Đây không phải hàng đợi công việc hay bản sao dữ liệu: mất dấu thì đường kéo bù.
 
 `GET /production-board` giữ phép gom cũ và thêm `read_at`, `poll_interval_seconds`.
-`GET /counter/queue` qua lớp `quay`, đọc đơn `pending_confirmation` theo thời điểm tạo rồi mã đơn;
+`GET /counter/queue` qua lớp `quay_hoac_chu_quan`, đọc đơn `pending_confirmation` theo thời điểm tạo rồi mã đơn;
 trả `orders`, `active_orders`, `paused_since`, `blind_since` và cùng hai trường mốc/chu kỳ.
 T-218 (2026-10-20, thiết kế Claude): mỗi đơn chờ thêm `total_vnd` và `lines` từ ảnh chụp
 `order_line` · `order_line_component` · `order_line_option`, cùng hình `doc_don.sql`, không tính lại giá.
@@ -78,7 +78,7 @@ Tổng cộng `line_total_vnd` mọi dòng; `lines` lấy dòng không cha theo 
 `in_progress` · `delivering`, theo `created_at` rồi `id`; trả mã đơn, kênh, cách trao, trạng thái,
 mốc tạo, điện thoại, tên khách, địa chỉ, giờ cần hàng, ghi chú liên hệ, cùng tổng và dòng đã chụp.
 `unserved_jobs` đếm việc trạm của đơn có `status <> 'served'`, cùng điều kiện cửa rời quán.
-Hai mảng rỗng trả `[]`; tất cả vẫn trong một câu SQL và giữ nguyên quyền lớp `quay`.
+Hai mảng rỗng trả `[]`; tất cả vẫn trong một câu SQL; quyền đọc là `quay_hoac_chu_quan` (T-308).
 Mốc và dữ liệu ở mỗi đường đọc trong cùng câu SQL, đọc thẳng chỗ ghi.
 Chu kỳ do hằng `realtime.PollIntervalSeconds = 20` cấp cho cả hai; hợp đồng công bố cùng giá trị.
 Màn cần tự kéo mỗi chu kỳ ngay cả khi không có SSE (pha 4).
@@ -113,7 +113,7 @@ vì vậy không dùng lại database đã chạy xong cả bộ để chạy ri
 
 | Phụ thuộc | Mệnh đề và bằng chứng cần chạy | Kết quả trong sandbox |
 |---|---|---|
-| PT-1 — mất luồng quầy | `TestI008_KhongLuongQuayThiBaKenhTuBamBiTuChoi`, `TestI008_CoLuongQuayThiNhanDon`, `TestI008_NhieuLuongQuayVaTuChoiSaiLop` | PASS trong mọi `be-check` (sửa 2026-10-19, T-206). Ba kênh dừng; hai kênh người vẫn ghi; một trong nhiều luồng còn mở thì còn thấy. |
+| PT-1 — mất luồng nhận đơn | `TestI008_KhongLuongQuayThiBaKenhTuBamBiTuChoi`, `TestI008_CoLuongQuayThiNhanDon`, `TestI008_NhieuLuongQuayChuQuanVaTuChoiSaiLop` | PASS trong `be-check` T-308 (2026-11-07): ba kênh dừng khi cả quầy và chủ quán rời trang; hai kênh người vẫn ghi; một trong nhiều luồng còn mở thì còn thấy. |
 | PT-2 — database mất | `TestI008_PT2_DatabaseMatVaNoiLai` cắt TCP proxy tới database, kiểm lỗi có mã và giới hạn chờ, số dòng không đổi; nối lại rồi ghi/đọc đúng | PASS trong mọi `be-check` (sửa 2026-10-19, T-206). |
 | PT-3 — ngân hàng không tự báo tiền | Rà route ở `be/cmd/server/router.go`, các `handler.go` và ma trận: không route webhook/ngân hàng tự ghi tiền. `TestI012_CuaTienCanNguoiCoTen` ở `be/internal/don/duong_tien_test.go`; cửa đóng phiên còn có kiểm quyền trong bộ `tai_ban_test.go` | Dẫn test có sẵn, giữ nguyên. Các cửa tiền có lớp `quay`, `nguoi_quan`, `quay_hoac_chu_quan` hoặc `chu_quan`; cửa nội bộ `theo_cua_goi` không có HTTP. |
 | PT-4 — mất tin báo có | `TestI021_MotNgayBanGiaQuaCuaRa0dLech` và `TestI021_CaiMotLanThuSaiDoiSoatKeu` ở `be/internal/don/duong_tien_test.go`: chia hai phương thức, hoàn chéo, ký ngày không nhận nguồn ngân hàng | Dẫn test có sẵn; không thêm nguồn đối soát hoặc tự quyết tiền đã về. |

@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.66.0
+  version: 0.67.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -2213,7 +2213,7 @@ paths:
       operationId: counterEvents
       tags:
         - nhandon
-      summary: Tín hiệu đọc lại cho quầy, lớp quay
+      summary: Tín hiệu đọc lại cho quầy hoặc chủ quán, lớp quay_hoac_chu_quan
       description: >-
         SSE hello ngay khi nối, changed sau COMMIT, heartbeat mỗi 10 giây.
         data là JSON chỉ có read_at từ database. Nhận hello/changed thì đọc lại đường kéo; không replay sự kiện.
@@ -2235,7 +2235,7 @@ paths:
       operationId: counterQueue
       tags:
         - nhandon
-      summary: Đơn chờ xác nhận, đơn ngoài bàn đang làm và trạng thái nhận đơn, lớp quay
+      summary: Đơn chờ xác nhận, đơn ngoài bàn đang làm và trạng thái nhận đơn, lớp quay_hoac_chu_quan
       description: >-
         Không nhận thân yêu cầu. Mốc từ database; không tự mở lại khoảng mù khi luồng nối lại.
       responses:
@@ -3532,6 +3532,7 @@ paths:
       operationId: approveOrder
       tags:
         - don
+      summary: Quầy hoặc chủ quán duyệt đơn chờ xác nhận
       parameters:
         - name: sales_order_id
           in: path
@@ -3558,6 +3559,7 @@ paths:
       operationId: rejectOrder
       tags:
         - don
+      summary: Quầy hoặc chủ quán từ chối đơn chờ xác nhận
       parameters:
         - name: sales_order_id
           in: path
@@ -4155,6 +4157,7 @@ paths:
       operationId: markServed
       tags:
         - sanxuat
+      summary: Quầy hoặc chủ quán ghi đã đem ra cho một bàn
       requestBody:
         required: true
         content:

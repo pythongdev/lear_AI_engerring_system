@@ -1174,7 +1174,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Tín hiệu đọc lại cho quầy, lớp quay
+         * Tín hiệu đọc lại cho quầy hoặc chủ quán, lớp quay_hoac_chu_quan
          * @description SSE hello ngay khi nối, changed sau COMMIT, heartbeat mỗi 10 giây. data là JSON chỉ có read_at từ database. Nhận hello/changed thì đọc lại đường kéo; không replay sự kiện.
          */
         get: operations["counterEvents"];
@@ -1194,7 +1194,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Đơn chờ xác nhận, đơn ngoài bàn đang làm và trạng thái nhận đơn, lớp quay
+         * Đơn chờ xác nhận, đơn ngoài bàn đang làm và trạng thái nhận đơn, lớp quay_hoac_chu_quan
          * @description Không nhận thân yêu cầu. Mốc từ database; không tự mở lại khoảng mù khi luồng nối lại.
          */
         get: operations["counterQueue"];
@@ -1761,6 +1761,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /** Quầy hoặc chủ quán duyệt đơn chờ xác nhận */
         post: operations["approveOrder"];
         delete?: never;
         options?: never;
@@ -1777,6 +1778,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /** Quầy hoặc chủ quán từ chối đơn chờ xác nhận */
         post: operations["rejectOrder"];
         delete?: never;
         options?: never;
@@ -2120,6 +2122,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /** Quầy hoặc chủ quán ghi đã đem ra cho một bàn */
         post: operations["markServed"];
         delete?: never;
         options?: never;

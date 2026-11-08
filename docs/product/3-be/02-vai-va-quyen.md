@@ -73,6 +73,12 @@ không phiên bị `unauthenticated`. Miền `tongquan` không có cửa ghi.
 `GET /service-board` thuộc lớp `quay_hoac_chu_quan` theo ADR-124.
 `authz.Read` kiểm trước mọi nguồn: chủ quán hoặc người đang đứng quầy được đọc;
 người ngoài quầy không phải chủ quán bị `not_on_counter_duty`, không phiên bị `unauthenticated`.
+
+**Sửa đổi T-308 (2026-11-06, chủ repo):** `GET /counter/events` và `GET /counter/queue`
+thuộc lớp `quay_hoac_chu_quan`. Chủ quán mở trang Vận hành giữ chính luồng nhận đơn;
+người ngoài quầy không phải chủ quán vẫn bị từ chối. `don/duyet`, `don/tu_choi`
+và `sanxuat/ra_ban` cũng dùng lớp này. Huỷ đơn đã xác nhận và các cửa tiền của
+quầy không đổi lớp. Xem ADR-097 *Sửa đổi 2026-11-06*.
 Trả từng phiên bàn, tiền đơn, tiền đã ra, bàn trống và lịch sử đem ra; không thêm cửa ghi.
 
 **Cửa đọc nhắc kiểm tra nguyên liệu (T-201, 2026-10-19, phiếu Claude):**
@@ -147,10 +153,10 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `menu/ngung_ban` | `chu_quan` | `architecture.md` §6.1 · `03-lat-cat.md` §3.3.4 |
 | `menu/ban_lai` | `chu_quan` | ADR-126 *Sửa đổi 2026-11-04* |
 | `menu/moc_ngung_ban` | `theo_cua_goi` | ADR-126 *Sửa đổi 2026-11-04* |
-| `don/duyet` | `quay` | `05-vong-doi.md` §5.2 — quầy duyệt đơn chờ xác nhận |
+| `don/duyet` | `quay_hoac_chu_quan` | `05-vong-doi.md` §5.2; T-308 — quầy hoặc chủ quán duyệt đơn chờ xác nhận |
 | `don/nha_hen` | `quay` | Phiếu T-142 (thiết kế ADR-091, Claude, 2026-10-09); `shop-facts.md` §5.2 điểm 5 — máy POS nhả đơn điện thoại tới giờ nhắc |
 | `don/roi_quan` | `quay` | `05-vong-doi.md` §5.2 dòng *Đang thực hiện → Đang giao*; `shop-facts.md` §6.7 (U-023) |
-| `don/tu_choi` | `quay` | `05-vong-doi.md` §5.2 — quầy từ chối đơn chờ xác nhận |
+| `don/tu_choi` | `quay_hoac_chu_quan` | `05-vong-doi.md` §5.2; T-308 — quầy hoặc chủ quán từ chối đơn chờ xác nhận |
 | `phien/tinh_tien` | `quay` | `05-vong-doi.md` §5.3 — quầy tính tổng phiên |
 | `hoadon/nhap_bu` | `quay_hoac_chu_quan` | ADR-099 và sửa đổi 2026-10-13; nhập bù sổ giấy |
 | `hoadon/dong` | `quay` | `05-vong-doi.md` §5.3 — đóng phiên đã thu hoặc cho nợ |
@@ -175,7 +181,7 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `sanxuat/no_don` | `theo_cua_goi` | `05-vong-doi.md` §5.2 · §5.4; ADR-090 — nổ cùng giao dịch duyệt hoặc tạo đơn đã xác nhận |
 | `sanxuat/bam_me` | `quay` | `shop-facts.md` §5.4; `05-vong-doi.md` §5.4; ADR-090 — POS bấm mẻ, bếp chỉ đọc |
 | `sanxuat/lui_me` | `quay` | `shop-facts.md` §5.4; `05-vong-doi.md` §5.4; ADR-090 — quầy lùi mẻ |
-| `sanxuat/ra_ban` | `quay` | `05-vong-doi.md` §5.4; `shop-facts.md` §5.4 (S-5, 2026-10-09); ADR-090 điểm 4 — số cái từng thứ cho một bàn |
+| `sanxuat/ra_ban` | `quay_hoac_chu_quan` | `05-vong-doi.md` §5.4; `shop-facts.md` §5.4 (S-5, sửa đổi 2026-11-06); ADR-090 điểm 4 — số cái từng thứ cho một bàn |
 | `sanxuat/chuyen` | `quay` | `shop-facts.md` §5.4; ADR-090 điểm 7 — quầy chọn đích; gồm đơn lẻ là suy luận của phiên |
 | `sanxuat/ghi_lam_sai` | `quay` | `shop-facts.md` §5.4; ADR-077; ADR-090 — quầy quyết không có nơi nhận |
 | `sanxuat/huy_ghi_lam_sai` | `quay` | ADR-077; ADR-090 điểm 6 — quầy huỷ ghi chú là suy luận của phiên |

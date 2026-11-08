@@ -158,7 +158,7 @@ không đổi cửa. Câu Telegram của `F-070` thành **U-080** trước khi m
   77 tập đối chiếu rỗng; lỗi cài tách hoá đơn bị bắt. Bước 10 Scenario 2 nay đi thẳng 200, ghi đã ra bàn khi rời quán (2026-11-04, T-223, theo phiếu Claude); ba tập `I-008` bỏ qua có lý do (§1.4).
 - [x] **9. Mỗi phụ thuộc ngoài đã bị cắt thử** — sáu dòng PT ở [`09-realtime-du-phong.md`](09-realtime-du-phong.md),
   lần chạy 2026-10-13: PT-1 `TestI008_KhongLuongQuayThiBaKenhTuBamBiTuChoi` · `TestI008_CoLuongQuayThiNhanDon` ·
-  `TestI008_NhieuLuongQuayVaTuChoiSaiLop` PASS; PT-2 `TestI008_PT2_DatabaseMatVaNoiLai` PASS; PT-3 `TestI012_CuaTienCanNguoiCoTen`
+  `TestI008_NhieuLuongQuayChuQuanVaTuChoiSaiLop` PASS (T-308); PT-2 `TestI008_PT2_DatabaseMatVaNoiLai` PASS; PT-3 `TestI012_CuaTienCanNguoiCoTen`
   PASS (và không route ngân hàng tự ghi tiền); PT-4 `TestI021_MotNgayBanGiaQuaCuaRa0dLech` · `TestI021_CaiMotLanThuSaiDoiSoatKeu`
   PASS; PT-5 `TestI008_MatDayVanDocDuocDonDaNhan` PASS; PT-6 `TestYC08_KhaiSoGiayQuaCua` · `TestI014_KyNgayConLuotGiayBiTuChoi`
   · `TestI014_KhaiSoChenLucKyNgay` PASS, và từ `T-174` đường bù trọn vẹn `TestI021_NgayGiayNhapDuRa0dLech` PASS.

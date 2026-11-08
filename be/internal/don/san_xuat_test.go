@@ -1215,7 +1215,9 @@ func TestI012_CuaSanXuatPhaiDungQuay(t *testing.T) {
 			"dining_table_id": ban, "items": []map[string]any{{"station_code": m.tram, "menu_component_id": m.thanhPhan,
 				"filling_option_ids": append([]int64{}, m.nhan...), "quantity": 1}}}
 		canMa(t, c.post(t, p.path, bep, body), http.StatusForbidden, "not_on_counter_duty", "")
-		canMa(t, c.post(t, p.path, c.chu, body), http.StatusForbidden, "not_on_counter_duty", "")
+		if p.path != "/served-marks" { // T-308: riêng đã ra bàn mở cho chủ quán.
+			canMa(t, c.post(t, p.path, c.chu, body), http.StatusForbidden, "not_on_counter_duty", "")
+		}
 		canMa(t, c.post(t, p.path, 0, body), http.StatusUnauthorized, "unauthenticated", "")
 	}
 	if s := c.anhSanXuat(t, v...) + " | " + c.trangThaiDon(t, don); s != anh {
@@ -1253,8 +1255,8 @@ func TestQC13_TramBepKhongCoCuaGhi(t *testing.T) {
 			continue
 		}
 		lop := maTran[f[3]]
-		if lop != "quay" && lop != "theo_cua_goi" {
-			t.Fatalf("ô %s %s %s thuộc cửa %s lớp %q — ghi tiến độ chỉ ở quầy (architecture.md §1.1)", f[0], f[1], f[2], f[3], lop)
+		if lop != "quay" && lop != "theo_cua_goi" && !(f[3] == "sanxuat/ra_ban" && lop == "quay_hoac_chu_quan") {
+			t.Fatalf("ô %s %s %s thuộc cửa %s lớp %q — ghi tiến độ chỉ ở quầy hoặc cửa ra bàn của chủ quán (T-308)", f[0], f[1], f[2], f[3], lop)
 		}
 		o = append(o, f[0]+" "+f[1]+" "+f[2]+" → "+f[3]+" ("+lop+")")
 	}

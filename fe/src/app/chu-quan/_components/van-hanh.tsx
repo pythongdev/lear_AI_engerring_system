@@ -1,10 +1,11 @@
 "use client";
 
 import { Fragment, useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { tien } from "@/components/shared/dong-mon-da-ghi";
+import { DongMonDaGhi, tien } from "@/components/shared/dong-mon-da-ghi";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { usePhien } from "@/lib/auth/session";
 import { useApi } from "@/lib/api/provider";
@@ -13,7 +14,7 @@ import { loiRaBan } from "@/app/quay/san-xuat/du-lieu-ra-ban";
 import { call, type ApiFailure, type ApiResult } from "@/lib/api/client";
 import { BaoMatKetNoi, TinHieuProvider } from "@/lib/realtime/tin-hieu";
 import { cotVanHanh, tenCot, type CotVanHanh, type ThuVanHanh } from "./cot-van-hanh";
-import { useBangVanHanh, loiVanHanh, type BangVanHanh } from "./du-lieu-van-hanh";
+import { useBangVanHanh, useHangChoChuQuan, loiVanHanh, type BangVanHanh } from "./du-lieu-van-hanh";
 
 type Phien = BangVanHanh["sessions"][number];
 const nhanBan = (p: Phien) => p.tables.map((b) => b.label).join(" + ");
@@ -161,7 +162,7 @@ function BangThieuTheoBan({ serving, chon, cot, demRa }: { serving: Phien[]; cho
         <td className="tien">{tien(tongTien(serving, "served_amount_vnd"))}{tongTien(chon, "served_amount_vnd") > 0 && <span className="them">+{tien(tongTien(chon, "served_amount_vnd"))}</span>}</td>
       </tr></tfoot>
     </table></VungBang><p className="text-sm">* nhiều nhân</p>
-    <p>{demRa ? "Bấm vào một ô số để báo đã đem ra." : "Chỉ người đang đứng quầy ghi được đem ra. Bạn chưa đứng quầy nên các ô chỉ để xem."}</p>
+    <p>{demRa ? "Bấm vào một ô số để báo đã đem ra." : "Chỉ chủ quán hoặc người đang đứng quầy ghi được đem ra. Các ô này chỉ để xem."}</p>
     {demRa && serving.filter((p) => p.tables.length > 1).map((p) => <p key={p.table_session_id}>{nhanBan(p)}: bàn ghép, ghi đem ra ở màn Sản xuất của quầy.</p>)}
   </section>;
 }
@@ -240,16 +241,61 @@ function NoiDung({ data, demRa }: { data: BangVanHanh; demRa?: (chon: ChonDemRa)
   </>;
 }
 export function TrangVanHanh() {
-  return <TinHieuProvider duong="/production-board/events">
+  return <TinHieuProvider duong="/counter/events">
     <BaoMatKetNoi />
     <NoiDungTrangVanHanh />
   </TinHieuProvider>;
 }
 
+function DonChoChuQuan({ bang }: { bang?: BangVanHanh }) {
+  const hang = useHangChoChuQuan();
+  const api = useApi();
+  const qc = useQueryClient();
+  const chot = useRef(false);
+  const [dangGhi, setDangGhi] = useState(false);
+  const [tuChoi, setTuChoi] = useState<number | null>(null);
+  const [bao, setBao] = useState("");
+  const tenBan = (id: number | null) => bang?.sessions.flatMap((p) => p.tables).find((b) => b.dining_table_id === id)?.label ?? (id == null ? "" : `#${id}`);
+  async function gui(loai: "duyet" | "tu-choi" | "mo-lai", id?: number) {
+    if (chot.current) return;
+    chot.current = true; setDangGhi(true); setBao("");
+    try {
+      const r = loai === "mo-lai" ? await call(api.POST("/shop-blind/reopening"))
+        : loai === "duyet" ? await call(api.POST("/orders/{sales_order_id}/approval", { params: { path: { sales_order_id: id! } } }))
+          : await call(api.POST("/orders/{sales_order_id}/rejection", { params: { path: { sales_order_id: id! } } }));
+      if (r.ok) {
+        setTuChoi(null);
+        setBao(loai === "mo-lai" ? "Đã mở lại nhận đơn." : `Đã ${loai === "duyet" ? "duyệt" : "từ chối"} đơn ${id}.`);
+      } else setBao(loiVanHanh(r.failure));
+      await qc.invalidateQueries();
+    } finally { chot.current = false; setDangGhi(false); }
+  }
+  return <section aria-label="Đơn chờ chủ quán xử lý" className={khung}>
+    <h2 className="text-xl font-semibold">Đơn chờ xác nhận</h2>
+    {bao && <p role="status">{bao}</p>}
+    {hang.isPending && <p role="status">Đang đọc đơn chờ…</p>}
+    {hang.isError && <p role="alert">Chưa đọc được đơn chờ. {loiVanHanh(hang.error as unknown as ApiFailure)} <Button variant="outline" onClick={() => void hang.refetch()}>Đọc lại đơn chờ</Button></p>}
+    {hang.data?.paused_since && <p role="alert">Quán đang tạm dừng nhận đơn từ {gio(hang.data.paused_since)}.</p>}
+    {hang.data?.blind_since && <div role="alert" className="space-y-2"><p>Quán đang không thấy đơn từ {gio(hang.data.blind_since)}. Cần người bấm mở lại trước khi khách đặt món.</p><Button disabled={dangGhi} onClick={() => void gui("mo-lai")}>Mở lại nhận đơn</Button></div>}
+    {hang.data?.orders.length === 0 && <p>Không có đơn chờ xác nhận.</p>}
+    <div className="grid gap-2 sm:grid-cols-2">{hang.data?.orders.map((don) => <article key={don.sales_order_id} aria-label={`Đơn ${don.sales_order_id}`} className="rounded-lg border border-[var(--vh-line)] p-3">
+      <h3 className="font-semibold">Đơn {don.sales_order_id} · {don.channel_code === "qr_table" ? `Bàn ${tenBan(don.dining_table_id)}` : don.channel_code === "delivery" ? "Giao tận nơi" : "Khách đến lấy"}</h3>
+      <p>Nhận lúc {gio(don.created_at)}</p>
+      {don.customer_phone && <p>Số liên hệ: {don.customer_phone}</p>}
+      <DongMonDaGhi lines={don.lines} total={don.total_vnd} />
+      <div className="flex gap-2"><Button disabled={dangGhi} onClick={() => void gui("duyet", don.sales_order_id)}>Duyệt đơn {don.sales_order_id}</Button><Button variant="outline" disabled={dangGhi} onClick={() => setTuChoi(don.sales_order_id)}>Từ chối đơn {don.sales_order_id}</Button></div>
+    </article>)}</div>
+    <Dialog open={tuChoi !== null} onOpenChange={(open) => { if (!open && !dangGhi) setTuChoi(null); }}><DialogContent className="trang-van-hanh vh-dialog" showCloseButton={false}>
+      <DialogTitle>Từ chối đơn {tuChoi}</DialogTitle><DialogDescription>Đơn chưa xác nhận sẽ bị huỷ. Bạn có muốn tiếp tục?</DialogDescription>
+      <div className="flex gap-2"><Button disabled={dangGhi} onClick={() => void gui("tu-choi", tuChoi!)}>Xác nhận từ chối</Button><Button variant="outline" disabled={dangGhi} onClick={() => setTuChoi(null)}>Giữ đơn</Button></div>
+    </DialogContent></Dialog>
+  </section>;
+}
+
 function NoiDungTrangVanHanh() {
   const query = useBangVanHanh();
   const phien = usePhien();
-  const duocGhi = !phien.isError && !!phien.data?.ok && phien.data.data.counter_duty_id != null;
+  const duocGhi = !phien.isError && !!phien.data?.ok && (phien.data.data.is_owner || phien.data.data.counter_duty_id != null);
   const [chonDemRa, setChonDemRa] = useState<ChonDemRa | null>(null);
   const [ketQua, setKetQua] = useState("");
   // Lề âm bù khoảng đệm p-6 của khung chung dùng cho cả quầy và trạm; không lề âm trên vì thanh điều hướng nằm ngay trên.
@@ -258,6 +304,7 @@ function NoiDungTrangVanHanh() {
     <Button variant="outline" disabled={query.isFetching} onClick={() => void query.refetch()}>Đọc lại</Button>
     {query.isPending && <p role="status">{query.fetchStatus === "paused" ? "Đang chờ kết nối." : "Đang đọc tình hình bàn…"}</p>}
     {query.isError && <Alert className="vh-alert" role="alert"><AlertDescription>Chưa đọc được tình hình bàn. {loiVanHanh(query.error as unknown as ApiFailure)}{query.data && ` Đang hiện bản đọc trước, lúc ${gio(query.data.read_at)}.`}</AlertDescription></Alert>}
+    <DonChoChuQuan bang={query.data} />
     {query.data && <>{query.isFetching && <p role="status">Đang đọc lại tình hình bàn…</p>}<NoiDung data={query.data} demRa={duocGhi ? (chon) => { setKetQua(""); setChonDemRa(chon); } : undefined} /></>}
     {ketQua && <p role="status" aria-label="Kết quả đem ra">{ketQua}</p>}
     {chonDemRa && duocGhi && <HopDemRa chon={chonDemRa} dong={() => setChonDemRa(null)} bao={setKetQua} docLai={() => { void query.refetch(); }} />}
