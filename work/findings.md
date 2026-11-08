@@ -5209,3 +5209,26 @@ thái cho (D) vào khuôn §2.1 và `scripts/reconcile.sh` (in `NOTE`, không đ
 
 **Status:**
 Open
+
+### F-078 — `TestI034_DatMuc*` của gói `combo` đỏ một lần ở dữ liệu dựng `counter_duty`, chạy lại thì xanh
+
+**Problem:**
+Đo 2026-11-08 (Claude Code, T-310, cây chính): lần `./scripts/gate.sh` thứ nhất đỏ ở `TestI034_DatMucTheoMonCuaCombo` (`be/internal/combo/muc_test.go:112`)
+và `TestI034_DatMucSaiBiTuChoi` (`:168`) với `new row for relation "counter_duty" violates check constraint "counter_duty_ended_after_started_check"`;
+`./scripts/be-check.sh` chạy riêng vài phút trước và lần gate thứ hai ngay sau đều xanh, không file nào của `combo` đổi giữa ba lần. Câu đỏ là
+dữ liệu dựng của `dung` (`be/internal/combo/combo_test.go:131`): `UPDATE shop.counter_duty SET ended_at = now() WHERE ended_at IS NULL` — đỏ nếu
+một ca đang mở có `started_at` sau mốc giao dịch. `be/internal/tongket/http_test.go:79` đã dùng `greatest(now(), started_at + interval '1 second')`
+cho đúng câu này. Mỗi lần `be-check` có database riêng và chạy tuần tự (`-p 1`), nên chưa rõ ca mở nào có mốc sau; **nguyên nhân chưa xác định**.
+
+**Impact:**
+Gate đỏ ở test không liên quan diff; phiên dễ đi tìm lỗi trong việc của mình (cùng họ F-063).
+
+**Decision / Fix:**
+Chưa sửa. Gặp lại: chạy lại một lần trước khi tìm trong diff, ghi ngày vào đây. Cách sửa ứng viên (task L1 riêng, Claude giao): dựng như
+`tongket` — `greatest(now(), started_at + interval '1 second')` — sau khi tìm được ca mở nào có mốc sau.
+
+**Related task:**
+`T-310`
+
+**Status:**
+Open
