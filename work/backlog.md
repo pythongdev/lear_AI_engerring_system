@@ -97,7 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [x] T-311 **Khách đặt món bị từ chối mà không thấy lời báo** — L1, xong 2026-11-08; lời báo của phiếu khách chuyển xuống ngay trên nút đặt, câu ngoài giờ nói rõ đơn chưa gửi; Codex làm, Claude duyệt, test 42/42 và gate đạt · [chi tiết](#t-311)
+- [x] CHAT-02 **Lượt ba: thẻ lệnh ghi chưa có thiết kế nên CHAT-10 chưa giao được** — L3, xong 2026-11-08; Claude soạn ADR-140 (thẻ chỉ là đề xuất, người bấm gọi đúng cửa màn tay, không đường ghi mới, model không điền người), chủ repo chọn *"Duyệt, giao Codex làm"*; thêm `I-044` · [mô tả](backlog_CHAT.md#chat-02)
 
 - [x] T-306 **Đơn QR mới hiện ngay trên trang Vận hành đang mở** — L1, xong 2026-11-06; nhận tín hiệu sau khi khách đồng ý đặt món và đọc lại bảng từ backend; test 17/17 và gate đạt · [chi tiết](#t-306)
 
@@ -562,25 +562,6 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
-
-<a id="t-311"></a>
-### T-311 — Khách đặt món bị từ chối mà không thấy lời báo
-
-Chủ repo báo 2026-11-08: đặt món ở `/ban/3` nhưng `/chu-quan/van-hanh` không hiện đơn. Claude đo cùng ngày: database dev chỉ có một đơn, đặt 06:34 rồi huỷ; gửi thử một lượt QR bàn 3 lúc 17:07 qua Next ⇒ HTTP 409 `outside_selling_hours` (`be/internal/ngayban/sql/ngoai_gio.sql`, giờ bán 06:00–11:00, `master_plan/shop-facts.md` §6 quy tắc 8), nên không đơn nào được tạo. Trang Vận hành không hỏng. Cái hỏng là `PhieuKhach` đặt lời báo (`loi`, `bao`) ngay dưới tiêu đề, trên đầu một trang menu dài, trong khi khách bấm *Đồng ý đặt món* ở cuối trang, nên lời từ chối không lọt vào mắt; câu ngoài giờ cũ cũng không nói đơn chưa gửi. Chủ repo chọn *"Sửa chỗ hiện lỗi"* và *"Nói rõ đơn chưa gửi"*; câu mới ghi ở shop-facts §6 quy tắc 8. Mức **L1**: chỉ đổi chỗ hiện và chữ của lời báo; không đổi API, giá, dữ liệu, luật giờ bán.
-
-Ngoài phạm vi, ghi để không mất: shop-facts §6 quy tắc 8 nói web **khoá nút đặt** ngoài giờ bán, nhưng hợp đồng chưa có trường nào cho khách biết giờ bán trước khi gửi, nên nút hiện chỉ bị từ chối sau khi bấm. Làm phần khoá nút cần đổi hợp đồng API (một task riêng, L2); FE không tự tính giờ bán bằng đồng hồ máy khách.
-
-Acceptance viết trước sửa:
-
-- A1 — Ở cả `/ban/<mã>` và `/dat-mon` (cùng `PhieuKhach`), lời từ chối hay chưa rõ kết quả (`role="alert"`) và lời đã gửi (`role="status"`) hiện ngay trên nút đặt (`CartBottomBar`), không còn dưới tiêu đề. Lời lỗi đọc menu giữ chỗ cũ.
-- A2 — `outside_selling_hours` hiện đúng *"Đơn chưa được gửi. Quán mở cửa 6h–11h sáng"*; các câu tạm dừng, mất kết nối, quét lại mã giữ nguyên văn. Phiếu giữ nguyên sau từ chối như cũ.
-- A3 — Test `khach-qr.test.tsx` và `dat-mon.test.tsx` kiểm câu mới và kiểm lời báo nằm cùng khối với nút đặt; `./scripts/gate.sh` đạt.
-
-Phạm vi (`work/scope/T-311.txt`): `fe/src/app/ban/_components/phieu-khach.tsx`, `fe/src/app/ban/_components/loi-khach.ts`, `fe/src/app/ban/mau-khach.ts`, `fe/src/app/ban/khach-qr.test.tsx`, `fe/src/app/dat-mon/dat-mon.test.tsx`, `work/backlog.md`, `master_plan/shop-facts.md`. Thi công: Codex trên cây chính, nhánh `P4A-01`, vì `phieu-khach.tsx` đang có hunk chưa commit của việc khác (hộp xác nhận mới) mà worktree từ `HEAD` không thấy; Claude dừng sửa trong lúc Codex làm. Duyệt: Claude, chưa duyệt. Lúc commit phải tách hunk T-311 khỏi hunk hộp xác nhận trong `phieu-khach.tsx`.
-
-Bàn giao 2026-11-08 (thực hiện: Codex, duyệt: Claude): `PhieuKhach` đặt `bao` (`role="status"`) và `loi` (`role="alert"`) trong `<form>`, ngay trước `CartBottomBar`; lời lỗi đọc menu và lỗi tính tổng giữ chỗ cũ. `CAU_NGOAI_GIO` ở `loi-khach.ts` và `mau-khach.ts` là câu mới; hai file test ghi nguyên văn câu ấy và kiểm `nextElementSibling` của lời báo là nút đặt (hoặc *Gửi lại*) cho ca đã gửi, chưa rõ kết quả và từng lời từ chối. Codex chạy test mới trên code cũ: đỏ (`2 failed`, `6 failed | 13 passed`). Claude đọc diff thật (hunk hộp xác nhận của việc khác giữ nguyên), tự chạy `npx vitest run src/app/ban src/app/dat-mon` ⇒ 42/42, và `./scripts/gate.sh` exit 0: Gate 3, 1b–1h, be-check PostgreSQL thật, verify PASS; db SKIP vì không đổi database. Không lỗi phải gửi lại Codex. Chưa thử bằng tay trên trình duyệt.
-
-[↑ đầu file](#top)
 
 <a id="t-310"></a>
 ### T-310 — Nhà giả của server chưa gọi được công cụ đọc nội bộ nên chưa diễn được biên bản chỉ đọc

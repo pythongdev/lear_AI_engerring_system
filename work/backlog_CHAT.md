@@ -121,8 +121,8 @@ thiết kế.
 **Lượt hai — xong 2026-11-04, ADR-139 (phần chỉ đọc)**
 
 - [x] Có ánh xạ công cụ → cửa/lớp cho phần đọc (ADR-139 điểm 9); danh sách công cụ đọc của người làm chốt ở phiếu CHAT-08.
-- [ ] Thiết kế thẻ ghi rõ gắn phiên/thân lệnh, đổi nội dung phải xác nhận lại, quyền kiểm lại, chống bấm lặp hoặc từ
-      chối gửi lại. — **để lượt ba**, trước CHAT-10.
+- [x] Thiết kế thẻ ghi rõ gắn phiên/thân lệnh, đổi nội dung phải xác nhận lại, quyền kiểm lại, chống bấm lặp hoặc từ
+      chối gửi lại. — **lượt ba, xong 2026-11-08, ADR-140**.
 - [x] Có giới hạn dữ liệu gửi ngoài, lịch sử/log, hạn chờ, token/lượt và trần tháng; bộ đếm cần chỗ cất mới nên có lát
       DB `CHAT-35` trước BE (ADR-139 điểm 2 · 3 · 5 · 6).
 - [x] Thiết kế cách lọc dữ liệu cá nhân khỏi kết quả công cụ trước khi gửi hãng (G6), và chốt ngưỡng *quá cũ*
@@ -137,6 +137,11 @@ liệu.
 Ghi bổ sung 2026-11-03, T-284.
 2026-11-04, Claude thiết kế lượt hai (ADR-139, phần chỉ đọc), chủ repo chọn *"Duyệt, giao Codex làm"*; mở `U-118`, thêm
 lát `CHAT-35`. Chưa có người duyệt thứ ba. Thẻ lệnh ghi còn lại cho lượt ba.
+2026-11-08, Claude thiết kế lượt ba (ADR-140, **Đề xuất**): chủ repo yêu cầu *"tiếp tục yêu cầu codex làm bạn kiểm tra"*, nhưng `CHAT-10` còn chờ dòng
+thẻ ghi ở trên, nên Codex chưa nhận được việc nào của lane. Chờ chủ repo duyệt; duyệt xong Claude sửa Acceptance dự kiến của `CHAT-10` · `CHAT-11`
+theo ADR-140 điểm 9, ghi `I-044`, viết test trước rồi mới giao `CHAT-10`.
+2026-11-08, chủ repo chọn *"Duyệt, giao Codex làm"*: ADR-140 **Đã chốt**, `I-044` ghi ở `quality/invariants.md`, Acceptance của `CHAT-10` · `CHAT-11`
+chia lại theo điểm 9. Chưa có người duyệt thứ ba.
 
 [↑ đầu file](#top)
 
@@ -493,13 +498,15 @@ người/model gửi role.
 
 **Acceptance dự kiến:**
 
-- [ ] Gọi model và tạo đề xuất không đổi dữ liệu nghiệp vụ; chưa có thẻ được bấm thì service ghi không chạy.
-- [ ] Thẻ gắn đúng phiên, cửa và thân lệnh; thay đối tượng/số/lý do sau xác nhận bị từ chối hoặc phải xác nhận lại.
-- [ ] Rời quầy/khoá tài khoản/đổi phiên giữa hai mốc khiến thực thi bị từ chối, người vào vết là người thật bấm.
-- [ ] Bấm lặp/mất phản hồi không tạo tác dụng đôi theo thiết kế từng cửa; cửa chưa chống lặp không được gửi lại tự
-      động.
-- [ ] Công cụ không có trong danh sách backend bị từ chối dù model trả tên hợp lệ; không phát tín hiệu khi giao dịch
-      lùi.
+*Chia lại 2026-11-08 theo ADR-140 điểm 9 (Claude). Ba dòng cũ — thẻ gắn phiên và thân, đổi phiên giữa hai mốc, bấm lặp —
+chuyển sang `CHAT-11` và test sẵn có của từng cửa, vì chat không có đường thực thi riêng (ADR-140 điểm 1).*
+
+- [ ] Model gọi công cụ ghi thì không service ghi nào chạy, chỉ hàm dựng đề xuất của công cụ ấy; lượt dừng ngay, không
+      gọi model thêm, chữ trả lời là câu cố định nói chưa ghi (`I-044`).
+- [ ] Tên công cụ ghi ngoài danh sách của phiên bị từ chối như công cụ đọc; đề xuất sai hình (thân hay tham số đường
+      không phải đối tượng JSON, thiếu `operationId`) hay hàm dựng lỗi thì không có đề xuất.
+- [ ] `askChat` trả trường đề xuất đúng hình ADR-140 điểm 3 (hợp đồng đổi phiên bản); lượt không đề xuất trả trường ấy rỗng.
+- [ ] Danh sách công cụ ghi của bản chạy rỗng với mọi phiên, kể cả chủ quán; công cụ ghi thử chỉ có trong test.
 
 **Verify:** be-check với service ghi thử trong test, ca quyền đổi giữa hai mốc, sửa thẻ, lặp và giao dịch lùi; Gate
 1f/1g; gate.
@@ -531,6 +538,9 @@ ra”.
 - [ ] Mất phản hồi hiện chưa rõ kết quả, giữ thẻ để đọc lại; không gửi lại ngầm.
 - [ ] Ghi xong đọc lại lỗi nói rõ đã ghi nhưng chưa đọc lại; đổi người loại thẻ cũ.
 - [ ] Các nhóm BE sau chỉ dùng thẻ chung nếu diễn đủ trường theo hợp đồng; thiếu trường phải chặn mở nhóm.
+- [ ] *Thêm 2026-11-08, ADR-140 điểm 5 · 6 · 9:* bấm gọi đúng hàm API sinh sẵn của `operationId`, thân gửi bằng thân hiện;
+      đổi một trường là thẻ mới; trường *cần chọn* còn trống thì không nút ghi; lượt mới, đóng chat, đổi người, quá 10 phút
+      loại thẻ; cửa có `submission_code` dùng lại dấu do FE sinh, cửa không có thì bấm một lần khoá thẻ.
 
 **Verify:** fe-check trạng thái đề xuất/chờ/từ chối/chưa rõ/đã ghi, bàn phím và đổi phiên; diễn với BE của CHAT-10;
 gate.

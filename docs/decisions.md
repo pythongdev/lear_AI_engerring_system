@@ -8741,3 +8741,66 @@ chiếu qua danh sách trường được phép (điểm 7(a)): bảng phục v�
 `getSaleDaySummary` (danh sách nhân viên, doanh thu ngày), `listAssignedTasks` · `listMyAssignedTasks` (chữ tự do do người gõ, có thể mang
 tên — chỗ hở `U-118`), `counterStationJobs` (trùng số của bảng trạm), `getSupplyStock` (tổng quan đã có phần thiếu nguyên liệu),
 `getDiningTables` (bảng phục vụ đã có bàn trống). Bất biến `I-043`.
+
+## ADR-140 — Nhánh chat có model, phần ghi: thẻ chỉ là đề xuất, người bấm gọi đúng cửa màn tay
+
+**Status:** **Đã chốt** 2026-11-08 — Claude Code thiết kế (CHAT-02 lượt ba, mức **L3**), chủ repo chọn *"Duyệt, giao Codex làm"* trong câu hỏi có sẵn
+phương án. Phủ `CHAT-10`, `CHAT-11` và khung chung cho nhóm `CHAT-15`…`CHAT-25`; **không mở nhóm ghi nào**. Mọi điểm dưới đây là thiết kế của phiên, không phải
+lời quán; các số có nhãn *phiên chọn* đổi bằng sửa ADR này.
+
+**Context:** ADR-136 điểm 2–4 (trợ lý chỉ gọi cửa đã có; lời model không tự ghi; người bấm là người vào vết); ADR-139 điểm 2 (server không
+giữ hội thoại), điểm 7 (dữ liệu gửi ra), điểm 9 (lượt đọc không có công cụ ghi); sổ CHAT *Acceptance chung* G2 · G3; `master_plan/shop-facts.md`
+§8.11 (việc chạm tiền không qua chat). Đo 2026-11-08 trên `0411354`: hợp đồng có 108 đường POST · PUT · DELETE, chỉ bảy cửa có
+`submission_code` (`createLeaveNotice`, `sendStationMessage`, `sendStationMessageToCounter`, `createOnlineOrder`, `createPhoneOrder`,
+`createTableOrder`, `createQrOrder`); `askChat` trả `answer` · `sources` · `degraded_reason`, chưa có chỗ cho một đề xuất.
+
+**Decision:**
+
+1. **Không có đường thực thi của chat.** Bấm *Xác nhận* trên thẻ gọi **chính cửa màn tay** — cùng `operationId`, cùng lớp gọi API sinh từ
+   hợp đồng — dưới cookie phiên đang mở. Backend không thêm cửa ghi, lớp quyền hay bảng nào; quyền, luật, vết, tín hiệu SSE và lùi giao dịch là
+   của cửa ấy, y như bấm trên màn tay (ADR-082, ADR-085). Người vào vết là người của phiên lúc bấm.
+2. **Công cụ ghi chỉ sinh đề xuất.** Model gọi một công cụ ghi thì backend không chạy service ghi nào. Nó (a) kiểm tên có trong danh sách của
+   phiên — tên ngoài danh sách bị từ chối như công cụ đọc (`I-041`); (b) kiểm hình tham số theo khuôn của công cụ; (c) đổi tham chiếu model nói
+   (số bàn, số đơn, tên món — thứ model được thấy theo ADR-139 điểm 7) thành id bằng service đọc dưới chính phiên, trong giao dịch chỉ đọc của
+   riêng nó; (d) trả đề xuất. Lượt **dừng ngay**, không gọi model thêm; chữ trả lời là một câu cố định nói chưa có gì được ghi, để model không có
+   chỗ nói *đã ghi*. Một lượt nhiều nhất một đề xuất (*phiên chọn*). Đề xuất và kết quả bấm không quay lại model ở lượt sau (lịch sử chỉ có
+   chữ, ADR-139 điểm 2).
+3. **Hình đề xuất.** `ChatTurnResponse` thêm một trường đề xuất (rỗng, hoặc một đối tượng): tên công cụ, `operationId` của cửa, tham số đường,
+   thân lệnh đúng khuôn của cửa ấy, và các dòng hiện cho người đọc (nhãn · giá trị · nguồn · `read_at`) do backend dựng từ lần đọc ở điểm 2(c).
+   Thẻ hiện *người bấm* lấy từ phiên ở FE, không từ đề xuất. Tên trường và phiên bản hợp đồng Claude chốt ở phiếu `CHAT-10`.
+4. **Trường về người không do model điền.** Thân lệnh cần một người (người nhận việc, người được ghi đào tạo…) thì đề xuất để trống trường ấy và
+   đánh dấu *cần chọn*; thẻ cho người bấm chọn từ đúng nguồn đọc màn tay dùng. Model không thấy tên hay id người (`I-043`), nên không có cách đúng
+   để nó điền. Thẻ còn trường bắt buộc trống, hoặc tham chiếu không đổi ra đúng một id, thì **không có nút ghi**.
+5. **Thẻ là bản chụp bất biến ở FE.** Thân gửi đi đúng bằng thân hiện trên thẻ. Đổi bất cứ trường nào (kể cả chọn người ở điểm 4) là dựng thẻ mới
+   phải bấm lại, không sửa tại chỗ rồi gửi. Một lúc chỉ một thẻ sống: lượt mới, đóng chat, đổi người, hoặc quá 10 phút từ mốc đọc thì thẻ cũ bị
+   loại (*phiên chọn*). Ràng buộc này **nằm ở FE** và đủ: người bấm vẫn gọi được cửa màn tay với thân bất kỳ bằng quyền của chính mình, nên ký thẻ
+   ở server không chặn thêm ai.
+6. **Gửi lại.** Cửa có `submission_code`: FE sinh dấu khi dựng thẻ (không phải model); bấm lại sau mất phản hồi dùng đúng dấu và thân ấy. Cửa
+   chưa có dấu: bấm một lần là thẻ khoá hẳn; mất phản hồi thì hiện *chưa rõ kết quả* cùng link màn tay để đọc lại; không gửi lại ngầm, không cho
+   bấm lại trên thẻ ấy. Không thêm cơ chế chống lặp nào cho cửa cũ (G3); cửa nào cần đẹp hơn thì thêm dấu ở chính cửa ấy, là việc của cửa.
+7. **Danh sách công cụ ghi theo phiên, mở theo nhóm.** Một công cụ ghi chỉ vào danh sách khi (a) nhóm của nó (`CHAT-15`…`CHAT-25`) đã có phiếu
+   được duyệt, và (b) lớp của người trong phiên qua được lớp của cửa — đọc bằng `authz` lúc dựng danh sách như công cụ đọc. Cửa chạm tiền không
+   bao giờ vào danh sách (§8.11); đổi giá chờ hỏi lại (ADR-136 *Sửa đổi 2026-11-01*). Không phiên và cookie khách không có công cụ ghi của người
+   làm. `CHAT-10` dựng khung với danh sách **rỗng** ở bản chạy; công cụ ghi thử chỉ có trong test.
+8. **Bất biến mới `I-044`:** một lượt chat không đổi dữ liệu nghiệp vụ nào, kể cả khi model gọi công cụ ghi; mọi lần ghi bắt nguồn từ chat đi qua
+   đúng cửa màn tay, do người bấm, dưới phiên lúc bấm. Test hồi quy Claude viết trước `CHAT-10`: nhà giả gọi công cụ ghi thử thì service ghi thử
+   không được gọi, bảng nghiệp vụ không đổi, câu trả lời có đề xuất.
+9. **Acceptance dự kiến của `CHAT-10` · `CHAT-11` chia lại khi duyệt.** `CHAT-10` (BE) chứng minh: không ghi khi model gọi công cụ ghi, tên ngoài
+   danh sách bị từ chối, tham chiếu đổi dưới phiên, hình đề xuất, lượt dừng sau đề xuất. Các dòng *thẻ gắn phiên và thân*, *đổi phiên giữa hai
+   mốc*, *bấm lặp* chuyển sang `CHAT-11` (FE: thân gửi bằng thân hiện, đổi người loại thẻ, cửa không dấu khoá thẻ) và sang test sẵn có của từng
+   cửa (quyền tại mốc giao dịch, `I-012`).
+
+**Why:** ADR-136 đặt tên chat là *mặt mới, không phải đường ghi mới*. Một cửa thực thi riêng cho chat phải chép lại phép chọn service, quyền và
+luật của hàng trăm cửa — đúng họ lỗi `F-001`, ở chỗ đắt nhất. Gọi thẳng cửa màn tay thì mọi test quyền, vết và tín hiệu đã có tự phủ phần ghi
+của chat. Server không giữ hội thoại (ADR-139 điểm 2), nên giữ đề xuất ở server là thêm dữ liệu riêng mà chưa ai yêu cầu.
+
+**Rejected alternatives:** *cửa chung `POST /chat/commands` nhận mã thẻ ký rồi gọi service* — một đường ghi chung cho mọi cửa, Gate 1f mất nghĩa
+*một cửa một việc*, và chữ ký chỉ chặn chính người bấm, người vẫn gọi được cửa màn tay; *bảng đề xuất dùng một lần trong database* — chống lặp tự
+nhiên nhưng cất nội dung có thể mang địa chỉ khách (`CHAT-21`), thêm lát DB và hạn lưu chưa ai yêu cầu; *model điền người theo tên trong câu gõ* —
+trái `I-043` và chỗ hở `U-118`, một tên trùng là giao việc sai người; *cho model chạy tiếp sau đề xuất* — model nói được *đã ghi* khi chưa ghi.
+
+**Consequences:** hợp đồng `askChat` thêm một trường (đổi phiên bản ở `CHAT-10`); một bất biến mới; FE cần bảng `operationId` → hàm gọi API sinh
+sẵn cho từng công cụ ghi được mở (`CHAT-11` dựng khung, mỗi nhóm thêm dòng của nó). Cửa chưa có dấu gửi lại cho trải nghiệm *chưa rõ kết quả*
+thô hơn. Lùi một nhóm: bỏ công cụ khỏi danh sách, không đụng dữ liệu.
+
+**Applies to:** lane `CHAT` · `CHAT-10` · `CHAT-11` · `CHAT-15`…`CHAT-25` · `I-044`.

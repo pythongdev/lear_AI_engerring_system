@@ -1819,3 +1819,19 @@ khoá nào ngoài danh sách được phép. Kịch bản dương: người ngo�
 số của cửa `GET` cùng người. Test hồi quy trong `be/internal/troly/` (`TestI043_*`) viết trước code.
 
 *Viết ở CHAT-08, 2026-11-06, Claude Code.*
+
+### I-044 — Một lượt chat KHÔNG đổi dữ liệu nghiệp vụ nào; mọi lần ghi bắt nguồn từ chat đi qua đúng cửa màn tay, do người bấm, dưới phiên lúc bấm
+
+**Invariant:**
+Thiết kế **ADR-140** điểm 1 · 2 · 7 · 8 (CHAT-02 lượt ba, Claude Code; chủ repo duyệt 2026-11-08). Model gọi một công cụ ghi thì backend chỉ chạy hàm
+dựng đề xuất của công cụ ấy — kiểm hình, đổi tham chiếu bằng service đọc dưới chính phiên — rồi dừng lượt; không service ghi nào chạy, không gọi model
+thêm. Đề xuất chỉ thành một lần ghi khi người bấm *Xác nhận* trên thẻ, và lần ấy là một lời gọi tới chính cửa màn tay của `operationId`, dưới phiên đang
+mở. Danh sách công cụ ghi do backend chọn theo phiên; cửa chạm tiền không bao giờ có trong đó.
+
+**Verification:**
+Kịch bản âm: nhà giả gọi công cụ ghi thử ⇒ hàm dựng chạy đúng một lần với tham số của model, model không được gọi thêm, câu trả lời là câu cố định, sổ gọi
+model chỉ thêm một dòng; tên công cụ ghi ngoài danh sách ⇒ `cong_cu_khong_co`, không đề xuất; đề xuất sai hình hay hàm dựng lỗi ⇒ không đề xuất. Danh
+sách công cụ ghi của bản chạy rỗng với mọi phiên. Kịch bản dương: `askChat` trả đề xuất đúng hình. Test hồi quy trong `be/internal/troly/` (`TestI044_*`)
+viết trước code. Vế FE (thân gửi bằng thân hiện, thẻ khoá) ở `CHAT-11`.
+
+*Viết ở CHAT-02 lượt ba, 2026-11-08, Claude Code.*
