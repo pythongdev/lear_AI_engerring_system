@@ -9,7 +9,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiProvider } from "@/lib/api/provider";
 import { useNhapKhach } from "@/lib/nhap-khach";
 
-import { CAU_MAT_KET_NOI, CAU_NGOAI_GIO, CAU_TAM_DUNG, UUID, clientBackend, coGia, guiDi, serverBackend, type Ghi, type TraLoi } from "../ban/mau-khach";
+import { CAU_MAT_KET_NOI, CAU_TAM_DUNG, UUID, clientBackend, coGia, guiDi, serverBackend, type Ghi, type TraLoi } from "../ban/mau-khach";
 import DatMonPage from "./page";
 
 vi.mock("next/navigation", () => ({
@@ -60,7 +60,9 @@ describe("đơn web — thông tin và gửi", () => {
     fireEvent.change(screen.getByRole("textbox", { name: "Tên" }), { target: { value: "Anh Nam" } });
     await waitFor(() => expect(nutDat().disabled).toBe(false));
     fireEvent.click(nutDat());
-    expect(await screen.findByText("Đã đặt đơn 88 · tổng 46.000đ")).toBeTruthy();
+    const bao = await screen.findByText("Đã đặt đơn 88 · tổng 46.000đ");
+    expect(bao.getAttribute("role")).toBe("status");
+    expect(bao.nextElementSibling).toBe(nutDat());
     const [g] = guiDi(goi);
     expect(g.path).toBe("/online-orders");
     expect(g.body?.submission_code).toMatch(UUID);
@@ -107,7 +109,9 @@ describe("đơn web — thông tin và gửi", () => {
     fireEvent.change(screen.getByLabelText("Giờ cần hàng"), { target: { value: "2026-10-22T08:15" } });
     await waitFor(() => expect(nutDat().disabled).toBe(false));
     fireEvent.click(nutDat());
-    expect(await screen.findByText(/Chưa xác nhận được kết quả/)).toBeTruthy();
+    const loi = await screen.findByText(/Chưa xác nhận được kết quả/);
+    expect(loi.getAttribute("role")).toBe("alert");
+    expect(loi.nextElementSibling).toBe(screen.getByRole("button", { name: "Gửi lại" }));
     await new Promise((r) => setTimeout(r, 50));
     expect(guiDi(goi)).toHaveLength(1);
     const lai = screen.getByRole("button", { name: "Gửi lại" });
@@ -123,7 +127,7 @@ describe("đơn web — thông tin và gửi", () => {
   it("lời từ chối của backend: tạm dừng, ngoài giờ, mất kết nối đúng nguyên văn; phiếu giữ nguyên", async () => {
     const ca: [string, string][] = [
       ["order_intake_paused", CAU_TAM_DUNG],
-      ["outside_selling_hours", CAU_NGOAI_GIO],
+      ["outside_selling_hours", "Đơn chưa được gửi. Quán mở cửa 6h–11h sáng"],
       ["shop_not_seeing_orders", CAU_MAT_KET_NOI],
     ];
     for (const [code, chu] of ca) {
@@ -132,7 +136,9 @@ describe("đơn web — thông tin và gửi", () => {
       fireEvent.change(screen.getByLabelText("Giờ cần hàng"), { target: { value: "2026-10-22T08:15" } });
       await waitFor(() => expect(nutDat().disabled).toBe(false));
       fireEvent.click(nutDat());
-      expect(await screen.findByText(chu)).toBeTruthy();
+      const loi = await screen.findByText(chu);
+      expect(loi.getAttribute("role")).toBe("alert");
+      expect(loi.nextElementSibling).toBe(nutDat());
       expect(screen.queryByText(new RegExp(`Mã: ${code}`))).toBeNull();
       expect(screen.getByRole("region", { name: "Dòng 1" })).toBeTruthy();
       expect((screen.getByRole("textbox", { name: "Số điện thoại" }) as HTMLInputElement).value).toBe("0907777777");

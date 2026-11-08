@@ -11,7 +11,7 @@ import { ApiProvider } from "@/lib/api/provider";
 import { useNhapKhach } from "@/lib/nhap-khach";
 
 import BanPage from "./[ma]/page";
-import { CAU_MAT_KET_NOI, CAU_NGOAI_GIO, CAU_TAM_DUNG, QR_BAN_3, UUID, baoGia, clientBackend, coGia, guiDi, serverBackend, sx, tinhThuDi,
+import { CAU_MAT_KET_NOI, CAU_TAM_DUNG, QR_BAN_3, UUID, baoGia, clientBackend, coGia, guiDi, serverBackend, sx, tinhThuDi,
   type Ghi, type TraLoi } from "./mau-khach";
 
 vi.mock("next/navigation", () => ({
@@ -118,7 +118,9 @@ describe("khách QR tại bàn — giỏ, tổng tính thử, gửi", () => {
     await act(async () => xong(baoGia(41000)));
     await waitFor(() => expect(nutGui().disabled).toBe(false));
     xacNhanDatMon();
-    expect(await screen.findByText("Đã gửi lượt gọi · tổng 71.000đ")).toBeTruthy();
+    const bao = await screen.findByText("Đã gửi lượt gọi · tổng 71.000đ");
+    expect(bao.getAttribute("role")).toBe("status");
+    expect(bao.nextElementSibling).toBe(nutGui());
     const [g] = guiDi(goi);
     expect(g.path).toBe("/qr-codes/ma-c1/orders");
     expect(g.body?.submission_code).toMatch(UUID);
@@ -145,7 +147,9 @@ describe("khách QR tại bàn — giỏ, tổng tính thử, gửi", () => {
     fireEvent.click(screen.getByRole("button", { name: "Thêm Canh" }));
     await waitFor(() => expect(nutGui().disabled).toBe(false));
     xacNhanDatMon();
-    expect(await screen.findByText(/Chưa xác nhận được kết quả/)).toBeTruthy();
+    const loi = await screen.findByText(/Chưa xác nhận được kết quả/);
+    expect(loi.getAttribute("role")).toBe("alert");
+    expect(loi.nextElementSibling).toBe(screen.getByRole("button", { name: "Gửi lại" }));
     await new Promise((r) => setTimeout(r, 50));
     expect(guiDi(goi)).toHaveLength(1);
     const lai = screen.getByRole("button", { name: "Gửi lại" });
@@ -161,7 +165,7 @@ describe("khách QR tại bàn — giỏ, tổng tính thử, gửi", () => {
   it("lời từ chối của backend: tạm dừng, ngoài giờ, mất kết nối đúng nguyên văn; mã QR cũ mời quét lại; giỏ giữ nguyên", async () => {
     const ca: [string, number, string | RegExp][] = [
       ["order_intake_paused", 409, CAU_TAM_DUNG],
-      ["outside_selling_hours", 409, CAU_NGOAI_GIO],
+      ["outside_selling_hours", 409, "Đơn chưa được gửi. Quán mở cửa 6h–11h sáng"],
       ["shop_not_seeing_orders", 409, CAU_MAT_KET_NOI],
       ["qr_code_not_current", 404, /quét lại mã/i],
     ];
@@ -170,7 +174,9 @@ describe("khách QR tại bàn — giỏ, tổng tính thử, gửi", () => {
       fireEvent.click(screen.getByRole("button", { name: "Thêm Canh" }));
       await waitFor(() => expect(nutGui().disabled).toBe(false));
       xacNhanDatMon();
-      expect(await screen.findByText(chu)).toBeTruthy();
+      const loi = await screen.findByText(chu);
+      expect(loi.getAttribute("role")).toBe("alert");
+      expect(loi.nextElementSibling).toBe(nutGui());
       expect(screen.queryByText(new RegExp(`Mã: ${code}`))).toBeNull();
       expect(screen.getByRole("region", { name: "Dòng 1" })).toBeTruthy();
       cleanup();

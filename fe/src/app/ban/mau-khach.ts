@@ -4,7 +4,7 @@ import { vi } from "vitest";
 
 export const CAU_TAM_DUNG = "Quán đang tạm dừng nhận đơn. Bạn vui lòng quay lại sau ít phút hoặc gọi hotline 0382688666 để đặt.";
 export const CAU_MAT_KET_NOI = "Quán tạm chưa nhận đơn qua web. Bạn vui lòng gọi hotline 0382688666 để đặt.";
-export const CAU_NGOAI_GIO = "Quán mở cửa 6h–11h sáng";
+export const CAU_NGOAI_GIO = "Đơn chưa được gửi. Quán mở cửa 6h–11h sáng";
 
 // T-237 (2026-11-04, Claude): GET /menu mang `categories` và `menu_category_id` của từng món; mẫu chưa xếp danh mục.
 export const menuMau = {

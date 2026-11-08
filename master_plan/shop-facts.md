@@ -981,6 +981,10 @@ giới đã chốt** như bốn ranh giới ở §6.12 — cho máy chia mẻ l�
      tiền rời quán.
 8. **Nút "Tạm dừng nhận đơn" của chủ quán có ưu tiên CAO HƠN giờ mở cửa** — dùng khi hết nguyên
    liệu giữa buổi. Ngoài giờ bán, web khoá nút đặt và hiện *"Quán mở cửa 6h–11h sáng"*.
+   Khi khách đã bấm gửi mà bị từ chối vì ngoài giờ, web hiện *"Đơn chưa được gửi. Quán mở cửa
+   6h–11h sáng"* ngay sát nút đặt (2026-11-08, chủ repo chọn trong hội thoại, `T-311`. *Lời chọn:*
+   phương án *"Nói rõ đơn chưa gửi"* do Claude viết sẵn; giữ nguyên câu giờ mở cửa phía sau là suy
+   ra của Claude).
    Lúc quán đang tạm dừng, web hiện *"Quán đang tạm dừng nhận đơn. Bạn vui lòng quay lại sau ít phút
    hoặc gọi hotline 0382688666 để đặt."* (2026-10-21, chủ repo chọn trong hội thoại, `P4-10`. *Lời
    chọn:* câu là chữ Claude viết sẵn trong phương án *"Câu trung tính + hotline"*; số hotline lấy ở §1.)
@@ -1595,6 +1599,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-11-01 | Chủ repo chọn trong câu hỏi có sẵn phương án (CHAT-01, lane chat): trạm *xác nhận* trên chat **chỉ là tin báo**, POS vẫn ghi tiến độ; chủ quán **không vượt** luật quầy qua chat; **việc chạm tiền không làm qua chat**; khách đặt qua chat **chỉ giao · đến lấy, không bắt đăng nhập**, không nhắn POS. Nhân viên dùng **điện thoại riêng**. Đóng `U-113` · `U-114` · `U-115` · `U-117`, hẹp `U-112`. Xem **ADR-136** | §8.11 |
 | 2026-11-04 | Chủ repo chọn trong câu hỏi có sẵn (T-223): đơn **giao tận nơi** còn món bếp **chưa làm xong** thì **từ chối rời quán**, báo rõ món nào chưa xong (*lời chọn*, phương án do Claude viết sẵn). *Suy ra của Claude, nằm trong câu hỏi, chưa được nói riêng:* món đã làm xong được ghi *"đã ra bàn"* đúng lúc rời quán; món đã huỷ hoặc bỏ không chặn đơn rời quán | §5.4 · §6.7 |
 | 2026-11-08 | Chủ repo chọn trong câu hỏi có sẵn phương án (T-308): *"Duyệt và tích hợp T-308"* — xác nhận cách triển khai Codex viết cho lời 2026-11-06 *"chủ quán cũng cần nhận được đơn và có quyền điều hành"*: trên trang Vận hành chủ quán **duyệt hoặc từ chối** đơn *Chờ xác nhận*, ghi *đã ra bàn*, bấm **mở lại** nhận đơn; **trang Vận hành của chủ quán đang mở được tính là quán nhìn thấy đơn** (I-008). Huỷ đơn đã xác nhận, hoàn tiền, thu tiền vẫn chỉ ở quầy. Xem **ADR-097** *Sửa đổi* | §5.4 · §6 quy tắc 2 · 13 |
+| 2026-11-08 | Chủ repo chọn trong câu hỏi có sẵn phương án (T-311): *"Sửa chỗ hiện lỗi"* và *"Nói rõ đơn chưa gửi"* — khách bấm gửi bị từ chối vì ngoài giờ thì thấy *"Đơn chưa được gửi. Quán mở cửa 6h–11h sáng"* ngay sát nút đặt. Giờ bán 06:00–11:00 không đổi. *Suy ra của Claude:* giữ nguyên câu *"Quán mở cửa 6h–11h sáng"* làm vế sau | §6 quy tắc 8 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **hai mục, tính tới 2026-10-23**
 

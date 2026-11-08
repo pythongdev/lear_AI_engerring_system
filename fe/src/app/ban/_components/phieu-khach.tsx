@@ -117,8 +117,6 @@ export function PhieuKhach({ ma, nhan, initialMenu, initialDelivery }: {
       {!web && <QrCode aria-hidden="true" />}
       {web ? "Đặt món" : /^\d+$/.test(nhan?.trim() ?? "") ? `Bàn ${nhan!.trim()}` : nhan}
     </h1></div></header>
-    {bao && <p role="status">{bao}</p>}
-    {loi && <p role="alert">{loi}</p>}
     {menu.isError && <p role="alert">Chưa đọc được menu. Đang hiện bản đọc lúc {new Date(menu.dataUpdatedAt).toLocaleTimeString("vi-VN")}. <Button onClick={() => void menu.refetch()}>Đọc lại menu</Button></p>}
     <form onSubmit={(e) => { e.preventDefault(); if (choGuiLai || web) void gui(); else if (hopLe) setXacNhan(true); }}>
       <fieldset disabled={dangGui || choGuiLai}>
@@ -140,6 +138,8 @@ export function PhieuKhach({ ma, nhan, initialMenu, initialDelivery }: {
         ? <p role="alert">{tong.error.message} <Button type="button" onClick={() => void tong.refetch()}>Tính lại</Button></p>
         : tong.isSuccess && <p className="text-[var(--accent)]">Tổng tạm tính {tien(tong.data.total_vnd)}</p>)} />
       </fieldset>
+      {bao && <p role="status">{bao}</p>}
+      {loi && <p role="alert">{loi}</p>}
       <button data-component="CartBottomBar" className="mt-3 flex h-[52px] w-full items-center justify-between gap-2 rounded-xl border-0 bg-[var(--accent)] px-3 text-[15px] text-[#fff]" type="submit" disabled={dangGui || (!choGuiLai && !hopLe)}>
         <span aria-hidden="true" className="rounded-md bg-[#ff9a4d] px-[9px] py-[3px] text-[12px]">{lines.reduce((n, d) => n + (Number.isFinite(d.quantity) ? d.quantity : 0), 0)}</span>
         <span>{dangGui ? "Đang gửi…" : choGuiLai ? "Gửi lại" : web ? "Đặt đơn" : "Đặt món"}</span>
