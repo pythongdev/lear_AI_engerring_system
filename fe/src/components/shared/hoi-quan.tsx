@@ -7,23 +7,11 @@ import { useApi } from "@/lib/api/provider";
 import type { components } from "@/lib/api/schema";
 import type { Khung } from "@/lib/auth/khung";
 import { loiTaiKhoan } from "@/lib/auth/messages";
+import { cuaGhiChat, gioNoiBo, manTay, tenNguon, tenNguonNoiBo, TheDeXuat, type CuaGhi } from "./the-de-xuat";
 
 type TraLoi = components["schemas"]["ChatTurnResponse"];
 type Luot = { question: string; response: TraLoi };
 const gio = new Intl.DateTimeFormat("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit" });
-const gioNoiBo = new Intl.DateTimeFormat("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit", second: "2-digit" });
-const tenNguon: Record<string, string> = { doc_menu: "Thực đơn", tinh_gia: "Bảng giá" };
-const tenNguonNoiBo: Record<string, string> = {
-  ...tenNguon,
-  doc_bang_tram: "Bảng trạm",
-  doc_bang_phuc_vu: "Bảng phục vụ",
-  doc_tong_quan: "Tổng quan",
-};
-const manTay: Record<Khung, { href: string; ten: string }> = {
-  "/tram": { href: "/tram", ten: "Xem Bảng trạm" },
-  "/quay": { href: "/quay/san-xuat", ten: "Xem Sản xuất" },
-  "/chu-quan": { href: "/chu-quan/van-hanh", ten: "Xem Vận hành" },
-};
 const suyGiam: Record<string, string> = {
   tat: "Trợ lý đang tắt.",
   het_ngan_sach: "Trợ lý đã dùng hết lượt hỏi của hôm nay.",
@@ -38,7 +26,12 @@ function loiHoi(loi: ApiFailure, khung?: Khung) {
   return `Chưa hỏi được (${loi.kind === "rejected" ? loi.code : loi.status}).`;
 }
 
-export function HoiQuan({ mo, khung }: { mo: boolean; khung?: Khung }) {
+export function HoiQuan({ mo, khung, nguoiBam, cuaGhi = cuaGhiChat }: {
+  mo: boolean;
+  khung?: Khung;
+  nguoiBam?: string;
+  cuaGhi?: Readonly<Record<string, CuaGhi>>;
+}) {
   const api = useApi();
   const nguon = khung ? tenNguonNoiBo : tenNguon;
   const dinhDangGio = khung ? gioNoiBo : gio;
@@ -46,6 +39,7 @@ export function HoiQuan({ mo, khung }: { mo: boolean; khung?: Khung }) {
   const linkManTay = <a href={duongVe.href} className="underline">{duongVe.ten}</a>;
   const [cau, setCau] = useState("");
   const [luot, setLuot] = useState<Luot[]>([]);
+  const [luotSong, setLuotSong] = useState<number | null>(null);
   const [dangHoi, setDangHoi] = useState(false);
   const [loi, setLoi] = useState<string | null>(null);
   const oNhap = useRef<HTMLTextAreaElement>(null);
@@ -74,6 +68,7 @@ export function HoiQuan({ mo, khung }: { mo: boolean; khung?: Khung }) {
     const controller = new AbortController();
     cho.current = controller;
     const lan = ++soLuot.current;
+    setLuotSong(null);
     setDangHoi(true); setLoi(null);
     const history = luot.filter((l) => l.response.degraded_reason === null && l.response.answer)
       .slice(-6).flatMap((l) => [
@@ -86,6 +81,7 @@ export function HoiQuan({ mo, khung }: { mo: boolean; khung?: Khung }) {
     setDangHoi(false);
     if (!r.ok) { setLoi(loiHoi(r.failure, khung)); return; }
     setLuot((truoc) => [...truoc, { question, response: r.data }]);
+    setLuotSong(luot.length);
     setCau("");
   }
 
@@ -106,6 +102,8 @@ export function HoiQuan({ mo, khung }: { mo: boolean; khung?: Khung }) {
             {linkManTay}
           </p>}
         </>}
+        {khung && l.response.proposal && <TheDeXuat deXuat={l.response.proposal} khung={khung}
+          nguoiBam={nguoiBam} cuaGhi={cuaGhi} song={mo && i === luotSong} />}
       </div>)}
       {dangHoi && <div><p>{question}</p><p role="status">Đang hỏi…</p></div>}
     </div>

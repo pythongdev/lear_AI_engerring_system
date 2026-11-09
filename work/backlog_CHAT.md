@@ -588,6 +588,33 @@ gate.
 
 **Nhận việc:**
 
+2026-11-09, Claude: chủ repo yêu cầu *"tiếp tục yêu cầu codex làm bản kiểm tra"*. Mức **L2** (FE bấm gọi cửa ghi, I-044). Đo trên `0820f9a`:
+`HoiQuan` chưa đọc `proposal`; `ChatProposal` (hợp đồng 0.68.0) có `operation_id` · `path_params` · `body` · `lines` · `needs_choice`; `CHAT-09` đã
+Done nhưng chưa commit nên worktree lấy bốn file của nó từ cây chính và stage làm nền. *Suy ra của phiên, chọn của Claude trong khung ADR-140:*
+thẻ ở file mới `the-de-xuat.tsx` với bảng `cuaGhiChat` (`operationId` → `{ coDau, goi }`) **rỗng** ở bản chạy, test đưa bảng thử dùng
+`cancelLeaveNotice` (không dấu) và `createLeaveNotice` (có dấu); `HoiQuan` nhận `nguoiBam` · `cuaGhi`, `OChat` truyền `display_name` của phiên;
+mặt khách không bày thẻ; `needs_choice` không rỗng thì chưa có ô chọn người ở lát này mà chỉ nói *cần chọn trên màn tay* — ô chọn theo nguồn đọc
+màn tay là việc của nhóm cần nó; đã ghi không đọc lại số mà nói rõ *chưa đọc lại*, link màn tay; mốc 10 phút tính từ `read_at` sớm nhất; lệnh
+ghi đã gửi không bị huỷ khi đóng chat; chữ chốt ở đầu test. Hợp đồng ở đầu `fe/src/components/shared/the-de-xuat.test.tsx` (SHA-256
+`9e2db451…60da` khi giao), 21/23 ca đỏ vì chưa có thẻ, 2 ca xanh sẵn (bảng rỗng, mặt khách). Acceptance ghi trước khi giao: A1 mọi ca của test
+mới xanh, `hoi-quan.test.tsx` · `hoi-quan-noi-bo.test.tsx` · `o-chat.test.tsx` không sửa và xanh; A2 không đường gọi mới ngoài hàm `goi` của
+bảng, `cuaGhiChat` rỗng, không `localStorage` · `sessionStorage`, lệnh ghi không mang `signal` huỷ; A3 dòng `HoiQuan` · `OChat` và dòng mới cho
+thẻ ở `docs/product/4-fe/01-khung-fe.md`; A4 `./scripts/fe-check.sh` và `./scripts/gate.sh` xanh. Worktree `../lean_wt/CHAT-11`, nhánh
+`codex/CHAT-11` từ `0820f9a`. **Chưa làm ở lát này:** ô chọn người cho `needs_choice`, đọc lại sau khi ghi, và phép diễn với BE thật — bản chạy
+chưa có công cụ ghi nào nên chưa có đề xuất thật để diễn.
+
+2026-11-09, CHAT-11 xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-11`, nhánh `codex/CHAT-11`, nền `0820f9a` + bốn file CHAT-09 đã stage,
+model `gpt-6-astra`, một lượt): `the-de-xuat.tsx` mới (`CuaGhi`, `cuaGhiChat` đóng băng rỗng, `TheDeXuat`; bảng tên nguồn, giờ:phút:giây và link màn
+tay chuyển từ `hoi-quan.tsx` sang đây để dùng chung), `hoi-quan.tsx` nhận `nguoiBam` · `cuaGhi` và đánh dấu lượt sống, `o-chat.tsx` truyền
+`display_name`, ba dòng ở `docs/product/4-fe/01-khung-fe.md`. *Codex tự chọn ngoài phiếu, Claude giữ:* mốc đọc không đọc được hoặc tên người bấm chỉ có
+khoảng trắng thì không có nút ghi. Codex không xong A4 vì sandbox chặn cache Go và build Next đứng. **Claude** duyệt diff (lệnh ghi chỉ qua `goi`, thân
+gửi là bản chụp `structuredClone` lúc dựng thẻ, không `signal`, không storage, nút dùng biến thể `outline` · `ghost`, mặt khách bỏ qua `proposal`), tự
+chạy `./scripts/fe-check.sh` trong worktree `fe-check: PASS` (727/727, build đạt), đưa patch về cây chính, `cmp` năm file khớp worktree. Bằng chứng ở cây
+chính: Vitest `src/components/shared/` 169/169, `./scripts/gate.sh` `PASS gate không cổng nào đỏ`; file test khớp SHA-256 phiếu `9e2db451…60da`.
+Chưa diễn trên trình duyệt. **Còn lại:** chưa nhóm ghi nào có dòng trong `cuaGhiChat` (mỗi nhóm `CHAT-15`…`CHAT-25` thêm dòng của nó); ô chọn người
+cho `needs_choice` và đọc lại sau ghi là việc của nhóm cần nó; thẻ chỉ kiểm hạn 10 phút lúc dựng và lúc bấm, không tự đổi chữ khi đồng hồ qua hạn
+mà không có lần bấm. Chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---

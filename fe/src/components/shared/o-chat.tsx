@@ -19,10 +19,10 @@ function OChatTheoPhien({ khung }: { khung: Khung }) {
   if (phien.isPending || phien.isError || !phien.data?.ok) return null;
 
   // Đổi người thì tháo toàn bộ state, kể cả nháp và trạng thái mở bảng.
-  return <VoOChat key={phien.data.data.person_id} khung={khung} personId={phien.data.data.person_id} />;
+  return <VoOChat key={phien.data.data.person_id} khung={khung} personId={phien.data.data.person_id} nguoiBam={phien.data.data.display_name} />;
 }
 
-function VoOChat({ khung, personId }: { khung: Khung; personId: number }) {
+function VoOChat({ khung, personId, nguoiBam }: { khung: Khung; personId: number; nguoiBam: string }) {
   const [mo, setMo] = useState(false);
   const [daMo, setDaMo] = useState(false);
   const [muc, setMuc] = useState("tin");
@@ -82,7 +82,7 @@ function VoOChat({ khung, personId }: { khung: Khung; personId: number }) {
             {daMoBaoNghi && <BaoNghi khung={khung} personId={personId} mo={mo && muc === "nghi"} />}
           </div>
           <div role="tabpanel" id={`${id}-hoi`} aria-labelledby={`${id}-the-hoi`} hidden={muc !== "hoi"}>
-            {daMoHoi && <HoiQuan mo={mo && muc === "hoi"} khung={khung} />}
+            {daMoHoi && <HoiQuan mo={mo && muc === "hoi"} khung={khung} nguoiBam={nguoiBam} />}
           </div>
         </section>
       )}
