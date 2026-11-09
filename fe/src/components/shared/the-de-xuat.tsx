@@ -13,12 +13,24 @@ export type CuaGhi = {
   coDau: boolean;
   manTay?: Partial<Record<Khung, { href: string; ten: string }>>;
   chonNguoi?: string;
+  chuChonNguoi?: { nhan: string; luaChonRong: string; canChon: string; loiDoc: string; rong: string };
   goi: (api: ApiClient, de: { path_params: Record<string, unknown>; body: Record<string, unknown> }) => Promise<ApiResult<unknown>>;
 };
 
 const manTayGiaoViec: CuaGhi["manTay"] = {
   "/quay": { href: "/quay/giao-viec", ten: "Xem Giao việc" },
   "/chu-quan": { href: "/chu-quan/giao-viec", ten: "Xem Giao việc" },
+};
+const manTayDaoTao: CuaGhi["manTay"] = {
+  "/quay": { href: "/quay/dao-tao", ten: "Xem Đào tạo" },
+  "/chu-quan": { href: "/chu-quan/dao-tao", ten: "Xem Đào tạo" },
+};
+const chuChonNguoiGiaoViec = {
+  nhan: "Người nhận",
+  luaChonRong: "Chọn người nhận",
+  canChon: "Chọn người nhận trước khi ghi.",
+  loiDoc: "Chưa đọc được danh sách người. Giao trên màn tay.",
+  rong: "Chưa có người để giao. Giao trên màn tay.",
 };
 // ADR-140: mỗi nhóm chỉ thêm cửa màn tay khi có phiếu mở nhóm được duyệt.
 export const cuaGhiChat: Readonly<Record<string, CuaGhi>> = Object.freeze({
@@ -52,6 +64,64 @@ export const cuaGhiChat: Readonly<Record<string, CuaGhi>> = Object.freeze({
       body: de.body as components["schemas"]["MarkAssignedTask"],
     })),
   },
+  attachAssignedTaskGuide: {
+    coDau: false,
+    manTay: manTayDaoTao,
+    goi: (api, de) => {
+      const form = new FormData();
+      form.set("kind", "text");
+      form.set("body", de.body.body as string);
+      return call(api.POST("/assigned-tasks/{assigned_task_id}/guides", {
+        params: { path: { assigned_task_id: Number(de.path_params.assigned_task_id) } },
+        body: { kind: "text" }, bodySerializer: () => form,
+      }));
+    },
+  },
+  updateAssignedTaskGuide: {
+    coDau: false,
+    manTay: manTayDaoTao,
+    goi: (api, de) => call(api.PUT("/assigned-task-guides/{assigned_task_guide_id}", {
+      params: { path: { assigned_task_guide_id: Number(de.path_params.assigned_task_guide_id) } },
+      body: de.body as components["schemas"]["UpdateAssignedTaskGuide"],
+    })),
+  },
+  hideAssignedTaskGuide: {
+    coDau: false,
+    manTay: manTayDaoTao,
+    goi: (api, de) => call(api.POST("/assigned-task-guides/{assigned_task_guide_id}/hiding", {
+      params: { path: { assigned_task_guide_id: Number(de.path_params.assigned_task_guide_id) } },
+      body: de.body as components["schemas"]["HideTrainingItem"],
+    })),
+  },
+  createTrainingRecord: {
+    coDau: false,
+    manTay: manTayDaoTao,
+    chonNguoi: "trainee_person_id",
+    chuChonNguoi: {
+      nhan: "Người được ghi",
+      luaChonRong: "Chọn người được ghi",
+      canChon: "Chọn người được ghi trước khi ghi.",
+      loiDoc: "Chưa đọc được danh sách người. Ghi trên màn tay.",
+      rong: "Chưa có người để ghi nhận. Ghi trên màn tay.",
+    },
+    goi: (api, de) => call(api.POST("/training-records", { body: de.body as components["schemas"]["CreateTrainingRecord"] })),
+  },
+  updateTrainingRecord: {
+    coDau: false,
+    manTay: manTayDaoTao,
+    goi: (api, de) => call(api.PUT("/training-records/{training_record_id}", {
+      params: { path: { training_record_id: Number(de.path_params.training_record_id) } },
+      body: de.body as components["schemas"]["UpdateTrainingRecord"],
+    })),
+  },
+  hideTrainingRecord: {
+    coDau: false,
+    manTay: manTayDaoTao,
+    goi: (api, de) => call(api.POST("/training-records/{training_record_id}/hiding", {
+      params: { path: { training_record_id: Number(de.path_params.training_record_id) } },
+      body: de.body as components["schemas"]["HideTrainingItem"],
+    })),
+  },
 });
 
 export const gioNoiBo = new Intl.DateTimeFormat("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit", second: "2-digit" });
@@ -65,6 +135,12 @@ export const tenNguonNoiBo: Record<string, string> = {
   sua_viec: "Giao việc",
   an_viec: "Giao việc",
   danh_dau_viec: "Giao việc",
+  gan_huong_dan: "Đào tạo",
+  sua_huong_dan: "Đào tạo",
+  an_huong_dan: "Đào tạo",
+  ghi_nhan_dao_tao: "Đào tạo",
+  sua_ghi_nhan: "Đào tạo",
+  an_ghi_nhan: "Đào tạo",
 };
 export const manTay: Record<Khung, { href: string; ten: string }> = {
   "/tram": { href: "/tram", ten: "Xem Bảng trạm" },
@@ -113,6 +189,7 @@ export function TheDeXuat({ deXuat, khung, nguoiBam, cuaGhi, song }: {
   if (biLoai && trangThai.loai === "cho") setTrangThai({ loai: quaGioLucDung ? "qua_gio" : "het" });
 
   const truongNguoi = the.cua?.chonNguoi;
+  const chuChonNguoi = the.cua?.chuChonNguoi ?? chuChonNguoiGiaoViec;
   const canChonNguoi = !!truongNguoi && the.de.needs_choice.length === 1 && the.de.needs_choice[0] === truongNguoi;
   const nguoi = useQuery({
     queryKey: ["people"],
@@ -130,9 +207,9 @@ export function TheDeXuat({ deXuat, khung, nguoiBam, cuaGhi, song }: {
   const nguoiDuocChon = danhSachNguoi?.people.find((p) => p.person_id === nguoiNhan);
   const lyDo = !the.cua ? "Việc này chưa mở cho trợ lý. Làm trên màn tay."
     : the.de.needs_choice.length > 0 && !canChonNguoi ? `Cần chọn trên màn tay: ${the.de.needs_choice.join(", ")}.`
-    : canChonNguoi && !danhSachNguoi && nguoi.isError ? "Chưa đọc được danh sách người. Giao trên màn tay."
-    : canChonNguoi && danhSachNguoi?.people.length === 0 ? "Chưa có người để giao. Giao trên màn tay."
-    : canChonNguoi && !nguoiDuocChon ? "Chọn người nhận trước khi ghi."
+    : canChonNguoi && !danhSachNguoi && nguoi.isError ? chuChonNguoi.loiDoc
+    : canChonNguoi && danhSachNguoi?.people.length === 0 ? chuChonNguoi.rong
+    : canChonNguoi && !nguoiDuocChon ? chuChonNguoi.canChon
     : the.de.lines.length === 0 ? "Đề xuất thiếu dòng để kiểm, không ghi được từ đây."
     : !the.nguoiBam?.trim() ? "Chưa biết người bấm, không ghi được từ đây."
     : !Number.isFinite(the.mocDoc) ? "Đề xuất có mốc đọc không hợp lệ, không ghi được từ đây."
@@ -174,17 +251,17 @@ export function TheDeXuat({ deXuat, khung, nguoiBam, cuaGhi, song }: {
   return <section role="group" aria-label="Đề xuất ghi" className="space-y-2 rounded border bg-background p-3 text-foreground">
     <p>Đề xuất, chưa ghi gì. Kiểm từng dòng trước khi bấm.</p>
     {the.de.lines.map((dong, i) => <p key={i}>{`${dong.label}: ${dong.value} (${tenNguonNoiBo[dong.source] ?? dong.source}, đọc lúc ${Number.isFinite(Date.parse(dong.read_at)) ? gioNoiBo.format(new Date(dong.read_at)) : dong.read_at})`}</p>)}
-    {canChonNguoi && <label className="block">Người nhận
+    {canChonNguoi && <label className="block">{chuChonNguoi.nhan}
       <select value={nguoiNhan ?? ""} disabled={biLoai || trangThai.loai !== "cho" || !danhSachNguoi?.people.length}
         onChange={(e) => {
           if (biLoai || trangThai.loai !== "cho" || chot.current) return;
           setNguoiNhan(e.target.value === "" ? null : Number(e.target.value));
         }} className="block min-h-11 w-full rounded border bg-background px-3 py-2">
-        <option value="">Chọn người nhận</option>
+        <option value="">{chuChonNguoi.luaChonRong}</option>
         {danhSachNguoi?.people.map((p) => <option key={p.person_id} value={p.person_id}>{p.display_name}</option>)}
       </select>
     </label>}
-    {nguoiDuocChon && danhSachNguoi && <p>{`Người nhận: ${nguoiDuocChon.display_name} (Danh sách người, đọc lúc ${gioNoiBo.format(danhSachNguoi.mocDoc)})`}</p>}
+    {nguoiDuocChon && danhSachNguoi && <p>{`${chuChonNguoi.nhan}: ${nguoiDuocChon.display_name} (Danh sách người, đọc lúc ${gioNoiBo.format(danhSachNguoi.mocDoc)})`}</p>}
     <p>Người bấm: {the.nguoiBam}</p>
     {trangThai.loai === "cho" && lyDo && <p>{lyDo}</p>}
     {trangThai.loai === "tu_choi" ? <p role="alert">{trangThai.loi}</p>

@@ -925,6 +925,33 @@ test backend qua PostgreSQL thật đều đạt`, bảy `TestI044_*` mới PASS
 gửi multipart cho `attachAssignedTaskGuide`, ô chọn người được ghi cho `ghi_nhan_dao_tao`); eval lệnh chèn trong hướng dẫn trên model thật (chờ
 `U-112`). Chưa có người duyệt thứ ba.
 
+2026-11-09, Claude, **lát FE**: chủ repo yêu cầu *"tiếp tục yêu cầu codex làm bạn kiểm tra"*. Mức **L2** (thẻ bấm gọi sáu cửa ghi đào tạo thật,
+I-031 · I-044). Đo trên `499b85d`: `cuaGhiChat` có bốn cửa giao việc; màn tay Đào tạo gửi `attachAssignedTaskGuide` bằng `FormData` qua
+`bodySerializer` (`fe/src/app/chu-quan/_components/du-lieu-dao-tao.ts`), chọn người được ghi từ `GET /people` không lọc; có `/quay/dao-tao` và
+`/chu-quan/dao-tao`. *Phiên chọn của Claude trong khung ADR-140 (đổi bằng sửa entry này):* (1) bảng thêm sáu dòng `coDau: false` sau bốn cửa giao
+việc, gọi đúng hàm API sinh sẵn của cửa; (2) `attachAssignedTaskGuide` gửi multipart đúng hai phần `kind` = `text` (hằng của FE) rồi `body` của
+thẻ, khoá nào khác của thân thẻ (tệp, URL, `kind` khác) không đi vào thân gửi và không được tải; (3) sáu cửa có link màn tay *Xem Đào tạo*, sáu tên
+công cụ hiện nguồn *Đào tạo*; (4) `createTrainingRecord` có `chonNguoi: "trainee_person_id"`, ô chọn theo luật CHAT-15 nhưng chữ riêng: *Người được
+ghi*, *Chọn người được ghi*, *Chưa đọc được danh sách người. Ghi trên màn tay.*, *Chưa có người để ghi nhận. Ghi trên màn tay.*; không lọc người, như
+màn Đào tạo. Hợp đồng ở đầu `fe/src/components/shared/the-de-xuat-dao-tao.test.tsx` (SHA-256 `78f61148…f461` khi giao), 16/16 ca đỏ đúng lý do
+*bảng chưa có cửa*; Claude sửa kỳ vọng danh sách bảng ở `the-de-xuat-giao-viec.test.tsx` (chỉ còn kiểm bốn cửa đầu, SHA-256 `90749b16…909a`) và
+`the-de-xuat.test.tsx` (mười cửa, SHA-256 `2b884421…0d82`), mỗi chỗ có dòng *Sửa 2026-11-09, CHAT-16*. Acceptance ghi trước khi giao: A1 ba file
+test xanh và không bị sửa, `hoi-quan.test.tsx` · `hoi-quan-noi-bo.test.tsx` · `o-chat.test.tsx` không sửa và xanh; A2 lệnh ghi chỉ qua `goi` của
+bảng, không `fetch` tay, không storage, không `signal`, multipart không phần tệp; A3 dòng `TheDeXuat` ở `docs/product/4-fe/01-khung-fe.md` nói sáu
+cửa đào tạo và ô chọn người được ghi; A4 `./scripts/fe-check.sh` và `./scripts/gate.sh` xanh. Worktree `../lean_wt/CHAT-16-fe`, nhánh
+`codex/CHAT-16-fe` từ `499b85d`. **Chưa làm ở lát này:** đọc lại sau khi ghi, gửi ảnh/video qua chat (màn tay giữ), eval lệnh chèn trong hướng dẫn
+trên model thật (chờ `U-112`).
+
+2026-11-09, CHAT-16 lát FE xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-16-fe`, nhánh `codex/CHAT-16-fe`, nền `499b85d` + ba file test của
+Claude đã stage, model `gpt-6-astra`, một lượt): `the-de-xuat.tsx` (sáu dòng `cuaGhiChat` sau bốn cửa giao việc, `attachAssignedTaskGuide` dựng
+`FormData` với `kind` hằng `text` rồi `body` của thẻ, trường tuỳ chọn mới `CuaGhi.chuChonNguoi` mang chữ ô chọn theo cửa, mặc định là chữ giao việc,
+sáu tên nguồn *Đào tạo*), dòng `TheDeXuat` ở `docs/product/4-fe/01-khung-fe.md`. Codex chạy Vitest 758/758 và `tsc` trong worktree; build bị sandbox
+chặn mở cổng. **Claude** duyệt diff (lệnh ghi chỉ qua `goi`, multipart không phần tệp và không chép khoá nào khác của thẻ, không `fetch` tay, không
+storage, không `signal`; chữ ô chọn CHAT-15 giữ nguyên), đưa patch về cây chính, `cmp` năm file khớp worktree; ba file test khớp SHA-256 phiếu. Bằng
+chứng ở cây chính: `./scripts/fe-check.sh` `fe-check: PASS` (759/759, build đạt), `./scripts/gate.sh` xanh. Chưa diễn trên trình duyệt với BE thật.
+**Còn lại:** đọc lại danh sách sau khi ghi, gửi ảnh/video qua chat (màn tay giữ), eval lệnh chèn trong hướng dẫn trên model thật (chờ `U-112`). Chưa
+có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---

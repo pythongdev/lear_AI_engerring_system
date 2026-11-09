@@ -133,7 +133,9 @@ async function bamVaChoGhi() {
 
 describe("CHAT-15 FE bảng cửa giao việc của bản chạy", () => {
   it("A1 bảng có đúng bốn cửa giao việc, không cửa nào có dấu, chỉ giao mới được chọn người", () => {
-    expect(Object.keys(cuaGhiChat)).toEqual(["createAssignedTask", "updateAssignedTask", "hideAssignedTask", "markAssignedTask"]);
+    // Sửa 2026-11-09, CHAT-16 lát FE (Claude): bảng nay có thêm sáu cửa đào tạo sau bốn cửa này; danh sách đủ kiểm ở
+    // `./the-de-xuat-dao-tao.test.tsx`. Ở đây chỉ kiểm bốn cửa giao việc đứng đầu, đúng thứ tự.
+    expect(Object.keys(cuaGhiChat).slice(0, 4)).toEqual(["createAssignedTask", "updateAssignedTask", "hideAssignedTask", "markAssignedTask"]);
     for (const cua of Object.values(cuaGhiChat)) expect(cua.coDau).toBe(false);
     expect(cuaGhiChat.createAssignedTask.chonNguoi).toBe("assignee_person_id");
     for (const op of ["updateAssignedTask", "hideAssignedTask", "markAssignedTask"]) expect(cuaGhiChat[op].chonNguoi).toBeUndefined();
