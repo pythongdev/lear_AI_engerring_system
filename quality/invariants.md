@@ -1834,4 +1834,8 @@ model chỉ thêm một dòng; tên công cụ ghi ngoài danh sách ⇒ `cong_c
 sách công cụ ghi của bản chạy rỗng với mọi phiên. Kịch bản dương: `askChat` trả đề xuất đúng hình. Test hồi quy trong `be/internal/troly/` (`TestI044_*`)
 viết trước code. Vế FE (thân gửi bằng thân hiện, thẻ khoá) ở `CHAT-11`.
 
+*Sửa 2026-11-09, CHAT-15 (Claude Code):* danh sách công cụ ghi của bản chạy nay rỗng với mọi phiên **trừ** lớp `quay_hoac_chu_quan`, có bốn công cụ giao
+việc. Kịch bản âm thêm: dựng đề xuất của cả bốn không đổi bảng `assigned_task` · `assigned_task_mark`; người rời quầy giữa lượt ⇒ hàm dựng lỗi; tham
+chiếu việc nhập nhằng ⇒ không đề xuất; gói tới model không mang nội dung việc hay tên người nhận (`I-043`).
+
 *Viết ở CHAT-02 lượt ba, 2026-11-08, Claude Code.*

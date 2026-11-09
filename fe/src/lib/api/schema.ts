@@ -1385,7 +1385,7 @@ export interface paths {
         put?: never;
         /**
          * Hỏi với công cụ đọc do backend chọn theo phiên người làm
-         * @description Backend chọn danh sách công cụ theo lớp quyền của người trong phiên người làm. Không có phiên người làm hoặc chỉ có phiên khách thì chỉ dùng công cụ công khai. Công cụ nội bộ gọi service đọc dưới chính người của phiên, kiểm lại quyền khi chạy; kết quả được giới hạn trường được phép và chỉ dùng trong chính lượt này. Công cụ ghi chỉ dựng đề xuất rồi dừng lượt với câu cố định, không ghi dữ liệu nghiệp vụ; bản chạy chưa mở nhóm công cụ ghi nào (ADR-140).
+         * @description Backend chọn danh sách công cụ theo lớp quyền của người trong phiên người làm. Không có phiên người làm hoặc chỉ có phiên khách thì chỉ dùng công cụ công khai. Công cụ nội bộ gọi service đọc dưới chính người của phiên, kiểm lại quyền khi chạy; kết quả được giới hạn trường được phép và chỉ dùng trong chính lượt này. Công cụ ghi chỉ dựng đề xuất rồi dừng lượt với câu cố định, không ghi dữ liệu nghiệp vụ; nhóm giao việc đã mở cho lớp quay_hoac_chu_quan theo CHAT-15 (ADR-140), với bốn operationId createAssignedTask, updateAssignedTask, hideAssignedTask, markAssignedTask.
          */
         post: operations["askChat"];
         delete?: never;

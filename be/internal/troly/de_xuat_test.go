@@ -198,8 +198,8 @@ func TestI044_BanChayChuaCoCongCuGhi(t *testing.T) {
 		{"không nguồn nội bộ", rong, n.chu},
 		{"người không có thật", nb, 999_999_999},
 		{"người ngoài quầy", nb, n.ngoai},
-		{"người đứng quầy", nb, n.quay},
-		{"chủ quán", nb, n.chu},
+		// Sửa 2026-11-09, CHAT-15 (Claude): người đứng quầy và chủ quán nay có bốn công cụ giao việc — kiểm ở
+		// TestI044_GiaoViecChiMoChoQuayVaChuQuan (ghi_giao_viec_test.go). Bốn ca còn lại vẫn rỗng.
 	} {
 		cc, err := ca.nb.CongCuGhi(n.ctx, ca.nguoi)
 		if err != nil || len(cc) != 0 {

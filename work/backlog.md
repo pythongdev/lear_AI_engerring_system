@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] CHAT-15 **Chat chưa gọi được cửa giao việc mà vẫn giữ quyền đánh dấu** — L2, ADR-140 điểm 2 · 4 · 7, xong lát BE 2026-11-09; Claude viết test trước, Codex dựng bốn công cụ ghi `giao_viec` · `sua_viec` · `an_viec` · `danh_dau_viec` chỉ sinh đề xuất cho lớp `quay_hoac_chu_quan`, nội dung việc và tên người không tới model, hợp đồng 0.69.0; be-check và gate đạt; còn dòng `cuaGhiChat` FE và ô chọn người nhận · [mô tả](backlog_CHAT.md#chat-15)
 - [x] CHAT-11 **Người dùng chưa nhìn thấy rõ điều mình sắp ghi** — L2, ADR-140 điểm 3 · 4 · 5 · 6, xong 2026-11-09; Claude viết test trước, Codex dựng `TheDeXuat` ở `HoiQuan` mặt người làm (bản chụp bất biến, gọi qua bảng `cuaGhiChat` rỗng ở bản chạy, dấu FE sinh, chưa rõ kết quả, hết hạn 10 phút); fe-check 727/727 và gate đạt; chưa nhóm ghi nào mở · [mô tả](backlog_CHAT.md#chat-11)
 
 - [x] CHAT-10 **Lời model chưa có ranh giới giữa đề xuất và thực thi** — L2, ADR-140, xong 2026-11-08; Claude viết test trước, Codex dựng khung công cụ ghi chỉ sinh đề xuất (`LuotCoGhi`, danh sách rỗng ở bản chạy) và `proposal` của `askChat`, hợp đồng 0.68.0; be-check đạt; tiếp theo `CHAT-11` (thẻ FE) · [mô tả](backlog_CHAT.md#chat-10)

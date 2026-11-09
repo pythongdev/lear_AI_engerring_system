@@ -817,6 +817,34 @@ giao việc.
 
 **Nhận việc:**
 
+2026-11-09, Claude: chủ repo yêu cầu *"tiếp tục yêu cầu codex làm bạn kiểm tra"*. Mức **L2** (mở nhóm ghi đầu tiên của ADR-140, I-044). Đo trên
+`d77600c`: `NguonNoiBo.CongCuGhi` rỗng; bốn cửa `createAssignedTask` · `updateAssignedTask` · `hideAssignedTask` · `markAssignedTask` lớp
+`quay_hoac_chu_quan`; `updateAssignedTask` bắt buộc cả `assignee_person_id`; `U-114` · `U-115` đã có lời, `U-112` chỉ chặn hãng thật. *Phiên chọn
+của Claude trong khung ADR-140 (đổi bằng sửa entry này):* (1) model **không** thấy nội dung việc hay tên người — không thêm công cụ đọc việc;
+model đưa `viec` là cụm chữ của người dùng, backend so khớp không phân biệt hoa thường trong nội dung các việc chưa ẩn đọc bằng
+`giaoviec.Service.Doc` dưới chính phiên, đúng một việc mới có đề xuất, không có hay nhập nhằng thì lỗi công cụ chung; vì lượt dừng ngay sau đề
+xuất nên dòng thẻ (mang nội dung và tên người nhận) chỉ tới FE, không về model; (2) `giao_viec` để trống người nhận, `needs_choice` =
+`assignee_person_id` (ADR-140 điểm 4) — thẻ CHAT-11 chưa có ô chọn người nên giao mới qua chat **chưa bấm được** tới khi có lát FE chọn người;
+(3) `sua_viec` chỉ đổi nội dung và/hoặc hạn, người nhận lấy từ việc hiện tại, không đổi người qua chat ở lát này; (4) hạn model đưa là
+`YYYY-MM-DDTHH:MM` giờ quán, backend đổi sang RFC3339 `+07:00`, thẻ hiện lại để người bấm kiểm; không chặn hạn đã qua vì hợp đồng không chặn;
+(5) khoá lạ trong tham số (kể cả `assignee_person_id`) là lỗi. Hợp đồng ở đầu `be/internal/troly/ghi_giao_viec_test.go`; Claude sửa hai test cũ
+có kỳ vọng *danh sách ghi rỗng* (`TestI044_BanChayChuaCoCongCuGhi` bỏ hai ca quầy · chủ, `TestI043_DuongHoiChonCongCuTheoPhien` thêm bốn tên ghi),
+mỗi chỗ có dòng *Sửa 2026-11-09*. Acceptance ghi trước khi giao: A1 test mới xanh, ba file test của Claude không sửa sau khi giao; A2 không câu
+SQL, không `authz.Door`, không gọi `Tao` · `Sua` · `An` · `DanhDau` của `giaoviec` từ `troly`; A3 mô tả `askChat` ở `openapi.yaml` nói nhóm
+giao việc đã mở, phiên bản tăng, một đoạn sổ ở `01-hop-dong-api.md`; A4 `./scripts/be-check.sh` và `./scripts/gate.sh` xanh. **Chưa làm ở lát
+này:** dòng `cuaGhiChat` ở FE cho bốn `operationId` (phiếu FE riêng sau lát BE, sổ CHAT *Chung* cấm gộp BE · FE), ô chọn người nhận, và eval tên
+người/ý định mơ hồ trên model thật (chờ `U-112`).
+
+2026-11-09, CHAT-15 lát BE xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-15`, nhánh `codex/CHAT-15`, nền `d77600c` + ba file test của Claude
+đã stage, model `gpt-6-astra`, một lượt): `ghi_giao_viec.go` mới (bốn `CongCuGhi`, kiểm lại lớp trong mỗi hàm dựng, tham chiếu việc qua
+`giaoviec.Service.Doc`, múi giờ quán đọc từ cấu hình kết nối do `postgres.Open` đặt, một lỗi chung không mang nội dung), `noi_bo.go` (`CongCuGhi`
+theo lớp), mô tả `askChat` và `0.69.0` ở `openapi.yaml`, đoạn sổ ở `01-hop-dong-api.md`. Codex không chạy được be-check vì sandbox chặn Docker.
+**Claude** duyệt diff (không SQL, không `authz.Door`, lời gọi `giaoviec` duy nhất là `NewService` · `Doc`), đưa patch về cây chính, `cmp` bảy file
+khớp worktree, sinh lại `fe/src/lib/api/schema.ts`, sửa Verification của `I-044`. Bằng chứng ở cây chính: `./scripts/be-check.sh` `be-check: PASS —
+mọi test backend qua PostgreSQL thật đều đạt`, bảy `TestI044_*` mới PASS; ba file test khớp SHA-256 phiếu. **Còn lại:** thẻ FE chưa có dòng
+`cuaGhiChat` cho bốn `operationId` nên đề xuất hiện được mà chưa bấm được; ô chọn người nhận cho `giao_viec`; eval trên model thật. Chưa có người
+duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---

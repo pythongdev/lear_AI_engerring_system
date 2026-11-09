@@ -145,6 +145,8 @@ ràng buộc nghĩa là gì với người dùng; người đoán đúng là lá
 
 ## 7. Phiên bản
 
+**CHAT-15 (2026-11-09, theo phiếu Claude, ADR-140):** tăng MINOR `0.68.0` → `0.69.0`; mô tả `askChat` ghi nhóm công cụ giao việc đã mở cho lớp `quay_hoac_chu_quan`, chỉ dựng đề xuất tới bốn cửa `createAssignedTask` · `updateAssignedTask` · `hideAssignedTask` · `markAssignedTask`. Không đổi hình dữ liệu; không thêm đường gọi hay mã lỗi.
+
 **CHAT-10 (2026-11-08, theo phiếu Claude, ADR-140):** tăng MINOR `0.67.0` → `0.68.0`; `ChatTurnResponse` của `POST /chat/turns` thêm `proposal` nullable, tham chiếu `ChatProposal`, không thêm vào `required` để tương thích mock FE cũ. Backend luôn trả khoá này; đề xuất hợp lệ kết thúc lượt bằng câu cố định, chưa ghi dữ liệu nghiệp vụ. `lines` và `needs_choice` là mảng không null; mốc đọc theo RFC3339Nano như `sources`. Bản chạy chưa mở nhóm công cụ ghi nào. Không đường gọi mới, không mã lỗi mới; xác nhận ở FE sẽ gọi thẳng cửa màn tay có sẵn. Type FE sinh từ hợp đồng.
 
 **T-308 (2026-11-06, chủ repo):** tăng MINOR `0.66.0` → `0.67.0`; mở lớp `quay_hoac_chu_quan` cho `GET /counter/events`, `GET /counter/queue`, duyệt/từ chối đơn chờ xác nhận và ghi đã đem ra. Không đổi hình dữ liệu; sinh lại type FE. Trang Vận hành của chủ quán giữ luồng nhận đơn theo ADR-097 sửa đổi.

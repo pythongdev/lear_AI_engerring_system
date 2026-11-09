@@ -8,6 +8,7 @@ import (
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
 	"banhcuon/be/internal/gia"
+	"banhcuon/be/internal/giaoviec"
 	"banhcuon/be/internal/sanxuat"
 	"banhcuon/be/internal/tongquan"
 	"github.com/jackc/pgx/v5"
@@ -19,15 +20,33 @@ type NguonNoiBo struct {
 	pool     *pgxpool.Pool
 	tongQuan *tongquan.Service
 	sanXuat  *sanxuat.Service
+	giaoViec *giaoviec.Service
 }
 
 func MoiNguonNoiBo(pool *pgxpool.Pool) *NguonNoiBo {
-	return &NguonNoiBo{pool: pool, tongQuan: tongquan.NewService(pool), sanXuat: sanxuat.NewService(pool)}
+	return &NguonNoiBo{
+		pool: pool, tongQuan: tongquan.NewService(pool), sanXuat: sanxuat.NewService(pool),
+		giaoViec: giaoviec.NewService(pool),
+	}
 }
 
-// CongCuGhi luôn rỗng, kể cả receiver nil: bản chạy chưa mở nhóm ghi nào (ADR-140).
-func (*NguonNoiBo) CongCuGhi(context.Context, int64) ([]CongCuGhi, error) {
-	return nil, nil
+// CongCuGhi chỉ mở nhóm giao việc cho lớp của cửa màn tay (CHAT-15, ADR-140).
+func (n *NguonNoiBo) CongCuGhi(ctx context.Context, nguoi int64) ([]CongCuGhi, error) {
+	if n == nil || nguoi <= 0 {
+		return nil, nil
+	}
+	err := authz.ReadAs(ctx, n.pool, authz.Caller{PersonID: nguoi}, authz.NeedCounterOrOwner, func(pgx.Tx, authz.Granted) error { return nil })
+	if err != nil {
+		var e apierr.Error
+		if errors.As(err, &e) {
+			switch e.Code {
+			case apierr.CodeUnauthenticated, apierr.CodeNotOnCounterDuty, apierr.CodeOwnerOnly:
+				return nil, nil
+			}
+		}
+		return nil, err
+	}
+	return n.congCuGhiGiaoViec(nguoi), nil
 }
 
 // CongCu đóng từng giao dịch kiểm lớp trước khi trả danh sách cho lượt gọi model.
