@@ -89,10 +89,16 @@ var submissionPattern = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}
 type Service struct {
 	pool       *pgxpool.Pool
 	visibility realtime.Visibility
+	boGioBan   bool
 }
 
 func NewService(pool *pgxpool.Pool, visibility realtime.Visibility) *Service {
 	return &Service{pool: pool, visibility: visibility}
+}
+
+func (s *Service) WithBoGioBan(bo bool) *Service {
+	s.boGioBan = bo
+	return s
 }
 
 func Tao(ctx context.Context, pool *pgxpool.Pool, personID int64, yc YeuCauTaiQuay) (DaTao, error) {
@@ -303,11 +309,13 @@ func (s *Service) xetNhanDon(ctx context.Context, tx pgx.Tx, kenh string) error 
 	if biChan {
 		return apierr.Error{Code: apierr.CodeOrderIntakePaused}
 	}
-	if biChan, err = ngayban.NgoaiGio(ctx, tx, moc); err != nil {
-		return err
-	}
-	if biChan {
-		return apierr.Error{Code: apierr.CodeOutsideSellingHours}
+	if !s.boGioBan {
+		if biChan, err = ngayban.NgoaiGio(ctx, tx, moc); err != nil {
+			return err
+		}
+		if biChan {
+			return apierr.Error{Code: apierr.CodeOutsideSellingHours}
+		}
 	}
 	if kenh == "delivery" || kenh == "pickup" || kenh == "qr_table" {
 		if s.visibility == nil {

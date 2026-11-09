@@ -8804,3 +8804,30 @@ sẵn cho từng công cụ ghi được mở (`CHAT-11` dựng khung, mỗi nh�
 thô hơn. Lùi một nhóm: bỏ công cụ khỏi danh sách, không đụng dữ liệu.
 
 **Applies to:** lane `CHAT` · `CHAT-10` · `CHAT-11` · `CHAT-15`…`CHAT-25` · `I-044`.
+
+## ADR-141 — Máy dev bỏ được điều kiện giờ bán của I-008 bằng một cờ khởi động
+
+**Status:** **Đã chốt** 2026-11-09 — chủ repo chọn *"Cho máy dev bỏ giờ bán"* trong câu hỏi có sẵn phương án (T-312); Claude Code thiết kế
+(mức **L2**). Phần cơ chế dưới đây là thiết kế của phiên, không phải lời quán.
+
+**Context:** chủ repo hai lần đặt món ở `/ban/3` vào buổi chiều (2026-11-08 17:07, 2026-11-09 13:05) rồi không thấy đơn ở
+`/chu-quan/van-hanh`. Đo cả hai lần: cửa đơn trả 409 `outside_selling_hours`, không đơn nào được tạo — đúng `I-008` và
+`master_plan/shop-facts.md` §1 (giờ bán 06:00–11:00). Máy dev chỉ thử được luồng khách → Vận hành trong năm giờ buổi sáng. Đồng hồ của cửa là
+`now()` của giao dịch (`don.DongHo`, `02-thoi-gian-ngay-ban.md` §3); chỉ test thay được nó. Kiểm giờ bán của luồng nhận đơn nằm đúng một chỗ:
+`xetNhanDon` ở `be/internal/don/service.go`. Combo cũng gọi `ngayban.NgoaiGio`, nhưng để **chỉ cho** đổi giá ngoài giờ.
+
+**Decision:**
+
+1. **Một cờ khởi động, chỉ cho máy dev.** `BANHCUON_DEV_BO_GIO_BAN`: rỗng hoặc `0` ⇒ tắt; `1` ⇒ bật; giá trị khác ⇒ server không khởi
+   động. Bật chỉ hợp lệ khi `BANHCUON_ORIGIN` là `http://localhost` hoặc `http://127.0.0.1` (có cổng hay không); origin khác ⇒ server không
+   khởi động. Đọc ở `be/cmd/server` (`docBoGioBan`), in một dòng cảnh báo khi bật.
+2. **Chỉ bỏ điều kiện giờ bán.** `don.Service.WithBoGioBan(true)` làm `xetNhanDon` bỏ bước giờ bán; tạm dừng (điều kiện 1) và quán mù
+   (điều kiện 3) giữ nguyên thứ tự và lời từ chối. Combo, ngày bán, đồng hồ, database và hợp đồng API không đổi.
+3. **`make dev` / `make be` bật sẵn** (`BANHCUON_DEV_BO_GIO_BAN ?= 1` trong `BE_ENV`); muốn thử lời ngoài giờ trên máy dev thì chạy
+   `make dev BANHCUON_DEV_BO_GIO_BAN=0`. Test (`be-check`, `db-check`) không đặt cờ, nên luôn chạy với luật thật.
+
+**Consequences:** máy dev đặt được đơn buổi chiều; đơn ấy có `created_at` ngoài giờ bán, nên phép đối chiếu `I-008/1`
+(`db/reconcile/i008.sql`) chạy trên database dev sẽ kêu — đúng, vì đơn ấy thật sự ngoài giờ. Rủi ro còn lại: một bản chạy thật đặt origin
+`localhost` và cờ `1` cùng lúc; pha 5 (triển khai, `T-109`) phải kiểm cờ này tắt. Lùi: bỏ cờ khỏi `Makefile`, server về luật thật.
+
+**Applies to:** `I-008` · `T-312` · `be/cmd/server` · `be/internal/don` · `Makefile`.

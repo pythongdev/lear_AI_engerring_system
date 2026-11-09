@@ -42,7 +42,15 @@ func newRouter(pool *pgxpool.Pool, auth authz.Authenticator, chat ...troly.CauHi
 	return routerWithRealtime(pool, auth, realtime.New(0), chat...)
 }
 
+func newRouterWithBoGioBan(pool *pgxpool.Pool, auth authz.Authenticator, boGioBan bool, chat ...troly.CauHinh) *gin.Engine {
+	return routerWithRealtimeBoGioBan(pool, auth, realtime.New(0), boGioBan, chat...)
+}
+
 func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtime.Broker, chat ...troly.CauHinh) *gin.Engine {
+	return routerWithRealtimeBoGioBan(pool, auth, b, false, chat...)
+}
+
+func routerWithRealtimeBoGioBan(pool *pgxpool.Pool, auth authz.Authenticator, b *realtime.Broker, boGioBan bool, chat ...troly.CauHinh) *gin.Engine {
 	r := gin.New()
 	r.Use(middleware.CungNguon(os.Getenv("BANHCUON_ORIGIN")))
 	r.Use(middleware.Realtime(b))
@@ -84,7 +92,7 @@ func routerWithRealtime(pool *pgxpool.Pool, auth authz.Authenticator, b *realtim
 	baonghi.Routes(r, baonghi.NewService(pool))
 	daotao.Routes(r, daotao.NewService(pool, os.Getenv("BANHCUON_FILE_DIR")))
 	sanxuat.Routes(r, sanxuat.NewService(pool).WithRealtime(b))
-	don.Routes(r, don.NewService(pool, b))
+	don.Routes(r, don.NewService(pool, b).WithBoGioBan(boGioBan))
 	nhandon.Routes(r, nhandon.NewService(pool, b))
 	r.NoMethod(func(c *gin.Context) {
 		if c.Request.Method != http.MethodHead {

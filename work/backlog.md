@@ -97,6 +97,8 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-312 **Máy dev không đặt được đơn ngoài giờ bán nên không thử được luồng khách → Vận hành** — L2, ADR-141, xong 2026-11-09; cờ `BANHCUON_DEV_BO_GIO_BAN` (make dev bật sẵn, chỉ origin localhost) bỏ riêng điều kiện giờ bán; Claude viết test trước, Codex làm, Claude duyệt; be-check và gate đạt, đơn QR thử lúc 13:21 hiện ở hàng chờ chủ quán · [chi tiết](#t-312)
+
 - [x] CHAT-16 **Chat chưa phân biệt ghi đào tạo với đánh dấu việc** — L2, ADR-140 điểm 2 · 4 · 7, I-031, xong lát BE 2026-11-09; Claude viết test trước (11 ca đỏ), Codex dựng sáu công cụ ghi đào tạo chỉ sinh đề xuất cho lớp `quay_hoac_chu_quan`, hướng dẫn chỉ chữ, người được ghi do người bấm chọn, hợp đồng 0.70.0; be-check và gate đạt; còn lát FE (sáu dòng `cuaGhiChat`, multipart, ô chọn người được ghi) và eval model thật (chờ `U-112`) · [mô tả](backlog_CHAT.md#chat-16)
 - [x] CHAT-15 **Chat chưa gọi được cửa giao việc mà vẫn giữ quyền đánh dấu** — L2, ADR-140 điểm 2 · 4 · 7, xong lát BE 2026-11-09; Claude viết test trước, Codex dựng bốn công cụ ghi `giao_viec` · `sua_viec` · `an_viec` · `danh_dau_viec` chỉ sinh đề xuất cho lớp `quay_hoac_chu_quan`, nội dung việc và tên người không tới model, hợp đồng 0.69.0; be-check và gate đạt; **xong lát FE 2026-11-09**: `cuaGhiChat` có bốn cửa giao việc, thẻ giao mới có ô chọn người nhận từ `GET /people`; Claude viết test trước, Codex làm, Claude duyệt, fe-check 743/743 và gate đạt; còn đọc lại sau ghi và eval model thật (chờ `U-112`); trước đó còn dòng `cuaGhiChat` FE và ô chọn người nhận · [mô tả](backlog_CHAT.md#chat-15)
 - [x] CHAT-11 **Người dùng chưa nhìn thấy rõ điều mình sắp ghi** — L2, ADR-140 điểm 3 · 4 · 5 · 6, xong 2026-11-09; Claude viết test trước, Codex dựng `TheDeXuat` ở `HoiQuan` mặt người làm (bản chụp bất biến, gọi qua bảng `cuaGhiChat` rỗng ở bản chạy, dấu FE sinh, chưa rõ kết quả, hết hạn 10 phút); fe-check 727/727 và gate đạt; chưa nhóm ghi nào mở · [mô tả](backlog_CHAT.md#chat-11)
@@ -569,6 +571,25 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-312"></a>
+### T-312 — Máy dev không đặt được đơn ngoài giờ bán nên không thử được luồng khách → Vận hành
+
+Chủ repo báo lần hai 2026-11-09: đặt ở `/ban/3`, `/chu-quan/van-hanh` không cập nhật. Claude đo lúc 13:05: cửa QR trả 409 `outside_selling_hours`, database không có đơn mới; trang Vận hành không hỏng (xem T-311). Chủ repo chọn *"Cho máy dev bỏ giờ bán"*. Mức **L2** vì đổi cách thực thi `I-008` trên một loại máy; thiết kế ở **ADR-141**, ngoại lệ ghi ở `quality/invariants.md` I-008.
+
+Acceptance viết trước sửa:
+
+- A1 — `don.Service.WithBoGioBan(true)` bỏ riêng bước giờ bán của `xetNhanDon`: năm kênh nhận đơn trước giờ mở và sau giờ đóng; bản mặc định vẫn `outside_selling_hours`; tạm dừng vẫn `order_intake_paused` ở năm kênh; quán mù vẫn `shop_not_seeing_orders` ở ba kênh khách tự bấm. Test `be/internal/don/bo_gio_ban_test.go` (Claude viết trước, SHA-256 `6ef71321…edd2e`).
+- A2 — `docBoGioBan(getenv)` ở `be/cmd/server`: rỗng/`0` tắt, `1` bật chỉ khi origin là `http://localhost` hoặc `http://127.0.0.1`, mọi trường hợp khác trả lỗi; `main` dừng khi lỗi và in cảnh báo khi bật; router dựng `don.Service` theo cờ. Test `be/cmd/server/bo_gio_ban_test.go` (SHA-256 `e1c785a1…aacbfda`).
+- A3 — `Makefile`: `BANHCUON_DEV_BO_GIO_BAN ?= 1` nằm trong `BE_ENV`; `make help` hoặc chú thích nói cách tắt.
+- A4 — Combo, ngày bán, đồng hồ, database, hợp đồng API không đổi; be-check và `./scripts/gate.sh` đạt.
+- A5 — Claude tự thử: server bật cờ, lúc ngoài giờ gửi một lượt QR bàn 3 ⇒ 201 và đơn hiện ở `GET /counter/queue` của chủ quán.
+
+Phạm vi (`work/scope/T-312.txt`): `be/internal/don/`, `be/cmd/server/`, `Makefile`, `docs/decisions.md`, `quality/invariants.md`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-312`, nhánh `codex/T-312`, nền `e8b0670`, vì cây chính đang có thay đổi chưa commit của nhóm CHAT. Duyệt: Claude, chưa duyệt.
+
+Bàn giao 2026-11-09 (thực hiện: Codex, duyệt: Claude): `docBoGioBan` ở `be/cmd/server/main.go` (Fatal khi lỗi, cảnh báo khi bật), `newRouterWithBoGioBan` ở `router.go` (giữ chữ ký `newRouter` cũ cho test, mặc định tắt), `don.Service.WithBoGioBan` bọc riêng bước `ngayban.NgoaiGio` trong `xetNhanDon`; `Makefile` thêm cờ vào `BE_ENV` kèm chú thích cách tắt. Hai file test của Claude giữ nguyên SHA-256. Claude đọc diff, chạy `./scripts/gate.sh` trong worktree: exit 0, be-check PostgreSQL thật PASS gồm năm test `TestI008_CoBoGioBanChiBatTrenMayDev`, `TestI008_MayDevBoGioBanThiNhanDonNgoaiGio`, `TestI008_MacDinhVanChanNgoaiGio`, `TestI008_MayDevBoGioBanVanTheoTamDung`, `TestI008_MayDevBoGioBanVanTheoQuanMu`; fe, db SKIP vì không đổi. A5 Claude tự thử trên database dev, server phụ cổng 8090 bật cờ: 13:20 lượt QR bàn 3 khi chưa ai mở luồng ⇒ `shop_not_seeing_orders` và mở khoảng quán mù số 2 (đúng I-008); chủ quán mở `GET /counter/events`, bấm `POST /shop-blind/reopening` ⇒ 200; 13:21 lượt QR bàn 3 ⇒ 201, `GET /counter/queue` của chủ quán có đơn 4 (`qr_table`, bàn 3, Giò bán rời 9.000đ), luồng nhận `changed`. Đơn thử số 4 để lại ở *Chờ xác nhận* cho chủ repo xem trên trang Vận hành. Không lỗi phải gửi lại Codex. Đưa về cây chính bằng patch rồi chạy lại gate ở cây chính. Server `make dev` đang chạy phải khởi động lại mới có cờ.
+
+[↑ đầu file](#top)
 
 <a id="t-310"></a>
 ### T-310 — Nhà giả của server chưa gọi được công cụ đọc nội bộ nên chưa diễn được biên bản chỉ đọc
