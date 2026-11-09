@@ -6,6 +6,7 @@
 //   * `type CuaGhi = { coDau: boolean; goi: (api: ApiClient, de: { path_params: Record<string, unknown>;
 //       body: Record<string, unknown> }) => Promise<ApiResult<unknown>> }` — một dòng của bảng operationId → hàm gọi API sinh sẵn.
 //   * `cuaGhiChat: Readonly<Record<string, CuaGhi>>` — bảng của bản chạy, RỖNG (ADR-140 điểm 7: chưa nhóm ghi nào mở).
+//     *Sửa 2026-11-09, CHAT-15 lát FE:* bảng nay có bốn cửa giao việc; nội dung bảng kiểm ở `./the-de-xuat-giao-viec.test.tsx`.
 //   * component thẻ (tên tuỳ người thi công; dòng ở docs/product/4-fe/01-khung-fe.md).
 // - `HoiQuan` nhận thêm `nguoiBam?: string` và `cuaGhi?: Readonly<Record<string, CuaGhi>>` (thiếu = `cuaGhiChat`).
 //   `OChat` truyền `nguoiBam` = `display_name` của phiên. Mặt khách (không `khung`) không bày thẻ.
@@ -363,8 +364,9 @@ describe("CHAT-11 thẻ đề xuất ở mặt người làm", () => {
 });
 
 describe("CHAT-11 bảng cửa của bản chạy và mặt khách", () => {
-  it("A5 bảng cửa của bản chạy rỗng: chưa nhóm ghi nào mở", () => {
-    expect(Object.keys(cuaGhiChat)).toEqual([]);
+  // Sửa 2026-11-09, CHAT-15 lát FE: nhóm giao việc đã mở; bảng chỉ còn được chứa các cửa của nhóm đã mở.
+  it("A5 bảng cửa của bản chạy chỉ có các nhóm đã mở", () => {
+    expect(Object.keys(cuaGhiChat)).toEqual(["createAssignedTask", "updateAssignedTask", "hideAssignedTask", "markAssignedTask"]);
   });
 
   it("A5 HoiQuan không truyền cuaGhi dùng bảng bản chạy: thẻ hiện, không nút ghi", async () => {

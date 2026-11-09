@@ -845,6 +845,30 @@ mọi test backend qua PostgreSQL thật đều đạt`, bảy `TestI044_*` mớ
 `cuaGhiChat` cho bốn `operationId` nên đề xuất hiện được mà chưa bấm được; ô chọn người nhận cho `giao_viec`; eval trên model thật. Chưa có người
 duyệt thứ ba.
 
+2026-11-09, Claude, **lát FE**: chủ repo yêu cầu *"hãy tiếp tục yêu cầu codex làm bạn kiểm tra"*. Mức **L2** (thẻ bấm gọi bốn cửa ghi thật, I-044).
+Đo trên `6084ae5`: `cuaGhiChat` rỗng; bốn cửa không có `submission_code`; màn Giao việc chọn người nhận từ `GET /people` (`listPeople`, mọi người, không
+lọc). *Phiên chọn của Claude trong khung ADR-140 (đổi bằng sửa entry này):* (1) bảng có bốn dòng `coDau: false`, gọi đúng hàm API sinh sẵn của cửa; (2)
+`CuaGhi` thêm `manTay` (link màn tay riêng của cửa, ở đây *Xem Giao việc* `/quay/giao-viec` · `/chu-quan/giao-viec`) và `chonNguoi` (trường thân
+được điền bằng người chọn từ `GET /people`; chỉ `createAssignedTask`); (3) ô chọn chỉ hiện khi `needs_choice` đúng bằng `[chonNguoi]`, trường khác
+giữ lời *Cần chọn trên màn tay* của CHAT-11; (4) chọn người hiện thêm dòng *Người nhận* có nguồn *Danh sách người* và mốc đọc, đổi lựa chọn là thẻ
+mới, đã bấm thì khoá; mốc 10 phút vẫn từ `read_at` của đề xuất; (5) bốn tên công cụ hiện nguồn *Giao việc*. Hợp đồng ở đầu
+`fe/src/components/shared/the-de-xuat-giao-viec.test.tsx` (SHA-256 `7717ae10…a2bc` khi giao), 15/15 ca đỏ; Claude sửa ca *bảng rỗng* của
+`the-de-xuat.test.tsx` (dòng *Sửa 2026-11-09*, SHA-256 `360692ed…eb80`). Acceptance ghi trước khi giao: A1 hai file test xanh và không bị sửa,
+`hoi-quan.test.tsx` · `hoi-quan-noi-bo.test.tsx` · `o-chat.test.tsx` không sửa và xanh; A2 lệnh ghi chỉ qua `goi` của bảng, không `fetch` tay, không
+storage, không `signal`; thân gửi là bản chụp cộng đúng một trường `chonNguoi`; A3 dòng `TheDeXuat` ở `docs/product/4-fe/01-khung-fe.md` nói bốn cửa
+và ô chọn; A4 `./scripts/fe-check.sh` và `./scripts/gate.sh` xanh. Worktree `../lean_wt/CHAT-15-fe`, nhánh `codex/CHAT-15-fe` từ `6084ae5`.
+**Chưa làm ở lát này:** đọc lại danh sách việc sau khi ghi, đổi người nhận qua chat, eval trên model thật (chờ `U-112`).
+
+2026-11-09, CHAT-15 lát FE xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-15-fe`, nhánh `codex/CHAT-15-fe`, nền `6084ae5` + hai file test của
+Claude đã stage, model `gpt-6-astra`, một lượt): `the-de-xuat.tsx` (bốn dòng `cuaGhiChat`, `CuaGhi.manTay` · `chonNguoi`, ô chọn người nhận đọc
+`GET /people` bằng khoá `["people"]` chỉ khi cần, chụp danh sách cùng `dataUpdatedAt` sau lần đọc mới, bốn tên nguồn *Giao việc*), dòng `TheDeXuat` ở
+`docs/product/4-fe/01-khung-fe.md`. Codex chạy Vitest 742/742 trong worktree; không xong fe-check · build vì sandbox chặn cache Go và Next không
+phân giải qua symlink `node_modules`. **Claude** duyệt diff (lệnh ghi chỉ qua `goi`, thân là bản chụp cộng đúng `assignee_person_id`, ô chọn khoá cả ở
+`disabled` lẫn hàm đổi, không `fetch` tay, không storage, không `signal`), đưa patch về cây chính, `cmp` bốn file khớp worktree; hai file test khớp
+SHA-256 phiếu. Bằng chứng ở cây chính: `./scripts/fe-check.sh` `fe-check: PASS` (743/743, build đạt), `./scripts/gate.sh` `PASS gate không cổng nào
+đỏ`. Chưa diễn trên trình duyệt với BE thật. **Còn lại:** đọc lại danh sách việc sau khi ghi, đổi người nhận qua chat, eval tên người và ý định mơ hồ
+trên model thật (chờ `U-112`). Chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---
