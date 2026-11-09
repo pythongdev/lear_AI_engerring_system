@@ -895,6 +895,36 @@ thị cho model.
 
 **Nhận việc:**
 
+2026-11-09, Claude, **lát BE**: chủ repo yêu cầu *"tiếp tục yêu cầu codex làm bạn kiểm tra"*. Mức **L2** (nhóm ghi thứ hai của ADR-140, I-031 ·
+I-044). Đo trên `e8b0670`: sáu cửa C09 lớp `quay_hoac_chu_quan`, không cửa nào có `submission_code`; `attachAssignedTaskGuide` nhận
+`multipart/form-data` (`kind` text cần `body`, image/video cần tệp); `updateTrainingRecord` thay cả hai trường, vắng là không còn;
+`daotao.Service` có `DocHuongDan(actor, task, hidden)` · `DocGhiNhan(actor, trainee, hidden)`, `NewService(pool, kho)`. *Phiên chọn của Claude trong
+khung ADR-140 (đổi bằng sửa entry này):* (1) sáu công cụ `gan_huong_dan` · `sua_huong_dan` · `an_huong_dan` · `ghi_nhan_dao_tao` · `sua_ghi_nhan` ·
+`an_ghi_nhan`, kể sau bốn công cụ giao việc; (2) hướng dẫn qua chat **chỉ là chữ** — khoá tệp, đường dẫn hay `kind` là lỗi, ảnh/video ở màn tay; tham
+chiếu hướng dẫn là cụm chữ trong thân các hướng dẫn chữ chưa ẩn của đúng việc đã tìm (cùng luật so khớp CHAT-15), nên hướng dẫn ảnh/video không ẩn
+được qua chat; (3) ghi nhận mới để trống người được ghi, `needs_choice` = `trainee_person_id` (ADR-140 điểm 4), thẻ chưa bấm được tới lát FE có ô
+chọn; (4) tham chiếu ghi nhận là cụm chữ trong nhận xét của các ghi nhận chưa ẩn, nên ghi nhận chỉ có đánh giá không sửa/ẩn được qua chat; (5) đánh
+giá chỉ `pass` · `not_yet`, dòng thẻ dùng chữ màn Đào tạo *Làm được* · *Chưa làm được* · *Chưa đánh giá*; sửa ghi nhận giữ giá trị hiện tại của trường
+không đổi vì cửa thay cả hai, không xoá trường qua chat ở lát này. Thân hướng dẫn, nhận xét và tên người không về model (lượt dừng ngay sau đề xuất).
+Hợp đồng ở đầu `be/internal/troly/ghi_dao_tao_test.go`; Claude sửa ba kỳ vọng ở `ghi_giao_viec_test.go` và một ở `noi_bo_test.go` (danh sách ghi nay mười
+tên), mỗi chỗ có dòng *Sửa 2026-11-09, CHAT-16*. Đỏ trước code: `./scripts/be-check.sh` 11 test `troly` FAIL đúng lý do *không có công cụ ghi* /
+*được 4*, mọi gói khác `ok`. Acceptance ghi trước khi giao: A1 test mới xanh, ba file test của Claude không sửa (SHA-256 `c6934b9e…0d9b` ·
+`c6af5b5c…80f5` · `27da308b…d4`); A2 không câu SQL, không `authz.Door`, lời gọi `daotao` chỉ `NewService` · `DocHuongDan` · `DocGhiNhan`; A3 mô tả
+`askChat` nói nhóm đào tạo đã mở, `info.version` tăng, một đoạn sổ ở `01-hop-dong-api.md`; A4 `./scripts/be-check.sh` và `./scripts/gate.sh` xanh.
+**Chưa làm ở lát này:** dòng `cuaGhiChat` FE cho sáu cửa (gửi multipart cho `attachAssignedTaskGuide`, ô chọn người được ghi), eval lệnh chèn trên
+model thật (chờ `U-112`).
+
+2026-11-09, CHAT-16 lát BE xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-16`, nhánh `codex/CHAT-16`, nền `e8b0670` + ba file test của Claude
+đã stage, model `gpt-6-astra`, một lượt): `ghi_dao_tao.go` mới (sáu `CongCuGhi`, kiểm lại lớp trong mỗi hàm dựng, tham chiếu việc dùng lại
+`timViecDeXuat`, tham chiếu hướng dẫn và ghi nhận qua `daotao.Service.DocHuongDan` · `DocGhiNhan`, một lỗi chung không mang nội dung), `noi_bo.go`
+(`daoTao` dựng bằng `daotao.NewService(pool, "")`, `CongCuGhi` nối giao việc rồi đào tạo), mô tả `askChat` và `0.70.0` ở `openapi.yaml`, đoạn sổ ở
+`01-hop-dong-api.md`. Codex không chạy được be-check vì sandbox chặn Docker. **Claude** duyệt diff (không SQL, không `authz.Door`, lời gọi `daotao` chỉ
+`NewService` · `DocHuongDan` · `DocGhiNhan`; hàm chuẩn hoá chép nguyên của `timViecDeXuat`), đưa bốn file về cây chính, `cmp` khớp worktree, sinh lại
+`fe/src/lib/api/schema.ts`, thêm đoạn *Sửa CHAT-16* ở Verification của `I-044`. Bằng chứng ở cây chính: `./scripts/be-check.sh` `be-check: PASS — mọi
+test backend qua PostgreSQL thật đều đạt`, bảy `TestI044_*` mới PASS; ba file test khớp SHA-256 phiếu. **Còn lại:** lát FE (sáu dòng `cuaGhiChat`,
+gửi multipart cho `attachAssignedTaskGuide`, ô chọn người được ghi cho `ghi_nhan_dao_tao`); eval lệnh chèn trong hướng dẫn trên model thật (chờ
+`U-112`). Chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---

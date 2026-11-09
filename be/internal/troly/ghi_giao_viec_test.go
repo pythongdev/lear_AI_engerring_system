@@ -193,8 +193,9 @@ func TestI044_GiaoViecChiMoChoQuayVaChuQuan(t *testing.T) {
 		{"không nguồn nội bộ", rong, n.chu, nil},
 		{"người không có thật", nb, 999_999_999, nil},
 		{"người ngoài quầy", nb, n.ngoai, nil},
-		{"người đứng quầy", nb, n.quay, dsGhiGiaoViec},
-		{"chủ quán", nb, n.chu, dsGhiGiaoViec},
+		// Sửa 2026-11-09, CHAT-16 (Claude): lớp quay_hoac_chu_quan nay có thêm sáu công cụ đào tạo sau bốn công cụ giao việc.
+		{"người đứng quầy", nb, n.quay, dsGhiQuayChu},
+		{"chủ quán", nb, n.chu, dsGhiQuayChu},
 	} {
 		cc, err := ca.nb.CongCuGhi(n.ctx, ca.nguoi)
 		if err != nil {
@@ -211,8 +212,8 @@ func TestI044_GiaoViecChiMoChoQuayVaChuQuan(t *testing.T) {
 		if !reflect.DeepEqual(ten, ca.muon) {
 			t.Fatalf("%s: muốn %v, được %v", ca.ten, ca.muon, ten)
 		}
-		if ca.muon != nil && !reflect.DeepEqual(op, opGhiGiaoViec) {
-			t.Fatalf("%s: operationId muốn %v, được %v", ca.ten, opGhiGiaoViec, op)
+		if ca.muon != nil && !reflect.DeepEqual(op, opGhiQuayChu) {
+			t.Fatalf("%s: operationId muốn %v, được %v", ca.ten, opGhiQuayChu, op)
 		}
 	}
 }
@@ -372,8 +373,9 @@ func TestI044_SuaAnDanhDauDungThanCuaCua(t *testing.T) {
 func TestI044_RoiQuayGiuaLuotThiKhongDeXuat(t *testing.T) {
 	v := moViec(t)
 	cc, err := troly.MoiNguonNoiBo(v.pool).CongCuGhi(v.ctx, v.quay)
-	if err != nil || len(cc) != len(dsGhiGiaoViec) {
-		t.Fatalf("người đứng quầy phải có bốn công cụ ghi: %d %v", len(cc), err)
+	// Sửa 2026-11-09, CHAT-16 (Claude): mười công cụ ghi (giao việc rồi đào tạo).
+	if err != nil || len(cc) != len(dsGhiQuayChu) {
+		t.Fatalf("người đứng quầy phải có %d công cụ ghi: %d %v", len(dsGhiQuayChu), len(cc), err)
 	}
 	v.dungQuay(t, 0)
 	defer v.dungQuay(t, v.quay)
@@ -454,8 +456,9 @@ func TestI044_DuongHoiGiaoViecKhongGhiKhongLo(t *testing.T) {
 	if len(g) != 1 {
 		t.Fatalf("lượt có đề xuất không gọi model thêm: %d lần", len(g))
 	}
-	if !reflect.DeepEqual(g[0].CongCu, append(append([]string{}, dsQuay...), dsGhiGiaoViec...)) {
-		t.Fatalf("gói tới model của người đứng quầy phải kể %v rồi %v, được %v", dsQuay, dsGhiGiaoViec, g[0].CongCu)
+	// Sửa 2026-11-09, CHAT-16 (Claude): sau tên đọc là mười tên ghi (giao việc rồi đào tạo).
+	if !reflect.DeepEqual(g[0].CongCu, append(append([]string{}, dsQuay...), dsGhiQuayChu...)) {
+		t.Fatalf("gói tới model của người đứng quầy phải kể %v rồi %v, được %v", dsQuay, dsGhiQuayChu, g[0].CongCu)
 	}
 	loRa(g)
 	v.khongGhi(t, "đường hỏi có đề xuất")

@@ -316,8 +316,9 @@ func TestI043_DuongHoiChonCongCuTheoPhien(t *testing.T) {
 		{"mã khách đặt vào cookie người làm", []*http.Cookie{{Name: "banhcuon_phien", Value: khach}}, dsCongKhai},
 		{"người ngoài quầy", []*http.Cookie{phien(n.ngoai)}, dsNguoiLam},
 		// Sửa 2026-11-09, CHAT-15 (Claude): lớp quay_hoac_chu_quan nay có thêm bốn công cụ giao việc, kể sau tên đọc.
-		{"người đứng quầy", []*http.Cookie{phien(n.quay)}, append(append([]string{}, dsQuay...), dsGhiGiaoViec...)},
-		{"chủ quán", []*http.Cookie{phien(n.chu)}, append(append([]string{}, dsChuQuan...), dsGhiGiaoViec...)},
+		// Sửa 2026-11-09, CHAT-16 (Claude): thêm sáu công cụ đào tạo sau bốn công cụ giao việc.
+		{"người đứng quầy", []*http.Cookie{phien(n.quay)}, append(append([]string{}, dsQuay...), dsGhiQuayChu...)},
+		{"chủ quán", []*http.Cookie{phien(n.chu)}, append(append([]string{}, dsChuQuan...), dsGhiQuayChu...)},
 	} {
 		truoc := len(nha.DaNhan())
 		hoi(ca.cookie...)

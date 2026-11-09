@@ -218,6 +218,13 @@ tạm dừng có ưu tiên **cao hơn** giờ mở cửa: đang giữa giờ bá
 được tạo. Luật này áp cho **mọi** kênh, không riêng ba kênh mang đi. Đơn đã tạo **trước** đó không
 bị chạm tới: nó vẫn được làm, đóng gói, giao và thu tiền.
 
+**Ngoại lệ của máy dev, không phải của quán** (2026-11-09, chủ repo chọn, **ADR-141**, `T-312`): server
+khởi động với `BANHCUON_DEV_BO_GIO_BAN=1` và origin `localhost`/`127.0.0.1` thì bỏ **riêng** điều kiện
+giờ bán; tạm dừng và quán mù vẫn chặn. Bản chạy thật không được bật cờ này. Test:
+`TestI008_MayDevBoGioBanThiNhanDonNgoaiGio`, `TestI008_MacDinhVanChanNgoaiGio`,
+`TestI008_MayDevBoGioBanVanTheoTamDung`, `TestI008_MayDevBoGioBanVanTheoQuanMu`,
+`TestI008_CoBoGioBanChiBatTrenMayDev`.
+
 **Điều kiện thứ ba cần đường điều khiển khi mạng quán mất.** Chủ quán chốt
 2026-09-25 (U-053): dùng 5G bấm tắt (`shop-facts.md` §6.11). Ba kênh khách
 tự bấm (`delivery`, `pickup`, `qr_table`) dừng; hai kênh do người của quán nhập (`staff_pos`,
@@ -1837,5 +1844,9 @@ viết trước code. Vế FE (thân gửi bằng thân hiện, thẻ khoá) ở
 *Sửa 2026-11-09, CHAT-15 (Claude Code):* danh sách công cụ ghi của bản chạy nay rỗng với mọi phiên **trừ** lớp `quay_hoac_chu_quan`, có bốn công cụ giao
 việc. Kịch bản âm thêm: dựng đề xuất của cả bốn không đổi bảng `assigned_task` · `assigned_task_mark`; người rời quầy giữa lượt ⇒ hàm dựng lỗi; tham
 chiếu việc nhập nhằng ⇒ không đề xuất; gói tới model không mang nội dung việc hay tên người nhận (`I-043`).
+
+*Sửa 2026-11-09, CHAT-16 (Claude Code):* lớp ấy có thêm sáu công cụ đào tạo sau bốn công cụ giao việc. Kịch bản âm thêm: dựng đề xuất của cả sáu không
+đổi bảng `assigned_task_guide` · `training_record`; hướng dẫn chỉ nhận chữ, khoá tệp hay đường dẫn ⇒ lỗi; đánh giá ngoài `pass` · `not_yet` ⇒ lỗi
+(`I-031`); người được ghi không do model điền; thân hướng dẫn mang câu như lệnh, nhận xét và tên người không tới model (`ghi_dao_tao_test.go`).
 
 *Viết ở CHAT-02 lượt ba, 2026-11-08, Claude Code.*

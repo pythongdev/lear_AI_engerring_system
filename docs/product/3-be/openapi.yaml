@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.69.0
+  version: 0.70.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -2509,8 +2509,10 @@ paths:
         Công cụ nội bộ gọi service đọc dưới chính người của phiên, kiểm lại quyền khi chạy;
         kết quả được giới hạn trường được phép và chỉ dùng trong chính lượt này.
         Công cụ ghi chỉ dựng đề xuất rồi dừng lượt với câu cố định, không ghi dữ liệu nghiệp vụ;
-        nhóm giao việc đã mở cho lớp quay_hoac_chu_quan theo CHAT-15 (ADR-140),
-        với bốn operationId createAssignedTask, updateAssignedTask, hideAssignedTask, markAssignedTask.
+        nhóm giao việc (CHAT-15) và nhóm đào tạo (CHAT-16) đã mở cho lớp quay_hoac_chu_quan (ADR-140),
+        với bốn operationId giao việc createAssignedTask, updateAssignedTask, hideAssignedTask, markAssignedTask
+        và sáu operationId đào tạo attachAssignedTaskGuide, updateAssignedTaskGuide, hideAssignedTaskGuide,
+        createTrainingRecord, updateTrainingRecord, hideTrainingRecord.
       requestBody:
         required: true
         content:

@@ -7,6 +7,7 @@ import (
 
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
+	"banhcuon/be/internal/daotao"
 	"banhcuon/be/internal/gia"
 	"banhcuon/be/internal/giaoviec"
 	"banhcuon/be/internal/sanxuat"
@@ -21,16 +22,18 @@ type NguonNoiBo struct {
 	tongQuan *tongquan.Service
 	sanXuat  *sanxuat.Service
 	giaoViec *giaoviec.Service
+	daoTao   *daotao.Service
 }
 
 func MoiNguonNoiBo(pool *pgxpool.Pool) *NguonNoiBo {
 	return &NguonNoiBo{
 		pool: pool, tongQuan: tongquan.NewService(pool), sanXuat: sanxuat.NewService(pool),
 		giaoViec: giaoviec.NewService(pool),
+		daoTao:   daotao.NewService(pool, ""),
 	}
 }
 
-// CongCuGhi chỉ mở nhóm giao việc cho lớp của cửa màn tay (CHAT-15, ADR-140).
+// CongCuGhi mở nhóm giao việc rồi đào tạo cho lớp của cửa màn tay (CHAT-15 · CHAT-16, ADR-140).
 func (n *NguonNoiBo) CongCuGhi(ctx context.Context, nguoi int64) ([]CongCuGhi, error) {
 	if n == nil || nguoi <= 0 {
 		return nil, nil
@@ -46,7 +49,7 @@ func (n *NguonNoiBo) CongCuGhi(ctx context.Context, nguoi int64) ([]CongCuGhi, e
 		}
 		return nil, err
 	}
-	return n.congCuGhiGiaoViec(nguoi), nil
+	return append(n.congCuGhiGiaoViec(nguoi), n.congCuGhiDaoTao(nguoi)...), nil
 }
 
 // CongCu đóng từng giao dịch kiểm lớp trước khi trả danh sách cho lượt gọi model.
