@@ -5,11 +5,25 @@ import { Button } from "@/components/ui/button";
 import { call, type ApiFailure } from "@/lib/api/client";
 import { useApi } from "@/lib/api/provider";
 import type { components } from "@/lib/api/schema";
+import type { Khung } from "@/lib/auth/khung";
+import { loiTaiKhoan } from "@/lib/auth/messages";
 
 type TraLoi = components["schemas"]["ChatTurnResponse"];
 type Luot = { question: string; response: TraLoi };
 const gio = new Intl.DateTimeFormat("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit" });
+const gioNoiBo = new Intl.DateTimeFormat("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit", second: "2-digit" });
 const tenNguon: Record<string, string> = { doc_menu: "Thực đơn", tinh_gia: "Bảng giá" };
+const tenNguonNoiBo: Record<string, string> = {
+  ...tenNguon,
+  doc_bang_tram: "Bảng trạm",
+  doc_bang_phuc_vu: "Bảng phục vụ",
+  doc_tong_quan: "Tổng quan",
+};
+const manTay: Record<Khung, { href: string; ten: string }> = {
+  "/tram": { href: "/tram", ten: "Xem Bảng trạm" },
+  "/quay": { href: "/quay/san-xuat", ten: "Xem Sản xuất" },
+  "/chu-quan": { href: "/chu-quan/van-hanh", ten: "Xem Vận hành" },
+};
 const suyGiam: Record<string, string> = {
   tat: "Trợ lý đang tắt.",
   het_ngan_sach: "Trợ lý đã dùng hết lượt hỏi của hôm nay.",
@@ -17,14 +31,19 @@ const suyGiam: Record<string, string> = {
   qua_so_lan: "Trợ lý chưa tìm được câu trả lời.",
   loi_hang: "Trợ lý đang gặp lỗi.",
 };
-function loiHoi(loi: ApiFailure) {
+function loiHoi(loi: ApiFailure, khung?: Khung) {
   if (loi.kind === "no_response") return "Không kết nối được tới quán. Thử lại sau.";
+  if (khung && loi.kind === "rejected" && loi.status === 401 && loi.code === "unauthenticated") return loiTaiKhoan(loi);
   if (loi.kind === "rejected" && loi.status === 400 && loi.code === "invalid_request") return "Câu hỏi chưa đúng hình.";
   return `Chưa hỏi được (${loi.kind === "rejected" ? loi.code : loi.status}).`;
 }
 
-export function HoiQuan({ mo }: { mo: boolean }) {
+export function HoiQuan({ mo, khung }: { mo: boolean; khung?: Khung }) {
   const api = useApi();
+  const nguon = khung ? tenNguonNoiBo : tenNguon;
+  const dinhDangGio = khung ? gioNoiBo : gio;
+  const duongVe = khung ? manTay[khung] : { href: "/dat-mon", ten: "Xem thực đơn" };
+  const linkManTay = <a href={duongVe.href} className="underline">{duongVe.ten}</a>;
   const [cau, setCau] = useState("");
   const [luot, setLuot] = useState<Luot[]>([]);
   const [dangHoi, setDangHoi] = useState(false);
@@ -65,7 +84,7 @@ export function HoiQuan({ mo }: { mo: boolean }) {
     if (controller.signal.aborted || lan !== soLuot.current) return;
     cho.current = null;
     setDangHoi(false);
-    if (!r.ok) { setLoi(loiHoi(r.failure)); return; }
+    if (!r.ok) { setLoi(loiHoi(r.failure, khung)); return; }
     setLuot((truoc) => [...truoc, { question, response: r.data }]);
     setCau("");
   }
@@ -76,17 +95,25 @@ export function HoiQuan({ mo }: { mo: boolean }) {
         <p>{l.question}</p>
         {l.response.degraded_reason !== null ? <p role="status">
           {suyGiam[l.response.degraded_reason] ?? `Trợ lý chưa trả lời được (${l.response.degraded_reason}).`}{" "}
-          <a href="/dat-mon" className="underline">Xem thực đơn</a>
+          {linkManTay}
         </p> : l.response.answer && <>
           <p>{l.response.answer}</p>
-          {l.response.sources.length > 0 && <p className="text-sm text-muted-foreground">Nguồn: {l.response.sources.map((s) => `${tenNguon[s.tool] ?? s.tool} (${gio.format(new Date(s.read_at))})`).join(", ")}</p>}
+          {l.response.sources.length > 0 && <p className="text-sm text-muted-foreground">Nguồn: {l.response.sources.map((s) => `${nguon[s.tool] ?? s.tool} (${khung ? "đọc lúc " : ""}${dinhDangGio.format(new Date(s.read_at))})`).join(", ")}</p>}
+          {khung && <p className="text-sm text-muted-foreground">
+            {l.response.sources.length > 0
+              ? "Số chỉ đúng tại mốc đọc; màn tay có thể đã đổi."
+              : "Câu này không kèm nguồn đọc nào của quán; đừng dựa vào số trong câu."}{" "}
+            {linkManTay}
+          </p>}
         </>}
       </div>)}
       {dangHoi && <div><p>{question}</p><p role="status">Đang hỏi…</p></div>}
     </div>
-    {loi && <p role="alert">{loi}{" "}<a href="/dat-mon" className="underline">Xem thực đơn</a></p>}
+    {loi && <p role="alert">{loi}{" "}{linkManTay}</p>}
     <form className="space-y-2" onSubmit={(e) => { e.preventDefault(); void hoi(); }}>
-      <p className="text-sm">Trợ lý chỉ trả lời về món và giá, không nhận đặt món.</p>
+      <p className="text-sm">{khung
+        ? "Trợ lý chỉ đọc số mà tài khoản của bạn xem được trên màn tay, không ghi gì."
+        : "Trợ lý chỉ trả lời về món và giá, không nhận đặt món."}</p>
       <label className="block">Câu hỏi
         <textarea ref={oNhap} value={cau} readOnly={dangHoi} onChange={(e) => setCau(e.target.value)}
           aria-invalid={quaDai || undefined}

@@ -82,7 +82,7 @@ function VoOChat({ khung, personId }: { khung: Khung; personId: number }) {
             {daMoBaoNghi && <BaoNghi khung={khung} personId={personId} mo={mo && muc === "nghi"} />}
           </div>
           <div role="tabpanel" id={`${id}-hoi`} aria-labelledby={`${id}-the-hoi`} hidden={muc !== "hoi"}>
-            {daMoHoi && <HoiQuan mo={mo && muc === "hoi"} />}
+            {daMoHoi && <HoiQuan mo={mo && muc === "hoi"} khung={khung} />}
           </div>
         </section>
       )}

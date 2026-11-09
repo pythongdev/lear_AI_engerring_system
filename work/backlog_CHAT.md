@@ -478,6 +478,29 @@ gate.
 
 **Nhận việc:**
 
+2026-11-08, Claude: chủ repo yêu cầu *"yêu cầu codex làm tiếp bạn kiểm tra"*. Mức **L2** (FE đọc theo quyền, đổi người). Đo trên `9eb7d73`:
+`HoiQuan` đã có ở thẻ *Hỏi quán* của `OChat` ba khung nhưng chỉ biết nguồn của khách, mốc giờ:phút, link `/dat-mon`; `OChat` đã khoá theo
+`person_id` và `KhungTheoVai` đã nghe đổi phiên giữa các tab, nên huỷ khi đổi người là có sẵn — test mới giữ nó. Hợp đồng `askChat` chỉ có
+400 · 500: backend không từ chối theo lớp mà bớt công cụ (ADR-139 điểm 9), nên *lời từ chối rõ* ở FE là chữ dẫn nói trợ lý chỉ đọc số tài
+khoản này được xem, lời cảnh báo khi câu trả lời không kèm nguồn, và một lần gọi không tự gọi lại; mã 401/403 lạ vẫn có chữ. *Suy ra của phiên,
+chọn của Claude:* mốc giờ:phút:giây; link màn tay `/tram` · `/quay/san-xuat` · `/chu-quan/van-hanh`; chữ chốt ở đầu test. Hợp đồng ở đầu
+`fe/src/components/shared/hoi-quan-noi-bo.test.tsx` (SHA-256 `dd53d141…87ce`), 22/25 ca đỏ vì chưa có prop `khung`; 3 ca xanh sẵn (mặt khách,
+hai ca đổi người). Acceptance ghi trước khi giao: A1 mọi ca của test mới xanh, `hoi-quan.test.tsx` · `o-chat.test.tsx` không sửa và xanh; A2 mặt
+khách không đổi; A3 không đường gọi mới, không `localStorage`; A4 dòng `HoiQuan` · `OChat` ở `docs/product/4-fe/01-khung-fe.md` ghi mặt người
+làm; A5 `./scripts/fe-check.sh` và `./scripts/gate.sh` xanh. Worktree `../lean_wt/CHAT-09`, nhánh `codex/CHAT-09` từ `9eb7d73`. **Chưa làm ở lát
+này:** nhà giả mặc định chỉ gọi `doc_menu`, nên trên `make dev` chưa diễn được số nội bộ và phép *so số trên màn tay* · *biên bản chỉ đọc* của
+Verify chưa chạy được; cần một lát BE nhỏ cho nhà giả hoặc model thật.
+
+2026-11-08, CHAT-09 xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-09`, nhánh `codex/CHAT-09`, nền `9eb7d73`, model `gpt-6-astra`, một lượt):
+`hoi-quan.tsx` thêm prop `khung` (bảng tên nguồn nội bộ, định dạng giờ:phút:giây, bảng link màn tay, 401 qua `loiTaiKhoan`), `o-chat.tsx` truyền
+`khung`, dòng `OChat` · `HoiQuan` ở `docs/product/4-fe/01-khung-fe.md`. **Claude** viết test, duyệt diff, đưa patch về cây chính và chạy lại. Codex dừng
+đúng ở sót của Claude: dữ liệu mẫu `Session` trong test dùng `role_code: "tram"` và `counter_duty_id: null`, sai kiểu nên typecheck đỏ; Claude sửa
+thành `trang_banh` · `0` như các test chat khác, không đổi điều kiện kiểm nào (SHA-256 sau sửa `145c13be…80bd`). Bằng chứng ở cây chính: Vitest
+`src/components/shared/` 146/146, `./scripts/fe-check.sh` `fe-check: PASS` (702/702), `./scripts/gate.sh` `PASS gate không cổng nào đỏ`; ba file test
+cũ khớp SHA-256 phiếu; diff không có `localStorage` · `sessionStorage`, không đường gọi mới, không đọc `role_code` · `is_owner` · `counter_duty_id`.
+Chưa diễn trên trình duyệt. **Còn lại:** biên bản chỉ đọc và phép so số trên màn tay chưa có, vì nhà giả mặc định chỉ gọi `doc_menu`; dòng thứ tư
+của Acceptance dự kiến (biên bản trước mọi lệnh ghi qua model) vẫn mở, nên `CHAT-10` không mở trước nó. Chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---
