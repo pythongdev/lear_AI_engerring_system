@@ -3,7 +3,10 @@ package tongquan
 import (
 	"context"
 	_ "embed"
+	"encoding/json"
+	"fmt"
 	"os"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -74,6 +77,197 @@ func phienCuaBan(t *testing.T, b BangVanHanh, nhan string) PhienBan {
 	}
 	t.Fatalf("không thấy phiên của bàn %s: %+v", nhan, b.Sessions)
 	return PhienBan{}
+}
+
+func TestI009_BangVanHanhLinesPhienChuaCoDon(t *testing.T) {
+	_, _, _, b, _, _ := bangFixture(t)
+	s := phienCuaBan(t, b, "test-t225-C")
+	if s.LinesTotalVnd != 0 {
+		t.Fatalf("phiên chưa có đơn phải có lines_total_vnd = 0, có %d", s.LinesTotalVnd)
+	}
+	if string(s.Lines) != "[]" {
+		t.Fatalf("phiên chưa có đơn phải trả lines = [], có %s", s.Lines)
+	}
+	// Kiểm cả JSON qua struct trả về: mảng rỗng không thành null hay bị bỏ khoá.
+	raw, err := json.Marshal(s)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var wire map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &wire); err != nil {
+		t.Fatal(err)
+	}
+	if string(wire["lines"]) != "[]" {
+		t.Fatalf("JSON phiên mất mảng lines rỗng: %s", raw)
+	}
+}
+
+func TestI009_BangVanHanhLinesAnhChupLocDonVaThuTu(t *testing.T) {
+	ctx, tx, _, b, _, _ := bangFixture(t)
+	// Ghi dòng của đơn sau trước dòng bổ sung của đơn đầu, để thứ tự theo đơn
+	// được kiểm riêng với thứ tự theo id dòng. Đơn huỷ đã có trong fixture gốc.
+	if _, err := tx.Exec(ctx, `
+SET CONSTRAINTS ALL DEFERRED;
+DO $$
+DECLARE s bigint; ban bigint; don_dau bigint; don_sau bigint; don_cho bigint;
+ mon bigint; thanh_phan bigint;
+BEGIN
+ SELECT id INTO STRICT ban FROM dining_table WHERE label='test-t225-A';
+ SELECT table_session_id INTO STRICT s FROM table_session_member WHERE dining_table_id=ban;
+ SELECT id INTO STRICT don_dau FROM sales_order WHERE table_session_id=s AND status='in_progress';
+ SELECT id INTO STRICT mon FROM menu_item WHERE name='test-t225-mon-canh';
+ SELECT id INTO STRICT thanh_phan FROM menu_component WHERE name='test-t225-canh';
+ INSERT INTO sales_order(channel_code,status,table_session_id,dining_table_id,submission_code)
+ VALUES ('staff_pos','in_progress',s,ban,gen_random_uuid()::text) RETURNING id INTO don_sau;
+ PERFORM pg_temp.t225_line(don_sau,mon,thanh_phan,'test-t225-canh',1,false,500,ARRAY[]::bigint[]);
+ PERFORM pg_temp.t225_line(don_dau,mon,thanh_phan,'test-t225-canh',1,false,600,ARRAY[]::bigint[]);
+ INSERT INTO sales_order(channel_code,status,table_session_id,dining_table_id,submission_code,qr_code_id)
+ VALUES ('qr_table','pending_confirmation',s,ban,gen_random_uuid()::text,qr_code_issue(ban)) RETURNING id INTO don_cho;
+ PERFORM pg_temp.t225_line(don_cho,mon,thanh_phan,'test-t225-canh',1,false,77777,ARRAY[]::bigint[]);
+END $$;
+SET CONSTRAINTS ALL IMMEDIATE;`); err != nil {
+		t.Fatal(err)
+	}
+	lai, err := docBang(ctx, tx, b.SaleDate)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var ib, ic, mb, mc, nhieu, thit int64
+	if err := tx.QueryRow(ctx, `SELECT
+ (SELECT id FROM menu_item WHERE name='test-t225-mon-banh'),
+ (SELECT id FROM menu_item WHERE name='test-t225-mon-canh'),
+ (SELECT id FROM menu_component WHERE name='test-t225-banh'),
+ (SELECT id FROM menu_component WHERE name='test-t225-canh'),
+ (SELECT id FROM menu_option WHERE name='test-t225-nhieu'),
+ (SELECT id FROM menu_option WHERE name='test-t225-thit')`).Scan(&ib, &ic, &mb, &mc, &nhieu, &thit); err != nil {
+		t.Fatal(err)
+	}
+	// Giá, tên món và phụ thu này khác menu hiện hành của fixture; phải lấy ảnh
+	// chụp. So cả hình JSON để bắt khoá null, mảng rỗng và trường bị thêm/bớt.
+	want := fmt.Sprintf(`[
+ {"menu_item_id":%[1]d,"item_name":"test-t225-item","quantity":1,"unit_price_vnd":8000,"line_total_vnd":8000,
+  "components":[{"menu_component_id":%[3]d,"component_name":"test-t225-banh","quantity":2,"takes_filling":true,"base_price_vnd":100}],
+  "options":[{"menu_option_id":%[5]d,"option_group_name":"Lượng nhân","option_name":"test-t225-nhieu","surcharge_vnd":0},
+             {"menu_option_id":%[6]d,"option_group_name":"test-t225-nhan","option_name":"test-t225-thit","surcharge_vnd":0}]},
+ {"menu_item_id":%[2]d,"item_name":"test-t225-item","quantity":1,"unit_price_vnd":1000,"line_total_vnd":1000,
+  "components":[{"menu_component_id":%[4]d,"component_name":"test-t225-canh","quantity":1,"takes_filling":false,"base_price_vnd":100}],"options":[]},
+ {"menu_item_id":%[1]d,"item_name":"test-t225-item","quantity":1,"unit_price_vnd":5000,"line_total_vnd":5000,
+  "components":[{"menu_component_id":%[3]d,"component_name":"test-t225-banh","quantity":1,"takes_filling":true,"base_price_vnd":100}],
+  "options":[{"menu_option_id":%[6]d,"option_group_name":"test-t225-nhan","option_name":"test-t225-thit","surcharge_vnd":0}]},
+ {"menu_item_id":%[2]d,"item_name":"test-t225-item","quantity":1,"unit_price_vnd":600,"line_total_vnd":600,
+  "components":[{"menu_component_id":%[4]d,"component_name":"test-t225-canh","quantity":1,"takes_filling":false,"base_price_vnd":100}],"options":[]},
+ {"menu_item_id":%[2]d,"item_name":"test-t225-item","quantity":1,"unit_price_vnd":500,"line_total_vnd":500,
+  "components":[{"menu_component_id":%[4]d,"component_name":"test-t225-canh","quantity":1,"takes_filling":false,"base_price_vnd":100}],"options":[]}
+]`, ib, ic, mb, mc, nhieu, thit)
+	soLinesJSON(t, phienCuaBan(t, lai, "test-t225-A").Lines, want)
+	// Đơn chờ 77.777đ và đơn huỷ không vào tổng.
+	if got := phienCuaBan(t, lai, "test-t225-A").LinesTotalVnd; got != 8000+1000+5000+600+500 {
+		t.Fatalf("lines_total_vnd = %d, muốn 15100", got)
+	}
+}
+
+func TestI009_BangVanHanhLinesComboBaPhanVaMonLe(t *testing.T) {
+	ctx, tx, _, b, _, _ := bangFixture(t)
+	if _, err := tx.Exec(ctx, `
+SET CONSTRAINTS ALL DEFERRED;
+DO $$
+DECLARE ban bigint; s bigint; don_dau bigint; don_combo bigint; cb bigint;
+ ib bigint; ic bigint; mb bigint; mc bigint; thit bigint; nhieu bigint;
+ goc bigint; suat_mot bigint; suat_hai bigint; mon_le bigint;
+BEGIN
+ SELECT id INTO STRICT ib FROM menu_item WHERE name='test-t225-mon-banh';
+ SELECT id INTO STRICT ic FROM menu_item WHERE name='test-t225-mon-canh';
+ SELECT id INTO STRICT mb FROM menu_component WHERE name='test-t225-banh';
+ SELECT id INTO STRICT mc FROM menu_component WHERE name='test-t225-canh';
+ SELECT id INTO STRICT thit FROM menu_option WHERE name='test-t225-thit';
+ SELECT id INTO STRICT nhieu FROM menu_option WHERE name='test-t225-nhieu';
+ INSERT INTO menu_combo(name,price_vnd) VALUES ('test-t313-menu-combo',99000) RETURNING id INTO cb;
+ INSERT INTO menu_combo_item(menu_combo_id,menu_item_id,quantity) VALUES (cb,ib,2);
+ INSERT INTO dining_table(label) VALUES ('test-t313-combo') RETURNING id INTO ban;
+ INSERT INTO table_session(status) VALUES ('serving') RETURNING id INTO s;
+ INSERT INTO table_session_member(table_session_id,dining_table_id) VALUES (s,ban);
+ INSERT INTO sales_order(channel_code,status,table_session_id,dining_table_id,submission_code)
+ VALUES ('staff_pos','in_progress',s,ban,gen_random_uuid()::text) RETURNING id INTO don_dau;
+ INSERT INTO sales_order(channel_code,status,table_session_id,dining_table_id,submission_code)
+ VALUES ('staff_pos','in_progress',s,ban,gen_random_uuid()::text) RETURNING id INTO don_combo;
+
+ -- Dòng combo không mang component_count/options; mỗi suất chụp lựa chọn riêng.
+ INSERT INTO order_line(sales_order_id,quantity,menu_combo_id,item_name,unit_price_vnd)
+ VALUES (don_combo,3,cb,'Combo đã chụp',5000) RETURNING id INTO goc;
+ INSERT INTO order_line(sales_order_id,quantity,menu_item_id,item_name,unit_price_vnd,component_count,parent_order_line_id)
+ VALUES (don_combo,3,ib,'Suất Z',700,1,goc) RETURNING id INTO suat_mot;
+ -- Món lẻ xen giữa hai suất: phải ở cấp gốc, sau combo, không lọt vào portions.
+ INSERT INTO order_line(sales_order_id,quantity,menu_item_id,item_name,unit_price_vnd,component_count)
+ VALUES (don_combo,2,ib,'Món lẻ kèm combo',4200,1) RETURNING id INTO mon_le;
+ INSERT INTO order_line(sales_order_id,quantity,menu_item_id,item_name,unit_price_vnd,component_count,parent_order_line_id)
+ VALUES (don_combo,3,ib,'Suất A',200,1,goc) RETURNING id INTO suat_hai;
+ INSERT INTO order_line_component(order_line_id,position,line_component_count,menu_component_id,component_name,quantity,takes_filling,base_price_vnd)
+ VALUES (suat_mot,1,1,mb,'Bánh đã chụp',2,true,100),
+        (suat_hai,1,1,mb,'Bánh đã chụp',2,true,100),
+        (mon_le,1,1,mb,'Bánh đã chụp',2,true,100);
+ INSERT INTO order_line_option(order_line_id,menu_option_id,option_group_name,option_name,surcharge_vnd)
+ VALUES (suat_mot,thit,'Nhân đã chụp','Thịt đã chụp',700),
+        (suat_hai,nhieu,'Lượng đã chụp','Nhiều đã chụp',200),
+        (mon_le,thit,'Nhân đã chụp','Thịt đã chụp',300);
+
+ -- Mã đơn nhỏ hơn nhưng id dòng lớn hơn mọi dòng của đơn combo.
+ PERFORM pg_temp.t225_line(don_dau,ic,mc,'test-t225-canh',1,false,500,ARRAY[]::bigint[]);
+END $$;
+SET CONSTRAINTS ALL IMMEDIATE;`); err != nil {
+		t.Fatal(err)
+	}
+	var cb, ib, ic, mb, mc, thit, nhieu int64
+	if err := tx.QueryRow(ctx, `SELECT
+ (SELECT id FROM menu_combo WHERE name='test-t313-menu-combo'),
+ (SELECT id FROM menu_item WHERE name='test-t225-mon-banh'),
+ (SELECT id FROM menu_item WHERE name='test-t225-mon-canh'),
+ (SELECT id FROM menu_component WHERE name='test-t225-banh'),
+ (SELECT id FROM menu_component WHERE name='test-t225-canh'),
+ (SELECT id FROM menu_option WHERE name='test-t225-thit'),
+ (SELECT id FROM menu_option WHERE name='test-t225-nhieu')`).Scan(&cb, &ib, &ic, &mb, &mc, &thit, &nhieu); err != nil {
+		t.Fatal(err)
+	}
+	lai, err := docBang(ctx, tx, b.SaleDate)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// So toàn bộ JSON: hai dòng món lẻ và từng suất không được mang khoá
+	// portions/menu_combo_id (kể cả null); combo giữ quantity 3 và thứ tự id suất.
+	want := fmt.Sprintf(`[
+ {"menu_item_id":%[3]d,"item_name":"test-t225-item","quantity":1,"unit_price_vnd":500,"line_total_vnd":500,
+  "components":[{"menu_component_id":%[5]d,"component_name":"test-t225-canh","quantity":1,"takes_filling":false,"base_price_vnd":100}],"options":[]},
+ {"menu_combo_id":%[1]d,"item_name":"Combo đã chụp","quantity":3,"unit_price_vnd":5000,"line_total_vnd":15000,
+  "components":[],"options":[],"portions":[
+   {"menu_item_id":%[2]d,"item_name":"Suất Z","quantity":3,"unit_price_vnd":700,"line_total_vnd":2100,
+    "components":[{"menu_component_id":%[4]d,"component_name":"Bánh đã chụp","quantity":2,"takes_filling":true,"base_price_vnd":100}],
+    "options":[{"menu_option_id":%[6]d,"option_group_name":"Nhân đã chụp","option_name":"Thịt đã chụp","surcharge_vnd":700}]},
+   {"menu_item_id":%[2]d,"item_name":"Suất A","quantity":3,"unit_price_vnd":200,"line_total_vnd":600,
+    "components":[{"menu_component_id":%[4]d,"component_name":"Bánh đã chụp","quantity":2,"takes_filling":true,"base_price_vnd":100}],
+    "options":[{"menu_option_id":%[7]d,"option_group_name":"Lượng đã chụp","option_name":"Nhiều đã chụp","surcharge_vnd":200}]}
+  ]},
+ {"menu_item_id":%[2]d,"item_name":"Món lẻ kèm combo","quantity":2,"unit_price_vnd":4200,"line_total_vnd":8400,
+  "components":[{"menu_component_id":%[4]d,"component_name":"Bánh đã chụp","quantity":2,"takes_filling":true,"base_price_vnd":100}],
+  "options":[{"menu_option_id":%[6]d,"option_group_name":"Nhân đã chụp","option_name":"Thịt đã chụp","surcharge_vnd":300}]}
+]`, cb, ib, ic, mb, mc, thit, nhieu)
+	soLinesJSON(t, phienCuaBan(t, lai, "test-t313-combo").Lines, want)
+	// Tổng gồm cả dòng suất (2100 + 600), không chỉ dòng gốc (500 + 15000 + 8400 = 23900).
+	if got := phienCuaBan(t, lai, "test-t313-combo").LinesTotalVnd; got != 500+15000+2100+600+8400 {
+		t.Fatalf("lines_total_vnd = %d, muốn 26600", got)
+	}
+}
+
+func soLinesJSON(t *testing.T, got json.RawMessage, want string) {
+	t.Helper()
+	var g, w any
+	if err := json.Unmarshal(got, &g); err != nil {
+		t.Fatal(err)
+	}
+	if err := json.Unmarshal([]byte(want), &w); err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(g, w) {
+		t.Fatalf("lines khác ảnh chụp/thứ tự/hình JSON:\ncó %s\nmuốn %s", got, want)
+	}
 }
 
 func thuCua(t *testing.T, s PhienBan, ten string, nhieu bool) ThuCuaBan {

@@ -145,6 +145,8 @@ ràng buộc nghĩa là gì với người dùng; người đoán đúng là lá
 
 ## 7. Phiên bản
 
+**T-313 (2026-11-09, theo phiếu Claude):** tăng MINOR `0.70.0` → `0.71.0`; `GET /service-board` thêm `lines` bắt buộc (mảng `PriceLine`) cho mỗi `ServiceBoardSession`: dòng gốc đã chụp của các đơn đã duyệt chưa huỷ trong phiên, theo mã đơn rồi mã dòng tăng; suất combo lồng trong `portions`, phiên chưa có đơn trả `[]`; thêm `lines_total_vnd` bắt buộc — tổng `line_total_vnd` của mọi dòng các đơn ấy, kể cả dòng suất, do backend cộng (ADR-102 điểm 3), không phải số phải thu. Hình dòng giống `GET /counter/queue`, không tính lại giá theo menu. Không đổi tiền, số đếm thành phần hay đường ghi. Sinh lại type FE.
+
 **CHAT-16 (2026-11-09, theo phiếu Claude, ADR-140):** tăng MINOR `0.69.0` → `0.70.0`; mô tả `askChat` ghi nhóm công cụ đào tạo đã mở sau nhóm giao việc cho lớp `quay_hoac_chu_quan`, chỉ dựng đề xuất tới sáu cửa `attachAssignedTaskGuide` · `updateAssignedTaskGuide` · `hideAssignedTaskGuide` · `createTrainingRecord` · `updateTrainingRecord` · `hideTrainingRecord`. Hướng dẫn qua chat chỉ là chữ; ghi nhận mới để người bấm chọn người được ghi. Không đổi hình dữ liệu; không thêm đường gọi hay mã lỗi.
 
 **CHAT-15 (2026-11-09, theo phiếu Claude, ADR-140):** tăng MINOR `0.68.0` → `0.69.0`; mô tả `askChat` ghi nhóm công cụ giao việc đã mở cho lớp `quay_hoac_chu_quan`, chỉ dựng đề xuất tới bốn cửa `createAssignedTask` · `updateAssignedTask` · `hideAssignedTask` · `markAssignedTask`. Không đổi hình dữ liệu; không thêm đường gọi hay mã lỗi.

@@ -202,7 +202,7 @@ export interface paths {
         };
         /**
          * Tình hình từng phiên bàn và lịch sử đem ra của trang Vận hành.
-         * @description ADR-124: lớp quay_hoac_chu_quan; không phiên trả unauthenticated, người ngoài quầy không phải chủ quán trả not_on_counter_duty. Ảnh hiện tại, ngày bán quy như owner-overview; không nhận ngày lịch sử. sessions gồm mọi phiên chưa closed và mọi bàn ghép của phiên, bỏ đơn cancelled. serving khi có đơn vị ra hết, waiting khi có đơn chưa huỷ nhưng chưa đơn vị nào ra, no_order khi không có đơn chưa huỷ. Items gom thành phần và tập tuỳ chọn nhân, bỏ trạm; một đơn vị là (order_line_component_id, position), việc không thành phần là đơn vị riêng. served khi mọi trạm served; missing = ordered - served. Options là tên đã chụp; extra_filling khi có lựa chọn nhóm Lượng nhân không mặc định. ADR-125: order_total_vnd và served_amount_vnd dùng cùng đoạn tiền theo suất với phien.TongTien và owner-overview; bằng due_vnd trước giảm giá khi đóng phiên. Suất ra dở không thu; thành phần không trạm không chặn thu. Đơn cancelled không vào tiền. empty_tables không thuộc phiên chưa đóng nào. serve_history đọc vết made → served trong ngày bán, kể cả phiên đã đóng; gom theo mốc, người, bàn, trạm và khoá gom, quantity đếm việc, mới nhất trước. Mọi danh sách rỗng là [].
+         * @description ADR-124: lớp quay_hoac_chu_quan; không phiên trả unauthenticated, người ngoài quầy không phải chủ quán trả not_on_counter_duty. Ảnh hiện tại, ngày bán quy như owner-overview; không nhận ngày lịch sử. sessions gồm mọi phiên chưa closed và mọi bàn ghép của phiên, bỏ đơn cancelled. lines là dòng gốc đã chụp của mọi đơn đã duyệt (id_if_approved khác null) chưa huỷ trong phiên, xếp theo sales_order_id rồi id dòng tăng, suất combo lồng trong portions, cùng hình PriceLine của counter/queue. lines_total_vnd là tổng line_total_vnd của mọi dòng các đơn ấy, kể cả dòng suất (như total_vnd của counter/queue); không phải số phải thu — số phải thu vẫn là order_total_vnd (ADR-125). serving khi có đơn vị ra hết, waiting khi có đơn chưa huỷ nhưng chưa đơn vị nào ra, no_order khi không có đơn chưa huỷ. Items gom thành phần và tập tuỳ chọn nhân, bỏ trạm; một đơn vị là (order_line_component_id, position), việc không thành phần là đơn vị riêng. served khi mọi trạm served; missing = ordered - served. Options là tên đã chụp; extra_filling khi có lựa chọn nhóm Lượng nhân không mặc định. ADR-125: order_total_vnd và served_amount_vnd dùng cùng đoạn tiền theo suất với phien.TongTien và owner-overview; bằng due_vnd trước giảm giá khi đóng phiên. Suất ra dở không thu; thành phần không trạm không chặn thu. Đơn cancelled không vào tiền. empty_tables không thuộc phiên chưa đóng nào. serve_history đọc vết made → served trong ngày bán, kể cả phiên đã đóng; gom theo mốc, người, bàn, trạm và khoá gom, quantity đếm việc, mới nhất trước. Mọi danh sách rỗng là [].
          */
         get: operations["getServiceBoard"];
         put?: never;
@@ -2772,6 +2772,8 @@ export interface components {
             order_total_vnd: components["schemas"]["MoneyVnd"];
             served_amount_vnd: components["schemas"]["MoneyVnd"];
             items: components["schemas"]["ServiceBoardItem"][];
+            lines: components["schemas"]["PriceLine"][];
+            lines_total_vnd: components["schemas"]["MoneyVnd"];
         };
         ServiceBoardTable: {
             /** Format: int64 */

@@ -18,6 +18,8 @@ const thitNhieu = thu(81, "Bánh cuốn", "Thịt", { filling_option_ids: [11, 1
 const trungTai = thu(83, "Trứng tái", null, { ordered: 1, served: 0, missing: 1 });
 const phien = (id: number, tables: { dining_table_id: number; label: string }[], items: ThuVanHanh[]): BangVanHanh["sessions"][number] => ({
   table_session_id: id, session_status: "open", service_group: "serving", tables, order_total_vnd: 50000, served_amount_vnd: 10000, items,
+  lines: [{ menu_item_id: 1, item_name: "Bánh cuốn đã ghi", quantity: 5, unit_price_vnd: 10000, line_total_vnd: 50000, components: [], options: [] }],
+  lines_total_vnd: 50000,
 });
 const data: BangVanHanh = {
   sale_date: "2025-02-03", read_at: "2025-02-03T03:17:29Z",
@@ -56,6 +58,19 @@ async function chon(ten: string, so: string) {
 }
 
 describe("Vận hành — bấm ô số ghi đã đem ra (T-228)", () => {
+  it("T-313: mở chi tiết thấy dòng món rồi vẫn bấm ô đem ra và chọn số được", async () => {
+    const g = mo(); const b = await vung();
+    const btn = b.getByRole("button", { name: "Bàn 01" });
+    fireEvent.click(btn);
+    const detail = document.getElementById(btn.getAttribute("aria-controls")!)!;
+    expect(within(detail).getByText("Bánh cuốn đã ghi · · Số lượng 5 · 50.000đ")).toBeTruthy();
+    await chon("Đem ra Bàn 01 · Thịt", "2");
+    const xn = await screen.findByRole("dialog", { name: "Xác nhận đem ra" });
+    expect(xn.textContent).toContain("Còn thiếu sẽ từ 4 xuống 2.");
+    fireEvent.click(within(xn).getByRole("button", { name: "Xác nhận" }));
+    await waitFor(() => expect(posts(g)).toHaveLength(1));
+    expect(posts(g)[0].path).toBe("/served-marks");
+  });
   it("đứng quầy: mỗi thứ còn thiếu của phiên một bàn là một nút riêng; thịt thường và thịt nhiều tách dòng", async () => {
     mo(); const b = await vung();
     for (const ten of ["Đem ra Bàn 01 · Thịt", "Đem ra Bàn 01 · Thịt nhiều", "Đem ra Bàn 01 · Trứng tái"]) expect(b.getByRole("button", { name: ten })).toBeTruthy();

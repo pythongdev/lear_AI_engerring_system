@@ -5,6 +5,7 @@ import (
 	"banhcuon/be/internal/ngayban"
 	"banhcuon/be/internal/phien"
 	"context"
+	"encoding/json"
 	"github.com/jackc/pgx/v5"
 	"time"
 )
@@ -18,13 +19,15 @@ type BangVanHanh struct {
 }
 
 type PhienBan struct {
-	TableSessionID  int64       `json:"table_session_id"`
-	SessionStatus   string      `json:"session_status"`
-	ServiceGroup    string      `json:"service_group"`
-	Tables          []BanTrong  `json:"tables"`
-	OrderTotalVnd   int64       `json:"order_total_vnd"`
-	ServedAmountVnd int64       `json:"served_amount_vnd"`
-	Items           []ThuCuaBan `json:"items"`
+	TableSessionID  int64           `json:"table_session_id"`
+	SessionStatus   string          `json:"session_status"`
+	ServiceGroup    string          `json:"service_group"`
+	Tables          []BanTrong      `json:"tables"`
+	OrderTotalVnd   int64           `json:"order_total_vnd"`
+	ServedAmountVnd int64           `json:"served_amount_vnd"`
+	Items           []ThuCuaBan     `json:"items"`
+	Lines           json.RawMessage `json:"lines"`
+	LinesTotalVnd   int64           `json:"lines_total_vnd"`
 }
 
 type BanTrong struct {

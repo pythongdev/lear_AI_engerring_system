@@ -106,7 +106,40 @@ don_vi AS (
    coalesce((SELECT sum(d.amount_vnd) FROM da_ra d JOIN sales_order o ON o.id = d.sales_order_id
      WHERE o.table_session_id = s.id), 0) AS served_amount_vnd,
    coalesce((SELECT jsonb_agg(to_jsonb(t) - 'table_session_id' ORDER BY t.menu_component_id, t.filling_option_ids)
-     FROM thu t WHERE t.table_session_id = s.id), '[]'::jsonb) AS items
+     FROM thu t WHERE t.table_session_id = s.id), '[]'::jsonb) AS items,
+ -- T-313: khuôn lines của hàng chờ; đọc ảnh chụp các đơn đã duyệt, không tính lại giá.
+ jsonb_strip_nulls((SELECT coalesce(jsonb_agg(jsonb_build_object(
+  'menu_item_id',l.menu_item_id,'item_name',l.item_name,'quantity',l.quantity,
+  'unit_price_vnd',l.unit_price_vnd,'line_total_vnd',l.line_total_vnd,
+  'components',(SELECT coalesce(jsonb_agg(jsonb_build_object(
+   'menu_component_id',c.menu_component_id,'component_name',c.component_name,'quantity',c.quantity,
+   'takes_filling',c.takes_filling,'base_price_vnd',c.base_price_vnd) ORDER BY c.position),'[]'::jsonb)
+   FROM order_line_component c WHERE c.order_line_id = l.id),
+  'options',(SELECT coalesce(jsonb_agg(jsonb_build_object(
+   'menu_option_id',p.menu_option_id,'option_group_name',p.option_group_name,
+   'option_name',p.option_name,'surcharge_vnd',p.surcharge_vnd) ORDER BY p.menu_option_id),'[]'::jsonb)
+   FROM order_line_option p WHERE p.order_line_id = l.id),
+  -- Dòng combo (ADR-117): suất con lồng dưới nó theo thứ tự ghi; dòng món không có portions.
+  'menu_combo_id',l.menu_combo_id,
+  'portions',CASE WHEN l.menu_combo_id IS NOT NULL THEN (SELECT coalesce(jsonb_agg(jsonb_build_object(
+  'menu_item_id',k.menu_item_id,'item_name',k.item_name,'quantity',k.quantity,
+  'unit_price_vnd',k.unit_price_vnd,'line_total_vnd',k.line_total_vnd,
+  'components',(SELECT coalesce(jsonb_agg(jsonb_build_object(
+   'menu_component_id',c.menu_component_id,'component_name',c.component_name,'quantity',c.quantity,
+   'takes_filling',c.takes_filling,'base_price_vnd',c.base_price_vnd) ORDER BY c.position),'[]'::jsonb)
+   FROM order_line_component c WHERE c.order_line_id = k.id),
+  'options',(SELECT coalesce(jsonb_agg(jsonb_build_object(
+   'menu_option_id',p.menu_option_id,'option_group_name',p.option_group_name,
+   'option_name',p.option_name,'surcharge_vnd',p.surcharge_vnd) ORDER BY p.menu_option_id),'[]'::jsonb)
+   FROM order_line_option p WHERE p.order_line_id = k.id)
+  ) ORDER BY k.id),'[]'::jsonb) FROM order_line k WHERE k.parent_order_line_id = l.id) END
+ ) ORDER BY l.sales_order_id, l.id),'[]'::jsonb) FROM order_line l
+   JOIN sales_order o ON o.id = l.sales_order_id
+   WHERE o.table_session_id = s.id AND o.id_if_approved IS NOT NULL
+     AND o.status <> 'cancelled' AND l.parent_order_line_id IS NULL))::jsonb AS lines,
+ -- T-313: tổng của lines tính ở backend (ADR-102 điểm 3), gồm cả dòng suất như total_vnd của hàng chờ.
+ coalesce((SELECT sum(l.line_total_vnd) FROM order_line l JOIN sales_order o ON o.id = l.sales_order_id
+   WHERE o.table_session_id = s.id AND o.id_if_approved IS NOT NULL AND o.status <> 'cancelled'), 0)::bigint AS lines_total_vnd
  FROM phien_mo s
 ), lich_su AS (
  SELECT r.created_at AS served_at, r.person_id, p.display_name AS person_name,

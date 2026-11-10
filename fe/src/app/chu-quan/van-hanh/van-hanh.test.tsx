@@ -14,8 +14,20 @@ const thu = (component_name: string, nhan?: string, extra: Partial<ThuVanHanh> =
 });
 const items = [thu("Bánh cuốn", "Thịt", { extra_filling: true }), thu("Bánh cuốn", "Thịt + mộc nhĩ"), thu("Bánh cuốn", "Chay"), thu("Trứng tái"), thu("Trứng chín"), thu("Canh bánh cuốn"), thu("Giò")];
 const phien = (id: number, service_group: BangVanHanh["sessions"][number]["service_group"], label: string, its = [items[0]]): BangVanHanh["sessions"][number] => ({
-  table_session_id: id, session_status: "open", service_group, tables: [{ dining_table_id: id, label }], order_total_vnd: 79123, served_amount_vnd: service_group === "serving" ? 23123 : 0, items: its,
+  table_session_id: id, session_status: "open", service_group, tables: [{ dining_table_id: id, label }], order_total_vnd: 79123, served_amount_vnd: service_group === "serving" ? 23123 : 0, items: its, lines: [], lines_total_vnd: 0,
 });
+type Dong = BangVanHanh["sessions"][number]["lines"][number];
+const dong = (item_name: string, extra: Partial<Dong> = {}): Dong => ({
+  menu_item_id: 1, item_name, quantity: 1, unit_price_vnd: 7000, line_total_vnd: 7000, components: [], options: [], ...extra,
+});
+// Ba dòng gốc từ nhiều đơn nối tiếp. Như dữ liệu thật: dòng combo chỉ mang giá combo × số lượng, phụ thu nằm ở suất;
+// tổng là lines_total_vnd backend cộng (63.000đ), khác cộng dòng gốc (61.000đ) — FE không tự cộng (ADR-102 điểm 3).
+const dongCuaBan: Dong[] = [
+  { menu_combo_id: 9, item_name: "Combo bữa sáng", quantity: 2, unit_price_vnd: 20000, line_total_vnd: 40000, components: [], options: [],
+    portions: [dong("Bánh cuốn thịt", { quantity: 2, unit_price_vnd: 1000, line_total_vnd: 2000,
+      options: [{ menu_option_id: 15, option_group_name: "Lượng nhân", option_name: "Nhiều nhân", surcharge_vnd: 1000 }] }), dong("Canh combo", { quantity: 2, unit_price_vnd: 0, line_total_vnd: 0 })] },
+  dong("Trứng chín"), dong("Canh thêm", { quantity: 2, line_total_vnd: 14000 }),
+];
 const hist = (served_at: string, name: string): BangVanHanh["serve_history"][number] => ({ served_at, dining_table_id: 21, table_label: "A", person_id: 91, person_name: "Người thử", station_code: "banh", menu_component_id: 81, component_name: name, filling_option_ids: [], quantity: 9 });
 const data: BangVanHanh = {
   sale_date: "2025-02-03", read_at: "2025-02-03T03:17:29Z",
@@ -87,7 +99,7 @@ describe("Vận hành", () => {
     await waitFor(() => expect(goi.some((g) => g.path === "/orders/78/rejection" && g.method === "POST")).toBe(true));
   });
   it("đơn QR mới phát changed thì đọc lại service-board và hiện bàn cùng số món; heartbeat không đọc", async () => {
-    const moi = { ...data, sessions: [...data.sessions, phien(3, "waiting", "3", [thu("Bánh cuốn", "Thịt", { ordered: 2, served: 0, missing: 2 })])] };
+    const moi = { ...data, sessions: [...data.sessions, { ...phien(3, "waiting", "3", [thu("Bánh cuốn", "Thịt", { ordered: 2, served: 0, missing: 2 })]), lines: [dong("Bánh cuốn", { quantity: 2, line_total_vnd: 14000 })], lines_total_vnd: 14000 }] };
     const goi = mo((n) => ({ status: 200, body: n === 1 ? data : moi }));
     await bang();
     await waitFor(() => expect(luong).toHaveLength(1));
@@ -99,7 +111,7 @@ describe("Vận hành", () => {
     await waitFor(() => expect(soDoc()).toBe(2));
     const b = within(screen.getByRole("region", { name: "Cộng thử ghép đơn" }));
     const banMoi = b.getByRole("checkbox", { name: "3 · 79.123đ" }).closest(".choice");
-    expect(banMoi?.textContent).toContain("Thịt: 2");
+    expect(banMoi?.textContent).toContain("Bánh cuốn ·  · Số lượng 2 · 14.000đ");
     expect(goi.every((g) => g.method === "GET")).toBe(true);
   });
   it("luồng đứt báo mất kết nối; nối lại nhận hello thì đọc bảng mới", async () => {
@@ -163,6 +175,47 @@ describe("Vận hành", () => {
     expect(g.filter(({ path }) => path !== "/counter/events").map(({ method, path }) => ({ method, path })).sort((a, b) => a.path.localeCompare(b.path))).toEqual([{ method: "GET", path: "/counter/queue" }, { method: "GET", path: "/service-board" }, { method: "GET", path: "/sessions/current" }].sort((a, b) => a.path.localeCompare(b.path)));
     expect(set).not.toHaveBeenCalled(); expect(remove).not.toHaveBeenCalled(); expect(clear).not.toHaveBeenCalled();
   });
+  it("T-313: thẻ cộng thử hiện liên tiếp dòng món và suất combo, tổng lấy từ backend, giữ chọn bàn", async () => {
+    mo(() => ({ status: 200, body: { ...data, sessions: data.sessions.map((p) => p.service_group === "waiting" ? { ...p, lines: dongCuaBan, lines_total_vnd: 63000 } : p) } }));
+    const b = await bang();
+    const congThu = within(screen.getByRole("region", { name: "Cộng thử ghép đơn" }));
+    const chon = congThu.getByRole("checkbox", { name: "C · 79.123đ" });
+    const the = chon.closest(".choice")!;
+    expect(Array.from(the.querySelectorAll("p")).map((p) => p.textContent)).toEqual([
+      "Combo bữa sáng ·  · Số lượng 2 · 40.000đ", "Bánh cuốn thịt · Nhiều nhân · Số suất 2", "Canh combo ·  · Số suất 2",
+      "Trứng chín ·  · Số lượng 1 · 7.000đ", "Canh thêm ·  · Số lượng 2 · 14.000đ", "Tổng 63.000đ",
+    ]);
+    expect(the.querySelector("h3")).toBeNull();
+    expect(the.textContent).not.toContain("Thịt:");
+    fireEvent.click(chon);
+    expect(congThu.getByText("Đã chọn 1 bàn.")).toBeTruthy();
+    expect(cells(b.getByRole("button", { name: "C" }).closest("tr")!)[0]).toBe("11");
+    fireEvent.click(congThu.getByRole("button", { name: "Bỏ chọn hết" }));
+    expect(congThu.getByText("Đã chọn 0 bàn.")).toBeTruthy();
+    expect(b.queryByRole("button", { name: "C" })).toBeNull();
+  });
+  it("T-313: chi tiết hàng đang phục vụ và bàn chờ đã chọn hiện dòng món dưới cột, giữ tiền đơn và tổng thiếu", async () => {
+    mo(() => ({ status: 200, body: { ...data, sessions: data.sessions.map((p) => ({ ...p, lines: dongCuaBan, lines_total_vnd: 63000 })) } }));
+    const b = await bang();
+    fireEvent.click(screen.getByRole("checkbox", { name: "C · 79.123đ" }));
+    const tongTruoc = cells(b.getAllByRole("row").at(-1)!);
+    for (const name of ["A + B", "C"]) {
+      const btn = b.getByRole("button", { name });
+      const hangTruoc = cells(btn.closest("tr")!);
+      fireEvent.click(btn);
+      const detail = document.getElementById(btn.getAttribute("aria-controls")!)!;
+      const ct = within(detail);
+      expect(ct.getByText("Combo bữa sáng · · Số lượng 2 · 40.000đ")).toBeTruthy();
+      expect(ct.getByText("Bánh cuốn thịt · Nhiều nhân · Số suất 2")).toBeTruthy();
+      expect(ct.getByText("Trứng chín · · Số lượng 1 · 7.000đ")).toBeTruthy();
+      expect(ct.getByText("Tổng 63.000đ")).toBeTruthy();
+      expect(ct.getByText("Tiền đơn: 79.123đ")).toBeTruthy();
+      expect(ct.getAllByText("thiếu")).toHaveLength(6);
+      expect(detail.textContent!.indexOf("Combo bữa sáng")).toBeGreaterThan(detail.textContent!.lastIndexOf("thiếu"));
+      expect(cells(btn.closest("tr")!)).toEqual(hangTruoc);
+    }
+    expect(cells(b.getAllByRole("row").at(-1)!)).toEqual(tongTruoc);
+  });
   it("đọc lại bỏ tick phiên hết waiting và không tự chọn lại khi nó quay về", async () => {
     mo((n) => ({ status: 200, body: n === 2 ? { ...data, sessions: data.sessions.map((p) => p.table_session_id === 31 ? { ...p, service_group: "serving" } : p) } : data }));
     await bang(); fireEvent.click(screen.getByRole("checkbox")); fireEvent.click(nut("Đọc lại"));
@@ -208,12 +261,12 @@ describe("Vận hành", () => {
     mo((n) => n === 1 ? { status: 200, body: data } : { status: 403, body: { code: "not_on_counter_duty" } }); await bang(); fireEvent.click(nut("Đọc lại"));
     expect((await screen.findByRole("alert")).textContent).toContain(`lúc ${new Date(data.read_at).toLocaleTimeString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour12: false })}.`); expect(nut("A + B")).toBeTruthy();
   });
-  it("mọi chuỗi tiền lấy từ hai trường backend hoặc tổng, số món đổi không đổi tiền, số tiền không là nút", async () => {
+  it("tiền lấy từ backend hoặc tổng dòng đã chụp, số thành phần đổi không đổi tiền, số tiền không là nút", async () => {
     mo(() => ({ status: 200, body: { ...data, sessions: data.sessions.map((p) => ({ ...p, items: p.items.map((i) => ({ ...i, ordered: 107, served: 101, missing: 6 })) })) } }));
     await bang(); fireEvent.click(nut("A + B")); fireEvent.click(nut("Chi tiết bàn đang phục vụ"));
     const values = Array.from(document.querySelectorAll("td, p, label")).flatMap((el) => el.children.length && el.tagName === "TD" ? [] : el.textContent!.match(/[\d.]+đ/g) ?? []);
     expect(values.length).toBeGreaterThan(5);
-    expect(values.every((v) => ["79.123đ", "23.123đ", "46.246đ", "158.246đ"].includes(v))).toBe(true);
+    expect(values.every((v) => ["79.123đ", "23.123đ", "46.246đ", "158.246đ", "0đ"].includes(v))).toBe(true);
     expect(screen.getAllByRole("button").every((b) => !/[\d.]+đ/.test(b.textContent!))).toBe(true);
     expect(document.body.textContent).toContain("Chỉ chủ quán hoặc người đang đứng quầy ghi được đem ra. Các ô này chỉ để xem.");
   });

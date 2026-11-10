@@ -57,6 +57,7 @@ function ChiTietBan({ phien, cot }: { phien: Phien; cot: readonly CotVanHanh[] }
       <h4 className="font-semibold">{c}</h4>
       {([['ordered', 'tổng'], ['served', 'đã ra'], ['missing', 'thiếu']] as const).map(([field, label]) => <div key={field}><span>{label}</span><SoCot items={phien.items} cot={c} field={field} /></div>)}
     </div>)}</div>
+    <DongMonDaGhi lines={phien.lines} total={phien.lines_total_vnd} />
     <p>Tiền đơn: {tien(phien.order_total_vnd)}</p>
   </div>;
 }
@@ -166,13 +167,13 @@ function BangThieuTheoBan({ serving, chon, cot, demRa }: { serving: Phien[]; cho
     {demRa && serving.filter((p) => p.tables.length > 1).map((p) => <p key={p.table_session_id}>{nhanBan(p)}: bàn ghép, ghi đem ra ở màn Sản xuất của quầy.</p>)}
   </section>;
 }
-function CongThuGhepDon({ waiting, chon, doi, cot }: { waiting: Phien[]; chon: number[]; doi: (ids: number[]) => void; cot: readonly CotVanHanh[] }) {
+function CongThuGhepDon({ waiting, chon, doi }: { waiting: Phien[]; chon: number[]; doi: (ids: number[]) => void }) {
   return <section aria-label="Cộng thử ghép đơn" className={khung}>
     <h2 className="text-xl font-semibold">Cộng thử ghép đơn</h2>
     {!waiting.length && <p>Chưa bàn nào sắp phục vụ.</p>}
     <div className="grid gap-1.5 sm:grid-cols-2">{waiting.map((p) => <div key={p.table_session_id} className="choice space-y-1">
       <label className="flex items-center gap-2"><Checkbox className="vh-checkbox" checked={chon.includes(p.table_session_id)} onCheckedChange={(checked) => doi(checked ? [...chon, p.table_session_id] : chon.filter((id) => id !== p.table_session_id))} />{nhanBan(p)} · {tien(p.order_total_vnd)}</label>
-      <div className="flex flex-wrap gap-2">{cot.map((c) => <div key={c}>{c}: <SoCot items={p.items} cot={c} field="ordered" /></div>)}</div>
+      <DongMonDaGhi lines={p.lines} total={p.lines_total_vnd} />
     </div>)}</div>
     <p role="status">Đã chọn {chon.length} bàn.</p><Button variant="outline" onClick={() => doi([])}>Bỏ chọn hết</Button>
   </section>;
@@ -236,7 +237,7 @@ function NoiDung({ data, demRa }: { data: BangVanHanh; demRa?: (chon: ChonDemRa)
   const cot = tenCot.filter((c) => c !== "Khác" || data.sessions.some((p) => p.items.some((i) => cotVanHanh(i).cot === "Khác")));
   return <>
     <BangThieuTheoBan serving={serving} chon={waiting.filter((p) => chon.includes(p.table_session_id))} cot={cot} demRa={demRa} />
-    <CongThuGhepDon waiting={waiting} chon={chon} doi={doi} cot={cot} />
+    <CongThuGhepDon waiting={waiting} chon={chon} doi={doi} />
     <KhoiBanDangPhucVu serving={serving} cot={cot} /><SoDoBan data={data} /><LichSuDemRa history={data.serve_history} />
   </>;
 }

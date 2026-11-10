@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.70.0
+  version: 0.71.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -433,6 +433,10 @@ paths:
         người ngoài quầy không phải chủ quán trả not_on_counter_duty.
         Ảnh hiện tại, ngày bán quy như owner-overview; không nhận ngày lịch sử.
         sessions gồm mọi phiên chưa closed và mọi bàn ghép của phiên, bỏ đơn cancelled.
+        lines là dòng gốc đã chụp của mọi đơn đã duyệt (id_if_approved khác null) chưa huỷ trong phiên,
+        xếp theo sales_order_id rồi id dòng tăng, suất combo lồng trong portions, cùng hình PriceLine của counter/queue.
+        lines_total_vnd là tổng line_total_vnd của mọi dòng các đơn ấy, kể cả dòng suất (như total_vnd của counter/queue);
+        không phải số phải thu — số phải thu vẫn là order_total_vnd (ADR-125).
         serving khi có đơn vị ra hết, waiting khi có đơn chưa huỷ nhưng chưa đơn vị nào ra,
         no_order khi không có đơn chưa huỷ. Items gom thành phần và tập tuỳ chọn nhân, bỏ trạm;
         một đơn vị là (order_line_component_id, position), việc không thành phần là đơn vị riêng.
@@ -5275,7 +5279,7 @@ components:
     ServiceBoardSession:
       type: object
       additionalProperties: false
-      required: [table_session_id, session_status, service_group, tables, order_total_vnd, served_amount_vnd, items]
+      required: [table_session_id, session_status, service_group, tables, order_total_vnd, served_amount_vnd, items, lines, lines_total_vnd]
       properties:
         table_session_id:
           type: integer
@@ -5298,6 +5302,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ServiceBoardItem'
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceLine'
+        lines_total_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
     ServiceBoardTable:
       type: object
       additionalProperties: false
