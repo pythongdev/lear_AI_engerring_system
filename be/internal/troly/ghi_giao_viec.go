@@ -100,6 +100,10 @@ func (n *NguonNoiBo) hanGiaoViec(chu string) (time.Time, error) {
 	return han, nil
 }
 
+func chuanThamChieu(s string) string {
+	return strings.ToLower(strings.Join(strings.Fields(s), " "))
+}
+
 func (n *NguonNoiBo) timViecDeXuat(ctx context.Context, nguoi int64, chu string) (giaoviec.Viec, error) {
 	if utf8.RuneCountInString(chu) < 2 {
 		return giaoviec.Viec{}, loiDeXuatGiaoViec
@@ -108,12 +112,11 @@ func (n *NguonNoiBo) timViecDeXuat(ctx context.Context, nguoi int64, chu string)
 	if err != nil {
 		return giaoviec.Viec{}, loiDeXuatGiaoViec
 	}
-	chuan := func(s string) string { return strings.ToLower(strings.Join(strings.Fields(s), " ")) }
-	chu = chuan(chu)
+	chu = chuanThamChieu(chu)
 	var viec giaoviec.Viec
 	dem := 0
 	for _, v := range ds {
-		if strings.Contains(chuan(v.Content), chu) {
+		if strings.Contains(chuanThamChieu(v.Content), chu) {
 			viec = v
 			dem++
 		}

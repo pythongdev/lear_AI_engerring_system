@@ -10,6 +10,7 @@ import (
 	"banhcuon/be/internal/daotao"
 	"banhcuon/be/internal/gia"
 	"banhcuon/be/internal/giaoviec"
+	"banhcuon/be/internal/nguyenlieu"
 	"banhcuon/be/internal/sanxuat"
 	"banhcuon/be/internal/tongquan"
 	"github.com/jackc/pgx/v5"
@@ -18,22 +19,24 @@ import (
 
 // NguonNoiBo dùng chung các service đọc của màn tay.
 type NguonNoiBo struct {
-	pool     *pgxpool.Pool
-	tongQuan *tongquan.Service
-	sanXuat  *sanxuat.Service
-	giaoViec *giaoviec.Service
-	daoTao   *daotao.Service
+	pool       *pgxpool.Pool
+	tongQuan   *tongquan.Service
+	sanXuat    *sanxuat.Service
+	giaoViec   *giaoviec.Service
+	daoTao     *daotao.Service
+	nguyenLieu *nguyenlieu.Service
 }
 
 func MoiNguonNoiBo(pool *pgxpool.Pool) *NguonNoiBo {
 	return &NguonNoiBo{
 		pool: pool, tongQuan: tongquan.NewService(pool), sanXuat: sanxuat.NewService(pool),
-		giaoViec: giaoviec.NewService(pool),
-		daoTao:   daotao.NewService(pool, ""),
+		giaoViec:   giaoviec.NewService(pool),
+		daoTao:     daotao.NewService(pool, ""),
+		nguyenLieu: nguyenlieu.NewService(pool),
 	}
 }
 
-// CongCuGhi mở nhóm giao việc rồi đào tạo cho lớp của cửa màn tay (CHAT-15 · CHAT-16, ADR-140).
+// CongCuGhi mở giao việc, đào tạo rồi nguyên liệu theo lớp của cửa màn tay (CHAT-15 · CHAT-16 · CHAT-17, ADR-140).
 func (n *NguonNoiBo) CongCuGhi(ctx context.Context, nguoi int64) ([]CongCuGhi, error) {
 	if n == nil || nguoi <= 0 {
 		return nil, nil
@@ -49,7 +52,16 @@ func (n *NguonNoiBo) CongCuGhi(ctx context.Context, nguoi int64) ([]CongCuGhi, e
 		}
 		return nil, err
 	}
-	return append(n.congCuGhiGiaoViec(nguoi), n.congCuGhiDaoTao(nguoi)...), nil
+	cc := append(n.congCuGhiGiaoViec(nguoi), n.congCuGhiDaoTao(nguoi)...)
+	err = authz.ReadAs(ctx, n.pool, authz.Caller{PersonID: nguoi}, authz.NeedOwner, func(pgx.Tx, authz.Granted) error { return nil })
+	if err != nil {
+		var e apierr.Error
+		if errors.As(err, &e) && e.Code == apierr.CodeOwnerOnly {
+			return cc, nil
+		}
+		return nil, err
+	}
+	return append(cc, n.congCuGhiNguyenLieu(nguoi)...), nil
 }
 
 // CongCu đóng từng giao dịch kiểm lớp trước khi trả danh sách cho lượt gọi model.

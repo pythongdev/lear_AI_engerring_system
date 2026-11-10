@@ -195,7 +195,8 @@ func TestI044_GiaoViecChiMoChoQuayVaChuQuan(t *testing.T) {
 		{"người ngoài quầy", nb, n.ngoai, nil},
 		// Sửa 2026-11-09, CHAT-16 (Claude): lớp quay_hoac_chu_quan nay có thêm sáu công cụ đào tạo sau bốn công cụ giao việc.
 		{"người đứng quầy", nb, n.quay, dsGhiQuayChu},
-		{"chủ quán", nb, n.chu, dsGhiQuayChu},
+		// Sửa 2026-11-10, CHAT-17 (Claude): chủ quán nay có thêm năm công cụ nguyên liệu (lớp chu_quan) sau mười công cụ của lớp quầy.
+		{"chủ quán", nb, n.chu, dsGhiChuQuan},
 	} {
 		cc, err := ca.nb.CongCuGhi(n.ctx, ca.nguoi)
 		if err != nil {
@@ -212,7 +213,7 @@ func TestI044_GiaoViecChiMoChoQuayVaChuQuan(t *testing.T) {
 		if !reflect.DeepEqual(ten, ca.muon) {
 			t.Fatalf("%s: muốn %v, được %v", ca.ten, ca.muon, ten)
 		}
-		if ca.muon != nil && !reflect.DeepEqual(op, opGhiQuayChu) {
+		if ca.muon != nil && !reflect.DeepEqual(op[:len(opGhiQuayChu)], opGhiQuayChu) {
 			t.Fatalf("%s: operationId muốn %v, được %v", ca.ten, opGhiQuayChu, op)
 		}
 	}

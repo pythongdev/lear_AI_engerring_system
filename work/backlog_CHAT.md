@@ -978,6 +978,37 @@ có người duyệt thứ ba.
 
 **Nhận việc:**
 
+2026-11-10, Claude, **lát BE**: chủ repo yêu cầu *"tiếp tục yêu cầu codex làm bạn kiểm tra"*. Mức **L2** (nhóm ghi thứ ba của ADR-140, I-025 ·
+I-026 · I-044). Đo trên `97163aa`: năm cửa C07 đều lớp `chu_quan` (`nguyenlieu.ThemThu` · `DatDonVi` · `GhiSo` · `SuaSo` · `DatTiLe`, `NeedOwner`),
+không cửa nào có `submission_code`; `nguyenlieu.Service` có `Doc(actor)` · `DocChiTiet(actor, id)`; `createSupplyDayEntry` nhận `supply_item_id` ·
+`entry_date` · `kind` (`purchased`/`used`) · `measure` (chuỗi, tối đa 3 chữ số lẻ), cửa từ chối ngày sau hôm nay của quán và trùng thứ/ngày/loại;
+màn Nguyên liệu viết *Mua vào* · *Đã dùng*. *Phiên chọn của Claude trong khung ADR-140 (đổi bằng sửa entry này):* (1) năm công cụ `them_nguyen_lieu` ·
+`dat_don_vi` · `ghi_so_nguyen_lieu` · `sua_so_nguyen_lieu` · `dat_ti_le_nhac`, chỉ cho chủ quán, kể sau mười công cụ của lớp quầy; (2) tham chiếu
+nguyên liệu bằng tên: đúng một tên **bằng** chuỗi (cùng luật chuẩn CHAT-15) thì dùng, không có thì đúng một tên **chứa** chuỗi — vì tên nguyên liệu
+ngắn (*Ớt* nằm trong *Ớt khô*); (3) mỗi con số qua chat phải kèm đơn vị người nói và đơn vị ấy phải bằng đơn vị đã đặt, thứ chưa có đơn vị thì đặt
+đơn vị trước — để *mơ hồ về đơn vị thì chưa có thẻ ghi*; (4) ngày chỉ nhận khuôn `YYYY-MM-DD`, model đổi *hôm qua* thành ngày và người bấm thấy ngày
+trên thẻ; ngày tương lai do cửa từ chối khi bấm; (5) thẻ không mở cho việc chắc chắn hỏng: tên trùng thứ đã có, đặt đơn vị cho thứ đã có đơn vị, ghi
+con số đã có cùng ngày cùng loại (dùng sửa), sửa con số không có; (6) mọi tham số là chuỗi, số JSON là lỗi. Hợp đồng ở đầu
+`be/internal/troly/ghi_nguyen_lieu_test.go` (SHA-256 `fed565ce…2cf6`); Claude sửa kỳ vọng danh sách của chủ quán ở `ghi_giao_viec_test.go`
+(`9a45cd91…0161`), `ghi_dao_tao_test.go` (`a922368a…33d4`) và `noi_bo_test.go` (`833a103c…3106`), mỗi chỗ có dòng *Sửa 2026-11-10, CHAT-17*.
+Đỏ trước code: `./scripts/be-check.sh` 12 test `troly` FAIL đúng lý do *không có công cụ ghi* / *được 10*, mọi gói khác `ok`. Acceptance ghi trước khi
+giao: A1 bốn file test xanh và không bị sửa; A2 không câu SQL, không `authz.Door` mới, lời gọi `nguyenlieu` chỉ `NewService` · `Doc` · `DocChiTiet`;
+A3 mô tả `askChat` nói nhóm nguyên liệu đã mở cho lớp `chu_quan`, `info.version` `0.71.0` → `0.72.0`, một đoạn sổ ở `01-hop-dong-api.md`; A4
+`./scripts/be-check.sh` và `./scripts/gate.sh` xanh. Worktree `../lean_wt/CHAT-17`, nhánh `codex/CHAT-17` từ `97163aa`. **Chưa làm ở lát này:** năm
+dòng `cuaGhiChat` FE, công cụ đọc kho cho chat, eval số và ngày trên model thật (chờ `U-112`).
+
+2026-11-10, CHAT-17 lát BE xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-17`, nhánh `codex/CHAT-17`, nền `97163aa` + bốn file test của Claude
+đã stage, model `gpt-6-astra`, một lượt): `ghi_nguyen_lieu.go` mới (năm `CongCuGhi`, kiểm lại lớp `chu_quan` trong mỗi hàm dựng, tham chiếu bằng
+trước chứa sau qua `nguyenlieu.Service.Doc`, con số ngày qua `DocChiTiet`, khuôn con số và tỉ lệ chép đúng `pattern` của hợp đồng, một lỗi chung không
+mang tên hay số), `ghi_giao_viec.go` (tách `chuanThamChieu` dùng chung, không đổi hành vi giao việc), `noi_bo.go` (`nguyenLieu` dựng bằng
+`nguyenlieu.NewService(pool)`, `CongCuGhi` thêm nhóm nguyên liệu khi qua `NeedOwner`, `owner_only` ⇒ giữ mười công cụ), mô tả `askChat` và `0.72.0` ở
+`openapi.yaml`, đoạn sổ ở `01-hop-dong-api.md`. Gate cuối của Codex FAIL vì sandbox mất Docker giữa các lượt; lượt đầu be-check đạt. **Claude** duyệt
+diff (không SQL, không `authz.Door`, lời gọi `nguyenlieu` chỉ `NewService` · `Doc` · `DocChiTiet`), đưa năm file về cây chính, `cmp` khớp worktree,
+sinh lại `fe/src/lib/api/schema.ts`, thêm đoạn *Sửa CHAT-17* ở Verification của `I-044`. Bằng chứng ở cây chính: `./scripts/gate.sh` exit 0
+(`be-check — mọi test backend qua PostgreSQL thật đều đạt`, chín `TestI044_*` nguyên liệu PASS; db SKIP vì không đổi), `./scripts/fe-check.sh`
+`apigen PASS`, 766/766, `fe-check: PASS`; bốn file test khớp SHA-256 phiếu. **Còn lại:** lát FE (năm dòng `cuaGhiChat`, gọi đúng hàm API sinh sẵn),
+công cụ đọc kho cho chat (chưa giao), eval số và ngày trên model thật (chờ `U-112`). Chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---

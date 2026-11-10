@@ -1849,4 +1849,9 @@ chiếu việc nhập nhằng ⇒ không đề xuất; gói tới model không m
 đổi bảng `assigned_task_guide` · `training_record`; hướng dẫn chỉ nhận chữ, khoá tệp hay đường dẫn ⇒ lỗi; đánh giá ngoài `pass` · `not_yet` ⇒ lỗi
 (`I-031`); người được ghi không do model điền; thân hướng dẫn mang câu như lệnh, nhận xét và tên người không tới model (`ghi_dao_tao_test.go`).
 
+*Sửa 2026-11-10, CHAT-17 (Claude Code):* lớp `chu_quan` có thêm năm công cụ nguyên liệu sau mười công cụ của lớp quầy; người đứng quầy không phải chủ
+quán không có chúng. Kịch bản âm thêm: dựng đề xuất của cả năm không đổi `supply_item` · `supply_day_entry`; người mất cờ chủ quán giữa lượt ⇒ hàm
+dựng lỗi; con số thiếu đơn vị, khác đơn vị đã đặt, sai khuôn hay là số JSON ⇒ lỗi; ngày ngoài khuôn `YYYY-MM-DD` ⇒ lỗi; tham chiếu nguyên liệu nhập
+nhằng ⇒ không đề xuất (`I-025` · `I-026`, `ghi_nguyen_lieu_test.go`).
+
 *Viết ở CHAT-02 lượt ba, 2026-11-08, Claude Code.*

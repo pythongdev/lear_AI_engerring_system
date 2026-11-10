@@ -318,7 +318,8 @@ func TestI043_DuongHoiChonCongCuTheoPhien(t *testing.T) {
 		// Sửa 2026-11-09, CHAT-15 (Claude): lớp quay_hoac_chu_quan nay có thêm bốn công cụ giao việc, kể sau tên đọc.
 		// Sửa 2026-11-09, CHAT-16 (Claude): thêm sáu công cụ đào tạo sau bốn công cụ giao việc.
 		{"người đứng quầy", []*http.Cookie{phien(n.quay)}, append(append([]string{}, dsQuay...), dsGhiQuayChu...)},
-		{"chủ quán", []*http.Cookie{phien(n.chu)}, append(append([]string{}, dsChuQuan...), dsGhiQuayChu...)},
+		// Sửa 2026-11-10, CHAT-17 (Claude): chủ quán có thêm năm công cụ nguyên liệu sau mười công cụ của lớp quầy.
+		{"chủ quán", []*http.Cookie{phien(n.chu)}, append(append([]string{}, dsChuQuan...), dsGhiChuQuan...)},
 	} {
 		truoc := len(nha.DaNhan())
 		hoi(ca.cookie...)
