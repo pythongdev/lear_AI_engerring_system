@@ -54,7 +54,8 @@ const posts = (g: GoiDen[]) => g.filter((x) => x.method === "POST");
 async function chon(ten: string, so: string) {
   fireEvent.click((await vung()).getByRole("button", { name: ten }));
   const hop = await screen.findByRole("dialog", { name: new RegExp(`${ten.replace("Đem ra ", "")}: đã đem ra mấy\\?`) });
-  fireEvent.click(within(hop).getByRole("button", { name: so }));
+  // Nút số chỉ hiện sau khi đọc xong bảng sản xuất; chờ nó thay vì tìm ngay (T-314: chạy cả bộ thì có lúc chưa kịp).
+  fireEvent.click(await within(hop).findByRole("button", { name: so }));
 }
 
 describe("Vận hành — bấm ô số ghi đã đem ra (T-228)", () => {
@@ -64,6 +65,7 @@ describe("Vận hành — bấm ô số ghi đã đem ra (T-228)", () => {
     fireEvent.click(btn);
     const detail = document.getElementById(btn.getAttribute("aria-controls")!)!;
     expect(within(detail).getByText("Bánh cuốn đã ghi · · Số lượng 5 · 50.000đ")).toBeTruthy();
+    fireEvent.click((await vung()).getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
     await chon("Đem ra Bàn 01 · Thịt", "2");
     const xn = await screen.findByRole("dialog", { name: "Xác nhận đem ra" });
     expect(xn.textContent).toContain("Còn thiếu sẽ từ 4 xuống 2.");
@@ -73,34 +75,43 @@ describe("Vận hành — bấm ô số ghi đã đem ra (T-228)", () => {
   });
   it("đứng quầy: mỗi thứ còn thiếu của phiên một bàn là một nút riêng; thịt thường và thịt nhiều tách dòng", async () => {
     mo(); const b = await vung();
+    fireEvent.click(b.getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
     for (const ten of ["Đem ra Bàn 01 · Thịt", "Đem ra Bàn 01 · Thịt nhiều", "Đem ra Bàn 01 · Trứng tái"]) expect(b.getByRole("button", { name: ten })).toBeTruthy();
-    expect(screen.getByText("Bấm vào một ô số để báo đã đem ra.")).toBeTruthy();
+    expect(screen.getByText("Bấm Chi tiết đem ra ở một bàn rồi bấm vào ô số để báo đã đem ra.")).toBeTruthy();
   });
   it("chủ quán không đứng quầy vẫn có nút ghi đem ra", async () => {
     const g = mo({ quay: null }); const b = await vung();
+    fireEvent.click(b.getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
     await waitFor(() => expect(b.getByRole("button", { name: "Đem ra Bàn 01 · Thịt" })).toBeTruthy());
     expect(posts(g)).toHaveLength(0);
   });
   it("người không phải chủ quán và không đứng quầy chỉ được xem", async () => {
     const g = mo({ quay: null, chu: false }); const b = await vung();
+    fireEvent.click(b.getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
+    fireEvent.click(b.getByRole("button", { name: "Chi tiết đem ra Bàn 02 + Bàn 03" }));
     await waitFor(() => expect(screen.getByText(/Chỉ chủ quán hoặc người đang đứng quầy ghi được đem ra/)).toBeTruthy());
     expect(b.queryAllByRole("button", { name: /^Đem ra / })).toHaveLength(0);
     expect(posts(g)).toHaveLength(0);
   });
   it("phiên ghép nhiều bàn: ô chỉ đọc, có câu chỉ sang màn Sản xuất của quầy", async () => {
     mo(); const b = await vung();
+    fireEvent.click(b.getByRole("button", { name: "Chi tiết đem ra Bàn 02 + Bàn 03" }));
     expect(b.queryByRole("button", { name: /^Đem ra Bàn 02 \+ Bàn 03/ })).toBeNull();
     expect(screen.getByText(/Bàn 02 \+ Bàn 03.*màn Sản xuất của quầy/)).toBeTruthy();
   });
   it("ô chọn đọc bảng sản xuất lúc bấm: số lớn nhất = min(thiếu, đã làm ở từng trạm của bàn ấy) và nói phần chưa làm xong", async () => {
-    const g = mo(); fireEvent.click((await vung()).getByRole("button", { name: "Đem ra Bàn 01 · Thịt" }));
+    const g = mo();
+    fireEvent.click((await vung()).getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
+    fireEvent.click((await vung()).getByRole("button", { name: "Đem ra Bàn 01 · Thịt" }));
     const hop = await screen.findByRole("dialog", { name: "Bàn 01 · Thịt: đã đem ra mấy?" });
     expect(within(hop).getAllByRole("button").map((x) => x.textContent)).toEqual(["0", "1", "2"]);
     expect(hop.textContent).toContain("Còn 2 cái chưa làm xong.");
     expect(g.filter((x) => x.path === "/production-board")).toHaveLength(1);
   });
   it("chọn 0 đóng ô, không ghi; chọn số rồi Huỷ ở hộp xác nhận cũng không ghi", async () => {
-    const g = mo(); await chon("Đem ra Bàn 01 · Thịt", "0");
+    const g = mo();
+    fireEvent.click((await vung()).getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
+    await chon("Đem ra Bàn 01 · Thịt", "0");
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     await chon("Đem ra Bàn 01 · Thịt", "2");
     const xn = await screen.findByRole("dialog", { name: "Xác nhận đem ra" });
@@ -109,7 +120,9 @@ describe("Vận hành — bấm ô số ghi đã đem ra (T-228)", () => {
     expect(posts(g)).toHaveLength(0);
   });
   it("xác nhận nhắc lại số cái, bàn, thiếu trước → sau; gửi một hàng mỗi trạm của đúng khoá gom và đọc lại bảng", async () => {
-    const g = mo(); await chon("Đem ra Bàn 01 · Thịt", "2");
+    const g = mo();
+    fireEvent.click((await vung()).getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
+    await chon("Đem ra Bàn 01 · Thịt", "2");
     const xn = await screen.findByRole("dialog", { name: "Xác nhận đem ra" });
     expect(xn.textContent).toContain("Quán đã đem ra 2 cái Thịt cho Bàn 01. Còn thiếu sẽ từ 4 xuống 2.");
     const truoc = g.filter((x) => x.path === "/service-board").length;
@@ -123,7 +136,9 @@ describe("Vận hành — bấm ô số ghi đã đem ra (T-228)", () => {
     await waitFor(() => expect(g.filter((x) => x.path === "/service-board").length).toBe(truoc + 1));
   });
   it("hàng nhiều nhân gửi đúng khoá gom của nó, không lẫn hàng thịt thường", async () => {
-    const g = mo(); await chon("Đem ra Bàn 01 · Thịt nhiều", "1");
+    const g = mo();
+    fireEvent.click((await vung()).getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
+    await chon("Đem ra Bàn 01 · Thịt nhiều", "1");
     fireEvent.click(within(await screen.findByRole("dialog", { name: "Xác nhận đem ra" })).getByRole("button", { name: "Xác nhận" }));
     await waitFor(() => expect(posts(g)).toHaveLength(1));
     expect((posts(g)[0].body as { items: unknown[] }).items).toEqual([
@@ -132,7 +147,9 @@ describe("Vận hành — bấm ô số ghi đã đem ra (T-228)", () => {
     ]);
   });
   it("bấm Xác nhận hai lần chỉ gửi một lần", async () => {
-    const g = mo(); await chon("Đem ra Bàn 01 · Thịt", "1");
+    const g = mo();
+    fireEvent.click((await vung()).getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
+    await chon("Đem ra Bàn 01 · Thịt", "1");
     const nut = within(await screen.findByRole("dialog", { name: "Xác nhận đem ra" })).getByRole("button", { name: "Xác nhận" });
     fireEvent.click(nut); fireEvent.click(nut);
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
@@ -143,6 +160,7 @@ describe("Vận hành — bấm ô số ghi đã đem ra (T-228)", () => {
     ["not_on_counter_duty", 403, "chưa đứng quầy", false],
   ])("cửa từ chối %s: báo theo mã, không báo đã ghi", async (code, status, text, docLai) => {
     const g = mo({ ghi: () => ({ status, body: { code, message: "x" } }) });
+    fireEvent.click((await vung()).getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
     await chon("Đem ra Bàn 01 · Thịt", "1");
     const truoc = g.filter((x) => x.path === "/service-board").length;
     fireEvent.click(within(await screen.findByRole("dialog", { name: "Xác nhận đem ra" })).getByRole("button", { name: "Xác nhận" }));
@@ -152,6 +170,7 @@ describe("Vận hành — bấm ô số ghi đã đem ra (T-228)", () => {
   });
   it("đọc bảng sản xuất lỗi: ô chọn báo lỗi, không có nút số nào ngoài đóng", async () => {
     mo({ bang: () => ({ status: 500, body: { code: "internal", message: "x" } }) });
+    fireEvent.click((await vung()).getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
     fireEvent.click((await vung()).getByRole("button", { name: "Đem ra Bàn 01 · Thịt" }));
     const hop = await screen.findByRole("dialog", { name: "Bàn 01 · Thịt: đã đem ra mấy?" });
     expect((await within(hop).findByRole("alert")).textContent).toContain("Chưa đọc được số đã làm");

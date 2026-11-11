@@ -68,6 +68,82 @@ const nut = (name: string) => screen.getByRole("button", { name });
 const vungAn = (b: HTMLElement) => document.getElementById(b.getAttribute("aria-controls")!)!;
 
 describe("Vận hành", () => {
+  it.each(["serving", "waiting"] as const)("T-314: hàng %s mặc định hiện đơn, chuyển cột riêng từng bàn rồi về đơn", async (nhom) => {
+    mo(() => ({ status: 200, body: { ...data, sessions: [
+      { ...phien(21, nhom, "Bàn X"), lines: dongCuaBan, lines_total_vnd: 63000 },
+      { ...phien(22, "serving", "Bàn Y"), lines: [dong("Món bàn Y")], lines_total_vnd: 7000 },
+    ] } }), undefined, true);
+    const b = await bang();
+    await screen.findByText("Bấm Chi tiết đem ra ở một bàn rồi bấm vào ô số để báo đã đem ra.");
+    if (nhom === "waiting") fireEvent.click(screen.getByRole("checkbox", { name: "Bàn X · 79.123đ" }));
+    const nhan = b.getByRole("button", { name: "Bàn X" });
+    const hang = nhan.closest("tr")!;
+    const hangKhac = b.getByRole("button", { name: "Bàn Y" }).closest("tr")!;
+    const donKhac = cells(hangKhac);
+    const cot = b.getAllByRole("columnheader").map((c) => c.textContent);
+    const tong = cells(b.getAllByRole("row").at(-1)!);
+    const tienDaRa = nhom === "serving" ? "23.123đ" : "0đ";
+    const kiemDon = () => {
+      const o = within(hang).getAllByRole("cell");
+      expect(o).toHaveLength(2);
+      expect(o[0].getAttribute("colspan")).toBe(String(cot.length - 2));
+      expect(Array.from(o[0].querySelectorAll("p")).map((p) => p.textContent)).toEqual([
+        "Combo bữa sáng ·  · Số lượng 2 · 40.000đ", "Bánh cuốn thịt · Nhiều nhân · Số suất 2", "Canh combo ·  · Số suất 2",
+        "Trứng chín ·  · Số lượng 1 · 7.000đ", "Canh thêm ·  · Số lượng 2 · 14.000đ", "Tổng 63.000đ",
+      ]);
+      expect(o[1].textContent).toBe(tienDaRa);
+      expect(within(hang).queryAllByRole("button", { name: /^Đem ra / })).toHaveLength(0);
+    };
+    kiemDon();
+    expect(b.queryAllByRole("button", { name: /^Đem ra / })).toHaveLength(0);
+    const chuyen = within(hang).getByRole("button", { name: "Chi tiết đem ra Bàn X" });
+    expect(chuyen.closest("th")).toBe(nhan.closest("th"));
+    expect(chuyen.textContent).toBe("Chi tiết đem ra");
+    expect(chuyen.getAttribute("aria-pressed")).toBe("false");
+    fireEvent.click(chuyen);
+    expect(within(hang).getByRole("button", { name: "Xem đơn đã đặt Bàn X" })).toBe(chuyen);
+    expect(chuyen.textContent).toBe("Xem đơn đã đặt");
+    expect(chuyen.getAttribute("aria-pressed")).toBe("true");
+    expect(nhan.getAttribute("aria-expanded")).toBe("false");
+    expect(cells(hang)).toEqual(["7*", "0", "0", "0", "0", tienDaRa]);
+    if (nhom === "serving") expect(within(hang).getByRole("button", { name: "Đem ra Bàn X · Thịt nhiều" })).toBeTruthy();
+    else expect(within(hang).queryAllByRole("button", { name: /^Đem ra / })).toHaveLength(0);
+    expect(cells(hangKhac)).toEqual(donKhac);
+    expect(within(hangKhac).getByRole("button", { name: "Chi tiết đem ra Bàn Y" }).getAttribute("aria-pressed")).toBe("false");
+    expect(b.getAllByRole("columnheader").map((c) => c.textContent)).toEqual(cot);
+    expect(cells(b.getAllByRole("row").at(-1)!)).toEqual(tong);
+    expect(screen.getByText("* nhiều nhân")).toBeTruthy();
+    fireEvent.click(chuyen);
+    expect(within(hang).getByRole("button", { name: "Chi tiết đem ra Bàn X" }).getAttribute("aria-pressed")).toBe("false");
+    kiemDon();
+    expect(cells(hangKhac)).toEqual(donKhac);
+    expect(cells(b.getAllByRole("row").at(-1)!)).toEqual(tong);
+  });
+  it.each(["nút Đọc lại", "tín hiệu changed"])("T-314: %s giữ chế độ từng hàng đang phục vụ và ghép thử", async (cachDoc) => {
+    const goi = mo((n) => ({ status: 200, body: n === 1 ? data : { ...data, sessions: data.sessions.map((p) => ({
+      ...p, items: p.items.map((i) => ({ ...i, missing: 3 })), lines: [dong("Món đọc lại")], lines_total_vnd: 9001,
+    })) } }), undefined, true);
+    const b = await bang();
+    await screen.findByText("Bấm Chi tiết đem ra ở một bàn rồi bấm vào ô số để báo đã đem ra.");
+    fireEvent.click(screen.getByRole("checkbox", { name: "C · 79.123đ" }));
+    for (const ten of ["D", "C"]) fireEvent.click(b.getByRole("button", { name: `Chi tiết đem ra ${ten}` }));
+    if (cachDoc === "nút Đọc lại") fireEvent.click(nut("Đọc lại"));
+    else {
+      await waitFor(() => expect(luong).toHaveLength(1));
+      await act(async () => luong[0].gui("changed"));
+    }
+    const hangDon = b.getByRole("button", { name: "A + B" }).closest("tr")!;
+    expect(await within(hangDon).findByText("Tổng 9.001đ")).toBeTruthy();
+    expect(within(hangDon).getByRole("button", { name: "Chi tiết đem ra A + B" }).getAttribute("aria-pressed")).toBe("false");
+    for (const ten of ["D", "C"]) {
+      const hang = b.getByRole("button", { name: ten }).closest("tr")!;
+      expect(within(hang).getByRole("button", { name: `Xem đơn đã đặt ${ten}` }).getAttribute("aria-pressed")).toBe("true");
+      expect(cells(hang)[0]).toBe(ten === "D" ? "3*" : "3");
+    }
+    expect(b.getByRole("button", { name: "Đem ra D · Thịt nhiều" }).textContent).toBe("3*");
+    expect(b.queryAllByRole("button", { name: /^Đem ra C/ })).toHaveLength(0);
+    expect(goi.filter((g) => g.path === "/service-board")).toHaveLength(2);
+  });
   it("chủ quán không đứng quầy thấy đơn QR, duyệt rồi đọc lại; luồng nhận đơn là counter/events", async () => {
     const don: HangChoChuQuan["orders"][number] = { sales_order_id: 77, channel_code: "qr_table", dining_table_id: 3,
       created_at: data.read_at, customer_phone: null, customer_needed_at: null, total_vnd: 8000,
@@ -83,6 +159,7 @@ describe("Vận hành", () => {
     fireEvent.click(vung.getByRole("button", { name: "Duyệt đơn 77" }));
     await waitFor(() => expect(goi.some((g) => g.method === "POST" && g.path === "/orders/77/approval")).toBe(true));
     await waitFor(() => expect(vung.getByText("Không có đơn chờ xác nhận.")).toBeTruthy());
+    fireEvent.click(nut("Chi tiết đem ra D"));
     expect(screen.getByRole("button", { name: /Đem ra D/ })).toBeTruthy();
   });
   it("chủ quán mở lại trạng thái mù bằng nút và từ chối đơn qua bước xác nhận", async () => {
@@ -146,6 +223,7 @@ describe("Vận hành", () => {
   });
   it("chỉ serving, ghép A + B, xếp theo mã bàn, cộng missing và tiền backend, đánh dấu nhiều", async () => {
     mo(); const b = await bang(); const rows = b.getAllByRole("row");
+    fireEvent.click(nut("Chi tiết đem ra A + B"));
     expect(rows).toHaveLength(4);
     expect(rows[1].textContent).toContain("A + B"); expect(rows[2].textContent).toContain("D");
     expect(cells(rows[1])).toEqual(["7*", "7", "7 tái7 chín", "7", "7", "7 Giò", "23.123đ"]);
@@ -167,6 +245,7 @@ describe("Vận hành", () => {
     const set = vi.spyOn(Storage.prototype, "setItem"); const remove = vi.spyOn(Storage.prototype, "removeItem"); const clear = vi.spyOn(Storage.prototype, "clear");
     const g = mo(); const b = await bang();
     fireEvent.click(screen.getByRole("checkbox", { name: "C · 79.123đ" }));
+    fireEvent.click(nut("Chi tiết đem ra C"));
     const row = b.getByRole("button", { name: "C" }).closest("tr")!;
     expect(row.className).toContain("dong-ghep"); expect(cells(row)[0]).toBe("11"); expect(cells(row).at(-1)).toBe("0đ");
     expect(cells(b.getAllByRole("row").at(-1)!)[0]).toBe("14+11*");
@@ -189,6 +268,7 @@ describe("Vận hành", () => {
     expect(the.textContent).not.toContain("Thịt:");
     fireEvent.click(chon);
     expect(congThu.getByText("Đã chọn 1 bàn.")).toBeTruthy();
+    fireEvent.click(nut("Chi tiết đem ra C"));
     expect(cells(b.getByRole("button", { name: "C" }).closest("tr")!)[0]).toBe("11");
     fireEvent.click(congThu.getByRole("button", { name: "Bỏ chọn hết" }));
     expect(congThu.getByText("Đã chọn 0 bàn.")).toBeTruthy();
@@ -272,6 +352,8 @@ describe("Vận hành", () => {
   });
   it("không đánh dấu nhiều khi không thiếu, Khác hiện cả khi chỉ có ở phiên no_order", async () => {
     mo(() => ({ status: 200, body: { ...data, sessions: [phien(21, "serving", "A", [thu("Bánh cuốn", "Thịt", { extra_filling: true, missing: 0, served: 13 })]), phien(41, "no_order", "E", [thu("Giò")])] } }));
-    const b = await bang(); expect(cells(b.getAllByRole("row")[1])[0]).toBe("0"); expect(b.getByRole("columnheader", { name: "Khác" })).toBeTruthy();
+    const b = await bang();
+    fireEvent.click(nut("Chi tiết đem ra A"));
+    expect(cells(b.getAllByRole("row")[1])[0]).toBe("0"); expect(b.getByRole("columnheader", { name: "Khác" })).toBeTruthy();
   });
 });

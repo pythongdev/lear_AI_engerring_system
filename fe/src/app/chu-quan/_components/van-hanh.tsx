@@ -131,11 +131,16 @@ function HopDemRa({ chon, dong, bao, docLai }: {
 }
 function HangThieu({ phien, cot, them, demRa }: { phien: Phien; cot: readonly CotVanHanh[]; them: boolean; demRa?: (chon: ChonDemRa) => void }) {
   const [mo, setMo] = useState(false);
+  const [chiTiet, setChiTiet] = useState(false);
   const id = useId();
+  const nhanChuyen = chiTiet ? "Xem đơn đã đặt" : "Chi tiết đem ra";
   return <>
     <tr className={them ? "dong-ghep" : ""}>
-      <th scope="row"><Button className="chon-ban" variant="ghost" aria-expanded={mo} aria-controls={id} onClick={() => setMo(!mo)}>{nhanBan(phien)}</Button></th>
-      {cot.map((c) => <td key={c}>{them ? <SoCot items={phien.items} cot={c} /> : (() => {
+      <th scope="row">
+        <Button className="chon-ban" variant="ghost" aria-expanded={mo} aria-controls={id} onClick={() => setMo(!mo)}>{nhanBan(phien)}</Button>
+        <div><Button variant="outline" aria-label={`${nhanChuyen} ${nhanBan(phien)}`} aria-pressed={chiTiet} onClick={() => setChiTiet(!chiTiet)}>{nhanChuyen}</Button></div>
+      </th>
+      {chiTiet ? cot.map((c) => <td key={c}>{them ? <SoCot items={phien.items} cot={c} /> : (() => {
         const items = thuCot(phien.items, c).filter((i) => i.missing > 0);
         return items.length ? items.map((item, index) => {
           const { dong } = cotVanHanh(item);
@@ -144,7 +149,7 @@ function HangThieu({ phien, cot, them, demRa }: { phien: Phien; cot: readonly Co
             {demRa && phien.tables.length === 1 ? <Button className="o-so" variant="ghost" aria-label={`Đem ra ${nhanBan(phien)} · ${tenThu(item)}`} onClick={() => demRa({ phien, item, ten: tenThu(item) })}>{chu}</Button> : chu}
           </div>;
         }) : <span className="khong">0</span>;
-      })()}</td>)}
+      })()}</td>) : <td colSpan={cot.length}><DongMonDaGhi lines={phien.lines} total={phien.lines_total_vnd} /></td>}
       <td className="tien">{tien(phien.served_amount_vnd)}</td>
     </tr>
     {mo && <tr id={id}><td colSpan={cot.length + 2}><ChiTietBan phien={phien} cot={cot} /></td></tr>}
@@ -163,7 +168,7 @@ function BangThieuTheoBan({ serving, chon, cot, demRa }: { serving: Phien[]; cho
         <td className="tien">{tien(tongTien(serving, "served_amount_vnd"))}{tongTien(chon, "served_amount_vnd") > 0 && <span className="them">+{tien(tongTien(chon, "served_amount_vnd"))}</span>}</td>
       </tr></tfoot>
     </table></VungBang><p className="text-sm">* nhiều nhân</p>
-    <p>{demRa ? "Bấm vào một ô số để báo đã đem ra." : "Chỉ chủ quán hoặc người đang đứng quầy ghi được đem ra. Các ô này chỉ để xem."}</p>
+    <p>{demRa ? "Bấm Chi tiết đem ra ở một bàn rồi bấm vào ô số để báo đã đem ra." : "Chỉ chủ quán hoặc người đang đứng quầy ghi được đem ra. Các ô này chỉ để xem."}</p>
     {demRa && serving.filter((p) => p.tables.length > 1).map((p) => <p key={p.table_session_id}>{nhanBan(p)}: bàn ghép, ghi đem ra ở màn Sản xuất của quầy.</p>)}
   </section>;
 }
