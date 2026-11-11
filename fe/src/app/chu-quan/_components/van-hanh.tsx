@@ -61,6 +61,14 @@ function ChiTietBan({ phien, cot }: { phien: Phien; cot: readonly CotVanHanh[] }
     <p>Tiền đơn: {tien(phien.order_total_vnd)}</p>
   </div>;
 }
+// T-316: Tổng thiếu theo bàn và Cộng thử ghép đơn — nhân viên đã thuộc món — chỉ số, tên ngắn, lựa chọn. Tên ngắn theo tên đã chụp, suy ra của Claude 2026-11-11, chờ chủ repo.
+const tenNgan: Record<string, string> = { "Giò bán rời": "giò", "Canh bánh cuốn": "canh" };
+const dongGon = (d: Phien["lines"][number]) =>
+  [String(d.quantity), tenNgan[d.item_name] ?? d.item_name.toLowerCase(), d.options.map((o) => o.option_name.toLowerCase()).join(", ")]
+    .filter(Boolean).join(" ");
+function DongMonGon({ lines }: { lines: Phien["lines"] }) {
+  return <div className="space-y-0.5">{lines.map((d, i) => <p key={i}>{dongGon(d)}</p>)}</div>;
+}
 type ChonDemRa = { phien: Phien; item: ThuVanHanh; ten: string };
 function tenThu(item: ThuVanHanh) {
   const { cot, dong } = cotVanHanh(item);
@@ -149,7 +157,7 @@ function HangThieu({ phien, cot, them, demRa }: { phien: Phien; cot: readonly Co
             {demRa && phien.tables.length === 1 ? <Button className="o-so" variant="ghost" aria-label={`Đem ra ${nhanBan(phien)} · ${tenThu(item)}`} onClick={() => demRa({ phien, item, ten: tenThu(item) })}>{chu}</Button> : chu}
           </div>;
         }) : <span className="khong">0</span>;
-      })()}</td>) : <td colSpan={cot.length}><DongMonDaGhi lines={phien.lines} total={phien.lines_total_vnd} /></td>}
+      })()}</td>) : <td colSpan={cot.length}><DongMonGon lines={phien.lines} /></td>}
       <td className="tien">{tien(phien.served_amount_vnd)}</td>
     </tr>
     {mo && <tr id={id}><td colSpan={cot.length + 2}><ChiTietBan phien={phien} cot={cot} /></td></tr>}
@@ -178,7 +186,7 @@ function CongThuGhepDon({ waiting, chon, doi }: { waiting: Phien[]; chon: number
     {!waiting.length && <p>Chưa bàn nào sắp phục vụ.</p>}
     <div className="grid gap-1.5 sm:grid-cols-2">{waiting.map((p) => <div key={p.table_session_id} className="choice space-y-1">
       <label className="flex items-center gap-2"><Checkbox className="vh-checkbox" checked={chon.includes(p.table_session_id)} onCheckedChange={(checked) => doi(checked ? [...chon, p.table_session_id] : chon.filter((id) => id !== p.table_session_id))} />{nhanBan(p)} · {tien(p.order_total_vnd)}</label>
-      <DongMonDaGhi lines={p.lines} total={p.lines_total_vnd} />
+      <DongMonGon lines={p.lines} />
     </div>)}</div>
     <p role="status">Đã chọn {chon.length} bàn.</p><Button variant="outline" onClick={() => doi([])}>Bỏ chọn hết</Button>
   </section>;

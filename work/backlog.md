@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-316 **Dòng món ở Tổng thiếu theo bàn và Cộng thử ghép đơn dài như hoá đơn nên nhân viên khó đọc nhanh** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; mỗi dòng gọn thành "số + tên ngắn + lựa chọn" (ví dụ "1 canh không rau"), bỏ giá, suất trong combo và dòng tổng ở hai mục này; Claude làm; fe-check và gate đạt · [chi tiết](#t-316)
 - [x] T-313 **Vận hành chỉ đếm theo thành phần nên chủ quán không thấy dòng món của bàn như ở Đơn chờ** — L2 (thêm trường vào hợp đồng API), xong 2026-11-09; `GET /service-board` thêm `lines` và `lines_total_vnd` cho mỗi phiên, hợp đồng 0.71.0; *Cộng thử ghép đơn* thay hàng cột bằng dòng món, *Tổng thiếu theo bàn* giữ cột và ô đem ra, thêm dòng món khi mở chi tiết bàn; Codex làm, Claude sửa nốt và duyệt; be-check, fe-check 745/745 và gate đạt · [chi tiết](#t-313)
 - [x] T-312 **Máy dev không đặt được đơn ngoài giờ bán nên không thử được luồng khách → Vận hành** — L2, ADR-141, xong 2026-11-09; cờ `BANHCUON_DEV_BO_GIO_BAN` (make dev bật sẵn, chỉ origin localhost) bỏ riêng điều kiện giờ bán; Claude viết test trước, Codex làm, Claude duyệt; be-check và gate đạt, đơn QR thử lúc 13:21 hiện ở hàng chờ chủ quán · [chi tiết](#t-312)
 
@@ -573,6 +574,23 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-316"></a>
+### T-316 — Dòng món ở Tổng thiếu theo bàn và Cộng thử ghép đơn dài như hoá đơn nên nhân viên khó đọc nhanh
+
+Chủ repo báo 2026-11-11: trên `/chu-quan/van-hanh`, chế độ mặc định của mỗi hàng ở *Tổng thiếu theo bàn* (T-314) dùng `DongMonDaGhi` nên in đủ như hoá đơn ("Đầy đủ trứng chín · · Số lượng 3 · 78.000đ", các dòng "Số suất" của từng thành phần combo, "Tổng 99.000đ"). Người đọc là nhân viên quán, đã thuộc món, nên chủ repo muốn gọn: "1 giò", "3 đầy đủ trứng chín", "1 canh không rau", "2 canh ít rau", "2 canh nhiều rau". Cùng ngày, giữa lúc làm, chủ repo yêu cầu thêm dạng gọn này cho mục *Cộng thử ghép đơn*.
+
+Suy luận của Claude, chưa được chủ repo xác nhận: tên ngắn chỉ rút cho hai món đúng tên đã chụp "Giò bán rời" → "giò" và "Canh bánh cuốn" → "canh" (cùng kiểu ánh xạ theo tên đã chụp như `cot-van-hanh.ts`), món khác giữ tên viết thường; lựa chọn của dòng viết thường nối sau tên, nhiều lựa chọn cách nhau dấu phẩy; chỉ đổi hai mục này — chi tiết bàn khi bấm nhãn bàn và Đơn chờ vẫn dùng `DongMonDaGhi` đầy đủ.
+
+Acceptance viết trước sửa:
+- A1 — Chế độ *đơn đã đặt* của mỗi hàng ở Tổng thiếu theo bàn (đang phục vụ và ghép thử) và mỗi thẻ bàn ở Cộng thử ghép đơn hiện mỗi dòng gốc của `lines` thành một dòng `"{quantity} {tên ngắn}[ {lựa chọn}]"`, đúng thứ tự `lines`; không giá, không dòng suất của combo, không dòng *Tổng*.
+- A2 — Ví dụ chủ repo cho ra đúng năm dòng ở cả hai mục: "1 giò", "3 đầy đủ trứng chín", "1 canh không rau", "2 canh ít rau", "2 canh nhiều rau".
+- A3 — Nút *Chi tiết đem ra*, chế độ cột, ô *Tiền bánh đã ra*, dòng Tổng của bảng, chi tiết bàn khi bấm nhãn bàn không đổi.
+- A4 — Test T-313/T-314 ở `van-hanh.test.tsx` đổi khẳng định dòng món của hai mục sang dạng gọn, thêm test cho A2; `./scripts/fe-check.sh` và `./scripts/gate.sh` xanh.
+- A5 — Dòng `/chu-quan/van-hanh` ở bảng nguồn dữ liệu của `docs/product/4-fe/01-khung-fe.md` nói dòng món ở Tổng thiếu và Cộng thử hiện dạng gọn (T-316), thêm `T-316` vào cột task.
+
+Phạm vi (`work/scope/T-316.txt`): `fe/src/app/chu-quan/_components/van-hanh.tsx`, `fe/src/app/chu-quan/van-hanh/`, `docs/product/4-fe/01-khung-fe.md`, `work/backlog.md`. Thi công: Claude, cây chính, nhánh `P4A-01`.
+
 
 <a id="t-313"></a>
 ### T-313 — Vận hành chỉ đếm theo thành phần nên chủ quán không thấy dòng món của bàn như ở Đơn chờ

@@ -87,10 +87,7 @@ describe("Vận hành", () => {
       const o = within(hang).getAllByRole("cell");
       expect(o).toHaveLength(2);
       expect(o[0].getAttribute("colspan")).toBe(String(cot.length - 2));
-      expect(Array.from(o[0].querySelectorAll("p")).map((p) => p.textContent)).toEqual([
-        "Combo bữa sáng ·  · Số lượng 2 · 40.000đ", "Bánh cuốn thịt · Nhiều nhân · Số suất 2", "Canh combo ·  · Số suất 2",
-        "Trứng chín ·  · Số lượng 1 · 7.000đ", "Canh thêm ·  · Số lượng 2 · 14.000đ", "Tổng 63.000đ",
-      ]);
+      expect(Array.from(o[0].querySelectorAll("p")).map((p) => p.textContent)).toEqual(["2 combo bữa sáng", "1 trứng chín", "2 canh thêm"]);
       expect(o[1].textContent).toBe(tienDaRa);
       expect(within(hang).queryAllByRole("button", { name: /^Đem ra / })).toHaveLength(0);
     };
@@ -119,6 +116,30 @@ describe("Vận hành", () => {
     expect(cells(hangKhac)).toEqual(donKhac);
     expect(cells(b.getAllByRole("row").at(-1)!)).toEqual(tong);
   });
+  it.each(["serving", "waiting"] as const)("T-316: dòng món %s hiện gọn cho nhân viên, không giá, không suất, không tổng", async (nhom) => {
+    const chon = (option_name: string) => ({ menu_option_id: 1, option_group_name: "Rau", option_name, surcharge_vnd: 0 });
+    const lines: Dong[] = [
+      dong("Giò bán rời", { quantity: 1, line_total_vnd: 9000 }),
+      { menu_combo_id: 3, item_name: "Đầy đủ trứng chín", quantity: 3, unit_price_vnd: 26000, line_total_vnd: 78000, components: [], options: [],
+        portions: [dong("Bánh cuốn", { quantity: 9, options: [chon("Thịt"), chon("Thường")] }), dong("Bánh trứng chín", { quantity: 3 }), dong("Giò bán rời", { quantity: 3 })] },
+      dong("Canh bánh cuốn", { quantity: 1, line_total_vnd: 0, options: [chon("Không rau")] }),
+      dong("Canh bánh cuốn", { quantity: 2, line_total_vnd: 0, options: [chon("Ít rau")] }),
+      dong("Canh bánh cuốn", { quantity: 2, line_total_vnd: 0, options: [chon("Nhiều rau")] }),
+    ];
+    mo(() => ({ status: 200, body: { ...data, sessions: [{ ...phien(21, nhom, "Bàn X"), lines, lines_total_vnd: 99000 }] } }), undefined, true);
+    const b = await bang();
+    const vi = ["1 giò", "3 đầy đủ trứng chín", "1 canh không rau", "2 canh ít rau", "2 canh nhiều rau"];
+    const kiem = (o: Element) => {
+      expect(Array.from(o.querySelectorAll("p")).map((p) => p.textContent)).toEqual(vi);
+      expect(o.textContent).not.toMatch(/\dđ|Số suất|Số lượng|Tổng/);
+    };
+    if (nhom === "waiting") {
+      const chon = within(screen.getByRole("region", { name: "Cộng thử ghép đơn" })).getByRole("checkbox", { name: "Bàn X · 79.123đ" });
+      kiem(chon.closest(".choice")!.querySelector("div")!);
+      fireEvent.click(chon);
+    }
+    kiem(within(b.getByRole("button", { name: "Bàn X" }).closest("tr")!).getAllByRole("cell")[0]);
+  });
   it.each(["nút Đọc lại", "tín hiệu changed"])("T-314: %s giữ chế độ từng hàng đang phục vụ và ghép thử", async (cachDoc) => {
     const goi = mo((n) => ({ status: 200, body: n === 1 ? data : { ...data, sessions: data.sessions.map((p) => ({
       ...p, items: p.items.map((i) => ({ ...i, missing: 3 })), lines: [dong("Món đọc lại")], lines_total_vnd: 9001,
@@ -133,7 +154,7 @@ describe("Vận hành", () => {
       await act(async () => luong[0].gui("changed"));
     }
     const hangDon = b.getByRole("button", { name: "A + B" }).closest("tr")!;
-    expect(await within(hangDon).findByText("Tổng 9.001đ")).toBeTruthy();
+    expect(await within(hangDon).findByText("1 món đọc lại")).toBeTruthy();
     expect(within(hangDon).getByRole("button", { name: "Chi tiết đem ra A + B" }).getAttribute("aria-pressed")).toBe("false");
     for (const ten of ["D", "C"]) {
       const hang = b.getByRole("button", { name: ten }).closest("tr")!;
@@ -188,7 +209,7 @@ describe("Vận hành", () => {
     await waitFor(() => expect(soDoc()).toBe(2));
     const b = within(screen.getByRole("region", { name: "Cộng thử ghép đơn" }));
     const banMoi = b.getByRole("checkbox", { name: "3 · 79.123đ" }).closest(".choice");
-    expect(banMoi?.textContent).toContain("Bánh cuốn ·  · Số lượng 2 · 14.000đ");
+    expect(banMoi?.textContent).toContain("2 bánh cuốn");
     expect(goi.every((g) => g.method === "GET")).toBe(true);
   });
   it("luồng đứt báo mất kết nối; nối lại nhận hello thì đọc bảng mới", async () => {
@@ -254,16 +275,13 @@ describe("Vận hành", () => {
     expect(g.filter(({ path }) => path !== "/counter/events").map(({ method, path }) => ({ method, path })).sort((a, b) => a.path.localeCompare(b.path))).toEqual([{ method: "GET", path: "/counter/queue" }, { method: "GET", path: "/service-board" }, { method: "GET", path: "/sessions/current" }].sort((a, b) => a.path.localeCompare(b.path)));
     expect(set).not.toHaveBeenCalled(); expect(remove).not.toHaveBeenCalled(); expect(clear).not.toHaveBeenCalled();
   });
-  it("T-313: thẻ cộng thử hiện liên tiếp dòng món và suất combo, tổng lấy từ backend, giữ chọn bàn", async () => {
+  it("T-313/T-316: thẻ cộng thử hiện dòng món gọn, giữ chọn bàn", async () => {
     mo(() => ({ status: 200, body: { ...data, sessions: data.sessions.map((p) => p.service_group === "waiting" ? { ...p, lines: dongCuaBan, lines_total_vnd: 63000 } : p) } }));
     const b = await bang();
     const congThu = within(screen.getByRole("region", { name: "Cộng thử ghép đơn" }));
     const chon = congThu.getByRole("checkbox", { name: "C · 79.123đ" });
     const the = chon.closest(".choice")!;
-    expect(Array.from(the.querySelectorAll("p")).map((p) => p.textContent)).toEqual([
-      "Combo bữa sáng ·  · Số lượng 2 · 40.000đ", "Bánh cuốn thịt · Nhiều nhân · Số suất 2", "Canh combo ·  · Số suất 2",
-      "Trứng chín ·  · Số lượng 1 · 7.000đ", "Canh thêm ·  · Số lượng 2 · 14.000đ", "Tổng 63.000đ",
-    ]);
+    expect(Array.from(the.querySelectorAll("p")).map((p) => p.textContent)).toEqual(["2 combo bữa sáng", "1 trứng chín", "2 canh thêm"]);
     expect(the.querySelector("h3")).toBeNull();
     expect(the.textContent).not.toContain("Thịt:");
     fireEvent.click(chon);
