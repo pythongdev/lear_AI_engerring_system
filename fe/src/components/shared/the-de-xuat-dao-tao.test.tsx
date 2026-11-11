@@ -170,7 +170,9 @@ async function bamVaChoGhi() {
 
 describe("CHAT-16 FE bảng cửa đào tạo của bản chạy", () => {
   it("A1 bảng có đúng mười cửa, giao việc trước rồi sáu cửa đào tạo, không cửa nào có dấu", () => {
-    expect(Object.keys(cuaGhiChat)).toEqual([
+    // Sửa 2026-11-10, CHAT-17 lát FE (Claude): bảng nay có thêm năm cửa nguyên liệu sau mười cửa này; danh sách đủ kiểm ở
+    // `./the-de-xuat-nguyen-lieu.test.tsx`. Ở đây chỉ kiểm mười cửa đứng đầu, đúng thứ tự.
+    expect(Object.keys(cuaGhiChat).slice(0, 10)).toEqual([
       "createAssignedTask", "updateAssignedTask", "hideAssignedTask", "markAssignedTask",
       "attachAssignedTaskGuide", "updateAssignedTaskGuide", "hideAssignedTaskGuide",
       "createTrainingRecord", "updateTrainingRecord", "hideTrainingRecord",

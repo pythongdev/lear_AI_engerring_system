@@ -1009,6 +1009,31 @@ sinh lại `fe/src/lib/api/schema.ts`, thêm đoạn *Sửa CHAT-17* ở Verific
 `apigen PASS`, 766/766, `fe-check: PASS`; bốn file test khớp SHA-256 phiếu. **Còn lại:** lát FE (năm dòng `cuaGhiChat`, gọi đúng hàm API sinh sẵn),
 công cụ đọc kho cho chat (chưa giao), eval số và ngày trên model thật (chờ `U-112`). Chưa có người duyệt thứ ba.
 
+2026-11-10, Claude, **lát FE**: chủ repo yêu cầu *"tiếp tục yêu cầu codex làm bạn kiểm tra"*. Mức **L2** (thẻ bấm gọi năm cửa ghi nguyên liệu thật,
+I-025 · I-026 · I-044). Đo trên `3b4cf4d`: `cuaGhiChat` có mười cửa (bốn giao việc, sáu đào tạo); năm cửa C07 không có `submission_code`,
+`measure` và `reminder_ratio` là chuỗi trong hợp đồng; màn tay là `/chu-quan/nguyen-lieu` (nhãn *Nguyên liệu* ở `muc-chu-quan.ts`), không có màn
+nguyên liệu ở khung quầy. *Phiên chọn của Claude trong khung ADR-140 (đổi bằng sửa entry này):* (1) bảng thêm năm dòng `coDau: false` sau sáu cửa đào
+tạo, gọi đúng hàm API sinh sẵn của cửa, thân gửi đúng bằng thân thẻ — con số và tỉ lệ giữ chuỗi nguyên chữ, ngày giữ `YYYY-MM-DD`; (2) năm cửa chỉ có
+link màn tay của chủ quán *Xem Nguyên liệu* → `/chu-quan/nguyen-lieu`, khung khác về link mặc định của khung; FE không tự chặn theo khung, quyền là
+của cửa backend (`owner_only`); (3) năm tên công cụ hiện nguồn *Nguyên liệu*; (4) không ô chọn người, ghi xong không đọc lại sổ hay kho. Hợp đồng ở
+đầu `fe/src/components/shared/the-de-xuat-nguyen-lieu.test.tsx` (SHA-256 `c5d5c271…1aaf` khi giao), 16/16 ca đỏ đúng lý do *bảng chưa có cửa* /
+*chưa có tên nguồn*; Claude sửa kỳ vọng danh sách bảng ở `the-de-xuat-dao-tao.test.tsx` (chỉ còn kiểm mười cửa đầu, `797bfb02…af30`) và
+`the-de-xuat.test.tsx` (mười lăm cửa, `d025edd5…121e`), mỗi chỗ có dòng *Sửa 2026-11-10, CHAT-17*. Acceptance ghi trước khi giao: A1 ba file test
+xanh và không bị sửa, `the-de-xuat-giao-viec.test.tsx` · `hoi-quan.test.tsx` · `hoi-quan-noi-bo.test.tsx` · `o-chat.test.tsx` không sửa và xanh;
+A2 lệnh ghi chỉ qua `goi` của bảng, không `fetch` tay, không storage, không `signal`, không đổi kiểu con số; A3 dòng `TheDeXuat` ở
+`docs/product/4-fe/01-khung-fe.md` nói năm cửa nguyên liệu; A4 `./scripts/fe-check.sh` và `./scripts/gate.sh` xanh. Worktree `../lean_wt/CHAT-17-fe`,
+nhánh `codex/CHAT-17-fe` từ `3b4cf4d`. **Chưa làm ở lát này:** công cụ đọc kho cho chat, eval số và ngày trên model thật (chờ `U-112`).
+
+2026-11-10, CHAT-17 lát FE xong. **Codex** thực hiện (worktree `../lean_wt/CHAT-17-fe`, nhánh `codex/CHAT-17-fe`, nền `3b4cf4d` + ba file test
+của Claude đã stage, model `gpt-6-astra`; lượt đầu hết hạn mức, lượt hai sau 13:39 xong một lượt): `the-de-xuat.tsx` (hằng `manTayNguyenLieu` chỉ
+khung chủ quán, năm dòng `cuaGhiChat` sau sáu cửa đào tạo gọi đúng hàm API sinh sẵn, thân là thân thẻ ép kiểu schema, `Number` chỉ cho id của
+`path_params`; năm tên nguồn *Nguyên liệu*), dòng `TheDeXuat` ở `docs/product/4-fe/01-khung-fe.md`. Codex chạy Vitest 777/777 và `tsc` trong
+worktree; build hỏng vì `fe/node_modules` của worktree là symlink sang cây chính, nằm ngoài gốc Turbopack (lỗi dựng môi trường của Claude, không
+phải code). **Claude** duyệt diff (lệnh ghi chỉ qua `goi`, không `fetch` tay, không storage, không `signal`, không đổi kiểu con số; `TheDeXuat`
+không đổi), đưa patch về cây chính, `cmp` khớp worktree, thêm `CHAT-17` vào cột task của dòng `TheDeXuat`; ba file test khớp SHA-256 phiếu. Bằng
+chứng ở cây chính: `./scripts/fe-check.sh` `fe-check: PASS` (782/782, build đạt), `./scripts/gate.sh` xanh. Chưa diễn trên trình duyệt với BE thật.
+**Còn lại:** công cụ đọc kho cho chat (chưa giao), eval số và ngày trên model thật (chờ `U-112`). Chưa có người duyệt thứ ba.
+
 [↑ đầu file](#top)
 
 ---

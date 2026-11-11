@@ -25,6 +25,9 @@ const manTayDaoTao: CuaGhi["manTay"] = {
   "/quay": { href: "/quay/dao-tao", ten: "Xem Đào tạo" },
   "/chu-quan": { href: "/chu-quan/dao-tao", ten: "Xem Đào tạo" },
 };
+const manTayNguyenLieu: CuaGhi["manTay"] = {
+  "/chu-quan": { href: "/chu-quan/nguyen-lieu", ten: "Xem Nguyên liệu" },
+};
 const chuChonNguoiGiaoViec = {
   nhan: "Người nhận",
   luaChonRong: "Chọn người nhận",
@@ -122,6 +125,40 @@ export const cuaGhiChat: Readonly<Record<string, CuaGhi>> = Object.freeze({
       body: de.body as components["schemas"]["HideTrainingItem"],
     })),
   },
+  createSupplyItem: {
+    coDau: false,
+    manTay: manTayNguyenLieu,
+    goi: (api, de) => call(api.POST("/supply-items", { body: de.body as components["schemas"]["CreateSupplyItem"] })),
+  },
+  setSupplyItemPurchaseUnit: {
+    coDau: false,
+    manTay: manTayNguyenLieu,
+    goi: (api, de) => call(api.PUT("/supply-items/{supply_item_id}/purchase-unit", {
+      params: { path: { supply_item_id: Number(de.path_params.supply_item_id) } },
+      body: de.body as components["schemas"]["SetSupplyItemPurchaseUnit"],
+    })),
+  },
+  createSupplyDayEntry: {
+    coDau: false,
+    manTay: manTayNguyenLieu,
+    goi: (api, de) => call(api.POST("/supply-day-entries", { body: de.body as components["schemas"]["CreateSupplyDayEntry"] })),
+  },
+  updateSupplyDayEntry: {
+    coDau: false,
+    manTay: manTayNguyenLieu,
+    goi: (api, de) => call(api.PUT("/supply-day-entries/{supply_day_entry_id}", {
+      params: { path: { supply_day_entry_id: Number(de.path_params.supply_day_entry_id) } },
+      body: de.body as components["schemas"]["UpdateSupplyDayEntry"],
+    })),
+  },
+  setSupplyItemReminderRatio: {
+    coDau: false,
+    manTay: manTayNguyenLieu,
+    goi: (api, de) => call(api.PUT("/supply-items/{supply_item_id}/reminder-ratio", {
+      params: { path: { supply_item_id: Number(de.path_params.supply_item_id) } },
+      body: de.body as components["schemas"]["SetSupplyItemReminderRatio"],
+    })),
+  },
 });
 
 export const gioNoiBo = new Intl.DateTimeFormat("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit", second: "2-digit" });
@@ -141,6 +178,11 @@ export const tenNguonNoiBo: Record<string, string> = {
   ghi_nhan_dao_tao: "Đào tạo",
   sua_ghi_nhan: "Đào tạo",
   an_ghi_nhan: "Đào tạo",
+  them_nguyen_lieu: "Nguyên liệu",
+  dat_don_vi: "Nguyên liệu",
+  ghi_so_nguyen_lieu: "Nguyên liệu",
+  sua_so_nguyen_lieu: "Nguyên liệu",
+  dat_ti_le_nhac: "Nguyên liệu",
 };
 export const manTay: Record<Khung, { href: string; ten: string }> = {
   "/tram": { href: "/tram", ten: "Xem Bảng trạm" },
