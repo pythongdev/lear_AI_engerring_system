@@ -35,6 +35,8 @@
 # không đổi điều kiện đạt/đỏ và exit code của cổng nào. Chi tiết của cổng PASS ·
 # SKIP bị ẩn và đếm (chạy lại chính script đó để xem); chi tiết của FAIL · NOTE
 # luôn in đủ. Test: scripts/gate.test.sh.
+# T-321 (2026-11-11): đo từng lần gọi cổng và tổng; lấy dòng [time] của Gate 1
+# để in thời gian các bước và ba file test chậm nhất dưới dòng tổng kết.
 
 set -uo pipefail
 
@@ -111,11 +113,73 @@ label() {
 
 report=""
 failed=0
+gate_started=$SECONDS
+gate_times=()
+gate1_ran=0
+gate1_steps=""
+test_times=()
+test_seconds=0
+test_count=0
+
+join_times() {
+  local item result=""
+  for item in "$@"; do
+    [ -z "$result" ] || result="$result · "
+    result="$result$item"
+  done
+  printf '%s' "$result"
+}
+
+read_gate1_times() {
+  local line name seconds
+  while IFS= read -r line; do
+    [[ "$line" =~ ^\[time\]\ (.+)\ ([0-9]+)s$ ]] || continue
+    name="${BASH_REMATCH[1]}"
+    seconds="${BASH_REMATCH[2]}"
+    case "$name" in
+      test:*)
+        test_times+=("$seconds ${name#test:}")
+        test_seconds=$((test_seconds + seconds))
+        test_count=$((test_count + 1)) ;;
+      *)
+        [ -z "$gate1_steps" ] || gate1_steps="$gate1_steps · "
+        gate1_steps="$gate1_steps$name ${seconds}s" ;;
+    esac
+  done <<< "$1"
+}
+
+time_report() {
+  local entry name seconds top=() count=0 steps="$gate1_steps"
+  printf '    thời gian %ss — %s\n' "$((SECONDS - gate_started))" "$(join_times "${gate_times[@]}")"
+  [ "$gate1_ran" -eq 1 ] || return 0
+  if [ "$test_count" -gt 0 ]; then
+    [ -z "$steps" ] || steps="$steps · "
+    steps="${steps}test ${test_seconds}s (${test_count} file)"
+  fi
+  printf '    Gate 1: %s\n' "$steps"
+  if [ "$test_count" -eq 0 ]; then
+    printf '    test chậm nhất: chưa có file test chạy\n'
+    return 0
+  fi
+  while IFS= read -r entry; do
+    [ "$count" -lt 3 ] || break
+    seconds="${entry%% *}"
+    name="${entry#* }"
+    top+=("$name ${seconds}s")
+    count=$((count + 1))
+  done < <(printf '%s\n' "${test_times[@]}" | sort -k1,1nr)
+  printf '    test chậm nhất: %s\n' "$(join_times "${top[@]}")"
+}
 
 step() { # step <cổng> <tên dòng trạng thái> <script> — chạy script, gom output có nhãn
-  local out rc
+  local out rc started=$SECONDS
   out="$("./scripts/$3" 2>&1)"
   rc=$?
+  gate_times+=("$1 $((SECONDS - started))s")
+  if [ "$1" = "Gate 1" ]; then
+    gate1_ran=1
+    read_gate1_times "$out"
+  fi
   [ "$rc" -ne 0 ] && failed=1
   report="$report$(label "$1" "$2" "$3" "$rc" "$out")"$'\n'
 }
@@ -148,11 +212,13 @@ fi
 
 if [ "$failed" -ne 0 ]; then
   printf '%-4s  %-8s %s\n%s' FAIL gate "có cổng đỏ — sửa trước khi kết thúc:" "$report" >&2
+  time_report >&2
   exit 2
 fi
 
 printf '%s' "$report"
 printf '%-4s  %-8s %s\n' PASS gate "không cổng nào đỏ (SKIP ở trên là cổng không chạy, không phải cổng đạt)"
+time_report
 
 # Gate 7 — CLAUDE.md §6.1: the turn hands over the commit content.
 if [ "${1:-}" = "--hook" ] && [ -n "${input:-}" ]; then

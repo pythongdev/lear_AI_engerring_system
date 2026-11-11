@@ -98,6 +98,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## In Progress
 
 - [x] T-322 **`README.md` vẽ cây thư mục cũ và bảng mục lục viết tay của `work/findings.md` lệch từ F-060** — L1 (chỉ tài liệu), xong 2026-11-11 theo Bước 8 của `work/proposals/danh-gia-he-thong-2026-11-11.md`; cây thư mục chỉ còn đường dẫn có thật, bảng mục lục thay bằng cách xem finding đang mở; Codex làm, Claude duyệt; gate đạt · [chi tiết](#t-322)
+- [x] T-321 **Gate không in thời gian từng cổng nên chưa biết 231 giây nằm ở đâu so với hạn hook 180 giây** — L1 (chỉ đo, không đổi điều kiện đạt/đỏ), xong 2026-11-11 theo Bước 6 của bản đánh giá; gate in thời gian từng cổng, từng bước Gate 1 và ba test chậm nhất; đo ở cây chính: 222 giây, trong đó Gate 3 chiếm 106 giây; Codex làm, Claude duyệt; gate đạt · [chi tiết](#t-321)
 - [x] T-317 **Nút chuyển chế độ của từng bàn ở Tổng thiếu theo bàn là chữ dài, chiếm chỗ ô bàn** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; nút *Chi tiết đem ra* / *Xem đơn đã đặt* thành nút icon, giữ tên truy cập và `aria-pressed`; Codex làm, Claude duyệt; fe-check 784/784 và gate đạt · [chi tiết](#t-317)
 - [x] T-316 **Dòng món ở Tổng thiếu theo bàn và Cộng thử ghép đơn dài như hoá đơn nên nhân viên khó đọc nhanh** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; mỗi dòng gọn thành "số + tên ngắn + lựa chọn" (ví dụ "1 canh không rau"), bỏ giá, suất trong combo và dòng tổng ở hai mục này; Claude làm; fe-check và gate đạt · [chi tiết](#t-316)
 - [x] T-313 **Vận hành chỉ đếm theo thành phần nên chủ quán không thấy dòng món của bàn như ở Đơn chờ** — L2 (thêm trường vào hợp đồng API), xong 2026-11-09; `GET /service-board` thêm `lines` và `lines_total_vnd` cho mỗi phiên, hợp đồng 0.71.0; *Cộng thử ghép đơn* thay hàng cột bằng dòng món, *Tổng thiếu theo bàn* giữ cột và ô đem ra, thêm dòng món khi mở chi tiết bàn; Codex làm, Claude sửa nốt và duyệt; be-check, fe-check 745/745 và gate đạt · [chi tiết](#t-313)
@@ -576,6 +577,25 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-321"></a>
+### T-321 — Gate không in thời gian từng cổng nên chưa biết 231 giây nằm ở đâu so với hạn hook 180 giây
+
+Chủ repo yêu cầu 2026-11-11 (Bước 6 của bản đánh giá). Lượt đo 2026-11-11: `./scripts/gate.sh` trên cây chỉ đổi `fe/` và tài liệu mất 231 giây, Stop hook đặt hạn 180 giây. Task này chỉ làm phần **đo**; cắt bước nào, hay nâng hạn hook, là quyết định sau khi có số và không nằm trong task này.
+
+Acceptance viết trước sửa:
+- A1 — `scripts/verify.sh` in một dòng `[time] <bước> <giây>s` cho mỗi bước nó thật sự chạy (phần tĩnh của `be`, `be-check`, `check-fe-rules`, `fe-check`, Node, `db-check`, từng file `*.test.sh`); dòng cuối vẫn là `Verification passed.`.
+- A2 — `scripts/gate.sh` in thời gian từng cổng, tổng, các bước của Gate 1 và ba file test chậm nhất dưới dạng dòng **thụt lề** ngay dưới dòng tổng kết `PASS  gate` (và dưới dòng `FAIL  gate` khi đỏ); mọi dòng ở cột 0 vẫn mở đầu bằng đúng một nhãn.
+- A3 — Không cổng nào đổi điều kiện đạt/đỏ hay mã thoát; số file test mà dòng `PASS  Gate 1 verify` đếm không đổi.
+- A4 — `scripts/gate.test.sh` thêm ca chứng minh A2 và A3; `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-321.txt`): `scripts/gate.sh`, `scripts/gate.test.sh`, `scripts/verify.sh`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-321`, nhánh `codex/T-321`, nền `9ecd6b6`. Duyệt: Claude.
+
+Duyệt và bàn giao 2026-11-11 (thực hiện: Codex, duyệt: Claude). `scripts/verify.sh` in `[time] <bước> <giây>s` cho từng bước đã chạy; `scripts/gate.sh` in ba dòng thụt lề dưới dòng tổng kết (từng cổng và tổng, các bước Gate 1, ba test chậm nhất), cả khi đỏ; `scripts/gate.test.sh` thêm ca 10. Trong sandbox của Codex gate đỏ ở hai ca `--amend` của `scripts/commit-msg.test.sh`; Claude chạy lại ngoài sandbox thì file test ấy và cả gate đều xanh, nguyên nhân trong sandbox chưa xác định.
+
+Số đo ở cây chính, lượt có thay đổi ở `fe/`, `scripts/` và tài liệu. Trước T-319: 222 giây — Gate 3 **106 giây**, Gate 1 111 giây (phần tĩnh `be` 3, `check-fe-rules` 12, `fe-check` 32, 18 file test 64). Sau T-319: 143 giây — Gate 3 dưới 1 giây, Gate 1 138 giây (`fe-check` 29, 20 file test **94**, chậm nhất `gate.test.sh` 26 và `brief.test.sh` 20). Kết luận: thời gian không nằm ở `next build` như bản đánh giá ngờ, mà ở Gate 3 (đã chữa) và ở việc chạy lại mọi `scripts/*.test.sh` mỗi lượt — việc cắt phần sau là T-324.
+
+Còn lại: điều suy luận ở bản đánh giá §4.5 (hook quá hạn thì lượt kết thúc không có phán quyết) chưa kiểm; lượt đổi `be/` hay database chưa đo; worktree `../lean_wt/T-321` và nhánh `codex/T-321` chờ chủ repo gỡ.
 
 <a id="t-322"></a>
 ### T-322 — `README.md` vẽ cây thư mục cũ và bảng mục lục viết tay của `work/findings.md` lệch từ F-060

@@ -27,22 +27,34 @@
 # The last line "Verification passed." is what gate.sh labels PASS (T-084).
 # The related-invariant regression test of an L2+ task (CLAUDE.md §3) runs here
 # only if it exists as one of the steps above.
+# T-321 (2026-11-11): in số giây nguyên của mỗi bước đã chạy và mỗi file test;
+# dòng cuối vẫn là "Verification passed." để gate.sh nhận kết quả như trước.
 set -euo pipefail
+
+time_step() { # time_step <tên bước> <lệnh> [đối số...]
+  local name="$1" started=$SECONDS rc
+  shift
+  if "$@"; then rc=0; else rc=$?; fi
+  printf '[time] %s %ss\n' "$name" "$((SECONDS - started))"
+  return "$rc"
+}
 
 echo "=== Lean AI Engineering Verification ==="
 
 if [ -f "be/go.mod" ]; then
+  static_started=$SECONDS
   echo "[be] formatting"
-  test -z "$(gofmt -l be)"
+  test -z "$(gofmt -l be)" || { rc=$?; printf '[time] be-static %ss\n' "$((SECONDS - static_started))"; exit "$rc"; }
   echo "[be] vet"
-  (cd be && go vet ./...)
+  (cd be && go vet ./...) || { rc=$?; printf '[time] be-static %ss\n' "$((SECONDS - static_started))"; exit "$rc"; }
   echo "[be] build"
-  (cd be && go build ./...)
+  (cd be && go build ./...) || { rc=$?; printf '[time] be-static %ss\n' "$((SECONDS - static_started))"; exit "$rc"; }
   echo "[be] scripts/check-sqlcgen.sh"
-  "$(cd "$(dirname "$0")" && pwd)"/check-sqlcgen.sh
+  "$(cd "$(dirname "$0")" && pwd)"/check-sqlcgen.sh || { rc=$?; printf '[time] be-static %ss\n' "$((SECONDS - static_started))"; exit "$rc"; }
+  printf '[time] be-static %ss\n' "$((SECONDS - static_started))"
   if [ -n "$(git status --porcelain --untracked-files=all -- be db compose.yaml scripts/be-check.sh)" ]; then
     echo "[be] scripts/be-check.sh"
-    "$(cd "$(dirname "$0")" && pwd)"/be-check.sh
+    time_step be-check "$(cd "$(dirname "$0")" && pwd)"/be-check.sh
   else
     echo "[be] skipped — nothing under be/, db/, compose.yaml or scripts/be-check.sh changed"
   fi
@@ -52,10 +64,10 @@ fi
 
 if [ -f "fe/package.json" ]; then
   echo "[fe] scripts/check-fe-rules.sh"
-  "$(cd "$(dirname "$0")" && pwd)"/check-fe-rules.sh
+  time_step fe-rules "$(cd "$(dirname "$0")" && pwd)"/check-fe-rules.sh
   if [ -n "$(git status --porcelain --untracked-files=all -- fe docs/product/3-be/openapi.yaml scripts/fe-check.sh scripts/check-fe-rules.sh)" ]; then
     echo "[fe] scripts/fe-check.sh"
-    "$(cd "$(dirname "$0")" && pwd)"/fe-check.sh
+    time_step fe-check "$(cd "$(dirname "$0")" && pwd)"/fe-check.sh
   else
     echo "[fe] skipped — nothing under fe/, docs/product/3-be/openapi.yaml, scripts/fe-check.sh or scripts/check-fe-rules.sh changed"
   fi
@@ -66,9 +78,11 @@ fi
 if [ -f "package.json" ]; then
   echo "[Node] package scripts"
   if command -v npm >/dev/null 2>&1; then
-    npm test --if-present
-    npm run lint --if-present
-    npm run build --if-present
+    node_started=$SECONDS
+    npm test --if-present || { rc=$?; printf '[time] node %ss\n' "$((SECONDS - node_started))"; exit "$rc"; }
+    npm run lint --if-present || { rc=$?; printf '[time] node %ss\n' "$((SECONDS - node_started))"; exit "$rc"; }
+    npm run build --if-present || { rc=$?; printf '[time] node %ss\n' "$((SECONDS - node_started))"; exit "$rc"; }
+    printf '[time] node %ss\n' "$((SECONDS - node_started))"
   fi
 fi
 
@@ -78,7 +92,7 @@ fi
 # Không có Docker thì db-check.sh tự FAIL — không bỏ qua.
 if [ -d db ] && [ -n "$(git status --porcelain --untracked-files=all -- db compose.yaml scripts/db-check.sh scripts/reconcile.sh docs/product/2-db 2>/dev/null)" ]; then
   echo "[db] scripts/db-check.sh"
-  "$(cd "$(dirname "$0")" && pwd)"/db-check.sh
+  time_step db-check "$(cd "$(dirname "$0")" && pwd)"/db-check.sh
 else
   echo "[db] skipped — nothing under db/, compose.yaml, scripts/db-check.sh, scripts/reconcile.sh or docs/product/2-db/ changed"
 fi
@@ -86,7 +100,7 @@ fi
 for t in "$(cd "$(dirname "$0")" && pwd)"/*.test.sh; do
   [ -f "$t" ] || continue
   echo "[test] $t"
-  "$t"
+  time_step "test:${t##*/}" "$t"
 done
 
 echo "Verification passed."

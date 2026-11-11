@@ -36,10 +36,12 @@ newrepo() { # newrepo <tên> → repo tạm, mọi cổng giả đều xanh và 
   stub "$d" check-gin-imports.sh 0 "check-gin-imports: PASS"
   stub "$d" verify.sh 0 "=== Lean AI Engineering Verification ===
 [db] skipped — nothing under db/ changed
+[time] be-static 2s
 [test] /abs/scripts/x.test.sh
 [test] x.sh
   ok   ca 1
 x.test: OK
+[time] test:x.test.sh 3s
 Verification passed."
   stub "$d" check-commit-block.sh 0 ""
   git -C "$d" add -A >/dev/null 2>&1 && git -C "$d" commit -qm init >/dev/null 2>&1
@@ -51,21 +53,25 @@ stub() { # stub <repo> <script> <exit> <output>
   chmod +x "$1/scripts/$2"
 }
 
-OUT="" RC=0
+OUT="" ERR="" RC=0
 run() { # run <repo> [--hook] — gom stdout+stderr vào $OUT, exit vào $RC
-  local r="$1"; shift
+  local r="$1" stdout="$TMPROOT/stdout" stderr="$TMPROOT/stderr"; shift
   if [ "${1:-}" = "--hook" ]; then
-    OUT="$(cd "$r" && printf '{"transcript_path":"x"}' | ./scripts/gate.sh --hook 2>&1)"
+    (cd "$r" && printf '{"transcript_path":"x"}' | ./scripts/gate.sh --hook >"$stdout" 2>"$stderr")
   else
-    OUT="$(cd "$r" && ./scripts/gate.sh </dev/null 2>&1)"
+    (cd "$r" && ./scripts/gate.sh </dev/null >"$stdout" 2>"$stderr")
   fi
   RC=$?
+  OUT="$(cat "$stdout" "$stderr")"
+  ERR="$(cat "$stderr")"
 }
 
 ok()   { echo "  ok   $1"; }
 bad()  { echo "  FAIL $1"; printf '%s\n' "$OUT" | sed 's/^/       | /'; fails=$((fails + 1)); }
 has()  { if printf '%s\n' "$OUT" | grep -qF -- "$2"; then ok "$1"; else bad "$1 — thiếu: $2"; fi; }
 hasnt(){ if printf '%s\n' "$OUT" | grep -qF -- "$2"; then bad "$1 — không được có: $2"; else ok "$1"; fi; }
+haserr(){ if printf '%s\n' "$ERR" | grep -qF -- "$2"; then ok "$1"; else bad "$1 — thiếu trên stderr: $2"; fi; }
+matches(){ if printf '%s\n' "$OUT" | grep -Eq -- "$2"; then ok "$1"; else bad "$1 — thiếu mẫu: $2"; fi; }
 rc()   { if [ "$RC" = "$2" ]; then ok "$1 (exit $RC)"; else bad "$1 — mong exit $2, nhận $RC"; fi; }
 
 # Mọi dòng ở cột 0 mang ĐÚNG MỘT nhãn; không dòng nào mở đầu bằng chữ trạng
@@ -94,6 +100,8 @@ has   "1 doc-status đạt là PASS"        "PASS  Gate 1c  check-doc-status —
 has   "1 Gate 1d không file là SKIP"    "SKIP  Gate 1d  check-phase-boundary"
 has   "1 verify bỏ qua là SKIP"         "SKIP  Gate 1   verify — chỉ tài liệu đổi"
 has   "1 dòng tổng là PASS"             "PASS  gate     không cổng nào đỏ"
+matches "1 thời gian đủ tám cổng"       '^    thời gian [0-9]+s — Gate 3 [0-9]+s · Gate 1b [0-9]+s · Gate 1c [0-9]+s · Gate 1d [0-9]+s · Gate 1e [0-9]+s · Gate 1f [0-9]+s · Gate 1g [0-9]+s · Gate 1h [0-9]+s$'
+hasnt "1 không có thời gian Gate 1"      "    Gate 1:"
 hasnt "1 không còn chữ skipping"        "skipping"
 hasnt "1 không còn chữ xanh —"          "xanh —"
 hasnt "1 không còn chữ OK —"            ": OK —"
@@ -106,6 +114,9 @@ rc "2 code đổi, verify đạt" 0
 labels "2"
 has   "2 db-check bỏ qua là SKIP"       "SKIP  Gate 1   db — nothing under db/ changed"
 has   "2 verify đạt là PASS, đếm test"  "PASS  Gate 1   verify — 1 file scripts/*.test.sh chạy, đều qua"
+matches "2 thời gian có Gate 1"        '^    thời gian [0-9]+s — .* · Gate 1 [0-9]+s$'
+has   "2 bước Gate 1 và test"           "    Gate 1: be-static 2s · test 3s (1 file)"
+has   "2 test chậm nhất"                "    test chậm nhất: x.test.sh 3s"
 has   "2 chi tiết ẩn có đếm và chỗ xem" "dòng chi tiết ẩn — chạy ./scripts/verify.sh để xem)"
 hasnt "2 chi tiết test không lộ"        "ok   ca 1"
 
@@ -136,6 +147,7 @@ has   "4 dòng đầu là FAIL tổng"         "FAIL  gate     có cổng đỏ"
 has   "4 cổng đỏ là FAIL"               "FAIL  Gate 3   check-scope — files changed outside"
 has   "4 chi tiết của FAIL hiện"        "    Revert them, or update work/scope.txt"
 has   "4 cổng khác vẫn chạy và in"      "PASS  Gate 1b  check-links"
+haserr "4 thời gian gate đỏ trên stderr" "    thời gian "
 
 # 5 — cổng đỏ không in dòng trạng thái nào (dạng của Gate 1d): FAIL chung + chi tiết.
 r="$(newrepo pb)"
@@ -162,7 +174,8 @@ hasnt "6 không PASS nào cho cổng ấy"    "PASS  Gate 1b"
 r="$(newrepo vfail)"
 stub "$r" verify.sh 1 "=== Lean AI Engineering Verification ===
 [test] /abs/scripts/x.test.sh
-  FAIL ca 2 — sai"
+  FAIL ca 2 — sai
+[time] test:x.test.sh 4s"
 echo "y" >> "$r/code.txt"
 run "$r"
 rc "7 verify đỏ" 2
@@ -170,6 +183,8 @@ labels "7"
 has   "7 FAIL chung"                    "FAIL  Gate 1   verify.sh — thoát mã 1"
 has   "7 chi tiết đỏ hiện"              "      FAIL ca 2 — sai"
 hasnt "7 không nói ẩn chi tiết"         "chi tiết ẩn"
+haserr "7 thời gian Gate 1 trên stderr" "    Gate 1: test 4s (1 file)"
+haserr "7 test chậm nhất trên stderr"   "    test chậm nhất: x.test.sh 4s"
 
 # 8 — Gate 7 (hook) chặn: FAIL trên stderr, exit giữ nguyên.
 r="$(newrepo g7)"
@@ -189,6 +204,29 @@ echo "# b" >> "$r/docs/a.md"
 run "$r" --hook
 rc "9 Gate 7 im" 0
 hasnt "9 không dòng Gate 7"             "Gate 7"
+
+# 10 — chỉ lấy ba file test chậm nhất, cộng đủ thời gian và giữ số file verify đếm.
+r="$(newrepo slow)"
+stub "$r" verify.sh 0 "[time] be-static 20s
+[time] fe-rules 1s
+[time] fe-check 150s
+[test] /abs/scripts/a.test.sh
+[time] test:a.test.sh 9s
+[test] /abs/scripts/b.test.sh
+[time] test:b.test.sh 20s
+[test] /abs/scripts/c.test.sh
+[time] test:c.test.sh 1s
+[test] /abs/scripts/d.test.sh
+[time] test:d.test.sh 10s
+Verification passed."
+echo "y" >> "$r/code.txt"
+run "$r"
+rc "10 bốn file test, gate xanh" 0
+labels "10"
+has "10 số file đếm như trước" "PASS  Gate 1   verify — 4 file scripts/*.test.sh chạy, đều qua"
+has "10 tổng bước Gate 1" "    Gate 1: be-static 20s · fe-rules 1s · fe-check 150s · test 40s (4 file)"
+has "10 đúng ba test chậm nhất theo thứ tự" "    test chậm nhất: b.test.sh 20s · d.test.sh 10s · a.test.sh 9s"
+hasnt "10 test thứ tư không vào top" "c.test.sh 1s"
 
 echo
 if [ "$fails" -eq 0 ]; then
