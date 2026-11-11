@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-317 **Nút chuyển chế độ của từng bàn ở Tổng thiếu theo bàn là chữ dài, chiếm chỗ ô bàn** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; nút *Chi tiết đem ra* / *Xem đơn đã đặt* thành nút icon, giữ tên truy cập và `aria-pressed`; Codex làm, Claude duyệt; fe-check 784/784 và gate đạt · [chi tiết](#t-317)
 - [x] T-316 **Dòng món ở Tổng thiếu theo bàn và Cộng thử ghép đơn dài như hoá đơn nên nhân viên khó đọc nhanh** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; mỗi dòng gọn thành "số + tên ngắn + lựa chọn" (ví dụ "1 canh không rau"), bỏ giá, suất trong combo và dòng tổng ở hai mục này; Claude làm; fe-check và gate đạt · [chi tiết](#t-316)
 - [x] T-313 **Vận hành chỉ đếm theo thành phần nên chủ quán không thấy dòng món của bàn như ở Đơn chờ** — L2 (thêm trường vào hợp đồng API), xong 2026-11-09; `GET /service-board` thêm `lines` và `lines_total_vnd` cho mỗi phiên, hợp đồng 0.71.0; *Cộng thử ghép đơn* thay hàng cột bằng dòng món, *Tổng thiếu theo bàn* giữ cột và ô đem ra, thêm dòng món khi mở chi tiết bàn; Codex làm, Claude sửa nốt và duyệt; be-check, fe-check 745/745 và gate đạt · [chi tiết](#t-313)
 - [x] T-312 **Máy dev không đặt được đơn ngoài giờ bán nên không thử được luồng khách → Vận hành** — L2, ADR-141, xong 2026-11-09; cờ `BANHCUON_DEV_BO_GIO_BAN` (make dev bật sẵn, chỉ origin localhost) bỏ riêng điều kiện giờ bán; Claude viết test trước, Codex làm, Claude duyệt; be-check và gate đạt, đơn QR thử lúc 13:21 hiện ở hàng chờ chủ quán · [chi tiết](#t-312)
@@ -574,6 +575,24 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-317"></a>
+### T-317 — Nút chuyển chế độ của từng bàn ở Tổng thiếu theo bàn là chữ dài, chiếm chỗ ô bàn
+
+Chủ repo yêu cầu 2026-11-11: trên `/chu-quan/van-hanh`, ở *Tổng thiếu theo bàn*, nút chuyển của từng bàn (chữ "Chi tiết đem ra" / "Xem đơn đã đặt", T-314) đổi thành icon; giao Codex làm, Claude kiểm tra.
+
+Suy luận của Claude, chưa được chủ repo xác nhận: đổi đúng nút chuyển này (cả hai trạng thái), không đổi nút nhãn bàn; icon lấy từ `lucide-react` đã có — `LayoutGrid` khi đang xem đơn (bấm để sang ô cột đem ra), `ClipboardList` khi đang xem cột (bấm để về đơn); chữ cũ chuyển vào `title` để rê chuột còn thấy; câu hướng dẫn dưới bảng nói "biểu tượng ô lưới" thay cho tên nút.
+
+Acceptance viết trước sửa:
+- A1 — Nút chuyển của mỗi hàng là `Button` `size="icon"` chỉ chứa icon (`aria-hidden`), không còn chữ hiện ra; `LayoutGrid` khi chưa chuyển, `ClipboardList` khi đã chuyển.
+- A2 — Tên truy cập giữ nguyên "Chi tiết đem ra {bàn}" / "Xem đơn đã đặt {bàn}", `aria-pressed` giữ nguyên; `title` là "Chi tiết đem ra" / "Xem đơn đã đặt".
+- A3 — Hành vi chuyển, ô đem ra, dòng món gọn (T-316), dòng Tổng không đổi.
+- A4 — Câu hướng dẫn thành "Bấm biểu tượng ô lưới ở một bàn rồi bấm vào ô số để báo đã đem ra."; test ở `fe/src/app/chu-quan/van-hanh/` đổi theo (chữ trong nút ⇒ kiểm `title` và icon), không bỏ khẳng định nào khác.
+- A5 — `./scripts/check-fe-rules.sh`, `./scripts/fe-check.sh`, `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-317.txt`): `fe/src/app/chu-quan/_components/van-hanh.tsx`, `fe/src/app/chu-quan/van-hanh/`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-317`, nhánh `codex/T-317`, nền `47e57a9` cộng phần T-316 của hai file `van-hanh` đã stage sẵn (T-316 chưa commit). Duyệt: Claude, chưa duyệt.
+
+Duyệt và bàn giao 2026-11-11 (Claude): Codex đổi nút chuyển trong `HangThieu` thành `Button` `size="icon"` với `LayoutGrid` / `ClipboardList` (`aria-hidden`), giữ `aria-label` và `aria-pressed`, thêm `title`; đổi câu hướng dẫn; ở `van-hanh.test.tsx` thay hai khẳng định chữ nút bằng hàm `kiemIcon` (kích thước, kiểu, `title`, chữ rỗng, đúng một `svg` có `aria-hidden`) ở cả hai trạng thái và khi chuyển về, ở `dem-ra.test.tsx` và `van-hanh.test.tsx` đổi câu hướng dẫn; không bỏ khẳng định nào (A1–A4). Gate của Codex đỏ ở `next build` vì sandbox cấm mở cổng, không do mã. Claude đọc diff thật, đưa patch về cây chính: `./scripts/fe-check.sh` exit 0, 784/784, build qua; `./scripts/gate.sh` exit 0 (A5). Worktree `../lean_wt/T-317` và nhánh `codex/T-317` để chủ repo xoá.
 
 <a id="t-316"></a>
 ### T-316 — Dòng món ở Tổng thiếu theo bàn và Cộng thử ghép đơn dài như hoá đơn nên nhân viên khó đọc nhanh

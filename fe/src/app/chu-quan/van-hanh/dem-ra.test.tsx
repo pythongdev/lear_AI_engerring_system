@@ -77,7 +77,7 @@ describe("Vận hành — bấm ô số ghi đã đem ra (T-228)", () => {
     mo(); const b = await vung();
     fireEvent.click(b.getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
     for (const ten of ["Đem ra Bàn 01 · Thịt", "Đem ra Bàn 01 · Thịt nhiều", "Đem ra Bàn 01 · Trứng tái"]) expect(b.getByRole("button", { name: ten })).toBeTruthy();
-    expect(screen.getByText("Bấm Chi tiết đem ra ở một bàn rồi bấm vào ô số để báo đã đem ra.")).toBeTruthy();
+    expect(screen.getByText("Bấm biểu tượng ô lưới ở một bàn rồi bấm vào ô số để báo đã đem ra.")).toBeTruthy();
   });
   it("chủ quán không đứng quầy vẫn có nút ghi đem ra", async () => {
     const g = mo({ quay: null }); const b = await vung();

@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { ClipboardList, LayoutGrid } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -146,7 +147,7 @@ function HangThieu({ phien, cot, them, demRa }: { phien: Phien; cot: readonly Co
     <tr className={them ? "dong-ghep" : ""}>
       <th scope="row">
         <Button className="chon-ban" variant="ghost" aria-expanded={mo} aria-controls={id} onClick={() => setMo(!mo)}>{nhanBan(phien)}</Button>
-        <div><Button variant="outline" aria-label={`${nhanChuyen} ${nhanBan(phien)}`} aria-pressed={chiTiet} onClick={() => setChiTiet(!chiTiet)}>{nhanChuyen}</Button></div>
+        <div><Button variant="outline" size="icon" aria-label={`${nhanChuyen} ${nhanBan(phien)}`} aria-pressed={chiTiet} title={nhanChuyen} onClick={() => setChiTiet(!chiTiet)}>{chiTiet ? <ClipboardList aria-hidden="true" /> : <LayoutGrid aria-hidden="true" />}</Button></div>
       </th>
       {chiTiet ? cot.map((c) => <td key={c}>{them ? <SoCot items={phien.items} cot={c} /> : (() => {
         const items = thuCot(phien.items, c).filter((i) => i.missing > 0);
@@ -176,7 +177,7 @@ function BangThieuTheoBan({ serving, chon, cot, demRa }: { serving: Phien[]; cho
         <td className="tien">{tien(tongTien(serving, "served_amount_vnd"))}{tongTien(chon, "served_amount_vnd") > 0 && <span className="them">+{tien(tongTien(chon, "served_amount_vnd"))}</span>}</td>
       </tr></tfoot>
     </table></VungBang><p className="text-sm">* nhiều nhân</p>
-    <p>{demRa ? "Bấm Chi tiết đem ra ở một bàn rồi bấm vào ô số để báo đã đem ra." : "Chỉ chủ quán hoặc người đang đứng quầy ghi được đem ra. Các ô này chỉ để xem."}</p>
+    <p>{demRa ? "Bấm biểu tượng ô lưới ở một bàn rồi bấm vào ô số để báo đã đem ra." : "Chỉ chủ quán hoặc người đang đứng quầy ghi được đem ra. Các ô này chỉ để xem."}</p>
     {demRa && serving.filter((p) => p.tables.length > 1).map((p) => <p key={p.table_session_id}>{nhanBan(p)}: bàn ghép, ghi đem ra ở màn Sản xuất của quầy.</p>)}
   </section>;
 }

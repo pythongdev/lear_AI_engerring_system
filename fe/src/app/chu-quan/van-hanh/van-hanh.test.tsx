@@ -74,7 +74,7 @@ describe("Vận hành", () => {
       { ...phien(22, "serving", "Bàn Y"), lines: [dong("Món bàn Y")], lines_total_vnd: 7000 },
     ] } }), undefined, true);
     const b = await bang();
-    await screen.findByText("Bấm Chi tiết đem ra ở một bàn rồi bấm vào ô số để báo đã đem ra.");
+    await screen.findByText("Bấm biểu tượng ô lưới ở một bàn rồi bấm vào ô số để báo đã đem ra.");
     if (nhom === "waiting") fireEvent.click(screen.getByRole("checkbox", { name: "Bàn X · 79.123đ" }));
     const nhan = b.getByRole("button", { name: "Bàn X" });
     const hang = nhan.closest("tr")!;
@@ -94,12 +94,20 @@ describe("Vận hành", () => {
     kiemDon();
     expect(b.queryAllByRole("button", { name: /^Đem ra / })).toHaveLength(0);
     const chuyen = within(hang).getByRole("button", { name: "Chi tiết đem ra Bàn X" });
+    const kiemIcon = (title: string, icon: string) => {
+      expect(chuyen.getAttribute("data-size")).toBe("icon");
+      expect(chuyen.getAttribute("data-variant")).toBe("outline");
+      expect(chuyen.getAttribute("title")).toBe(title);
+      expect(chuyen.textContent).toBe("");
+      expect(chuyen.children).toHaveLength(1);
+      expect(chuyen.querySelector(`svg.lucide-${icon}`)?.getAttribute("aria-hidden")).toBe("true");
+    };
     expect(chuyen.closest("th")).toBe(nhan.closest("th"));
-    expect(chuyen.textContent).toBe("Chi tiết đem ra");
+    kiemIcon("Chi tiết đem ra", "layout-grid");
     expect(chuyen.getAttribute("aria-pressed")).toBe("false");
     fireEvent.click(chuyen);
     expect(within(hang).getByRole("button", { name: "Xem đơn đã đặt Bàn X" })).toBe(chuyen);
-    expect(chuyen.textContent).toBe("Xem đơn đã đặt");
+    kiemIcon("Xem đơn đã đặt", "clipboard-list");
     expect(chuyen.getAttribute("aria-pressed")).toBe("true");
     expect(nhan.getAttribute("aria-expanded")).toBe("false");
     expect(cells(hang)).toEqual(["7*", "0", "0", "0", "0", tienDaRa]);
@@ -112,6 +120,7 @@ describe("Vận hành", () => {
     expect(screen.getByText("* nhiều nhân")).toBeTruthy();
     fireEvent.click(chuyen);
     expect(within(hang).getByRole("button", { name: "Chi tiết đem ra Bàn X" }).getAttribute("aria-pressed")).toBe("false");
+    kiemIcon("Chi tiết đem ra", "layout-grid");
     kiemDon();
     expect(cells(hangKhac)).toEqual(donKhac);
     expect(cells(b.getAllByRole("row").at(-1)!)).toEqual(tong);
@@ -145,7 +154,7 @@ describe("Vận hành", () => {
       ...p, items: p.items.map((i) => ({ ...i, missing: 3 })), lines: [dong("Món đọc lại")], lines_total_vnd: 9001,
     })) } }), undefined, true);
     const b = await bang();
-    await screen.findByText("Bấm Chi tiết đem ra ở một bàn rồi bấm vào ô số để báo đã đem ra.");
+    await screen.findByText("Bấm biểu tượng ô lưới ở một bàn rồi bấm vào ô số để báo đã đem ra.");
     fireEvent.click(screen.getByRole("checkbox", { name: "C · 79.123đ" }));
     for (const ten of ["D", "C"]) fireEvent.click(b.getByRole("button", { name: `Chi tiết đem ra ${ten}` }));
     if (cachDoc === "nút Đọc lại") fireEvent.click(nut("Đọc lại"));
