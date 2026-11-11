@@ -15,9 +15,13 @@
 set -uo pipefail
 
 SCRIPT="$(cd "$(dirname "$0")" && pwd)/brief.sh"
+CHECK_SCOPE="$(cd "$(dirname "$0")" && pwd)/check-scope.sh"
 TMPROOT="$(mktemp -d)"
 trap 'rm -rf "$TMPROOT"' EXIT
 fails=0
+# Hook Claude Code nạp khoảng 10 000 ký tự; ngày 2026-11-11 brief 141 KB
+# khiến phiên chỉ thấy 2 KB đầu. Chừa khoảng trống cho chênh lệch byte/ký tự.
+BRIEF_MAX_BYTES=9000
 
 MARK="CẢNH BÁO"
 
@@ -44,6 +48,8 @@ newrepo() {
   : > "$d/docs/product/99-unknowns.md"
   git -C "$d" add -A >/dev/null 2>&1
   git -C "$d" commit -qm init >/dev/null 2>&1
+  mkdir -p "$d/scripts"
+  cp "$CHECK_SCOPE" "$d/scripts/check-scope.sh"
   printf '%s' "$d"
 }
 
@@ -89,28 +95,28 @@ exit0() { # exit0 <tên ca> <rc>
 echo "=== brief.sh — cảnh báo scope chưa dọn ==="
 
 # B1. file scope của một mã KHÔNG ở In Progress → kêu, nêu đích danh mã và file
-r="$(newrepo b1 no)"; setscope "$r" "docs/x.md" "scripts/"
+r="$(newrepo b1 no)"; echo "- [x] T-001 đã xong" >> "$r/work/backlog.md"; setscope "$r" "docs/x.md" "scripts/"
 brief "$r"
 want "B1 file scope của task không ở In Progress" yes "$out"
 exit0 "B1" "$rc"
 case "$out" in
-  *"T-001 không ở In Progress"*) echo "  ok   B1 nêu đích danh mã task" ;;
-  *) echo "  FAIL B1 — không nêu 'T-001 không ở In Progress'"; fails=$((fails + 1)) ;;
+  *"file scope không ở In Progress: T-001"*) echo "  ok   B1 nêu đích danh mã task" ;;
+  *) echo "  FAIL B1 — không nêu T-001 trong cảnh báo orphan"; fails=$((fails + 1)) ;;
 esac
 
 # B1b. F-014 + T-085: cảnh báo không được ra lệnh xoá vô điều kiện — task Done mà
 # chưa commit vẫn cần file scope cho Gate 7b. Xoá chỉ khi đã commit.
 case "$out" in
-  *"Nếu task đã"*"commit: xoá"*"giữ tới khi commit xong"*)
+  *"Nếu task đã commit: xoá file"*"giữ tới khi commit xong"*)
     echo "  ok   B1b chỉ bảo xoá khi đã commit, giữ khi chưa (F-014, T-085)" ;;
   *) echo "  FAIL B1b — thiếu điều kiện xoá/giữ theo commit"; fails=$((fails + 1)) ;;
 esac
 
 # B1c. hai task: file của task In Progress im, file của task khác kêu — chỉ nó
-r="$(newrepo b1c yes)"; setscope "$r" "docs/x.md"; SCOPE_ID=T-007 setscope "$r" "docs/y.md"
+r="$(newrepo b1c yes)"; echo "- [x] T-007 đã xong" >> "$r/work/backlog.md"; setscope "$r" "docs/x.md"; SCOPE_ID=T-007 setscope "$r" "docs/y.md"
 brief "$r"
 case "$out" in
-  *"T-007 không ở In Progress"*) echo "  ok   B1c kêu đúng T-007" ;;
+  *"file scope không ở In Progress: T-007"*) echo "  ok   B1c kêu đúng T-007" ;;
   *) echo "  FAIL B1c — không kêu T-007"; fails=$((fails + 1)) ;;
 esac
 case "$out" in
@@ -328,6 +334,8 @@ manyrepo() {
   : > "$d/docs/product/99-unknowns.md"
   git -C "$d" add -A >/dev/null 2>&1
   git -C "$d" commit -qm init >/dev/null 2>&1
+  mkdir -p "$d/scripts"
+  cp "$CHECK_SCOPE" "$d/scripts/check-scope.sh"
   printf '%s' "$d"
 }
 
@@ -491,6 +499,158 @@ case "$pline" in
   *) echo "  FAIL D4 — docs/product/ không có ngày thật, nhận: $pline"; fails=$((fails + 1)) ;;
 esac
 exit0 "D4" "$rc"
+
+echo "=== brief.sh — T-319: scope, thứ tự, ADR và trần kích thước ==="
+
+# E1. Brief dùng phân loại --list: active/unknown giữ pattern, Ready/Done gộp.
+r="$(newrepo e1 yes)"
+setscope "$r" "active-pattern/"
+SCOPE_ID=T-003 setscope "$r" "unknown-pattern/"
+SCOPE_ID=T-002 setscope "$r" "orphan-pattern/"
+brief "$r"; b="$(sect 'DECLARED SCOPE')"
+inbody "E1 pattern active hiện" "$b" "active-pattern/"
+inbody "E1 pattern unknown hiện" "$b" "unknown-pattern/"
+inbody "E1 unknown có lời nhắc" "$b" "T-003 chưa có dòng trong work/backlog.md"
+notinbody "E1 pattern orphan ẩn" "$b" "orphan-pattern/"
+inbody "E1 orphan gộp số và mã" "$b" "1 file scope không ở In Progress: T-002"
+exit0 "E1" "$rc"
+
+# E2. Hơn 20 orphan vẫn chỉ một dòng, trỏ --list và nói rõ ba cách xử lý.
+r="$(newrepo e2 no)"
+for i in $(seq 1 25); do
+  id="$(printf 'T-%03d' "$((i + 100))")"
+  echo "- [x] $id đã xong" >> "$r/work/backlog.md"
+  SCOPE_ID="$id" setscope "$r" "orphan-$id/"
+done
+brief "$r"; b="$(sect 'DECLARED SCOPE')"
+inbody "E2 orphan có số 25" "$b" "25 file scope không ở In Progress"
+# Thứ tự in là "mới sửa trước" (ls -t), nên đếm số mã thay vì đoán mã nào đứng thứ 21.
+n="$(printf '%s\n' "$b" | grep 'file scope không ở In Progress' | grep -oE 'T-1[0-9][0-9]' | grep -c .)"
+if [ "$n" = 20 ]; then echo "  ok   E2 orphan in đúng 20 mã"
+else echo "  FAIL E2 — mong 20 mã orphan, nhận $n"; fails=$((fails + 1)); fi
+inbody "E2 orphan báo ĐÃ CẮT và trỏ --list" "$b" "ĐÃ CẮT (xem ./scripts/check-scope.sh --list)"
+inbody "E2 cách xử lý theo commit và In Progress" "$b" "đã Done mà chưa commit: giữ tới khi commit xong; đang làm: đưa mã về In Progress"
+n="$(printf '%s\n' "$b" | grep -c 'file scope không ở In Progress')"
+if [ "$n" = 1 ]; then echo "  ok   E2 orphan chỉ một dòng tổng hợp"
+else echo "  FAIL E2 — mong 1 dòng orphan, nhận $n"; fails=$((fails + 1)); fi
+exit0 "E2" "$rc"
+
+# E3. Chỉ tick thì không nhắc task mở. Thêm một chưa tick: nó lên đầu, không
+# đổi thứ tự trong nhóm; dòng dài cắt ở ranh giới từ, archive chỉ khi có file.
+r="$(newrepo e3 no)"
+cat > "$r/work/backlog.md" <<'EOF'
+## Ready
+- [ ] R-001 việc kế tiếp
+## In Progress
+- [x] T-001 đã tick
+- [x] T-002 đã tick
+EOF
+brief "$r"; b="$(sect 'DECLARED SCOPE')"
+notinbody "E3 chỉ tick không nhắc task mở" "$b" "a task is open"
+b="$(sect 'IN PROGRESS')"
+notinbody "E3 chưa có archive script thì im" "$b" "archive-done.sh"
+mkdir -p "$r/scripts"; : > "$r/scripts/archive-done.sh"; chmod +x "$r/scripts/archive-done.sh"
+brief "$r"; b="$(sect 'IN PROGRESS')"
+inbody "E3 có script và tick thì nhắc archive" "$b" "2 việc đã tick còn ở In Progress — việc nào đã commit thì chuyển bằng ./scripts/archive-done.sh"
+long=""
+for i in $(seq 1 65); do long="${long}điệnthoại "; done
+cat > "$r/work/backlog.md" <<EOF
+## Ready
+- [ ] R-001 $long
+## In Progress
+- [x] T-001 đã tick
+- [ ] T-003 $long
+- [x] T-002 đã tick
+- [ ] T-004 $long
+EOF
+brief "$r"; b="$(sect 'IN PROGRESS')"
+order="$(printf '%s\n' "$b" | sed -n 's/^  - \[[ x]\] \(T-[0-9]*\).*/\1/p' | tr '\n' ' ')"
+if [ "$order" = 'T-003 T-004 T-001 T-002 ' ]; then echo "  ok   E3 chưa tick trước, giữ thứ tự từng nhóm"
+else echo "  FAIL E3 — thứ tự: $order"; fails=$((fails + 1)); fi
+inbody "E3 còn chưa tick thì nhắc task mở" "$(sect 'DECLARED SCOPE')" "a task is open"
+line="$(printf '%s\n' "$b" | grep 'T-003')"
+size="$(printf '%s' "$line" | wc -c | tr -d ' ')"
+case "$line" in *"điệnthoại…") echo "  ok   E3 cắt sau từ tiếng Việt" ;;
+  *) echo "  FAIL E3 — cắt giữa từ tiếng Việt: $line"; fails=$((fails + 1)) ;; esac
+if [ "$size" -le 210 ]; then echo "  ok   E3 dòng In Progress khoảng 200 byte ($size)"
+else echo "  FAIL E3 dòng In Progress dài $size byte"; fails=$((fails + 1)); fi
+b="$(sect 'NEXT READY')"; line="$(printf '%s\n' "$b" | grep 'R-001')"
+case "$line" in *"điệnthoại…") echo "  ok   E3 Ready cũng cắt sau từ tiếng Việt" ;;
+  *) echo "  FAIL E3 Ready cắt giữa từ tiếng Việt"; fails=$((fails + 1)) ;; esac
+exit0 "E3" "$rc"
+
+# E4. ADR hỗn hợp ##/###, dòng khuôn, thứ tự file lộn xộn.
+r="$(newrepo e4 no)"
+cat > "$r/docs/decisions.md" <<'EOF'
+## ADR-141 — Quyết định 141
+### ADR-126 — Quyết định 126
+## ADR-142 — Quyết định 142
+## ADR-140 — Quyết định 140
+## ADR-999 — Title
+EOF
+brief "$r"; b="$(sect 'LATEST DECISIONS')"
+expected="$(printf '  ADR-140 — Quyết định 140\n  ADR-141 — Quyết định 141\n  ADR-142 — Quyết định 142')"
+if [ "$b" = "$expected" ]; then echo "  ok   E4 ADR lấy 3 số lớn nhất, tăng dần, bỏ khuôn và dấu #"
+else echo "  FAIL E4 — nhận: $b"; fails=$((fails + 1)); fi
+exit0 "E4" "$rc"
+
+# E5. check-scope không chạy được: brief giữ mọi pointer và luôn exit 0.
+r="$(newrepo e5 no)"; SCOPE_ID=T-002 setscope "$r" "fallback-pattern/"
+chmod -x "$r/scripts/check-scope.sh"
+brief "$r"; b="$(sect 'DECLARED SCOPE')"
+inbody "E5 fallback in mọi pattern" "$b" "fallback-pattern/"
+exit0 "E5" "$rc"
+
+# E5b. Mục scope có trần: 10 file scope đang được tính, mỗi file 9 pattern ⇒ chỉ 6 file in
+#      pattern, mỗi file 6 pattern, phần còn lại được NÓI RA là đã cắt (một mục không trần
+#      từng làm brief dài 141 KB và hook bỏ gần hết — đo 2026-11-11).
+r="$(newrepo e5b no)"
+{
+  echo '## In Progress'
+  for i in $(seq 1 10); do printf -- '- [ ] T-%03d việc đang làm\n' "$((i + 400))"; done
+  echo '## Done'
+} > "$r/work/backlog.md"
+for i in $(seq 1 10); do
+  id="$(printf 'T-%03d' "$((i + 400))")"
+  SCOPE_ID="$id" setscope "$r" "p1-$id/" "p2-$id/" "p3-$id/" "p4-$id/" "p5-$id/" "p6-$id/" "p7-$id/" "p8-$id/" "p9-$id/"
+done
+brief "$r"; b="$(sect 'DECLARED SCOPE')"
+n="$(printf '%s\n' "$b" | grep -c '^  work/scope/T-4[0-9][0-9]\.txt:$')"
+if [ "$n" = 6 ]; then echo "  ok   E5b chỉ 6 file scope in pattern"
+else echo "  FAIL E5b — mong 6 file in pattern, nhận $n"; fails=$((fails + 1)); fi
+n="$(printf '%s\n' "$b" | grep -c '^    p[0-9]-T-4')"
+if [ "$n" = 36 ]; then echo "  ok   E5b mỗi file 6 pattern"
+else echo "  FAIL E5b — mong 36 dòng pattern, nhận $n"; fails=$((fails + 1)); fi
+inbody "E5b nói đã cắt pattern của từng file" "$b" "ĐÃ CẮT: in 6/9 pattern"
+inbody "E5b nói đã cắt file và còn mấy file" "$b" "ĐÃ CẮT: in 6/10 file scope đang được tính (mới sửa trước). Còn 4 file:"
+inbody "E5b trỏ tới file scope và --list" "$b" "work/scope/<MÃ>.txt; danh sách đủ: ./scripts/check-scope.sh --list"
+exit0 "E5b" "$rc"
+
+# E6. 300 orphan × 5 pattern và 30 dòng In Progress dài hơn 600 byte.
+r="$(newrepo e6 no)"
+{
+  echo '## In Progress'
+  for i in $(seq 1 30); do printf -- '- [ ] P-%03d %s\n' "$i" "$long"; done
+  echo '## Done'
+  for i in $(seq 1 300); do printf -- '- [x] T-%03d đã xong\n' "$i"; done
+} > "$r/work/backlog.md"
+for i in $(seq 1 300); do
+  id="$(printf 'T-%03d' "$i")"
+  SCOPE_ID="$id" setscope "$r" "one-$id/" "two-$id/" "three-$id/" "four-$id/" "five-$id/"
+done
+brief "$r"
+size="$(wc -c < "$BOUT" | tr -d ' ')"
+if [ "$size" -le "$BRIEF_MAX_BYTES" ]; then echo "  ok   E6 300 orphan, 30 dòng dài: $size <= $BRIEF_MAX_BYTES byte"
+else echo "  FAIL E6 brief $size > $BRIEF_MAX_BYTES byte"; fails=$((fails + 1)); fi
+exit0 "E6" "$rc"
+
+# E7. Đo chính repo chứa test để độ phình của brief thật làm gate đỏ.
+repo_root="$(git -C "$(dirname "$SCRIPT")" rev-parse --show-toplevel)"
+brief "$repo_root"
+size="$(wc -c < "$BOUT" | tr -d ' ')"
+if [ "$size" -le "$BRIEF_MAX_BYTES" ]; then echo "  ok   E7 repo thật: $size <= $BRIEF_MAX_BYTES byte"
+else echo "  FAIL E7 brief repo thật $size > $BRIEF_MAX_BYTES byte"; fails=$((fails + 1)); fi
+exit0 "E7" "$rc"
 
 if [ "$fails" -ne 0 ]; then
   echo "brief: $fails ca FAIL"; exit 1

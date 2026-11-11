@@ -186,9 +186,11 @@ a paragraph or under another heading is never seen. Full shape contract:
 It runs, in order — each script's header is the owner of how it works:
 
 1. `scripts/check-scope.sh` (Gate 3) — every changed **tracked** file must be
-   allowed by some scope file. An untracked file outside scope prints a `NOTE`
-   and does not fail (ADR-003): if it is a file *your* task created, put it in
-   scope or delete it — nothing else will stop you.
+   allowed by the scope file of a task in *In Progress* (or of an ID
+   `work/backlog.md` does not list yet); a scope file whose task left
+   In Progress is ignored and counted in a `NOTE` (ADR-143). An untracked file
+   outside scope prints a `NOTE` and does not fail (ADR-003): if it is a file
+   *your* task created, put it in scope or delete it — nothing else will stop you.
 2. `scripts/check-links.sh` (Gate 1b) — every path a pointer document names must
    open. Runs on every turn, docs-only included (ADR-005).
 3. `scripts/check-doc-status.sh` (Gate 1c) — one ID, two places, two states
@@ -335,9 +337,11 @@ tool reruns it whenever the state may have moved:
 - **It never blocks** — every failure path exits 0.
 - **It says when it cut a list** (`→ ĐÃ CẮT`, F-012). A capped list is a pointer,
   not an answer: open the file it names before deciding anything.
-- **It warns about a scope file whose task is not In Progress.** Delete it only
-  if that task is committed; Done-but-uncommitted keeps it until the commit; if
-  you are mid-task, put the task back in *In Progress* (ADR-063, F-010).
+- **It folds scope files whose task is not In Progress into one warning line**
+  (`./scripts/check-scope.sh --list` names them; Gate 3 ignores them). Delete
+  one only if that task is committed; Done-but-uncommitted keeps it until the
+  commit; if you are mid-task, put the task back in *In Progress* (ADR-063,
+  ADR-143, F-010).
 
 When a brief line contradicts what you believe, the brief's dates come from git:
 **the brief wins**, re-read that owner before touching anything.

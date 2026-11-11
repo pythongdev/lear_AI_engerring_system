@@ -4291,6 +4291,8 @@ Gate 3 đỏ giữa chừng vì scope bị gỡ sạch); file bị git theo dõi
    không bị `git checkout --` hay `git stash` xoá.
 2. Gate 3: một file đổi hợp lệ khi có ít nhất một file scope cho phép nó và chính file ấy không
    cấm nó. Gate 3 FAIL khi `work/scope.txt` còn pattern, và khi một file scope bị git theo dõi.
+   *Sửa đổi 2026-11-11 (**ADR-143**, T-319): Gate 3 chỉ hợp file scope của mã đang ở In Progress và
+   của mã chưa có dòng nào trong `work/backlog.md`; file scope của mã đã rời In Progress bị bỏ qua.*
 3. Gate 7b: mã đứng đầu subject của mỗi `git commit -m "<MÃ>: …"` trong turn chọn file scope để
    chấm; không mã nào có file ⇒ chấm theo hợp mọi file scope. File scope trong khối ⇒ kêu.
 4. File scope giữ qua *Done* tới khi task đã commit, rồi mới xoá. Brief liệt kê từng file scope và
@@ -8831,3 +8833,42 @@ thô hơn. Lùi một nhóm: bỏ công cụ khỏi danh sách, không đụng d
 `localhost` và cờ `1` cùng lúc; pha 5 (triển khai, `T-109`) phải kiểm cờ này tắt. Lùi: bỏ cờ khỏi `Makefile`, server về luật thật.
 
 **Applies to:** `I-008` · `T-312` · `be/cmd/server` · `be/internal/don` · `Makefile`.
+
+## ADR-143 — Gate 3 và brief chỉ tính file scope của việc đang làm; file scope của việc đã rời In Progress bị bỏ qua
+
+**Status:** **Đã chốt** 2026-11-11 — chủ repo yêu cầu thực hiện các bước của `work/proposals/danh-gia-he-thong-2026-11-11.md`
+(Bước 2 · 3, task T-319). Phần cơ chế dưới đây là thiết kế của Claude Code, chủ repo chưa xác nhận từng điểm.
+
+**Context:** ADR-063 cho Gate 3 hợp **mọi** file `work/scope/<MÃ>.txt`, và ghi rõ cái giá: *một file scope bị bỏ quên sau
+commit chỉ nới Gate 3*. Việc xoá file ấy được hẹn sau commit, lúc không phiên nào chạy, và từ 2026-10-26 phiên không được chạy
+lệnh xoá. Đo 2026-11-11: 249 file scope, 221 của việc đã xong, mười sáu file khai cả `be/` · `db/` · `fe/`; Gate 3 cho qua 12 trên
+13 đường dẫn bịa ra; brief in đủ pattern và bốn dòng cảnh báo cho từng file nên dài 141 KB, trong khi hook `SessionStart` của
+Claude Code chỉ đưa khoảng 2 KB đầu vào phiên.
+
+**Decision:**
+
+1. Một file scope có ba trạng thái, đọc từ `work/backlog.md` — *dòng của mã* là dòng mở đầu `- [ ] <MÃ>` hay `- [x] <MÃ>`:
+   **đang làm** khi mã có dòng trong mục In Progress, đã tick hay chưa (việc Done chưa commit vẫn cần scope tới khi commit);
+   **mồ côi** khi mã không có dòng ở In Progress nhưng có dòng ở mục khác; **chưa ghi** khi mã không có dòng nào.
+2. Gate 3 và `check-scope.sh --match` không kèm `--task` chỉ hợp scope *đang làm* và *chưa ghi*. Scope *mồ côi* bị bỏ qua và
+   được đếm trong một dòng `NOTE`; file vi phạm mà chỉ khớp scope mồ côi thì lời đỏ nêu mã ấy.
+3. *Chưa ghi* được tính, không bị bỏ: worktree của Codex cắt từ `HEAD` trước khi dòng task được commit, nên ở đó mã của chính
+   task đang làm không có dòng nào. Gate in tên các mã *chưa ghi* trong một dòng `NOTE` mỗi lượt.
+4. `--match --task <MÃ>` (Gate 7b, Gate 9) không đổi: chấm theo file của đúng mã ấy bất kể trạng thái; không mã nào có file thì
+   lùi về hợp ở điểm 2.
+5. Phép phân loại có **một** chủ, `scripts/check-scope.sh --list`; `scripts/brief.sh` hỏi nó. Brief chỉ in pattern của scope
+   *đang làm* và *chưa ghi*, gộp scope mồ côi thành một dòng, và `scripts/brief.test.sh` đỏ khi brief vượt 9 000 byte.
+6. Mục scope của brief có trần: sáu file mới sửa nhất, sáu pattern mỗi file, phần còn lại được nói ra là đã cắt. Bản trước cố
+   ý không cắt mục này (*scope bị ẩn là scope không ai tuân*), và chính nó làm brief không tới được phiên. Cắt ở brief không đổi
+   điều Gate 3 chấm: cổng đọc file scope thật.
+
+**Phương án đã bỏ:** *chỉ tính mã ở In Progress* (đúng lời Bước 3) — chặn mọi worktree Codex ngay file đầu tiên; *cho scope
+"chưa ghi" hết hạn theo tuổi file* — cổng đổi kết quả theo đồng hồ, đúng họ lỗi F-051.
+
+**Consequences:** việc dọn trễ không còn pha loãng Gate 3 với task có dòng trong backlog; brief trở lại cỡ vài KB. Giới hạn còn
+lại: file scope mang tên không gắn task (lượt đo có 52 file `L0-…`) là *chưa ghi* nên vẫn được tính cho tới khi bị xoá — hook
+`post-commit` của T-320 chỉ in gợi ý xoá cho loại này, không tự xoá (F-014: xoá scope của phiên đang chạy). Trần 9 000 byte dựa
+trên suy luận rằng hook nạp khoảng 10 000 ký tự; kiểm bằng phiên Claude mới sau khi tích hợp. Lùi: trả `scripts/check-scope.sh`
+và `scripts/brief.sh` về bản trước T-319.
+
+**Applies to:** ADR-063 · ADR-002 · F-010 · F-014 · `T-319` · `T-320` · `scripts/check-scope.sh` · `scripts/brief.sh` · `CLAUDE.md` §5 · §7.1.

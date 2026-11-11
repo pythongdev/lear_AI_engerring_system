@@ -41,6 +41,13 @@ MAX_LIST=6        # In Progress · Ready · Open findings — ba danh sách đ�
 # nó phải là chuyện hiếm, và khi xảy ra thì nói thẳng hậu quả (F-012).
 MAX_UNKNOWNS=12
 
+# Mục scope cũng có trần (T-319, 2026-11-11). Trước đó nó cố ý không cắt ("scope bị ẩn là
+# scope không ai tuân"), và chính nó làm brief dài 141 KB: hook của Claude Code bỏ gần hết,
+# phiên chỉ nhận 2 KB đầu — mất luôn Ready, findings, unknowns. Một mục không trần giết cả
+# brief. Cắt ở đây không đổi điều Gate 3 chấm: cổng đọc file work/scope/<MÃ>.txt thật.
+MAX_SCOPE=6       # số file scope in pattern, file mới sửa trước
+MAX_SCOPE_PAT=6   # số pattern in cho mỗi file
+
 section() { printf '\n%s\n' "$1"; }
 none()    { printf '  (none)\n'; }
 
@@ -72,43 +79,96 @@ block() {
   ' "$file"
 }
 
+# Cắt theo từ: substr() trên byte có thể xẻ đôi chữ tiếng Việt (xem Unknowns).
+short_lines() {
+  awk '{
+    if (length($0) <= 200) { print; next }
+    n = split($0, words, " "); line = ""
+    for (i = 1; i <= n; i++) {
+      nextline = (line == "" ? words[i] : line " " words[i])
+      if (line != "" && length(nextline) > 200) break
+      line = nextline
+    }
+    print line "…"
+  }'
+}
+
 printf '=== Lean AI Engineering — session brief (%s) ===\n' "$(date +%F)"
 printf 'Read CLAUDE.md for shared rules (Codex entry: AGENTS.md). This brief points; §2 owners hold facts.\n'
 
 # --- What is being worked on -------------------------------------------------
 section "IN PROGRESS (work/backlog.md)"
-# Không cắt ở đây nữa: $inprog phải là danh sách ĐỦ, vì cảnh báo scope bên dưới
-# hỏi "có task nào đang chạy không" — cắt xong mới hỏi là hỏi trên một nửa sự thật.
-inprog="$(block work/backlog.md '## In Progress' | grep -E '^- \[')"
-printf '%s\n' "$inprog" | emit "$MAX_LIST" 'work/backlog.md → In Progress'
+# Giữ đủ danh sách để đếm checkbox; đưa việc chưa tick lên trước, giữ thứ tự
+# trong từng nhóm. Chỉ cắt chiều dài từng dòng sau khi phân nhóm.
+inprog="$(block work/backlog.md '## In Progress' | grep -E '^- \[[ x]\] ' || true)"
+open_tasks="$(printf '%s\n' "$inprog" | grep -E '^- \[ \] ' || true)"
+done_tasks="$(printf '%s\n' "$inprog" | grep -E '^- \[x\] ' || true)"
+{ [ -z "$open_tasks" ] || printf '%s\n' "$open_tasks"; [ -z "$done_tasks" ] || printf '%s\n' "$done_tasks"; } \
+  | short_lines | emit "$MAX_LIST" 'work/backlog.md → In Progress'
+if [ -n "$done_tasks" ] && [ -x scripts/archive-done.sh ]; then
+  done_count="$(printf '%s\n' "$done_tasks" | grep -c .)"
+  printf '  → %s việc đã tick còn ở In Progress — việc nào đã commit thì chuyển bằng ./scripts/archive-done.sh\n' "$done_count"
+fi
 
 section "DECLARED SCOPE (work/scope/<MÃ>.txt)"
-# Mỗi task một file scope (T-085, docs/decisions.md ADR-063). File của một task
-# In Progress = bình thường. File của một mã KHÔNG ở In Progress = task đã Done
-# nhưng có thể chưa commit (Gate 7b cần file ấy tới lúc giao khối commit), hoặc
-# đã commit mà chưa ai xoá. Brief không biết ca nào — nó chỉ nêu đích danh.
-# Cảnh báo, không chặn: brief không bao giờ đổi mã thoát (§7.1).
-# No cap here. A scope line hidden by truncation is a scope line nobody honours,
-# and Gate 3 would then reject a file the brief said nothing about.
+# Trạng thái chỉ do check-scope.sh phân loại (T-319, F-001). Khi script đó lỗi,
+# vẫn in mọi pattern để brief không chặn và không làm mất pointer.
+scope_list=""
+scope_ok=0
+if [ -x ./scripts/check-scope.sh ]; then
+  scope_list="$(./scripts/check-scope.sh --list 2>/dev/null)" && scope_ok=1
+fi
 nscope=0
-for sf in work/scope/*.txt; do
+orphan_count=0
+orphan_ids=""
+more_count=0
+more_ids=""
+while IFS= read -r sf; do
   [ -f "$sf" ] || continue
   scope="$(grep -vE '^\s*(#|$)' "$sf")"
   [ -n "$scope" ] || continue
-  nscope=$((nscope + 1))
   id="$(basename "$sf" .txt)"
-  printf '  %s:\n' "$sf"
-  printf '%s\n' "$scope" | sed 's/^/    /'
-  if ! printf '%s\n' "$inprog" | grep -qE "(^|[^A-Za-z0-9-])${id}([^0-9]|\$)"; then
-    printf '    → CẢNH BÁO: %s không ở In Progress trong work/backlog.md. Nếu task đã\n' "$id"
-    printf '      commit: xoá %s. Nếu đã Done mà chưa commit: giữ tới khi commit xong\n' "$sf"
-    printf '      (Gate 7b chấm khối commit theo file này). Nếu bạn đang làm %s: đưa nó\n' "$id"
-    printf '      về In Progress, đừng xoá.\n'
+  state=""
+  if [ "$scope_ok" -eq 1 ]; then
+    state="$(printf '%s\n' "$scope_list" | awk -F '\t' -v id="$id" '$2 == id { print $1; exit }')"
   fi
-done
-if [ "$nscope" -eq 0 ]; then
+  if [ "$state" = orphan ]; then
+    orphan_count=$((orphan_count + 1))
+    [ "$orphan_count" -gt 20 ] || orphan_ids="${orphan_ids:+$orphan_ids, }$id"
+    continue
+  fi
+  nscope=$((nscope + 1))
+  if [ "$nscope" -gt "$MAX_SCOPE" ]; then
+    more_count=$((more_count + 1))
+    [ "$more_count" -gt 20 ] || more_ids="${more_ids:+$more_ids, }$id"
+    continue
+  fi
+  printf '  %s:\n' "$sf"
+  npat="$(printf '%s\n' "$scope" | grep -c .)"
+  printf '%s\n' "$scope" | head -n "$MAX_SCOPE_PAT" | sed 's/^/    /'
+  if [ "$npat" -gt "$MAX_SCOPE_PAT" ]; then
+    printf '    → ĐÃ CẮT: in %s/%s pattern. Còn lại chỉ có ở %s.\n' "$MAX_SCOPE_PAT" "$npat" "$sf"
+  fi
+  if [ "$state" = unknown ]; then
+    printf '    → %s chưa có dòng trong work/backlog.md\n' "$id"
+  fi
+done < <(ls -t work/scope/*.txt 2>/dev/null)
+if [ "$more_count" -gt 0 ]; then
+  printf '  → ĐÃ CẮT: in %s/%s file scope đang được tính (mới sửa trước). Còn %s file: %s' \
+    "$MAX_SCOPE" "$nscope" "$more_count" "$more_ids"
+  [ "$more_count" -le 20 ] || printf ' …'
+  printf '\n    Pattern của chúng chỉ có ở work/scope/<MÃ>.txt; danh sách đủ: ./scripts/check-scope.sh --list\n'
+fi
+if [ "$orphan_count" -gt 0 ]; then
+  printf '  → CẢNH BÁO: %s file scope không ở In Progress: %s' "$orphan_count" "$orphan_ids"
+  [ "$orphan_count" -le 20 ] || printf ' → ĐÃ CẮT (xem ./scripts/check-scope.sh --list)'
+  printf '\n'
+  printf '    Nếu task đã commit: xoá file; nếu đã Done mà chưa commit: giữ tới khi commit xong; đang làm: đưa mã về In Progress.\n'
+fi
+if [ "$nscope" -eq 0 ] && [ "$orphan_count" -eq 0 ]; then
   printf '  (not declared — no task in flight, or an L0 change)\n'
-elif [ -n "$inprog" ]; then
+fi
+if [ -n "$open_tasks" ]; then
   printf '  → a task is open. Finish or hand it off before starting another.\n'
 fi
 if [ -f work/scope.txt ] && grep -qvE '^\s*(#|$)' work/scope.txt; then
@@ -132,6 +192,7 @@ fi
 
 section "NEXT READY (work/backlog.md)"
 block work/backlog.md '## Ready' | grep -E '^- \[ \]' \
+  | short_lines \
   | emit "$MAX_LIST" 'work/backlog.md → Ready'
 
 # --- What is unresolved ------------------------------------------------------
@@ -199,8 +260,15 @@ thiếu, và CLAUDE.md §3.5 chỉ dừng được phiên BIẾT mình thiếu. 
 
 # --- What was decided --------------------------------------------------------
 section "LATEST DECISIONS (docs/decisions.md)"
-adr="$(grep -E '^### ADR-' docs/decisions.md 2>/dev/null | grep -v ' — Title$' | tail -n 3)"
-if [ -n "$adr" ]; then printf '%s\n' "$adr" | sed 's/^### /  /'; else none; fi
+adr="$(awk '
+  /^##[#]? ADR-[0-9]+/ && $0 !~ / — Title$/ {
+    line = $0; sub(/^##[#]? /, "", line)
+    match(line, /^ADR-[0-9]+/)
+    number = substr(line, 5, RLENGTH - 4)
+    print number "\t" line
+  }
+' docs/decisions.md 2>/dev/null | sort -n -k1,1 | tail -n 3)"
+if [ -n "$adr" ]; then printf '%s\n' "$adr" | sed 's/^[^	]*\t/  /'; else none; fi
 
 # --- What moved since last time ----------------------------------------------
 section "RECENT COMMITS"
