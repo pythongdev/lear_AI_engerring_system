@@ -14,36 +14,48 @@ A lightweight AI-assisted development operating system inspired by the strongest
 ## Structure
 
 ```text
-AGENTS.md             (Codex entry → shared rules in CLAUDE.md)
-CLAUDE.md
-docs/
-  product.md
-  architecture.md
-  decisions.md
-  prompt-guideline.md
-work/
-  backlog.md
-  findings.md
-  scope/               (mỗi task một file scope, git bỏ qua — CLAUDE.md §3.4)
-quality/
-  invariants.md
-  review-gate.md
-master_plan/
-  shop-facts.md        (mọi dữ kiện của dự án hiện tại — CLAUDE.md §2)
-prompt/
-  BA/ maintenance/     (bộ prompt dựng từ master_plan/)
-scripts/
-  verify.sh
-  check-scope.sh
-  check-links.sh
-  check-links.ignore
-  check-links.test.sh
-  check-commit-block.sh
-  check-commit-block.test.sh
-  gate.sh
-  brief.sh
-.claude/
-  settings.json
+.claude/                 (cấu hình Claude Code)
+  settings.json          (hook phiên và gate)
+AGENTS.md                (lối vào Codex)
+CLAUDE.md                (quy tắc chung và bảng owner)
+README.md                (mức rủi ro và triết lý repo)
+Makefile                 (lệnh phát triển)
+compose.yaml             (dịch vụ chạy tại máy)
+be/                      (mã backend)
+db/                      (dữ liệu và phép kiểm database)
+  migrations/            (schema có hiệu lực)
+docs/                    (tài liệu hệ thống)
+  decisions.md           (quyết định kiến trúc)
+  product.md             (bản lưu trước khi tách)
+  prompt-guideline.md    (cách viết phiếu việc)
+  product/               (quy tắc sản phẩm)
+    00-index.md          (chỉ mục owner sản phẩm)
+    1-system-design/     (thiết kế hệ thống)
+      architecture.md    (kiến trúc)
+    2-db/                (quy ước và lược đồ dữ liệu)
+    3-be/                (hợp đồng backend)
+      openapi.yaml       (hợp đồng API)
+    4-fe/                (route và component)
+      01-khung-fe.md     (khung giao diện)
+    99-unknowns.md       (câu hỏi nghiệp vụ đang mở)
+fe/                      (mã giao diện)
+master_plan/             (kế hoạch các pha)
+  shop-facts.md          (dữ kiện của quán)
+prompt/                  (bộ prompt)
+  BA/                    (prompt phân tích nghiệp vụ)
+  maintenance/           (prompt bảo trì)
+quality/                 (bất biến và thước review)
+  invariants.md          (bất biến nghiệp vụ)
+  review-gate.md         (thước review)
+scripts/                 (gate và phép kiểm)
+  brief.sh               (trạng thái phiên hiện tại)
+  gate.sh                (cổng kiểm chung)
+  verify.sh              (kiểm code và test)
+tools/                   (công cụ hỗ trợ)
+work/                    (task và finding)
+  backlog.md             (trạng thái task)
+  findings.md            (vấn đề và bài học)
+  scope/                 (scope từng task, git bỏ qua)
 ```
 
 ## Risk-based ceremony

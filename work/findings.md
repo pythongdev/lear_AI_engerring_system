@@ -46,81 +46,10 @@ Ghi lại 2026-08-31 sau khi **F-011** bị chính lỗi này giấu ngay trong 
 
 ---
 
-## Mục lục
+## Xem finding đang mở
 
-Tổng: 59 hàng trong bảng dưới — 57 Fixed/Resolved/Closed, 2 Open (đếm lại ngày 2026-10-11, lúc đóng F-059 ở T-169, bằng `awk` trên cột Status; bảng **chưa có hàng** F-060…F-064 dù thân năm mục ấy đã có bên dưới — lượt này không thêm; trước đó 2026-10-06, *59 — 55/4*, lúc ghi F-059 ở P3-06; trước đó cùng ngày, *58 — 55/3*, lúc đóng F-058 ở P3-04; trước đó 2026-10-05, *58 — 54/4*, lúc ghi F-058 ở P3-01; trước đó cùng ngày, *57 — 54/3*, lúc đóng F-047 ở T-137; trước đó cùng ngày, *57 — 53/4*, lúc đóng F-056 · F-057 ở T-134; trước đó cùng ngày, *57 — 51/6*, lúc ghi F-056 · F-057 ở lượt review T-133; trước đó cùng ngày, *55 — 51/4*, lúc đóng F-048 ở T-133; trước đó 2026-10-01, *55 — 50/5*, lúc đóng F-050 ở T-132; trước đó cùng ngày, *55 — 49/6*, lúc đóng F-049 ở T-131; trước đó cùng ngày, *55 — 48/7*, lúc đóng F-055 ở P2A-07; trước đó cùng ngày, *55 — 47/8*, lúc đóng F-045 ở T-128; trước đó cùng ngày, *55 — 46/9*, lúc ghi F-055 ở P2A-07; trước đó cùng ngày, *54 — 46/8*, lúc ghi và đóng F-054 ở P2A-04; trước đó 2026-09-30, *53 — 45/8*, lúc ghi và đóng F-053 ở P2A-02; trước đó cùng ngày *52 — 44/8*, lúc đóng F-052 ở T-123; trước đó cùng ngày *43 — 9*, lúc ghi F-052 ở P2A-01; trước đó cùng ngày, lúc ghi F-049 · F-050 ở P2-14 và F-051 ở T-121; trước đó cùng ngày, lúc ghi F-048 ở P2-13 và F-047 ở P2-11; trước đó 2026-09-28, lúc ghi F-046 ở P2-08; trước đó lúc ghi F-045 — cùng lượt thêm hàng F-044 mà lượt `P2-07` viết thân mục nhưng quên bảng này; trước đó T-115, sau khi đóng F-043; trước đó T-113 sau khi đóng F-042, T-112 sau khi đóng F-037, và T-110, sau khi đóng F-038. Cùng lượt sửa hai hàng F-040 · F-041 của bảng dưới: thân mục của cả hai đã **Closed** từ 2026-09-20 (T-079) mà bảng vẫn ghi *Open* — đúng hình trôi mà câu kế bên cảnh báo. Phép đếm trước đó, *39 — 30/9* ngày 2026-09-08, đã cũ bốn mục). Cột **Status** ở đây là một bản
-chụp — nhà thật của trạng thái là dòng `**Status:**` trong chính mục đó (đúng nhà mà
-`scripts/brief.sh` đọc). Đổi trạng thái một finding thì sửa cả hai chỗ trong cùng một lần, đừng để
-trôi (bài học F-001, F-005, F-006).
-
-**Ghi chú dựng bảng này:** file đang có nhiều phiên khác cùng sửa song song (đúng rủi ro F-025 mô
-tả) — số đo đổi giữa hai lần đọc cách nhau vài phút (F-030 chuyển Fixed, F-032 xuất hiện). Bảng dưới
-là số đo sau cùng lúc bảng được ghi. Nhân tiện đã cắt hai dòng `**Status:**` (F-020, F-028) về đúng
-một chữ `Open` — trước đó chúng viết thêm chữ sau "Open", phá đúng hợp đồng ở đầu file khiến
-`scripts/brief.sh` không nhận ra hai mục này là đang mở (họ lỗi F-008, lần này rơi vào Status của
-F-XXX thay vì mục Unknowns); nội dung thêm không mất vì đã có sẵn ở *Decision / Fix* của cả hai.
-
-| ID | Tiêu đề | Status |
-|---|---|---|
-| F-001 | Bảng giá hai bản: `00-scope.md` và `shop-facts.md` | Fixed |
-| F-002 | Ba ca giá 5–7 ghi nhầm "đã đối chiếu khớp" | Fixed |
-| F-003 | Đếm "đúng N": quyết định hay bẫy | Fixed |
-| F-004 | Suy ra từ luật chốt phải tách khỏi lời chủ quán | Fixed |
-| F-005 | Đổi số ở shop-facts.md phải grep cả tài liệu khung | Fixed |
-| F-006 | Rà theo con số không bắt được chỗ lệch không có số | Fixed |
-| F-007 | Bản xuất khẩu trỏ bảy đường không tồn tại | Fixed |
-| F-008 | Brief đọc Unknowns theo hình dạng dòng | Resolved |
-| F-009 | Hai cổng ngoảnh mặt khỏi file chưa track (`git add -A`) | Fixed |
-| F-010 | Scope quên dọn ⇒ phiên sau bị chấm bằng scope người khác | Fixed |
-| F-011 | `0704139 "dsfg"` — cổng không chặn commit ngoài phiên | Fixed |
-| F-012 | Brief cắt danh sách ở 6 mà không báo đã cắt | Fixed |
-| F-013 | Bản xuất khẩu vẫn thiết kế nút "Xong" đã bị bỏ | Fixed |
-| F-014 | Cảnh báo "scope bẩn" bảo XOÁ trong khi chủ thật đang chạy | Fixed *(lời cảnh báo đã sửa; **hậu quả vẫn tái diễn** — lần thứ sáu 2026-09-20, đường xoá là `git checkout -- work/scope.txt`. Đọc bản thân mục F-014)* |
-| F-015 | Đóng unknown chỉ sửa chỗ trả lời, không sửa chỗ được nhắc tới | Fixed |
-| F-016 | shop-facts.md tự khai "không trỏ đi đâu" nhưng trỏ 5 chỗ | Fixed |
-| F-017 | Câu `grep` "chứng minh xong" trong prompt lọc rỗng | Fixed |
-| F-018 | Số đếm động dùng như invariant | Fixed |
-| F-019 | Tách file đẻ tiêu đề thứ hai trùng chữ, nghiệm thu đếm hụt | Fixed |
-| F-020 | Ba khối `work/scope.txt` bị commit, Gate 3 mở toang — đường đã chốt, chờ T-047 | Fixed |
-| F-021 | Bảng tổng hợp decisions.md nói ngược thân của chính nó | Fixed |
-| F-022 | Hai mục ĐÃ CHỐT trả lời khác nhau cùng một câu hỏi | Fixed |
-| F-023 | Một ADR giao lược đồ/API/route cho hai tài liệu tự khai không sở hữu | Fixed |
-| F-024 | Deliverable bị bỏ rơi vì task đóng trước khi giao | Fixed |
-| F-025 | Phiên song song `git commit` nhặt luôn thay đổi chưa commit của phiên khác | Open *(**lần thứ sáu 2026-09-20**, `04c5a64` — lần đầu cú nhặt tự đẻ ra một cổng đỏ: `work/scope.txt` vào git kèm pattern. Đọc cuối mục F-025)* |
-| F-026 | Ba invariant sinh sau khi kế hoạch chia nhóm, không nhóm nào nhận — cả ba đã xếp xong (ADR-042 · ADR-044) | Fixed |
-| F-027 | Hai phụ thuộc ngoài chỉ tồn tại ở bản xuất khẩu | Fixed |
-| F-028 | Một dãy mã bị đọc thành phép đếm, đã đứng trong ADR hai ngày | Fixed |
-| F-029 | Tiền đề "không tài liệu nào nói X" viết mà không grep | Fixed |
-| F-030 | Gate 1c coi mọi U-XXX nhắc trong gạch đầu dòng đang mở là "đang mở" | Fixed |
-| F-031 | Lần thứ năm: subject trùng commit trước, nội dung không khớp — Gate 8 nay chặn (ADR-062) | Fixed |
-| F-032 | Mục lục `backlog_SD.md` ghi Trạng thái "Đóng" cho hai bước còn thiếu dòng luật đòi | Fixed |
-| F-033 | Ảnh chụp *"hôm nay có chưa"* của kế hoạch pha 1 vẫn ghi **chưa** cho bốn thứ đã xong | Fixed |
-| F-034 | Cơ chế chặn *mất hẳn dữ liệu* chỉ sống ở tài liệu không sở hữu gì — lần thứ hai của F-027 | Fixed |
-| F-035 | Gate 7b đọc index bằng encoding KHÁC mọi chỗ đọc khác trong chính nó ⇒ kêu một file scope đã phủ | Closed |
-| F-036 | Phép đối chiếu của một mệnh đề hẹp hơn chính mệnh đề ấy ⇒ đọc ra rỗng trong khi một vế đã hỏng | Fixed |
-| F-037 | Khoản trả trước có mốc tính tiền nhưng không có dòng nào trong bảng đối soát để đứng | Fixed |
-| F-038 | *"Thiếu một trường bắt buộc thì đơn không tạo được"* — luật đã chốt của pha 0, pha 1 không có mệnh đề nào | Fixed |
-| F-039 | Gate 7b đọc khối commit theo từng dòng ⇒ khối nối dòng `\` vừa bị kêu nhầm vừa bị chấm sót bảy trên mười file | Fixed |
-| F-040 | Ba chỗ vượt ranh giới pha trong `architecture.md`, chỉ một có tên trong ngoại lệ — cả ba sinh TRƯỚC ADR-035 | Closed |
-| F-041 | Gate 1d mù với khối API rõ nhất repo (mẫu đòi `/` ngay sau động từ), và dòng ignore ghi sai mục | Closed |
-| F-042 | Mã QR của bàn phải không đoán được và đổi được — pha 1 không có mệnh đề nào | Fixed |
-| F-043 | Một lần gửi đơn phải thành đúng một đơn — pha 1 không có mệnh đề nào | Fixed |
-| F-044 | Một tập đối chiếu của hàng `I-004` không bao giờ rỗng được — việc trạm không có trạng thái huỷ | Open |
-| F-045 | Hai phiên chạy `db-check` cùng lúc dùng chung một compose project ⇒ gỡ database của nhau, đỏ giả | Fixed |
-| F-046 | Vết cập nhật ở chế độ mềm — lần sửa không khai lý do đi qua mà không vết (chủ repo chọn, P2-08) | Fixed (T-138, 2026-10-10) |
-| F-047 | Thêm một dòng con vào bản ghi đã có (món vào đơn, thành phần vào suất, xấp mệnh giá vào tiền đầu két) không để lại vết ai thêm (P2-11) | Fixed |
-| F-048 | Số tiền mặt đếm được cuối ngày và dấu *ngày đã đối soát xong* không có chỗ cất, không bước nào nhận — đối soát ngưỡng 0đ không chạy được trên dữ liệu (P2-13) | Fixed |
-| F-049 | Gate 1d mù với thẻ component có thuộc tính, thẻ đóng, tên component và route viết trong backtick — hai ca hồi quy chỉ thử hình thẻ ít gặp nhất (P2-14) | Fixed |
-| F-050 | Pha 1 đòi vết của mỗi lần *quán đang mù* và giao dòng yêu cầu cho "P1-07 hoặc pha 2"; không bước nào viết dòng `YC`, nên pha 2 không chấm nó (P2-14) | Fixed |
-| F-051 | `db-check` đỏ theo giờ trong ngày — đơn test `I-024` để lại sau COMMIT lấy lúc tạo từ đồng hồ, `I-008/1` bắt nó ngoài giờ bán (T-121) | Fixed |
-| F-052 | Mệnh đề admin `I-025`…`I-029` có ở `quality/invariants.md` trước khi có câu đối chiếu, nên phép so mã của `scripts/reconcile.sh` đỏ và `db-check` sẽ đỏ ở lát admin đầu tiên (P2A-01) | Fixed |
-| F-053 | Bước khoá chặn của `db-check` giả định bước migration trên cùng luôn có dữ liệu mồi, nên lát admin đầu tiên (hai bảng còn rỗng) làm nó đỏ oan — chỗ hở thứ hai cùng họ F-052 mà lượt chữa F-052 không đo (P2A-02) | Fixed |
-| F-054 | Phép từ chối `qd21_so_am` của `db-check` đòi mọi bảng có cột tiền có một dòng ở ngày bán mẫu, nên hai bảng tiền đầu tiên của mảng admin (tạm ứng, thưởng) làm nó đỏ — chỗ hở thứ ba cùng họ F-052 · F-053 (P2A-04) | Fixed |
-| F-055 | T-125 chèn một tập vào GIỮA ô `I-021` của pha 1, nên câu `I-021/2` · `I-021/6` của bộ đối chiếu mang số của tập khác, và không gate nào thấy (P2A-07) | Fixed |
-| F-056 | Số đếm cuối ngày của một ngày ĐÃ đóng dấu đối soát vẫn đổi được bằng một xấp mệnh giá thêm sau, không vết — dấu không giữ con số nó ký (review T-133) | Fixed |
-| F-057 | Một ngày đóng dấu đối soát được khi số đếm hay tiền đầu két không có dòng mệnh giá nào — *chưa đếm* và *đếm ra 0* cùng một hình (review T-133) | Fixed |
-| F-058 | Bốn lời từ chối do trigger phát ra (khoá ngày đã đối soát, ADR-080) chỉ mang mã lỗi chung và một câu tiếng Việt, không mang tên theo `QC-10` — backend pha 3 không nhận ra luật nào vừa chặn (P3-01) | Fixed |
-| F-059 | Mặc định *Thịt · Thường* (`shop-facts.md` §4.6 luật 8) chưa có chỗ cất trong dữ liệu, nên cửa tạo lượt gọi từ chối dòng thiếu lựa chọn thay vì điền — pha 4 cần nó trước màn gọi món (P3-06) | Fixed (T-169, 2026-10-11) |
+`./scripts/brief.sh` in mục **OPEN FINDINGS** với các finding đang mở.
+Trong file này, tìm dòng `**Status:**` có dòng ngay sau là `Open` để xem trực tiếp mục đó.
 
 ---
 

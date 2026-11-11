@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-322 **`README.md` vẽ cây thư mục cũ và bảng mục lục viết tay của `work/findings.md` lệch từ F-060** — L1 (chỉ tài liệu), xong 2026-11-11 theo Bước 8 của `work/proposals/danh-gia-he-thong-2026-11-11.md`; cây thư mục chỉ còn đường dẫn có thật, bảng mục lục thay bằng cách xem finding đang mở; Codex làm, Claude duyệt; gate đạt · [chi tiết](#t-322)
 - [x] T-317 **Nút chuyển chế độ của từng bàn ở Tổng thiếu theo bàn là chữ dài, chiếm chỗ ô bàn** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; nút *Chi tiết đem ra* / *Xem đơn đã đặt* thành nút icon, giữ tên truy cập và `aria-pressed`; Codex làm, Claude duyệt; fe-check 784/784 và gate đạt · [chi tiết](#t-317)
 - [x] T-316 **Dòng món ở Tổng thiếu theo bàn và Cộng thử ghép đơn dài như hoá đơn nên nhân viên khó đọc nhanh** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; mỗi dòng gọn thành "số + tên ngắn + lựa chọn" (ví dụ "1 canh không rau"), bỏ giá, suất trong combo và dòng tổng ở hai mục này; Claude làm; fe-check và gate đạt · [chi tiết](#t-316)
 - [x] T-313 **Vận hành chỉ đếm theo thành phần nên chủ quán không thấy dòng món của bàn như ở Đơn chờ** — L2 (thêm trường vào hợp đồng API), xong 2026-11-09; `GET /service-board` thêm `lines` và `lines_total_vnd` cho mỗi phiên, hợp đồng 0.71.0; *Cộng thử ghép đơn* thay hàng cột bằng dòng món, *Tổng thiếu theo bàn* giữ cột và ô đem ra, thêm dòng món khi mở chi tiết bàn; Codex làm, Claude sửa nốt và duyệt; be-check, fe-check 745/745 và gate đạt · [chi tiết](#t-313)
@@ -575,6 +576,21 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-322"></a>
+### T-322 — `README.md` vẽ cây thư mục cũ và bảng mục lục viết tay của `work/findings.md` lệch từ F-060
+
+Chủ repo yêu cầu 2026-11-11 (Bước 8 của bản đánh giá, phần không đụng owner nào khác). `README.md` còn vẽ `docs/architecture.md` không tồn tại; bảng *Mục lục* của `work/findings.md` chép lại trạng thái mà dòng `**Status:**` của từng mục đã giữ, và tự ghi là thiếu hàng từ F-060. Không làm trong task này: đổi tên `work/proposals/admin.admiadmin` và `updatee_sýstem.md` (ADR và findings cũ trỏ vào đúng hai tên ấy), chuyển danh sách Done sang archive (đổi owner ở `CLAUDE.md` §2), ngân sách độ dài cho ADR (chủ repo chưa quyết).
+
+Acceptance viết trước sửa:
+- A1 — Cây thư mục trong `README.md` chỉ nêu đường dẫn có thật, khớp các thư mục cấp một và owner ở `CLAUDE.md` §2; phần mức rủi ro và triết lý không đổi một chữ.
+- A2 — `work/findings.md` không còn bảng *Mục lục* và câu đếm của nó; thay bằng vài dòng nói cách xem mục đang mở (brief, hoặc `grep` dòng `**Status:**`); thân mọi mục `F-XXX` giữ nguyên từng byte.
+- A3 — Không script hay test nào đọc bảng ấy bị hỏng; nếu có script đọc nó thì dừng phần A2 và báo, không sửa script.
+- A4 — `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-322.txt`): `README.md`, `work/findings.md`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-322`, nhánh `codex/T-322`, nền `9ecd6b6`. Duyệt: Claude.
+
+Duyệt và bàn giao 2026-11-11 (thực hiện: Codex, duyệt: Claude): `README.md` chỉ đổi khối cây thư mục (42 đường dẫn, Codex kiểm 42/42 tồn tại; phần ngoài khối giống `HEAD` từng byte), Claude căn lại hai dòng chú thích lệch cột. `work/findings.md` bỏ mục *Mục lục* (câu đếm, ghi chú dựng bảng, bảng 59 hàng), thay bằng mục *Xem finding đang mở*; từ `### F-001` tới hết file giống `HEAD` từng byte. Không script nào đọc bảng ấy (`scripts/brief.sh` đọc tiêu đề `### F-` và dòng `**Status:**`); mục *OPEN FINDINGS* của brief trước và sau như nhau. Claude chạy lại `./scripts/gate.sh` trong worktree: không cổng nào đỏ (Gate 1 bỏ qua vì chỉ tài liệu đổi). Còn lại: worktree `../lean_wt/T-322` và nhánh `codex/T-322` chờ chủ repo gỡ.
 
 <a id="t-317"></a>
 ### T-317 — Nút chuyển chế độ của từng bàn ở Tổng thiếu theo bàn là chữ dài, chiếm chỗ ô bàn
