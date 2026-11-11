@@ -149,7 +149,8 @@ Then, at every level:
    ```
 
    If the task genuinely needs more, update your scope file and say so. Keep it
-   through *Done* (Gate 7b reads it) and delete it once the task is committed.
+   through *Done* (Gate 7b reads it); the `post-commit` hook deletes it once the
+   task is committed (§6.2).
 5. **Never invent business truth** — if a business rule is unclear, stop and ask.
    If you cannot ask, record it and leave the behavior undecided (§4). This rule
    has no L0.
@@ -311,6 +312,12 @@ warns while it is not installed (ADR-010).
 **Gate 9 — `scripts/hooks/pre-commit`** (2026-10-19, repo owner, F-025): git refuses a commit whose
 staged files are not all inside the scope file of **one** task; its header owns the rule. Same
 escape hatch, same install.
+
+**Dọn sau commit — `scripts/hooks/post-commit`** (2026-11-11, T-320): after a commit whose subject
+starts `<ID>:` and whose `work/backlog.md` row is ticked, git deletes `work/scope/<ID>.txt` and
+prints the commands that remove that task's worktree and branch; it never blocks, and its header
+owns the rule. `./scripts/archive-done.sh` moves ticked, committed rows from *In Progress* to
+*Done* and their long description to `work/backlog_archive.md` — it only prints until `--apply`.
 
 ## 7. Keeping the System Current
 

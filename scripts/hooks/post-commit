@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# T-320, 2026-11-11 — dọn scope sau khi chủ repo commit.
+# VÌ SAO: việc hẹn "sau commit" rơi vào lúc không phiên nào chạy. Hook này chạy
+# trong chính lệnh git commit của chủ repo, nên việc xoá thuộc lệnh của chủ repo
+# (CLAUDE.md §6, Quyền chạy lệnh).
+# LUẬT: với subject có mã, chỉ xoá scope của mã ấy nếu dòng backlog đã tick
+# [x]. Task nhiều commit giữ scope tới commit đã tick. Worktree chỉ được nhắc
+# lệnh gỡ, không tự gỡ. Với subject không mã (L0), scope không gắn dòng backlog
+# mà phủ hết commit chỉ được gợi ý lệnh xoá; hook không tự xoá.
+# IM LẶNG: subject không mã mà không có scope phù hợp hoặc thiếu check-scope;
+# subject có mã nhưng scope của mã không tồn tại (về scope).
+
+set -uo pipefail
+
+root="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+cd "$root" || exit 0
+subject="$(git log -1 --format=%s 2>/dev/null)" || exit 0
+hint_l0_scope() {
+  [ -f scripts/check-scope.sh ] && [ -f work/backlog.md ] || return 0
+  local files=() file scope name out
+  while IFS= read -r file; do
+    [ -n "$file" ] && files+=("$file")
+  done < <(git -c core.quotePath=false diff-tree --no-commit-id --name-only -r --root HEAD 2>/dev/null)
+  [ "${#files[@]}" -gt 0 ] || return 0
+  for scope in work/scope/*.txt; do
+    [ -f "$scope" ] || continue
+    sed 's/#.*//' "$scope" | grep -q '[^[:space:]]' || continue
+    name="${scope#work/scope/}"
+    name="${name%.txt}"
+    if awk -v id="$name" '
+      /^- \[[ x]\] / {
+        s = substr($0, 7)
+        if (s == id || index(s, id " ") == 1 || index(s, id "\t") == 1) found = 1
+      }
+      END { exit !found }
+    ' work/backlog.md; then
+      continue
+    fi
+    if out="$(./scripts/check-scope.sh --match --task "$name" "${files[@]}" 2>/dev/null)" && [ -z "$out" ]; then
+      printf 'post-commit: %s không gắn task nào và phủ hết commit này — nếu là scope của commit này thì xoá: rm %s\n' "$scope" "$scope"
+    fi
+  done
+}
+if ! [[ "$subject" =~ ^([A-Z][A-Z0-9]*-[0-9]+): ]]; then
+  hint_l0_scope
+  exit 0
+fi
+id="${BASH_REMATCH[1]}"
+scope="work/scope/$id.txt"
+
+if [ -f "$scope" ]; then
+  if [ -f work/backlog.md ] && grep -Eq "^- \[x\] ${id}([[:space:]]|$)" work/backlog.md; then
+    if rm -- "$scope"; then
+      printf 'post-commit: đã xoá %s — %s đã tick và vừa commit.\n' "$scope" "$id"
+    else
+      printf 'post-commit: không xoá được %s.\n' "$scope" >&2
+    fi
+  else
+    printf 'post-commit: giữ %s — dòng của %s chưa tick [x] (task nhiều commit).\n' "$scope" "$id"
+  fi
+fi
+
+path="" branch=""
+while IFS= read -r line; do
+  case "$line" in
+    worktree\ *) path="${line#worktree }"; branch="" ;;
+    branch\ refs/heads/*)
+      branch="${line#branch refs/heads/}"
+      if [ -n "$path" ] && [[ "$branch" == */"$id" ]]; then
+        printf 'post-commit: khi không còn cần worktree của %s, chạy:\n' "$id"
+        printf '  git worktree remove %q\n' "$path"
+        printf '  git branch -D %q\n' "$branch"
+      fi
+      ;;
+  esac
+done < <(git worktree list --porcelain 2>/dev/null)
+exit 0
