@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-325 **`db-check` đỏ ngay ở bản đã commit: I-043 và I-044 không có câu đối chiếu và không có dòng lý do ở bộ đối chiếu** — L1 (chỉ tài liệu ánh xạ, không đổi bất biến), xong 2026-11-12, F-080; thêm hai dòng §2.1 nêu vì sao hai mệnh đề không đọc lại được từ dữ liệu và test tầng 3 nào giữ chúng; Codex làm, Claude duyệt và chạy `db-check` đạt · [chi tiết](#t-325)
 - [x] T-324 **Mỗi lượt gate chạy lại mọi `scripts/*.test.sh` dù không script nào đổi, mất 94 trên 143 giây** — L1 (đổi điều kiện chạy một bước của Gate 1), xong 2026-11-12 theo Bước 6 của bản đánh giá; test của script chỉ chạy khi `scripts/` hay đầu vào riêng của từng file đổi, brief tự báo khi vượt trần; lượt không đổi `scripts/` ở cây chính còn 49 giây; Codex làm hai vòng, Claude duyệt; gate đạt · [chi tiết](#t-324)
 - [x] T-322 **`README.md` vẽ cây thư mục cũ và bảng mục lục viết tay của `work/findings.md` lệch từ F-060** — L1 (chỉ tài liệu), xong 2026-11-11 theo Bước 8 của `work/proposals/danh-gia-he-thong-2026-11-11.md`; cây thư mục chỉ còn đường dẫn có thật, bảng mục lục thay bằng cách xem finding đang mở; Codex làm, Claude duyệt; gate đạt · [chi tiết](#t-322)
 - [x] T-321 **Gate không in thời gian từng cổng nên chưa biết 231 giây nằm ở đâu so với hạn hook 180 giây** — L1 (chỉ đo, không đổi điều kiện đạt/đỏ), xong 2026-11-11 theo Bước 6 của bản đánh giá; gate in thời gian từng cổng, từng bước Gate 1 và ba test chậm nhất; đo ở cây chính: 222 giây, trong đó Gate 3 chiếm 106 giây; Codex làm, Claude duyệt; gate đạt · [chi tiết](#t-321)
@@ -580,6 +581,24 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-325"></a>
+### T-325 — `db-check` đỏ ngay ở bản đã commit: I-043 và I-044 không có câu đối chiếu và không có dòng lý do ở bộ đối chiếu
+
+Claude đo 2026-11-12 khi duyệt lát 1 của T-323 (worktree `../lean_wt/T-323`, nền `9ecd6b6`): `./scripts/db-check.sh` thoát đỏ ở *đối chiếu trên dữ liệu mồi* và *đối chiếu trên ngày vừa diễn* với `I-043 chưa có câu ở db/reconcile/ và không có dòng hợp lệ ở docs/product/2-db/09-doi-chieu-bat-bien.md §2.1`, và cùng câu cho `I-044`. Nguyên nhân: `I-043` vào `quality/invariants.md` ở commit `145af80` (CHAT-08, 2026-11-06) và `I-044` ở `a0dd20f` (CHAT-02, 2026-11-09), cả hai không kèm dòng nào ở §2.1 — trong khi `I-041` và `I-042` cùng họ thì có. Không ai thấy vì gate chỉ chạy `db-check` khi phía database đổi, và lượt chỉ đổi tài liệu thì bỏ qua cả Gate 1 (F-080).
+
+Việc phải làm: thêm cho `I-043` và `I-044` mỗi mã một dòng ở §2.1 theo đúng hình của `I-041` · `I-042`, với lý do **đúng sự thật** và test tầng 3 có thật. Việc không làm: không viết câu đối chiếu mới, không sửa `quality/invariants.md`, không sửa `scripts/reconcile.sh` để nó thôi kêu.
+
+Acceptance viết trước sửa:
+- A1 — §2.1 của `docs/product/2-db/09-doi-chieu-bat-bien.md` có đúng một dòng cho `I-043` và một dòng cho `I-044`, cùng bốn cột và cùng cách viết với dòng `I-041` · `I-042`; mọi dòng khác của file giữ nguyên.
+- A2 — Lý do của mỗi dòng nêu vì sao mệnh đề không đọc được từ dữ liệu đã lưu (điểm ADR liên quan) và tên test tầng 3 đang giữ nó, tên lấy bằng `grep` trong `be/`, không viết theo trí nhớ. Nếu một phần của mệnh đề **đọc được** từ dữ liệu đã lưu thì dừng, nêu trong báo cáo, không tự viết "(D)".
+- A3 — Các cổng tĩnh của `./scripts/gate.sh` xanh (Gate 1b, 1c, 1d, 1e đọc file này); Claude chạy `./scripts/db-check.sh` và hai phần đối chiếu hết đỏ vì hai mã này.
+
+Phạm vi (`work/scope/T-325.txt`): `docs/product/2-db/09-doi-chieu-bat-bien.md`; phần của Claude: `work/findings.md` (F-080), `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-325`, nhánh `codex/T-325`, nền `43a881b`. Duyệt: Claude.
+
+Duyệt và bàn giao 2026-11-12 (thực hiện: Codex một vòng, duyệt: Claude). Diff chỉ thêm hai dòng ngay sau dòng `I-042` ở §2.1. `I-043`: lý do (D) — server không cất gói gửi model hay kết quả công cụ, sổ gọi model không có người và phiên (ADR-139 điểm 2 · 5 · 7(a) · 9); giữ bằng `TestI043_DanhSachCongCuTheoLop`, `TestI043_CongCuKiemLaiQuyenLucChay`, `TestI043_ChieuTongQuanBoNguoi`. `I-044`: lý do (D) — server không cất lượt chat hay đề xuất (ADR-139 điểm 2, ADR-140 điểm 2) nên không gắn được một lần đổi bảng nghiệp vụ với một lượt chat; giữ bằng bốn test `TestI044_*` trong `be/internal/troly/`. Claude đối chiếu: bảy tên test đều có thật (`grep` trong `be/internal/troly/`), các điểm ADR nói đúng điều dòng viết; Codex không thấy phần nào của hai mệnh đề đọc lại được từ dữ liệu đã lưu, Claude đồng ý. Bằng chứng: `./scripts/reconcile.sh --codes` (không cần database) — `PASS mã I-0xx — 38 mã có câu + 4 mã chưa có lát = 42 mã`; `./scripts/db-check.sh` trong worktree — `db-check: PASS`, 710 giây.
+
+Còn lại: gốc của F-080 chưa chữa (phép soát mã chỉ đọc file nhưng chỉ chạy trong `db-check`); `db-check` còn in một dòng `printf: write error: Broken pipe` ở khoảng dòng 632 dù vẫn đạt — chưa xem; worktree `../lean_wt/T-325` và nhánh `codex/T-325` chờ chủ repo gỡ.
 
 <a id="t-324"></a>
 ### T-324 — Mỗi lượt gate chạy lại mọi `scripts/*.test.sh` dù không script nào đổi, mất 94 trên 143 giây

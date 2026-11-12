@@ -5187,3 +5187,29 @@ chạy gate ngoài sandbox khi duyệt.
 
 **Status:**
 Open
+
+### F-080 — `db-check` đỏ ở bản đã commit suốt sáu ngày mà không ai thấy: bất biến mới không kèm dòng ở bộ đối chiếu, và gate không chạy `db-check` cho lượt chỉ đổi tài liệu
+
+**Problem:**
+Đo 2026-11-12 (Claude Code, duyệt T-323, worktree sạch ở `9ecd6b6`): `./scripts/db-check.sh` đỏ với `I-043 chưa có câu ở
+db/reconcile/ và không có dòng hợp lệ ở docs/product/2-db/09-doi-chieu-bat-bien.md §2.1`, và cùng câu cho `I-044`. `I-043` vào
+`quality/invariants.md` ở `145af80` (CHAT-08, 2026-11-06), `I-044` ở `a0dd20f` (CHAT-02, 2026-11-09); không commit nào thêm dòng
+§2.1. `scripts/gate.sh` bỏ qua cả Gate 1 khi lượt chỉ đổi `docs/` · `quality/` · `work/` · `*.md`, và `scripts/verify.sh` chỉ
+gọi `db-check` khi `db/`, `compose.yaml`, hai script hay `docs/product/2-db/` đổi — một lượt thêm bất biến vào
+`quality/invariants.md` không chạm thứ nào trong đó.
+
+**Impact:**
+Từ 2026-11-06, mọi lượt có đổi phía database đều nhận một `db-check` đỏ không do diff của nó — đúng họ lỗi làm cổng mất giá trị
+(F-063, F-078). Phép đối chiếu là tầng bảo vệ cuối của bất biến; nó đỏ sẵn thì một lỗi thật ở đó không còn nổi lên.
+
+**Decision / Fix:**
+Chữa hiện trạng: T-325 thêm hai dòng §2.1. Chưa chữa gốc — ứng viên, chưa ai quyết: phép kiểm *mọi mã `I-0xx` có câu hoặc có
+dòng §2.1* chỉ đọc file (`./scripts/reconcile.sh --codes` chạy không cần database, vài giây), nên tách khỏi `db-check` thành một
+cổng tĩnh chạy mọi lượt (cùng kiểu Gate 1e). Đây là lần đầu ghi; theo
+`quality/review-gate.md` *Vòng phản hồi*, lần hai mới thành cổng.
+
+**Related task:**
+`T-325` · `T-323`
+
+**Status:**
+Open
