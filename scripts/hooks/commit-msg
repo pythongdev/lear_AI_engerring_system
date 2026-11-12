@@ -96,14 +96,18 @@ fi
 # nó: message được CHÉP LẠI thay vì viết cho thay đổi đang commit. Phần lớn là
 # chép đúng subject của HEAD, nên HEAD cũng bị so — trừ khi đang `--amend`: khi
 # đó commit mới THAY HEAD chứ không đứng cạnh nó, giữ nguyên subject là đúng.
+# T-327, F-079: ps bị chặn thì không nhận ra amend; không bỏ HEAD khỏi phép so
+# vì ADR-062 đã bác phương án đó.
 # Không có HEAD (commit đầu tiên) hay không ở trong repo git ⇒ không chặn.
 if head="$(git rev-parse -q --verify HEAD 2>/dev/null)"; then
   amending=0
+  ps_failed=0
   pid="$PPID"
   for _ in 1 2; do   # cha của hook là git; nếu git chạy hook qua sh thì là ông
-    args="$(ps -o args= -p "$pid" 2>/dev/null)" || break
+    args="$(ps -o args= -p "$pid" 2>/dev/null)" || { ps_failed=1; break; }
     case " $args " in *" --amend "*) amending=1; break ;; esac
-    pid="$(ps -o ppid= -p "$pid" 2>/dev/null | tr -d ' ')"
+    parent="$(ps -o ppid= -p "$pid" 2>/dev/null)" || { ps_failed=1; break; }
+    pid="$(printf '%s' "$parent" | tr -d ' ')"
     [ -n "$pid" ] || break
   done
   range="$head"
@@ -132,6 +136,13 @@ Sửa commit vừa làm mà giữ subject:  git commit --amend
 Nếu lần này thật sự cần đi qua:     git commit --no-verify
 
 EOF
+    if [ "$ps_failed" = 1 ] && [ "$dup" = "$(git log -1 --format='%h' "$head" 2>/dev/null)" ]; then
+      cat >&2 <<'EOF'
+Hook không đọc được dòng lệnh tiến trình ở môi trường này nên không nhận ra
+`--amend`. Nếu đang sửa commit vừa làm, chạy git commit --amend --no-verify.
+
+EOF
+    fi
     exit 1
   fi
 fi

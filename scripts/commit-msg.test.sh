@@ -18,6 +18,31 @@ TMPROOT="$(mktemp -d)"
 trap 'rm -rf "$TMPROOT"' EXIT
 fails=0
 n=0
+not_checked=0
+
+# Ba bản ps chỉ sống trong thư mục tạm: lỗi ngay, đọc được cả hai lệnh,
+# và chỉ lỗi ở lệnh đọc PPID thứ hai của vòng dò amend.
+mkdir -p "$TMPROOT/ps-fail" "$TMPROOT/ps-ok" "$TMPROOT/ps-ppid-fail"
+cat > "$TMPROOT/ps-fail/ps" <<'EOF'
+#!/bin/sh
+exit 1
+EOF
+cat > "$TMPROOT/ps-ok/ps" <<'EOF'
+#!/bin/sh
+case "$2" in
+  args=) printf '%s\n' 'git commit -m subject';;
+  ppid=) printf '\n';;
+  *) exit 1;;
+esac
+EOF
+cat > "$TMPROOT/ps-ppid-fail/ps" <<'EOF'
+#!/bin/sh
+case "$2" in
+  args=) printf '%s\n' 'git commit -m subject';;
+  *) exit 1;;
+esac
+EOF
+chmod +x "$TMPROOT/ps-fail/ps" "$TMPROOT/ps-ok/ps" "$TMPROOT/ps-ppid-fail/ps"
 
 # Tầng A chạy NGOÀI mọi repo git: luật 4 (F-031) so subject với lịch sử của repo
 # ở thư mục hiện tại, và ca của tầng A không được đỏ chỉ vì lịch sử thật của repo
@@ -37,6 +62,29 @@ msg() { # msg <exit mong đợi> <tên ca> <nội dung commit…>   (chạy tron
     echo "  ok   $name (exit $rc)"
   else
     echo "  FAIL $name — mong đợi exit $want, nhận $rc: $(printf '%s' "$out" | tr '\n' ' ')"
+    fails=$((fails + 1))
+  fi
+}
+
+duplicate_hint() { # duplicate_hint <tên ca> <thư mục ps giả> <subject> <có đoạn bổ sung: 0/1>
+  local name="$1" ps_dir="$2" subject="$3" want_hint="$4"
+  n=$((n + 1))
+  local f="$TMPROOT/msg.hint.$n" out rc good=0
+  printf '%s\n' "$subject" > "$f"
+  out="$(cd "$hist" && PATH="$ps_dir:$PATH" "$HOOK" "$f" 2>&1)"; rc=$?
+  if [ "$rc" = 1 ] && [[ "$out" == *F-031* ]]; then
+    if [ "$want_hint" = 1 ]; then
+      [[ "$out" == *"không đọc được dòng lệnh tiến trình"* ]] \
+        && [[ "$out" == *"git commit --amend --no-verify"* ]] && good=1
+    else
+      [[ "$out" != *"không đọc được dòng lệnh tiến trình"* ]] \
+        && [[ "$out" != *"git commit --amend --no-verify"* ]] && good=1
+    fi
+  fi
+  if [ "$good" = 1 ]; then
+    echo "  ok   $name"
+  else
+    echo "  FAIL $name — mong đợi exit 1, đoạn bổ sung=$want_hint; nhận exit $rc: $(printf '%s' "$out" | tr '\n' ' ')"
     fails=$((fails + 1))
   fi
 }
@@ -128,6 +176,14 @@ else
   echo "  FAIL lời từ chối thiếu hash cũ ($want_hash), F-031 hoặc --no-verify: $out"
   fails=$((fails + 1))
 fi
+duplicate_hint "ps lỗi ở args, trùng HEAD: lời từ chối giải thích amend" "$TMPROOT/ps-fail" \
+  "T-030: thêm một dòng nữa" 1
+duplicate_hint "ps lỗi ở ppid, trùng HEAD: lời từ chối giải thích amend" "$TMPROOT/ps-ppid-fail" \
+  "T-030: thêm một dòng nữa" 1
+duplicate_hint "ps đọc được, trùng HEAD: lời từ chối giữ nguyên" "$TMPROOT/ps-ok" \
+  "T-030: thêm một dòng nữa" 0
+duplicate_hint "ps lỗi, trùng commit cũ: lời từ chối giữ nguyên" "$TMPROOT/ps-fail" \
+  "T-020: đơn mang đi được trả trước" 0
 DIR="$TMPROOT"
 
 # --- tầng B — commit thật qua install-hooks.sh -------------------------------
@@ -215,16 +271,45 @@ fi
 # --amend THAY HEAD chứ không thêm commit đứng cạnh nó: giữ subject phải qua.
 echo hi4 >> "$repo/d.txt"
 git -C "$repo" add d.txt
-if git -C "$repo" commit --amend -m "T-025: thêm d.txt để thử luật trùng" >/dev/null 2>&1; then
-  echo "  ok   --amend giữ nguyên subject của HEAD vẫn qua"
+amend_same_subject_cases() {
+  local ps_args
+  # Cùng lệnh hook dùng để đọc tiến trình; cần cả exit 0 lẫn output khác rỗng.
+  if ps_args="$(ps -o args= -p "$$" 2>/dev/null)" && [ -n "$ps_args" ]; then
+    if git -C "$repo" commit --amend -m "T-025: thêm d.txt để thử luật trùng" >/dev/null 2>&1; then
+      echo "  ok   --amend giữ nguyên subject của HEAD vẫn qua"
+    else
+      echo "  FAIL --amend giữ nguyên subject của HEAD bị chặn"
+      fails=$((fails + 1))
+    fi
+    if ( cd "$repo" && git commit --amend --no-edit >/dev/null 2>&1 ); then
+      echo "  ok   --amend --no-edit vẫn qua"
+    else
+      echo "  FAIL --amend --no-edit bị chặn"
+      fails=$((fails + 1))
+    fi
+  else
+    echo "  NOTE --amend giữ nguyên subject của HEAD vẫn qua — không kiểm được ở môi trường này: ps bị chặn nên hook không nhận ra --amend (work/findings.md F-079)"
+    echo "  NOTE --amend --no-edit vẫn qua — không kiểm được ở môi trường này: ps bị chặn nên hook không nhận ra --amend (work/findings.md F-079)"
+    not_checked=$((not_checked + 2))
+  fi
+}
+amend_same_subject_cases
+
+# Tự kiểm nhánh môi trường chặn ps. Hàm chạy trong subshell nên không sửa repo
+# hoặc bộ đếm của lượt thật; hai NOTE phải đúng nguyên văn và không tăng fails.
+fake_out="$(
+  before_fails=$fails
+  before_not_checked=$not_checked
+  PATH="$TMPROOT/ps-fail:$PATH" amend_same_subject_cases
+  [ "$fails" -eq "$before_fails" ] && [ "$not_checked" -eq $((before_not_checked + 2)) ]
+)"; fake_rc=$?
+expected_fake_out="$(printf '%s\n' \
+  '  NOTE --amend giữ nguyên subject của HEAD vẫn qua — không kiểm được ở môi trường này: ps bị chặn nên hook không nhận ra --amend (work/findings.md F-079)' \
+  '  NOTE --amend --no-edit vẫn qua — không kiểm được ở môi trường này: ps bị chặn nên hook không nhận ra --amend (work/findings.md F-079)')"
+if [ "$fake_rc" -eq 0 ] && [ "$fake_out" = "$expected_fake_out" ]; then
+  echo "  ok   ps giả luôn lỗi: hai NOTE, không tính ca hỏng"
 else
-  echo "  FAIL --amend giữ nguyên subject của HEAD bị chặn"
-  fails=$((fails + 1))
-fi
-if ( cd "$repo" && git commit --amend --no-edit >/dev/null 2>&1 ); then
-  echo "  ok   --amend --no-edit vẫn qua"
-else
-  echo "  FAIL --amend --no-edit bị chặn"
+  echo "  FAIL ps giả luôn lỗi: mong hai NOTE, không tính ca hỏng; nhận exit $fake_rc: $fake_out"
   fails=$((fails + 1))
 fi
 # …nhưng amend thành subject của một commit CŨ HƠN vẫn là trùng.
@@ -245,8 +330,16 @@ else
 fi
 
 if [ "$fails" -eq 0 ]; then
-  echo "[test] commit-msg: tất cả ca đều đạt"
+  if [ "$not_checked" -eq 0 ]; then
+    echo "[test] commit-msg: tất cả ca đều đạt"
+  else
+    echo "[test] commit-msg: tất cả ca được kiểm đều đạt; $not_checked ca không kiểm được ở môi trường này (F-079)"
+  fi
   exit 0
 fi
-echo "[test] commit-msg: $fails ca hỏng"
+if [ "$not_checked" -eq 0 ]; then
+  echo "[test] commit-msg: $fails ca hỏng"
+else
+  echo "[test] commit-msg: $fails ca hỏng; $not_checked ca không kiểm được ở môi trường này (F-079)"
+fi
 exit 1

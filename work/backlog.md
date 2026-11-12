@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-327 **Hai ca `--amend` của test Gate 8 đỏ ở nơi `ps` bị chặn, làm gate của Codex đỏ không do diff** — L1 (test tự nói khi không kiểm được, hook nói rõ lý do; không nới luật trùng subject), xong 2026-11-12, F-079; ở nơi `ps` bị chặn hai ca được nêu tên là không kiểm được thay vì đỏ, lời từ chối của hook giải thích và chỉ đường `--amend --no-verify`; Codex làm một vòng, Claude duyệt; gate đạt · [chi tiết](#t-327)
 - [x] T-325 **`db-check` đỏ ngay ở bản đã commit: I-043 và I-044 không có câu đối chiếu và không có dòng lý do ở bộ đối chiếu** — L1 (chỉ tài liệu ánh xạ, không đổi bất biến), xong 2026-11-12, F-080; thêm hai dòng §2.1 nêu vì sao hai mệnh đề không đọc lại được từ dữ liệu và test tầng 3 nào giữ chúng; Codex làm, Claude duyệt và chạy `db-check` đạt · [chi tiết](#t-325)
 - [x] T-324 **Mỗi lượt gate chạy lại mọi `scripts/*.test.sh` dù không script nào đổi, mất 94 trên 143 giây** — L1 (đổi điều kiện chạy một bước của Gate 1), xong 2026-11-12 theo Bước 6 của bản đánh giá; test của script chỉ chạy khi `scripts/` hay đầu vào riêng của từng file đổi, brief tự báo khi vượt trần; lượt không đổi `scripts/` ở cây chính còn 49 giây; Codex làm hai vòng, Claude duyệt; gate đạt · [chi tiết](#t-324)
 - [ ] T-323 **Sáu finding "gate đỏ rồi chạy lại thì xanh" chưa được chữa chung: các gói test Go dùng chung một database, F-078 chưa rõ nguyên nhân** — L2, mở 2026-11-11 theo Bước 9 của `work/proposals/danh-gia-he-thong-2026-11-11.md`; lát 1 (L1, Codex làm, Claude duyệt, mở 2026-11-12): `db-check` không gỡ database `be-check` giữ lại và test combo tự khai ca quầy gây lỗi; lát 2 (tách database theo gói) chờ Claude thiết kế và viết test trước · [chi tiết](#t-323)
@@ -582,6 +583,25 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-327"></a>
+### T-327 — Hai ca `--amend` của test Gate 8 đỏ ở nơi `ps` bị chặn, làm gate của Codex đỏ không do diff
+
+Chủ repo 2026-11-12 dặn tiếp tục giao Codex làm, Claude kiểm. F-079: `scripts/hooks/commit-msg` nhận biết `--amend` bằng `ps`; sandbox của Codex chặn `ps`, nên hai ca `--amend` của `scripts/commit-msg.test.sh` đỏ ở đó và làm đỏ gate của mọi phiếu việc có đổi `scripts/` (T-321, T-324). Codex khảo sát 2026-11-12 bằng thí nghiệm trên git 2.44.0: **không có tín hiệu nào** ngoài dòng lệnh của tiến trình cha phân biệt được `--amend --no-edit` với `git commit -C HEAD` — tham số hook, message, `HEAD`, mọi biến `GIT_*` và các file trạng thái trong `.git/` đều giống nhau; so mốc tác giả thì nhầm `-C HEAD`, nhầm commit cùng giây và sót `--amend --reset-author`.
+
+Quyết định của Claude 2026-11-12, chưa được chủ repo xác nhận: **không nới Gate 8**. Bỏ `HEAD` khỏi phép so khi `ps` lỗi chính là phương án ADR-062 đã bỏ (nó thả đúng bốn trên năm nhóm commit trùng subject). Thứ cần chữa là cổng đỏ sai lý do ở sandbox, và Codex không bao giờ commit, nên chữa ở phía test và lời báo: test tự dò xem môi trường có đọc được dòng lệnh tiến trình không, không đọc được thì hai ca `--amend` được nêu tên là *không kiểm được ở đây* thay vì đỏ; hook khi từ chối vì trùng `HEAD` mà không đọc được tiến trình thì nói thêm điều đó và đường đi đúng.
+
+Acceptance viết trước sửa:
+- A1 — `scripts/commit-msg.test.sh` dò khả năng đọc dòng lệnh tiến trình bằng đúng lệnh `ps` mà hook dùng; đọc được ⇒ hai ca `--amend` giữ subject chạy và chấm như hiện nay; không đọc được ⇒ hai ca ấy không tính là đỏ, in một dòng nêu tên từng ca, lý do và F-079; mọi ca khác vẫn chạy và chấm ở cả hai môi trường.
+- A2 — Có ca chứng minh A1 bằng một `ps` giả luôn lỗi đặt trước trong `PATH`: file test thoát 0 và in dòng *không kiểm được*; với `ps` thật thì hai ca chạy và đạt.
+- A3 — `scripts/hooks/commit-msg`: luật trùng subject không đổi một ca nào; khi từ chối vì trùng chính `HEAD` **và** không đọc được dòng lệnh tiến trình, lời từ chối có thêm một đoạn nói hook không nhận ra được `--amend` ở môi trường này và nếu đang amend thì dùng `git commit --amend --no-verify`.
+- A4 — `./scripts/gate.sh` xanh ngoài sandbox (Claude chạy); trong sandbox của Codex file test này không còn làm gate đỏ.
+
+Phạm vi (`work/scope/T-327.txt`): `scripts/commit-msg.test.sh`, `scripts/hooks/commit-msg`; phần của Claude: `work/findings.md` (F-079), `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-327`, nhánh `codex/T-327`, nền `9d75279`. Duyệt: Claude.
+
+Duyệt và bàn giao 2026-11-12 (thực hiện: Codex một vòng, duyệt: Claude). `scripts/commit-msg.test.sh`: dò bằng đúng lệnh `ps -o args=` của hook; đọc được thì hai ca `--amend` giữ subject chạy và chấm như cũ, không đọc được thì mỗi ca in một dòng `NOTE … không kiểm được ở môi trường này … F-079` và dòng tổng kết nói rõ; thêm ca `ps giả luôn lỗi: hai NOTE, không tính ca hỏng` và bốn ca cho lời từ chối. `scripts/hooks/commit-msg`: ghi nhận khi một trong hai lệnh `ps` của vòng dò thất bại; khi từ chối vì trùng **chính `HEAD`** mà `ps` đã thất bại thì thêm đoạn giải thích và đường `git commit --amend --no-verify`; điều kiện chọn lịch sử để so, tìm subject trùng và từ chối không đổi (Claude đọc từng hunk). Bằng chứng: trong sandbox của Codex (`ps` trả `operation not permitted`) file test thoát 0 với hai dòng NOTE và gate của Codex xanh; Claude chạy ngoài sandbox — hai ca `--amend` chạy thật và đạt, ca `ps` giả đạt, `./scripts/gate.sh` ở worktree và ở cây chính đều không cổng nào đỏ, 21 file test qua.
+
+Còn lại: ở môi trường chặn `ps`, `git commit --amend` giữ nguyên subject vẫn bị hook từ chối (nay có lời giải thích) — giới hạn đã chấp nhận, vì không có tín hiệu nào khác để nhận ra amend; worktree `../lean_wt/T-327` và nhánh `codex/T-327` chờ chủ repo gỡ.
 
 <a id="t-325"></a>
 ### T-325 — `db-check` đỏ ngay ở bản đã commit: I-043 và I-044 không có câu đối chiếu và không có dòng lý do ở bộ đối chiếu

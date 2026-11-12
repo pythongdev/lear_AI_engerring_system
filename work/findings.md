@@ -5186,12 +5186,20 @@ phải dừng ở ranh giới scope; cùng họ "đỏ rồi chạy lại ở ch
 Chưa sửa. Ứng viên (task L1 riêng, vì đụng Gate 8): nhận biết `--amend` không qua bảng tiến trình, hoặc khi không đọc được tiến
 trình cha thì không coi subject của chính `HEAD` là trùng. Tới khi sửa: phiếu việc dặn Codex coi hai ca này là đã biết, và Claude
 chạy gate ngoài sandbox khi duyệt.
+*Bổ sung 2026-11-12 (Codex khảo sát bằng thí nghiệm trên git 2.44.0, Claude quyết):* không có tín hiệu nào ngoài dòng lệnh của
+tiến trình cha phân biệt được `--amend --no-edit` với `git commit -C HEAD` — tham số hook, message, `HEAD`, mọi biến `GIT_*` và
+file trạng thái trong `.git/` giống hệt nhau; so mốc tác giả thì nhầm `-C HEAD`, nhầm commit cùng giây, sót `--amend
+--reset-author`. Cả hai ứng viên trên vì thế đều **bị bỏ**: ứng viên thứ hai chính là phương án ADR-062 đã bỏ. Hướng chữa (T-327):
+giữ nguyên luật của Gate 8, để test tự nói *không kiểm được ở đây* khi `ps` bị chặn, và để lời từ chối của hook nói rõ lý do.
+*Đã chữa 2026-11-12 (T-327, Codex làm, Claude duyệt):* đúng hướng trên. Trong sandbox của Codex file test thoát 0 với hai dòng
+`NOTE`, gate của Codex xanh; ngoài sandbox hai ca vẫn chạy thật. Giới hạn còn lại, đã chấp nhận: nơi chặn `ps`, amend giữ nguyên
+subject vẫn bị từ chối, nay kèm lời giải thích và đường `git commit --amend --no-verify`.
 
 **Related task:**
 `T-321` · `T-324`
 
 **Status:**
-Open
+Fixed
 
 ### F-080 — `db-check` đỏ ở bản đã commit suốt sáu ngày mà không ai thấy: bất biến mới không kèm dòng ở bộ đối chiếu, và gate không chạy `db-check` cho lượt chỉ đổi tài liệu
 
