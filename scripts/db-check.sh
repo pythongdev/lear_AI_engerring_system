@@ -45,11 +45,26 @@ fail() { echo "FAIL $*"; failed=1; }
 # Chỉ nhận tên có PID dương; tên cũ không hậu tố và project làm việc không khớp.
 # PID được tái dùng, hay PID của user khác (kill -0 trả EPERM), vẫn coi là đang
 # sống: hỏi `ps -p`, không hỏi `kill -0` — thà để sót rác hơn gỡ nhầm.
+db_check_stale_pid() {
+  local project="$1"
+  [[ "$project" =~ ^banhcuon_check_([1-9][0-9]*)(_[a-z0-9_-]+)?$ ]] || return 1
+  printf '%s\n' "${BASH_REMATCH[1]}"
+}
+
+db_check_kept() {
+  local project="$1" kept_dir="$2"
+  [ -f "$kept_dir/$project" ]
+}
+
 cleanup_stale() {
-  local project pid
+  local project pid kept_dir
+  kept_dir="$(git rev-parse --git-common-dir)/lean-ai-kept-db"
   while IFS= read -r project; do
-    [[ "$project" =~ ^banhcuon_check_([1-9][0-9]*)(_[a-z0-9_-]+)?$ ]] || continue
-    pid="${BASH_REMATCH[1]}"
+    pid="$(db_check_stale_pid "$project")" || continue
+    if db_check_kept "$project" "$kept_dir"; then
+      echo "NOTE db-check — bỏ qua project được giữ để điều tra: $project (xoá dấu: $kept_dir/$project)"
+      continue
+    fi
     ps -p "$pid" >/dev/null 2>&1 && continue
     if docker compose -p "$project" down -v --remove-orphans >/dev/null 2>&1; then
       echo "NOTE db-check — đã gỡ project rác $project (PID $pid không còn sống)"

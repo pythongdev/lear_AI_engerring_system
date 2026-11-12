@@ -5155,6 +5155,11 @@ Gate đỏ ở test không liên quan diff; phiên dễ đi tìm lỗi trong vi�
 **Decision / Fix:**
 Chưa sửa. Gặp lại: chạy lại một lần trước khi tìm trong diff, ghi ngày vào đây. Cách sửa ứng viên (task L1 riêng, Claude giao): dựng như
 `tongket` — `greatest(now(), started_at + interval '1 second')` — sau khi tìm được ca mở nào có mốc sau.
+*Bổ sung 2026-11-12 (T-323 lát 1, Codex làm, Claude duyệt):* `dung` nay tự khai khi đỏ — tên test, `transaction_timestamp()`,
+`clock_timestamp()` và từng ca `counter_duty` đang mở; Claude cài thử một ca mở bắt đầu sau một giờ và lời đỏ nêu đúng ca ấy. Lần tái
+diễn kế tiếp: chép nguyên lời ấy vào đây. Hai điều rút ra từ lượt khảo sát và lượt cài lỗi: (1) cách sửa ứng viên `greatest(…)`
+**chưa đủ** — nếu ca cũ bắt đầu ở tương lai, ca mới mở tại `now()` có thể chồng khoảng và bị ràng buộc loại trừ chặn; (2) một ca
+mở như vậy làm đỏ ít nhất tám gói test khác trong cùng lượt `be-check`, vì mọi gói dùng chung một database (lát 2 của T-323).
 
 **Related task:**
 `T-310`

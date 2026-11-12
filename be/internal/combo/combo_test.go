@@ -127,13 +127,27 @@ func dung(t *testing.T) khung {
 	k.datGio(t, k.dong+2*time.Hour)
 	k.chu = k.so(t, "INSERT INTO shop.person (display_name, is_owner) VALUES ($1, true) RETURNING id", "test-chủ quán · "+t.Name())
 	k.quay = k.so(t, "INSERT INTO shop.person (display_name, is_owner) VALUES ($1, false) RETURNING id", "test-người quầy · "+t.Name())
+	dongCaLoi := false
 	if err := k.coVet(func(tx pgx.Tx) error {
 		if _, err := tx.Exec(ctx, "UPDATE shop.counter_duty SET ended_at = now() WHERE ended_at IS NULL"); err != nil {
+			dongCaLoi = true
 			return err
 		}
 		_, err := tx.Exec(ctx, "INSERT INTO shop.counter_duty (person_id, started_at) VALUES ($1, now())", k.quay)
 		return err
 	}); err != nil {
+		if dongCaLoi {
+			var giaoDich, dongHo time.Time
+			var caMo string
+			loiDoc := k.owner.QueryRow(ctx, `SELECT transaction_timestamp(), clock_timestamp(),
+				COALESCE(jsonb_agg(jsonb_build_object('id', id, 'person_id', person_id, 'started_at', started_at) ORDER BY id), '[]'::jsonb)
+				FROM shop.counter_duty WHERE ended_at IS NULL`).Scan(&giaoDich, &dongHo, &caMo)
+			if loiDoc != nil {
+				t.Fatalf("%s: đóng ca lỗi: %v; đọc đồng hồ và ca đang mở lỗi: %v", t.Name(), err, loiDoc)
+			}
+			t.Fatalf("%s: đóng ca lỗi: %v; transaction_timestamp=%s; clock_timestamp=%s; ca đang mở (id, person_id, started_at)=%s",
+				t.Name(), err, giaoDich, dongHo, caMo)
+		}
 		t.Fatal(err)
 	}
 	return k

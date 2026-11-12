@@ -54,6 +54,43 @@ d="$TMPROOT/mattaiLieu"; mkrepo "$d"
 printf '# rỗng\n' > "$d/docs/product/2-db/10-quy-uoc-code.md"
 check "owner mất khối QC-17 ⇒ đỏ, không im" 1 "không đọc được khối phép kiểm QC-17" "$d"
 
+# Chạy riêng cleanup_on_exit trong subshell: nhánh giữ không gọi Docker.
+run_keep_cleanup() { # run_keep_cleanup <repo tạm> <project>
+  (
+    cd "$1" || exit 1
+    eval "$(sed -n '/^cleanup_on_exit() {$/,/^}$/p' "$ROOT/scripts/be-check.sh")"
+    PROJECT="$2"
+    keep_db=1
+    BANHCUON_TEST_OWNER_DSN=owner-test
+    BANHCUON_TEST_APP_DSN=app-test
+    false
+    cleanup_on_exit
+  ) 2>&1
+}
+
+project=banhcuon_check_123_be_1700000000_42
+d="$TMPROOT/giulai"; mkdir -p "$d"; git -C "$d" init -q
+out="$(run_keep_cleanup "$d" "$project")"; rc=$?
+marker="$d/.git/lean-ai-kept-db/$project"
+if [ "$rc" = 1 ] && [ -f "$marker" ] && [ ! -s "$marker" ] &&
+   [[ "$out" == *"rm -f -- .git/lean-ai-kept-db/$project"* ]]; then
+  echo "  ok   giữ database ⇒ tạo dấu rỗng và in lệnh dọn (exit $rc)"
+else
+  echo "  FAIL giữ database — exit $rc, dấu: $marker, output: $out"
+  fails=$((fails + 1))
+fi
+
+d="$TMPROOT/khongtaodau"; mkdir -p "$d"; git -C "$d" init -q
+: > "$d/.git/lean-ai-kept-db"
+out="$(run_keep_cleanup "$d" "$project")"; rc=$?
+if [ "$rc" = 1 ] && [[ "$out" == *"NOTE be-check — không tạo được dấu giữ"* ]] &&
+   [[ "$out" == *"BE_CHECK_KEEP_DB=1, giữ database lúc đỏ"* ]]; then
+  echo "  ok   không tạo được dấu ⇒ báo NOTE và vẫn giữ database (exit $rc)"
+else
+  echo "  FAIL không tạo được dấu — exit $rc, output: $out"
+  fails=$((fails + 1))
+fi
+
 if [ "$fails" -eq 0 ]; then
   echo "be-check.test: PASS"
 else

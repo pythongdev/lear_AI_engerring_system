@@ -47,10 +47,18 @@ cleanup_on_exit() {
   trap - EXIT
   trap '' INT TERM
   if [ "$keep_db" = 1 ]; then
+    local kept_dir kept_marker
+    kept_dir="$(git rev-parse --git-common-dir)/lean-ai-kept-db"
+    kept_marker="$kept_dir/$PROJECT"
+    if mkdir -p "$kept_dir" 2>/dev/null && : > "$kept_marker" 2>/dev/null; then
+      :
+    else
+      echo "NOTE be-check — không tạo được dấu giữ $kept_marker; database vẫn giữ nhưng db-check có thể dọn lượt sau"
+    fi
     echo "NOTE be-check — BE_CHECK_KEEP_DB=1, giữ database lúc đỏ: project $PROJECT"
     echo "     DSN chủ: $BANHCUON_TEST_OWNER_DSN"
     echo "     DSN app: $BANHCUON_TEST_APP_DSN"
-    echo "     dọn khi xong: docker compose -p $PROJECT down -v"
+    printf '     dọn khi xong: docker compose -p %s down -v && rm -f -- %q\n' "$PROJECT" "$kept_marker"
     exit "$status"
   fi
   compose down -v --remove-orphans >/dev/null 2>&1
