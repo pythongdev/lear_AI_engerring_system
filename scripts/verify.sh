@@ -21,7 +21,8 @@
 #           scripts/db-check.sh.
 #           It needs Docker; without Docker db-check.sh FAILS, it does not skip
 #           (docs/product/2-db/10-quy-uoc-code.md QC-07).
-#   test  — every scripts/*.test.sh, always. These guard the gates themselves.
+#   test  — scripts/ changed: every scripts/*.test.sh. Otherwise, only tests
+#           whose own real-repo inputs changed; report how many were skipped.
 #
 # set -e: the first failing step stops the run and the exit code is non-zero.
 # The last line "Verification passed." is what gate.sh labels PASS (T-084).
@@ -29,6 +30,10 @@
 # only if it exists as one of the steps above.
 # T-321 (2026-11-11): in số giây nguyên của mỗi bước đã chạy và mỗi file test;
 # dòng cuối vẫn là "Verification passed." để gate.sh nhận kết quả như trước.
+# T-324 (2026-11-12): lượt đổi fe/ đo 143 giây ở gate, riêng 20 script test tốn
+# 94 giây (gate.test.sh 26 giây, brief.test.sh 20 giây), gần hạn 180 giây của Stop hook.
+# Mọi test chạy khi scripts/ đổi; lượt khác chọn từng test theo đầu vào riêng,
+# để lượt chỉ đổi fe/ không kéo theo cả 20 test script.
 set -euo pipefail
 
 time_step() { # time_step <tên bước> <lệnh> [đối số...]
@@ -97,10 +102,46 @@ else
   echo "[db] skipped — nothing under db/, compose.yaml, scripts/db-check.sh, scripts/reconcile.sh or docs/product/2-db/ changed"
 fi
 
+# Bảng file test → đầu vào NGOÀI scripts/ đọc từ repo thật. Không có nhánh
+# nghĩa là test chỉ đọc script/fixture; brief.test.sh/E7 chỉ đo trạng thái.
+test_input_changed() { # test_input_changed <tên file test>
+  case "$1" in
+    fe-check.test.sh)          # fe/ thật và hợp đồng API thật
+      set -- fe/ docs/product/3-be/openapi.yaml ;;
+    check-write-paths.test.sh) # chạy check-write-paths.sh trên cây be/ và migration thật
+      set -- be/ db/migrations/ ;;
+    check-sqlcgen.test.sh)     # chép go.mod, go.sum và dùng migration thật
+      set -- be/go.mod be/go.sum db/migrations/ ;;
+    reconcile.test.sh)         # chép QD thật vào fixture
+      set -- db/reconcile/qd.sql ;;
+    be-check.test.sh)          # chép owner QC-17 và invariant thật vào fixture
+      set -- docs/product/2-db/10-quy-uoc-code.md quality/invariants.md ;;
+    *) return 1 ;;
+  esac
+  [ -n "$(git status --porcelain --untracked-files=all -- "$@")" ]
+}
+
+scripts_changed="$(git status --porcelain --untracked-files=all -- scripts/)"
+tests_to_run=()
+tests_to_run_count=0
+skipped_tests=0
 for t in "$(cd "$(dirname "$0")" && pwd)"/*.test.sh; do
   [ -f "$t" ] || continue
-  echo "[test] $t"
-  time_step "test:${t##*/}" "$t"
+  if [ -n "$scripts_changed" ] || test_input_changed "${t##*/}"; then
+    tests_to_run+=("$t")
+    tests_to_run_count=$((tests_to_run_count + 1))
+  else
+    skipped_tests=$((skipped_tests + 1))
+  fi
 done
+if [ "$skipped_tests" -gt 0 ]; then
+  printf '[test] skipped — %s file: không có gì dưới scripts/ đổi và đầu vào riêng của chúng không đổi\n' "$skipped_tests"
+fi
+if [ "$tests_to_run_count" -gt 0 ]; then
+  for t in "${tests_to_run[@]}"; do
+    echo "[test] $t"
+    time_step "test:${t##*/}" "$t"
+  done
+fi
 
 echo "Verification passed."

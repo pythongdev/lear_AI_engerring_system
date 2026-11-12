@@ -19,9 +19,9 @@ CHECK_SCOPE="$(cd "$(dirname "$0")" && pwd)/check-scope.sh"
 TMPROOT="$(mktemp -d)"
 trap 'rm -rf "$TMPROOT"' EXIT
 fails=0
-# Hook Claude Code nạp khoảng 10 000 ký tự; ngày 2026-11-11 brief 141 KB
-# khiến phiên chỉ thấy 2 KB đầu. Chừa khoảng trống cho chênh lệch byte/ký tự.
-BRIEF_MAX_BYTES=9000
+# Đọc trần từ script thật; test không giữ bản sao con số.
+BRIEF_MAX_BYTES="$(sed -n 's/^BRIEF_MAX_BYTES="${BRIEF_MAX_BYTES:-\([0-9][0-9]*\)}"$/\1/p' "$SCRIPT")"
+if [ -z "$BRIEF_MAX_BYTES" ]; then echo 'brief.test: thiếu BRIEF_MAX_BYTES trong brief.sh'; exit 1; fi
 
 MARK="CẢNH BÁO"
 
@@ -67,7 +67,7 @@ BOUT="$TMPROOT/out.txt"
 rc=0
 out=""
 brief() {
-  ( cd "$1" && "$SCRIPT" 2>/dev/null ) > "$BOUT"
+  ( cd "$1" && BRIEF_MAX_BYTES="${BRIEF_TEST_LIMIT:-$BRIEF_MAX_BYTES}" "$SCRIPT" 2>/dev/null ) > "$BOUT"
   rc=$?
   out="$(cat "$BOUT")"
 }
@@ -644,13 +644,32 @@ if [ "$size" -le "$BRIEF_MAX_BYTES" ]; then echo "  ok   E6 300 orphan, 30 dòng
 else echo "  FAIL E6 brief $size > $BRIEF_MAX_BYTES byte"; fails=$((fails + 1)); fi
 exit0 "E6" "$rc"
 
-# E7. Đo chính repo chứa test để độ phình của brief thật làm gate đỏ.
+# E7. Repo thật vẫn phải trả output và exit 0; brief tự cảnh báo nếu phình.
 repo_root="$(git -C "$(dirname "$SCRIPT")" rev-parse --show-toplevel)"
 brief "$repo_root"
-size="$(wc -c < "$BOUT" | tr -d ' ')"
-if [ "$size" -le "$BRIEF_MAX_BYTES" ]; then echo "  ok   E7 repo thật: $size <= $BRIEF_MAX_BYTES byte"
-else echo "  FAIL E7 brief repo thật $size > $BRIEF_MAX_BYTES byte"; fails=$((fails + 1)); fi
+echo "  ok   E7 repo thật: tự đo trong brief.sh"
 exit0 "E7" "$rc"
+
+# E8. Dùng cùng một repo tạm với hai trần: số byte cảnh báo là kích thước
+# output gốc, cảnh báo ở dòng thứ hai và trong 400 byte đầu; dưới trần thì im.
+r="$(newrepo e8 no)"
+BRIEF_TEST_LIMIT=1000000 brief "$r"
+size="$(wc -c < "$BOUT" | tr -d ' ')"
+case "$out" in *'→ CẢNH BÁO: brief dài'*)
+  echo '  FAIL E8 dưới trần vẫn cảnh báo'; fails=$((fails + 1)) ;;
+  *) echo "  ok   E8 dưới trần không cảnh báo ($size byte)" ;; esac
+exit0 "E8 dưới trần" "$rc"
+BRIEF_TEST_LIMIT=100 brief "$r"
+second="$(sed -n '2p' "$BOUT")"
+case "$second" in
+  "→ CẢNH BÁO: brief dài $size byte, quá trần 100 — hook của Claude Code sẽ cắt phần sau. Tìm mục phình: ./scripts/brief.sh | less")
+    echo '  ok   E8 dòng thứ hai nêu đúng byte và trần' ;;
+  *) echo "  FAIL E8 dòng thứ hai: $second"; fails=$((fails + 1)) ;;
+esac
+if head -c 400 "$BOUT" | grep -qF '→ CẢNH BÁO: brief dài'; then
+  echo '  ok   E8 cảnh báo trong 400 byte đầu'
+else echo '  FAIL E8 cảnh báo ngoài 400 byte đầu'; fails=$((fails + 1)); fi
+exit0 "E8 vượt trần" "$rc"
 
 if [ "$fails" -ne 0 ]; then
   echo "brief: $fails ca FAIL"; exit 1

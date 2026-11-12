@@ -5161,3 +5161,29 @@ Chưa sửa. Gặp lại: chạy lại một lần trước khi tìm trong diff,
 
 **Status:**
 Open
+
+### F-079 — Hook `commit-msg` nhận biết `--amend` bằng `ps`; nơi nào chặn `ps` thì hai ca `--amend` của test đỏ và gate đỏ giả
+
+**Problem:**
+Đo 2026-11-11 và 2026-11-12 (T-321, T-324): trong sandbox `workspace-write` của Codex, `./scripts/gate.sh` đỏ ở
+`scripts/commit-msg.test.sh`, đúng hai ca *"--amend giữ nguyên subject của HEAD vẫn qua"* và *"--amend --no-edit vẫn qua"*; Claude
+chạy lại cùng cây ngoài sandbox thì file test ấy và cả gate đều xanh. Codex tìm nguyên nhân 2026-11-12 (chỉ đọc, có phép thử):
+`scripts/hooks/commit-msg` gọi `ps -o args=` (khoảng dòng 101–110) để tìm `--amend` trong lệnh của tiến trình cha; `ps` bị chặn
+(`operation not permitted`) thì `amending` giữ 0 và hook so subject với chính `HEAD`, nên từ chối như subject trùng. Thay `ps` bằng
+một bản giả luôn lỗi thì ngoài sandbox cũng đỏ đúng hai ca ấy.
+
+**Impact:**
+Mọi phiếu việc của Codex có đổi file dưới `scripts/` đều nhận một gate đỏ không liên quan diff (hai lần trong hai ngày), và Codex
+phải dừng ở ranh giới scope; cùng họ "đỏ rồi chạy lại ở chỗ khác thì xanh" của T-323. Ngoài sandbox, một máy chặn `ps` sẽ không
+`git commit --amend` giữ nguyên subject được.
+
+**Decision / Fix:**
+Chưa sửa. Ứng viên (task L1 riêng, vì đụng Gate 8): nhận biết `--amend` không qua bảng tiến trình, hoặc khi không đọc được tiến
+trình cha thì không coi subject của chính `HEAD` là trùng. Tới khi sửa: phiếu việc dặn Codex coi hai ca này là đã biết, và Claude
+chạy gate ngoài sandbox khi duyệt.
+
+**Related task:**
+`T-321` · `T-324`
+
+**Status:**
+Open

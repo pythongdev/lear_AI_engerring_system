@@ -228,6 +228,93 @@ has "10 tổng bước Gate 1" "    Gate 1: be-static 20s · fe-rules 1s · fe-c
 has "10 đúng ba test chậm nhất theo thứ tự" "    test chậm nhất: b.test.sh 20s · d.test.sh 10s · a.test.sh 9s"
 hasnt "10 test thứ tư không vào top" "c.test.sh 1s"
 
+# 11 — verify chạy nhưng bộ test script bỏ qua: SKIP riêng, PASS verify đúng sự thật.
+r="$(newrepo test_skip)"
+stub "$r" verify.sh 0 "[time] be-static 2s
+[test] skipped — 6 file: không có gì dưới scripts/ đổi và đầu vào riêng của chúng không đổi
+Verification passed."
+echo "y" >> "$r/code.txt"
+run "$r"
+rc "11 verify xanh, test bỏ qua" 0
+labels "11"
+has "11 nhãn SKIP của test" "SKIP  Gate 1   test — 6 file: không có gì dưới scripts/ đổi và đầu vào riêng của chúng không đổi"
+has "11 PASS verify không đếm test" "PASS  Gate 1   verify — các bước đã chạy đều qua"
+hasnt "11 không nói test đã chạy" "file scripts/*.test.sh chạy"
+has "11 giữ thời gian bước đã chạy" "    Gate 1: be-static 2s"
+hasnt "11 không có test chậm nhất" "test chậm nhất:"
+
+# 11b — một test chạy, các test khác bỏ qua: vẫn đếm đúng và hiện SKIP.
+r="$(newrepo test_partial)"
+stub "$r" verify.sh 0 "[test] skipped — 5 file: không có gì dưới scripts/ đổi và đầu vào riêng của chúng không đổi
+[test] /abs/scripts/fe-check.test.sh
+[time] test:fe-check.test.sh 1s
+Verification passed."
+echo "y" >> "$r/code.txt"
+run "$r"
+rc "11b verify xanh, một test chạy" 0
+labels "11b"
+has "11b nhãn SKIP đếm năm file" "SKIP  Gate 1   test — 5 file: không có gì dưới scripts/ đổi và đầu vào riêng của chúng không đổi"
+has "11b PASS verify đếm một file" "PASS  Gate 1   verify — 1 file scripts/*.test.sh chạy, đều qua"
+has "11b thời gian chỉ test đã chạy" "    Gate 1: test 1s (1 file)"
+
+# 12 — verify.sh thật trong repo tạm: toàn bộ script, một test riêng, hoặc không test.
+newverifyrepo() {
+  local d="$TMPROOT/$1"
+  mkdir -p "$d/scripts/hooks" "$d/quality"
+  git -C "$d" init -q
+  git -C "$d" config user.email t@t
+  git -C "$d" config user.name t
+  cp "$(dirname "$GATE")/verify.sh" "$d/scripts/verify.sh"
+  local test_name
+  for test_name in fe-check.test.sh check-write-paths.test.sh check-sqlcgen.test.sh reconcile.test.sh be-check.test.sh probe.test.sh; do
+    printf '#!/usr/bin/env bash\necho "[probe] %s ran"\n' "$test_name" > "$d/scripts/$test_name"
+    chmod +x "$d/scripts/$test_name"
+  done
+  echo base > "$d/code.txt"
+  echo base > "$d/quality/invariants.md"
+  git -C "$d" add -A && git -C "$d" commit -qm init
+  printf '%s' "$d"
+}
+runverify() {
+  local d="$1"
+  VOUT="$(cd "$d" && ./scripts/verify.sh 2>&1)"
+  VRC=$?
+}
+r="$(newverifyrepo verify_triggers)"
+echo changed >> "$r/code.txt"
+runverify "$r"
+if [ "$VRC" = 0 ] && [[ "$VOUT" == *'[test] skipped — 6 file: không có gì dưới scripts/ đổi và đầu vào riêng của chúng không đổi'* ]] && [[ "$VOUT" != *'[probe] '* ]]; then
+  ok "12 ngoài mọi danh sách: không test nào chạy, skipped đếm 6"
+else bad "12 code ngoài danh sách phải bỏ qua test"; printf '%s\n' "$VOUT" | sed 's/^/       | verify: /'; fi
+r="$(newverifyrepo verify_scripts)"
+echo '# changed' >> "$r/scripts/verify.sh"
+runverify "$r"
+count="$(printf '%s\n' "$VOUT" | grep -c '^\[test\] /' || true)"
+if [ "$VRC" = 0 ] && [ "$count" = 6 ] && [[ "$VOUT" == *'[probe] probe.test.sh ran'* ]] && [[ "$VOUT" != *'[test] skipped'* ]]; then
+  ok "12 scripts/ đổi: cả 6 test chạy, không skipped"
+else bad "12 scripts/ đổi phải chạy cả 6 test"; fi
+r="$(newverifyrepo verify_hook)"
+echo hook > "$r/scripts/hooks/new-hook"
+runverify "$r"
+count="$(printf '%s\n' "$VOUT" | grep -c '^\[test\] /' || true)"
+if [ "$VRC" = 0 ] && [ "$count" = 6 ] && [[ "$VOUT" != *'[test] skipped'* ]]; then
+  ok "12 hook mới: cả 6 test chạy"
+else bad "12 hook mới phải chạy cả 6 test"; fi
+r="$(newverifyrepo verify_fe)"
+mkdir -p "$r/fe/src"; echo changed > "$r/fe/src/a.ts"
+runverify "$r"
+count="$(printf '%s\n' "$VOUT" | grep -c '^\[test\] /' || true)"
+if [ "$VRC" = 0 ] && [ "$count" = 1 ] && [[ "$VOUT" == *'[probe] fe-check.test.sh ran'* ]] && [[ "$VOUT" == *'[test] skipped — 5 file:'* ]]; then
+  ok "12 chỉ fe/: chỉ fe-check chạy, skipped đếm 5"
+else bad "12 chỉ fe/ phải chạy riêng fe-check"; fi
+r="$(newverifyrepo verify_owner)"
+echo changed >> "$r/quality/invariants.md"
+runverify "$r"
+count="$(printf '%s\n' "$VOUT" | grep -c '^\[test\] /' || true)"
+if [ "$VRC" = 0 ] && [ "$count" = 1 ] && [[ "$VOUT" == *'[probe] be-check.test.sh ran'* ]] && [[ "$VOUT" == *'[test] skipped — 5 file:'* ]]; then
+  ok "12 chỉ quality/invariants.md: chỉ be-check chạy, skipped đếm 5"
+else bad "12 chỉ quality/invariants.md phải chạy riêng be-check"; fi
+
 echo
 if [ "$fails" -eq 0 ]; then
   echo "gate.test: tất cả ca đều qua."

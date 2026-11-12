@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-324 **Mỗi lượt gate chạy lại mọi `scripts/*.test.sh` dù không script nào đổi, mất 94 trên 143 giây** — L1 (đổi điều kiện chạy một bước của Gate 1), xong 2026-11-12 theo Bước 6 của bản đánh giá; test của script chỉ chạy khi `scripts/` hay đầu vào riêng của từng file đổi, brief tự báo khi vượt trần; lượt không đổi `scripts/` ở cây chính còn 49 giây; Codex làm hai vòng, Claude duyệt; gate đạt · [chi tiết](#t-324)
 - [x] T-322 **`README.md` vẽ cây thư mục cũ và bảng mục lục viết tay của `work/findings.md` lệch từ F-060** — L1 (chỉ tài liệu), xong 2026-11-11 theo Bước 8 của `work/proposals/danh-gia-he-thong-2026-11-11.md`; cây thư mục chỉ còn đường dẫn có thật, bảng mục lục thay bằng cách xem finding đang mở; Codex làm, Claude duyệt; gate đạt · [chi tiết](#t-322)
 - [x] T-321 **Gate không in thời gian từng cổng nên chưa biết 231 giây nằm ở đâu so với hạn hook 180 giây** — L1 (chỉ đo, không đổi điều kiện đạt/đỏ), xong 2026-11-11 theo Bước 6 của bản đánh giá; gate in thời gian từng cổng, từng bước Gate 1 và ba test chậm nhất; đo ở cây chính: 222 giây, trong đó Gate 3 chiếm 106 giây; Codex làm, Claude duyệt; gate đạt · [chi tiết](#t-321)
 - [x] T-320 **Không có gì dọn sau commit: file scope và dòng đã xong tồn lại vì bước dọn rơi vào lúc không phiên nào chạy** — L1, xong 2026-11-11 theo Bước 4 của bản đánh giá; hook `post-commit` xoá scope của việc đã tick, `scripts/archive-done.sh` chuyển việc đã xong sang Done và archive (chưa chạy `--apply` trên backlog thật); Codex làm, Claude duyệt và sửa nốt một lỗi; gate đạt · [chi tiết](#t-320)
@@ -579,6 +580,28 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-324"></a>
+### T-324 — Mỗi lượt gate chạy lại mọi `scripts/*.test.sh` dù không script nào đổi, mất 94 trên 143 giây
+
+Chủ repo yêu cầu 2026-11-11 làm các bước của bản đánh giá, và 2026-11-12 dặn tiếp tục giao Codex làm, Claude kiểm. Đây là nửa sau của Bước 6: T-321 đã cho số đo, giờ mới cắt. Ở cây chính, một lượt có thay đổi ở `fe/` mất 143 giây, trong đó 94 giây là 20 file `scripts/*.test.sh` — các test này canh chính các script gate, nên chỉ có ý nghĩa khi script đổi. Hạn của Stop hook là 180 giây.
+
+Thiết kế của Claude 2026-11-12, chưa được chủ repo xác nhận: `scripts/verify.sh` chỉ chạy các file test của script khi lượt này đổi gì dưới `scripts/` hoặc ở đường dẫn ngoài `scripts/` mà một file test đọc từ repo thật; không thì in một dòng bỏ qua. Vì ca "brief thật vượt 9 000 byte" của `scripts/brief.test.sh` khi ấy không còn chạy mỗi lượt, brief tự đo chính nó và in cảnh báo ngay dưới dòng đầu khi vượt trần. Không nâng hạn hook trong task này.
+
+Acceptance viết trước sửa:
+- A1 — *Đổi 2026-11-12 sau vòng duyệt một:* `scripts/verify.sh` chạy **mọi** `scripts/*.test.sh` khi lượt đổi file dưới `scripts/` (đã track hay chưa); không thì mỗi file test chỉ chạy khi đầu vào **riêng** của nó ngoài `scripts/` đổi (bảng file test → đầu vào nằm ở một chỗ trong script); file bị bỏ qua được đếm trong một dòng `[test] skipped — …`. Bản vòng một gộp đầu vào thành một danh sách chung có cả `fe/` và `be/`, nên lượt chỉ đổi `fe/` vẫn chạy đủ 20 file — lỗi ở phiếu của Claude.
+- A2 — Có file test bị bỏ qua thì gate in một dòng `SKIP  Gate 1   test — …`; dòng `PASS  Gate 1   verify` đếm đúng số file đã chạy và không nói có file test nào chạy khi không file nào chạy.
+- A3 — `scripts/brief.sh` tự đo: vượt trần thì dòng thứ hai của brief là cảnh báo nêu số byte và trần; trần là một hằng duy nhất, `scripts/brief.test.sh` đọc từ đó; brief vẫn luôn thoát 0.
+- A4 — `scripts/gate.test.sh` và `scripts/brief.test.sh` có ca cho A1–A3; mọi khẳng định cũ giữ nguyên.
+- A5 — `./scripts/gate.sh` xanh ở worktree; Claude đo ở cây chính một lượt không đổi `scripts/`.
+
+Phạm vi (`work/scope/T-324.txt`): `scripts/verify.sh`, `scripts/gate.sh`, `scripts/gate.test.sh`, `scripts/brief.sh`, `scripts/brief.test.sh`; phần của Claude lúc tích hợp: `CLAUDE.md` (§5 dòng 9), `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-324`, nhánh `codex/T-324`, nền `9ecd6b6` cộng bản chưa commit của `scripts/` ở cây chính (T-319 · T-320 · T-321). Duyệt: Claude.
+
+Duyệt và bàn giao 2026-11-12 (thực hiện: Codex hai vòng, duyệt: Claude). `scripts/verify.sh`: có thay đổi dưới `scripts/` thì chạy mọi file test; không thì từng file chỉ chạy khi đầu vào riêng đổi — bảng nằm ở hàm `test_input_changed` (`fe-check.test.sh` ← `fe/`, `docs/product/3-be/openapi.yaml`; `check-write-paths.test.sh` ← `be/`, `db/migrations/`; `check-sqlcgen.test.sh` ← `be/go.mod`, `be/go.sum`, `db/migrations/`; `reconcile.test.sh` ← `db/reconcile/qd.sql`; `be-check.test.sh` ← `docs/product/2-db/10-quy-uoc-code.md`, `quality/invariants.md`); file bị bỏ qua được đếm trong một dòng `[test] skipped`. `scripts/gate.sh`: dòng ấy thành `SKIP  Gate 1   test`, dòng `PASS … verify` đếm đúng số file đã chạy. `scripts/brief.sh`: gom output rồi mới in, vượt `BRIEF_MAX_BYTES` (một hằng, mặc định 9000) thì dòng thứ hai là cảnh báo; `scripts/brief.test.sh` lấy trần từ `brief.sh`. Test: `scripts/gate.test.sh` ca 11 · 11b · 12 (dùng `verify.sh` thật trong repo tạm: đổi `scripts/` hay thêm hook ⇒ mọi test chạy; chỉ đổi `fe/` ⇒ riêng `fe-check.test.sh`; chỉ đổi `quality/invariants.md` ⇒ riêng `be-check.test.sh`; đổi file ngoài bảng ⇒ không file nào), `scripts/brief.test.sh` ca E8.
+
+Claude chạy ở cây chính: lượt có `scripts/` đổi — không cổng nào đỏ, 20 file test đều qua, 140 giây. Lượt đo coi như `scripts/` không đổi (đánh dấu `assume-unchanged` năm file trong lúc đo rồi gỡ ngay): **49 giây**, Gate 1 45 giây (`fe-check` 28, `check-fe-rules` 12, phần tĩnh `be` 3, 2 file test 2 giây — `fe-check.test.sh` vì `fe/` đang đổi, `be-check.test.sh` vì `quality/invariants.md` đang đổi), 18 file được báo bỏ qua. Tài liệu: `CLAUDE.md` §5 dòng 9. Finding mới từ lượt này: F-079 (hook `commit-msg` nhận biết `--amend` bằng `ps`, sandbox của Codex chặn `ps` nên hai ca `--amend` đỏ ở đó — Codex chứng minh bằng một bản `ps` giả).
+
+Còn lại: lượt đổi `be/` hay database chưa đo (lượt `be-check` riêng lẻ mất 208 giây, vượt hạn 180 giây của Stop hook); nâng hạn hook là quyết định của chủ repo; worktree `../lean_wt/T-324` và nhánh `codex/T-324` chờ chủ repo gỡ.
 
 <a id="t-319"></a>
 ### T-319 — Scope của việc đã xong làm Gate 3 cho qua gần mọi file và làm brief phình tới mức không tới được phiên Claude

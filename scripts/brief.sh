@@ -47,6 +47,8 @@ MAX_UNKNOWNS=12
 # brief. Cắt ở đây không đổi điều Gate 3 chấm: cổng đọc file work/scope/<MÃ>.txt thật.
 MAX_SCOPE=6       # số file scope in pattern, file mới sửa trước
 MAX_SCOPE_PAT=6   # số pattern in cho mỗi file
+# T-324 (2026-11-12): brief tự báo khi vượt giới hạn nạp của hook.
+BRIEF_MAX_BYTES="${BRIEF_MAX_BYTES:-9000}"
 
 section() { printf '\n%s\n' "$1"; }
 none()    { printf '  (none)\n'; }
@@ -93,6 +95,7 @@ short_lines() {
   }'
 }
 
+render_brief() {
 printf '=== Lean AI Engineering — session brief (%s) ===\n' "$(date +%F)"
 printf 'Read CLAUDE.md for shared rules (Codex entry: AGENTS.md). This brief points; §2 owners hold facts.\n'
 
@@ -301,4 +304,18 @@ else
 fi
 
 printf '\n'
+}
+
+# Giữ stdout đã tạo kể cả khi một lệnh con trong render_brief lỗi: script không
+# dùng set -e, và mọi phép đo/in bên dưới vẫn kết thúc bằng exit 0.
+brief_output="$(render_brief)"
+brief_bytes="$(printf '%s\n\n' "$brief_output" | wc -c | tr -d ' ')"
+if [ "$brief_bytes" -gt "$BRIEF_MAX_BYTES" ]; then
+  printf '%s\n' "${brief_output%%$'\n'*}"
+  printf '→ CẢNH BÁO: brief dài %s byte, quá trần %s — hook của Claude Code sẽ cắt phần sau. Tìm mục phình: ./scripts/brief.sh | less\n' \
+    "$brief_bytes" "$BRIEF_MAX_BYTES"
+  printf '%s\n\n' "${brief_output#*$'\n'}"
+else
+  printf '%s\n\n' "$brief_output"
+fi
 exit 0

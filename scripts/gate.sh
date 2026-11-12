@@ -70,7 +70,10 @@ label() {
     BEGIN { cur = 0 }   # chi tiết trước dòng trạng thái đầu nằm ở det[0]
     function strip(t) { sub(/^[[:space:]]*(—|-|:)[[:space:]]*/, "", t); return t }
     /^[[:space:]]*$/ { next }
-    /^Verification passed\.?$/ { add("PASS", "verify", (tests + 0) " file scripts/*.test.sh chạy, đều qua"); next }
+    /^Verification passed\.?$/ {
+      add("PASS", "verify", tests ? tests " file scripts/*.test.sh chạy, đều qua" : "các bước đã chạy đều qua")
+      next
+    }
     /^\[test\] \// { tests++ }   # dòng verify.sh in (đường dẫn tuyệt đối), không dòng test tự in
     /^\[[A-Za-z0-9._-]+\] skipped/ {
       nm = $0; sub(/^\[/, "", nm); sub(/\].*/, "", nm)
@@ -157,10 +160,7 @@ time_report() {
     steps="${steps}test ${test_seconds}s (${test_count} file)"
   fi
   printf '    Gate 1: %s\n' "$steps"
-  if [ "$test_count" -eq 0 ]; then
-    printf '    test chậm nhất: chưa có file test chạy\n'
-    return 0
-  fi
+  [ "$test_count" -gt 0 ] || return 0
   while IFS= read -r entry; do
     [ "$count" -lt 3 ] || break
     seconds="${entry%% *}"
