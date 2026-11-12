@@ -5160,6 +5160,9 @@ Chưa sửa. Gặp lại: chạy lại một lần trước khi tìm trong diff,
 diễn kế tiếp: chép nguyên lời ấy vào đây. Hai điều rút ra từ lượt khảo sát và lượt cài lỗi: (1) cách sửa ứng viên `greatest(…)`
 **chưa đủ** — nếu ca cũ bắt đầu ở tương lai, ca mới mở tại `now()` có thể chồng khoảng và bị ràng buộc loại trừ chặn; (2) một ca
 mở như vậy làm đỏ ít nhất tám gói test khác trong cùng lượt `be-check`, vì mọi gói dùng chung một database (lát 2 của T-323).
+*Bổ sung 2026-11-12 (T-323 lát 2, ADR-144):* mỗi gói test nay chạy trên một database riêng; Claude lặp lại phép cài lỗi và chỉ
+gói `combo` đỏ (1/32). Vì gói `combo` đứng một mình trên database của nó, lần tái diễn kế tiếp của finding này chỉ có thể do chính
+test của `combo` hoặc do đồng hồ — không còn do gói khác để lại ca mở.
 
 **Related task:**
 `T-310`

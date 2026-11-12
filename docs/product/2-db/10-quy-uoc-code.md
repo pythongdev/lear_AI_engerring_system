@@ -613,9 +613,14 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
 - **Quy ước:**
   - Thư viện `testing` chuẩn. **Một** lệnh chạy cả bộ: `scripts/be-check.sh` — dựng database riêng
     và rỗng (compose project `banhcuon_check_{PID}_be_…`, cổng ngẫu nhiên — khuôn tên mà
-    `db-check` cũng dọn khi tiến trình đã chết, **F-045**), chạy mọi migration từ số 0, xuất ra môi
-    trường chuỗi kết nối `shop_app` · `shop_owner` và múi giờ quán, chạy `go test -count=1 -p 1 -v ./...`
-    trong `be/`, rồi chỉ gỡ project của mình. Không Docker, hay database không lên ⇒ **FAIL**.
+    `db-check` cũng dọn khi tiến trình đã chết, **F-045**), chạy mọi migration từ số 0. Database
+    `banhcuon` vừa migrate là **database mẫu**: không test nào chạy trên nó. Với mỗi gói Go có test,
+    script sao một database riêng tên `banhcuon_g001`, `banhcuon_g002`… (`CREATE DATABASE … TEMPLATE banhcuon`,
+    cấp lại quyền mức database như `db/init/001-vai-va-schema.sql`), xuất ra môi trường chuỗi kết nối `shop_app` ·
+    `shop_owner` trỏ database ấy và múi giờ quán, rồi chạy `go test -count=1 -v <gói>` trong `be/`. Các
+    gói chạy nối tiếp; một gói đỏ không dừng gói sau; số gói đã xử lý khác số gói `go list` in ra ⇒
+    **FAIL** (**ADR-144**, `T-323`, Claude sửa 2026-11-12). Xong thì chỉ gỡ project của mình. Không
+    Docker, hay database không lên ⇒ **FAIL**.
   - Test cần database lấy kết nối qua `be/internal/testhelper/` (đổi tên từ `dbtest` ở `T-151`); thiếu biến môi trường ⇒ test **đỏ**
     với lời chỉ sang `scripts/be-check.sh`. Không `t.Skip`, không `testing.Short`, không database giả,
     không mock driver, không testcontainers (một cách dựng database kiểm, không hai).
@@ -625,9 +630,12 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
 - **Hậu quả nếu làm khác:** test tự bỏ qua khi thiếu database là test không ai biết đã không chạy
   (**F-007**). Test trên database giả xanh vì không có ai để từ chối — tầng 1 và tầng 2 không tồn
   tại ở đó (`P3-03` *Bẫy*). Hai lần chạy dùng chung một database kiểm thì gỡ của nhau (**F-045**).
+  Các gói dùng chung một database thì dữ liệu gói này để lại làm đỏ gói khác (**F-072**; đo 2026-11-12:
+  một ca quầy mở ở tương lai dựng trong `combo` làm đỏ thêm tám gói).
 - **Phép kiểm:**
   ```sh
   grep -q 'scripts/be-check.sh' scripts/verify.sh || echo "scripts/verify.sh không gọi scripts/be-check.sh"
+  grep -q 'TEMPLATE banhcuon' scripts/be-check.sh || echo "scripts/be-check.sh không sao database riêng cho từng gói test (ADR-144)"
   grep -rnE 't\.Skip|testing\.Short' be --include='*.go' 2>/dev/null
   grep -Ei 'sqlmock|pgxmock|sqlite|testcontainers' be/go.mod 2>/dev/null | grep -v '// indirect'
   grep -rnE '"[^"]*(sqlmock|pgxmock|sqlite|testcontainers)[^"]*"' be --include='*.go' 2>/dev/null
@@ -635,7 +643,8 @@ repo duyệt 2026-10-10 — Gin, sqlc, cấu trúc kết hợp: **ADR-093**; cá
   Dòng ba chỉ chấm phụ thuộc trực tiếp: dòng `tool` của sqlc (`QC-11`) kéo `github.com/ncruces/go-sqlite3`
   vào `go.mod` dưới dạng `// indirect`, vì sqlc tự hỗ trợ engine sqlite; code của ta không dùng nó. Dòng bốn
   chặn code Go import một gói như thế dù `go.mod` còn ghi `// indirect` (Claude sửa 2026-10-11, `T-150`).
-- **Nguồn:** owner — **ADR-082** điểm 2 · 7 (test qua cửa trên PostgreSQL thật), **F-045**, **F-007**;
+- **Nguồn:** owner — **ADR-082** điểm 2 · 7 (test qua cửa trên PostgreSQL thật), **ADR-144** (mỗi gói một
+  database), **F-045**, **F-007**;
   lệnh, tên project và biến môi trường là phiên chọn 2026-10-06 (**ADR-083**).
 
 ### QC-17 — Tên test mang mã mệnh đề nó chấm

@@ -8872,3 +8872,42 @@ trên suy luận rằng hook nạp khoảng 10 000 ký tự; kiểm bằng phiê
 và `scripts/brief.sh` về bản trước T-319.
 
 **Applies to:** ADR-063 · ADR-002 · F-010 · F-014 · `T-319` · `T-320` · `scripts/check-scope.sh` · `scripts/brief.sh` · `CLAUDE.md` §5 · §7.1.
+
+## ADR-144 — Mỗi gói test Go chạy trên một database riêng, sao từ database đã migrate của chính lượt `be-check` ấy
+
+**Status:** **Đã chốt** 2026-11-12 — chủ repo yêu cầu làm các bước của `work/proposals/danh-gia-he-thong-2026-11-11.md` (Bước 9,
+task T-323 lát 2) và dặn *"tiếp tục yêu cầu codex làm, bạn kiểm tra"*. Phương án và cơ chế dưới đây là thiết kế của Claude Code
+(mức **L2**), chủ repo chưa xác nhận từng điểm.
+
+**Context:** `scripts/be-check.sh` dựng một compose project riêng cho mỗi lượt (F-045 đã chữa va chạm giữa hai lượt), rồi chạy
+`go test -count=1 -p 1 -v ./...` — mọi gói nối tiếp nhau trên **một** database `banhcuon`. Dữ liệu một gói để lại là đầu vào của
+gói sau: F-072 (fixture của `menu` làm đỏ `gia`), và có thể F-078. Đo 2026-11-12 (Claude, cài lỗi trong worktree riêng): một ca
+`counter_duty` mở bắt đầu ở tương lai, dựng trong gói `combo`, làm đỏ thêm ít nhất tám gói khác trong cùng lượt. Sáu finding
+"đỏ rồi chạy lại thì xanh" (F-045, F-051, F-063, F-072, F-076, F-078) không chung một nguyên nhân; quyết định này chỉ chữa phần
+*dữ liệu lan giữa các gói*.
+
+**Decision:**
+
+1. Sau khi migrate từ số 0, `be-check` coi database `banhcuon` là **database mẫu** và không cho test nào chạy trên nó. Với mỗi
+   gói Go có test, nó tạo một database riêng bằng `CREATE DATABASE … TEMPLATE banhcuon`, cấp lại quyền mức database y như
+   `db/init/001-vai-va-schema.sql` làm với `banhcuon` (`REVOKE ALL … FROM PUBLIC`, `GRANT CONNECT … TO shop_app`), rồi chạy
+   `go test -count=1 -v <gói>` với hai chuỗi kết nối trỏ database ấy.
+2. Các gói vẫn chạy **nối tiếp**, một lệnh `go test` mỗi gói. Một gói đỏ không dừng các gói sau; cuối lượt `be-check` đỏ và nêu
+   tên từng gói đỏ.
+3. `be/internal/testhelper` không đổi: test vẫn đọc ba biến môi trường. Tên biến, tên vai, schema `shop`, compose project riêng
+   theo lượt và `BE_CHECK_KEEP_DB` giữ nguyên; khi giữ database, lời nhắc nêu database của từng gói đỏ.
+4. Test hồi quy viết trước: `TestQC16_GoiTestChayTrenDatabaseRiengKhongPhaiDatabaseMau` (`be/internal/testhelper/`, trên
+   PostgreSQL thật) và các ca *mỗi gói một database* của `scripts/be-check.test.sh` (không Docker, `docker` và `go` giả).
+
+**Phương án đã bỏ:** *schema riêng cho từng gói* — schema `shop` nằm cứng trong quyền, `search_path`, migration và nhiều câu SQL
+của test; *bọc mỗi test trong một giao dịch rồi lùi* — test đi qua cửa thật, cửa tự COMMIT; *xoá dữ liệu giữa hai gói* — cần một
+danh sách bảng và thứ tự phải giữ đúng mãi, sai thì im lặng; *một compose project cho mỗi gói* — chậm hơn nhiều lần mà không cô
+lập hơn.
+
+**Consequences:** lỗi dữ liệu của một gói không còn làm đỏ gói khác, nên một lần F-078 tái diễn sẽ khoanh được vào chính gói
+`combo`. Không chữa: dữ liệu lan giữa các test **trong cùng một gói**; hai phiên cùng một cây (F-063); `next build` (F-076); phụ
+thuộc giờ trong ngày của `db-check` (F-051). `QC-16` đổi lời cho khớp. Thời gian `be-check` (đo 2026-11-12: 188–208 giây) có thể
+tăng vì mỗi gói thêm một lần sao database và một lần khởi động `go test` — đo lại khi tích hợp. Lùi: trả `scripts/be-check.sh`
+về một lệnh `go test ./...`.
+
+**Applies to:** ADR-082 điểm 2 · 7 · ADR-083 · `QC-16` · F-045 · F-072 · F-078 · `T-323` · `scripts/be-check.sh` · `be/internal/testhelper`.
