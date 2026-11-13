@@ -16,6 +16,7 @@ const thu = (menu_component_id: number, component_name: string, nhan: string | n
 const thit = thu(81, "Bánh cuốn", "Thịt");
 const thitNhieu = thu(81, "Bánh cuốn", "Thịt", { filling_option_ids: [11, 15], extra_filling: true, ordered: 2, served: 0, missing: 2 });
 const trungTai = thu(83, "Trứng tái", null, { ordered: 1, served: 0, missing: 1 });
+const gio = thu(84, "Giò", null);
 const phien = (id: number, tables: { dining_table_id: number; label: string }[], items: ThuVanHanh[]): BangVanHanh["sessions"][number] => ({
   table_session_id: id, session_status: "open", service_group: "serving", tables, order_total_vnd: 50000, served_amount_vnd: 10000, items,
   lines: [{ menu_item_id: 1, item_name: "Bánh cuốn đã ghi", quantity: 5, unit_price_vnd: 10000, line_total_vnd: 50000, components: [], options: [] }],
@@ -23,8 +24,8 @@ const phien = (id: number, tables: { dining_table_id: number; label: string }[],
 });
 const data: BangVanHanh = {
   sale_date: "2025-02-03", read_at: "2025-02-03T03:17:29Z",
-  sessions: [phien(1, [{ dining_table_id: 21, label: "Bàn 01" }], [thit, thitNhieu, trungTai]),
-    phien(2, [{ dining_table_id: 22, label: "Bàn 02" }, { dining_table_id: 23, label: "Bàn 03" }], [thu(81, "Bánh cuốn", "Thịt")])],
+  sessions: [phien(1, [{ dining_table_id: 21, label: "Bàn 01" }], [thit, thitNhieu, trungTai, gio]),
+    phien(2, [{ dining_table_id: 22, label: "Bàn 02" }, { dining_table_id: 23, label: "Bàn 03" }], [thu(81, "Bánh cuốn", "Thịt"), gio])],
   empty_tables: [], serve_history: [],
 };
 const part = (dining_table_id: number, made: number) => ({ dining_table_id, sales_order_id: null, ordered: 5, pending: 0, made, served: 1, missing: 4 });
@@ -59,6 +60,23 @@ async function chon(ten: string, so: string) {
 }
 
 describe("Vận hành — bấm ô số ghi đã đem ra (T-228)", () => {
+  it("T-326 A2: ô Giò chỉ hiện số, mở hộp đem ra và gửi đúng thành phần giò", async () => {
+    const g = mo({ bang: () => ({ status: 200, body: { ...board, rows: [hang("tram_gio_thu", gio, [part(21, 3)])] } }) });
+    const b = await vung();
+    fireEvent.click(b.getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
+    const nut = b.getByRole("button", { name: "Đem ra Bàn 01 · Giò" });
+    expect(nut.textContent).toBe("4");
+    expect(nut.closest("td")!.textContent).toBe("4");
+    await chon("Đem ra Bàn 01 · Giò", "3");
+    const xn = await screen.findByRole("dialog", { name: "Xác nhận đem ra" });
+    expect(xn.textContent).toContain("Quán đã đem ra 3 cái Giò cho Bàn 01. Còn thiếu sẽ từ 4 xuống 1.");
+    fireEvent.click(within(xn).getByRole("button", { name: "Xác nhận" }));
+    await waitFor(() => expect(posts(g)).toHaveLength(1));
+    expect(posts(g)[0]).toEqual({ method: "POST", path: "/served-marks", body: { dining_table_id: 21,
+      items: [{ station_code: "tram_gio_thu", menu_component_id: 84, filling_option_ids: [], quantity: 3 }],
+    } });
+    expect((await screen.findByRole("status", { name: "Kết quả đem ra" })).textContent).toBe("Đã ghi đem ra 3 cái Giò cho Bàn 01.");
+  });
   it("T-313: mở chi tiết thấy dòng món rồi vẫn bấm ô đem ra và chọn số được", async () => {
     const g = mo(); const b = await vung();
     const btn = b.getByRole("button", { name: "Bàn 01" });
@@ -76,13 +94,14 @@ describe("Vận hành — bấm ô số ghi đã đem ra (T-228)", () => {
   it("đứng quầy: mỗi thứ còn thiếu của phiên một bàn là một nút riêng; thịt thường và thịt nhiều tách dòng", async () => {
     mo(); const b = await vung();
     fireEvent.click(b.getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
-    for (const ten of ["Đem ra Bàn 01 · Thịt", "Đem ra Bàn 01 · Thịt nhiều", "Đem ra Bàn 01 · Trứng tái"]) expect(b.getByRole("button", { name: ten })).toBeTruthy();
+    for (const ten of ["Đem ra Bàn 01 · Thịt", "Đem ra Bàn 01 · Thịt nhiều", "Đem ra Bàn 01 · Trứng tái", "Đem ra Bàn 01 · Giò"]) expect(b.getByRole("button", { name: ten })).toBeTruthy();
     expect(screen.getByText("Bấm biểu tượng ô lưới ở một bàn rồi bấm vào ô số để báo đã đem ra.")).toBeTruthy();
   });
   it("chủ quán không đứng quầy vẫn có nút ghi đem ra", async () => {
     const g = mo({ quay: null }); const b = await vung();
     fireEvent.click(b.getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
     await waitFor(() => expect(b.getByRole("button", { name: "Đem ra Bàn 01 · Thịt" })).toBeTruthy());
+    expect(b.getByRole("button", { name: "Đem ra Bàn 01 · Giò" }).textContent).toBe("4");
     expect(posts(g)).toHaveLength(0);
   });
   it("người không phải chủ quán và không đứng quầy chỉ được xem", async () => {
@@ -90,12 +109,14 @@ describe("Vận hành — bấm ô số ghi đã đem ra (T-228)", () => {
     fireEvent.click(b.getByRole("button", { name: "Chi tiết đem ra Bàn 01" }));
     fireEvent.click(b.getByRole("button", { name: "Chi tiết đem ra Bàn 02 + Bàn 03" }));
     await waitFor(() => expect(screen.getByText(/Chỉ chủ quán hoặc người đang đứng quầy ghi được đem ra/)).toBeTruthy());
+    expect(within(b.getByRole("button", { name: "Bàn 01" }).closest("tr")!).getAllByRole("cell")[4].textContent).toBe("4");
     expect(b.queryAllByRole("button", { name: /^Đem ra / })).toHaveLength(0);
     expect(posts(g)).toHaveLength(0);
   });
   it("phiên ghép nhiều bàn: ô chỉ đọc, có câu chỉ sang màn Sản xuất của quầy", async () => {
     mo(); const b = await vung();
     fireEvent.click(b.getByRole("button", { name: "Chi tiết đem ra Bàn 02 + Bàn 03" }));
+    expect(within(b.getByRole("button", { name: "Bàn 02 + Bàn 03" }).closest("tr")!).getAllByRole("cell")[4].textContent).toBe("4");
     expect(b.queryByRole("button", { name: /^Đem ra Bàn 02 \+ Bàn 03/ })).toBeNull();
     expect(screen.getByText(/Bàn 02 \+ Bàn 03.*màn Sản xuất của quầy/)).toBeTruthy();
   });

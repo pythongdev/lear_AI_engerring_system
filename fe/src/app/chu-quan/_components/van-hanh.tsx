@@ -18,10 +18,15 @@ import { cotVanHanh, tenCot, type CotVanHanh, type ThuVanHanh } from "./cot-van-
 import { useBangVanHanh, useHangChoChuQuan, loiVanHanh, type BangVanHanh } from "./du-lieu-van-hanh";
 
 type Phien = BangVanHanh["sessions"][number];
+type CotHienThi = CotVanHanh | "Giò";
+const cotTongThieu = ["Thịt", "Mộc nhĩ", "Trứng", "Chay", "Giò"] as const;
 const nhanBan = (p: Phien) => p.tables.map((b) => b.label).join(" + ");
 const gio = (s: string) => new Date(s).toLocaleTimeString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour12: false });
 const cong = (items: ThuVanHanh[], field: "ordered" | "served" | "missing") => items.reduce((n, i) => n + i[field], 0);
-const thuCot = (items: ThuVanHanh[], cot: CotVanHanh) => items.filter((i) => cotVanHanh(i).cot === cot);
+const thuCot = (items: ThuVanHanh[], cot: CotHienThi) => items.filter((i) => {
+  const viTri = cotVanHanh(i);
+  return cot === "Giò" ? viTri.cot === "Khác" && viTri.dong === "Giò" : viTri.cot === cot;
+});
 const tongTien = (ps: Phien[], field: "order_total_vnd" | "served_amount_vnd") => ps.reduce((n, p) => n + p[field], 0);
 const khung = "vh-card space-y-1.5";
 
@@ -38,13 +43,13 @@ function AnHien({ ten, children, chiTiet = false }: { ten: string; children: Rea
     <div id={id} hidden={!mo}>{children}</div>
   </div>;
 }
-function SoCot({ items, cot, field = "missing", them = [] }: { items: ThuVanHanh[]; cot: CotVanHanh; field?: "ordered" | "served" | "missing"; them?: ThuVanHanh[] }) {
+function SoCot({ items, cot, field = "missing", them = [] }: { items: ThuVanHanh[]; cot: CotHienThi; field?: "ordered" | "served" | "missing"; them?: ThuVanHanh[] }) {
   const goc = thuCot(items, cot), phu = thuCot(them, cot);
   const cacDong = cot === "Trứng" || cot === "Khác"
     ? [...new Set([...goc, ...phu].map((i) => cotVanHanh(i).dong))] : [""];
   if (!cacDong.length) return <span className="khong">0</span>;
   return <>{cacDong.map((dong) => {
-    const a = goc.filter((i) => cotVanHanh(i).dong === dong), b = phu.filter((i) => cotVanHanh(i).dong === dong);
+    const a = goc.filter((i) => cot === "Giò" || cotVanHanh(i).dong === dong), b = phu.filter((i) => cot === "Giò" || cotVanHanh(i).dong === dong);
     const nhieu = [...a, ...b].some((i) => i.extra_filling && i.missing > 0);
     const themSo = cong(b, field);
     return <div key={dong} className={nhieu ? "nhieu" : cong(a, field) === 0 && themSo === 0 ? "khong" : ""}>
@@ -52,7 +57,7 @@ function SoCot({ items, cot, field = "missing", them = [] }: { items: ThuVanHanh
     </div>;
   })}</>;
 }
-function ChiTietBan({ phien, cot }: { phien: Phien; cot: readonly CotVanHanh[] }) {
+function ChiTietBan({ phien, cot }: { phien: Phien; cot: readonly CotHienThi[] }) {
   return <div className="space-y-1.5 p-1.5">
     <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-6">{cot.map((c) => <div key={c} className="space-y-1 rounded border p-1.5">
       <h4 className="font-semibold">{c}</h4>
@@ -138,7 +143,7 @@ function HopDemRa({ chon, dong, bao, docLai }: {
     </DialogContent>
   </Dialog>;
 }
-function HangThieu({ phien, cot, them, demRa }: { phien: Phien; cot: readonly CotVanHanh[]; them: boolean; demRa?: (chon: ChonDemRa) => void }) {
+function HangThieu({ phien, cot, them, demRa }: { phien: Phien; cot: readonly CotHienThi[]; them: boolean; demRa?: (chon: ChonDemRa) => void }) {
   const [mo, setMo] = useState(false);
   const [chiTiet, setChiTiet] = useState(false);
   const id = useId();
@@ -152,7 +157,7 @@ function HangThieu({ phien, cot, them, demRa }: { phien: Phien; cot: readonly Co
       {chiTiet ? cot.map((c) => <td key={c}>{them ? <SoCot items={phien.items} cot={c} /> : (() => {
         const items = thuCot(phien.items, c).filter((i) => i.missing > 0);
         return items.length ? items.map((item, index) => {
-          const { dong } = cotVanHanh(item);
+          const dong = c === "Giò" ? "" : cotVanHanh(item).dong;
           const chu = `${item.missing}${dong ? ` ${dong}` : ""}${item.extra_filling ? "*" : ""}`;
           return <div key={index} className={item.extra_filling ? "nhieu" : ""}>
             {demRa && phien.tables.length === 1 ? <Button className="o-so" variant="ghost" aria-label={`Đem ra ${nhanBan(phien)} · ${tenThu(item)}`} onClick={() => demRa({ phien, item, ten: tenThu(item) })}>{chu}</Button> : chu}
@@ -164,7 +169,7 @@ function HangThieu({ phien, cot, them, demRa }: { phien: Phien; cot: readonly Co
     {mo && <tr id={id}><td colSpan={cot.length + 2}><ChiTietBan phien={phien} cot={cot} /></td></tr>}
   </>;
 }
-function BangThieuTheoBan({ serving, chon, cot, demRa }: { serving: Phien[]; chon: Phien[]; cot: readonly CotVanHanh[]; demRa?: (chon: ChonDemRa) => void }) {
+function BangThieuTheoBan({ serving, chon, cot, demRa }: { serving: Phien[]; chon: Phien[]; cot: readonly CotHienThi[]; demRa?: (chon: ChonDemRa) => void }) {
   return <section aria-label="Tổng thiếu theo bàn" className={khung}>
     <h2 className="text-xl font-semibold">Tổng thiếu theo bàn</h2>
     <VungBang ten="Bảng tổng thiếu"><table className="bang-tong-thieu w-full text-left">
@@ -250,8 +255,8 @@ function NoiDung({ data, demRa }: { data: BangVanHanh; demRa?: (chon: ChonDemRa)
   const serving = data.sessions.filter((p) => p.service_group === "serving").sort((a, b) => Math.min(...a.tables.map((t) => t.dining_table_id)) - Math.min(...b.tables.map((t) => t.dining_table_id)));
   const cot = tenCot.filter((c) => c !== "Khác" || data.sessions.some((p) => p.items.some((i) => cotVanHanh(i).cot === "Khác")));
   return <>
-    {/* T-318: chủ repo bỏ hẳn cột Khác ở Tổng thiếu (2026-11-11); Bàn đang phục vụ vẫn giữ. */}
-    <BangThieuTheoBan serving={serving} chon={waiting.filter((p) => chon.includes(p.table_session_id))} cot={cot.filter((c) => c !== "Khác")} demRa={demRa} />
+    {/* T-318 bỏ cột Khác (2026-11-11), T-326 thay cột Canh bằng cột Giò (2026-11-12) — chủ repo; Bàn đang phục vụ giữ tenCot. */}
+    <BangThieuTheoBan serving={serving} chon={waiting.filter((p) => chon.includes(p.table_session_id))} cot={cotTongThieu} demRa={demRa} />
     <CongThuGhepDon waiting={waiting} chon={chon} doi={doi} />
     <KhoiBanDangPhucVu serving={serving} cot={cot} /><SoDoBan data={data} /><LichSuDemRa history={data.serve_history} />
   </>;

@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-326 **Tổng thiếu theo bàn có cột Canh nhưng giò không có chỗ hiện để đem ra** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-12; ở riêng mục này cột *Canh* thay bằng cột *Giò*, *Bàn đang phục vụ* giữ nguyên; Codex làm, Claude duyệt; fe-check 790/790 và gate đạt · [chi tiết](#t-326)
 - [x] T-318 **Cột Khác ở Tổng thiếu theo bàn hiện "N nước chấm" làm nhân viên hiểu sai** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; chủ repo chọn bỏ hẳn cột Khác khỏi mục này (cả giò lẫn nước chấm), *Bàn đang phục vụ* giữ cột Khác; Claude làm; fe-check và gate đạt · [chi tiết](#t-318)
 - [x] T-325 **`db-check` đỏ ngay ở bản đã commit: I-043 và I-044 không có câu đối chiếu và không có dòng lý do ở bộ đối chiếu** — L1 (chỉ tài liệu ánh xạ, không đổi bất biến), xong 2026-11-12, F-080; thêm hai dòng §2.1 nêu vì sao hai mệnh đề không đọc lại được từ dữ liệu và test tầng 3 nào giữ chúng; Codex làm, Claude duyệt và chạy `db-check` đạt · [chi tiết](#t-325)
 - [x] T-324 **Mỗi lượt gate chạy lại mọi `scripts/*.test.sh` dù không script nào đổi, mất 94 trên 143 giây** — L1 (đổi điều kiện chạy một bước của Gate 1), xong 2026-11-12 theo Bước 6 của bản đánh giá; test của script chỉ chạy khi `scripts/` hay đầu vào riêng của từng file đổi, brief tự báo khi vượt trần; lượt không đổi `scripts/` ở cây chính còn 49 giây; Codex làm hai vòng, Claude duyệt; gate đạt · [chi tiết](#t-324)
@@ -734,6 +735,25 @@ Acceptance viết trước sửa:
 Phạm vi (`work/scope/T-322.txt`): `README.md`, `work/findings.md`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-322`, nhánh `codex/T-322`, nền `9ecd6b6`. Duyệt: Claude.
 
 Duyệt và bàn giao 2026-11-11 (thực hiện: Codex, duyệt: Claude): `README.md` chỉ đổi khối cây thư mục (42 đường dẫn, Codex kiểm 42/42 tồn tại; phần ngoài khối giống `HEAD` từng byte), Claude căn lại hai dòng chú thích lệch cột. `work/findings.md` bỏ mục *Mục lục* (câu đếm, ghi chú dựng bảng, bảng 59 hàng), thay bằng mục *Xem finding đang mở*; từ `### F-001` tới hết file giống `HEAD` từng byte. Không script nào đọc bảng ấy (`scripts/brief.sh` đọc tiêu đề `### F-` và dòng `**Status:**`); mục *OPEN FINDINGS* của brief trước và sau như nhau. Claude chạy lại `./scripts/gate.sh` trong worktree: không cổng nào đỏ (Gate 1 bỏ qua vì chỉ tài liệu đổi). Còn lại: worktree `../lean_wt/T-322` và nhánh `codex/T-322` chờ chủ repo gỡ.
+
+<a id="t-326"></a>
+### T-326 — Tổng thiếu theo bàn có cột Canh nhưng giò không có chỗ hiện để đem ra
+
+Chủ repo yêu cầu 2026-11-12: trên `/chu-quan/van-hanh`, ở *Tổng thiếu theo bàn*, "cột canh thay bằng cột giò"; giao Codex làm, Claude kiểm tra. Sau T-318 (bỏ cột Khác) giò không còn hiện ở mục này.
+
+Suy luận của Claude, chưa được chủ repo xác nhận: chỉ đổi mục *Tổng thiếu theo bàn* (bảng, dòng Tổng, chế độ cột, chi tiết bàn mở từ nhãn bàn); cột *Giò* luôn hiện, đứng chỗ cột Canh (cuối cùng trước *Tiền bánh đã ra*); thứ vào cột Giò là thứ `cotVanHanh` đang xếp `{ cot: "Khác", dong: "Giò" }` (thành phần tên đã chụp đúng "Giò"), ô hiện số không kèm chữ "Giò"; `cot-van-hanh.ts` và mục *Bàn đang phục vụ* (cột Canh, cột Khác chứa giò) không đổi.
+
+Acceptance viết trước sửa:
+- A1 — Tiêu đề cột của bảng tổng thiếu đúng `Bàn · Thịt · Mộc nhĩ · Trứng · Chay · Giò · Tiền bánh đã ra`, kể cả khi không phiên nào có giò; không còn cột Canh.
+- A2 — Ở chế độ cột, ô Giò của hàng hiện số thiếu của giò (không chữ "Giò"), bấm được để ghi đem ra như các ô khác (tên truy cập `Đem ra {bàn} · Giò`), `0` khi không thiếu; hàng ghép thử hiện số và `+N` như các cột khác; dòng Tổng cộng đúng giò.
+- A3 — Chi tiết bàn mở từ nhãn bàn trong mục này có ô Giò, không có ô Canh.
+- A4 — *Bàn đang phục vụ* giữ cột Canh và cột "Khác đặt / đã ra" (có giò) như trước; `cot-van-hanh.ts` không đổi.
+- A5 — Test ở `fe/src/app/chu-quan/van-hanh/` đổi theo và thêm ca cho A1–A4; `./scripts/check-fe-rules.sh`, `./scripts/fe-check.sh`, `./scripts/gate.sh` xanh.
+- A6 — Dòng `/chu-quan/van-hanh` ở bảng nguồn dữ liệu của `docs/product/4-fe/01-khung-fe.md` nói Tổng thiếu có cột Giò thay cột Canh (T-326), thêm `T-326` vào cột task — Claude sửa khi tích hợp.
+
+Phạm vi (`work/scope/T-326.txt`): `fe/src/app/chu-quan/_components/van-hanh.tsx`, `fe/src/app/chu-quan/van-hanh/`, `docs/product/4-fe/01-khung-fe.md`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-326`, nhánh `codex/T-326`, nền `9d75279` cộng phần T-318 của hai file `van-hanh` đã stage sẵn (T-318 chưa commit). Duyệt: Claude, chưa duyệt.
+
+Duyệt và bàn giao 2026-11-12 (thực hiện: Codex, duyệt: Claude). Codex thêm kiểu `CotHienThi = CotVanHanh | "Giò"` và hằng `cotTongThieu` trong `van-hanh.tsx`; `thuCot` hiểu cột `"Giò"` là thứ `cotVanHanh` xếp `Khác`/`Giò`, `SoCot` và ô đem ra coi `dong` rỗng ở cột Giò; `BangThieuTheoBan` nhận `cotTongThieu`, `KhoiBanDangPhucVu` giữ `tenCot`; `cot-van-hanh.ts` không đổi. Test: thêm giò vào dữ liệu `dem-ra.test.tsx` và ca đem ra giò (ô chỉ hiện số, tên `Đem ra Bàn 01 · Giò`, hộp xác nhận, dữ liệu gửi); `van-hanh.test.tsx` thêm ca tiêu đề cố định khi có giò, không giò, không phiên, ca số thiếu và `+N` của giò, ca Bàn đang phục vụ giữ Canh và Khác; khẳng định cũ chỉ được thay bằng bản tương đương hoặc chặt hơn (A1–A5). Gate của Codex xanh trong worktree. Claude đọc diff thật, đưa patch về cây chính, sửa lời chú thích chỗ gọi `BangThieuTheoBan` và dòng `01-khung-fe.md` (A6): `./scripts/fe-check.sh` exit 0, 790/790, build qua; `./scripts/gate.sh` exit 0. Sự cố lúc giao: Claude lấy nhầm mã T-319 (đã là task khác, đã commit `b4316b6`) nên ghi đè vào worktree `../lean_wt/T-319` còn chờ gỡ — đã trả hai file `van-hanh` về HEAD của nó và viết lại file scope theo dòng *Phạm vi* của T-319, rồi đổi task này sang T-326. Worktree `../lean_wt/T-326` và nhánh `codex/T-326` để chủ repo xoá.
 
 <a id="t-318"></a>
 ### T-318 — Cột Khác ở Tổng thiếu theo bàn hiện "N nước chấm" làm nhân viên hiểu sai

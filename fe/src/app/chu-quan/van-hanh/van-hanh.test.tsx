@@ -261,18 +261,22 @@ describe("Vận hành", () => {
     expect(rows[1].textContent).toContain("A + B"); expect(rows[2].textContent).toContain("D");
     expect(cells(rows[1])).toEqual(["7*", "7", "7 tái7 chín", "7", "7", "23.123đ"]);
     expect(cells(rows[3])).toEqual(["14*", "7", "7 tái7 chín", "7", "7", "46.246đ"]);
-    expect(b.queryByText(/Giò/)).toBeNull();
+    expect(b.getByRole("columnheader", { name: "Giò" })).toBeTruthy();
+    expect(within(rows[1]).queryByText(/Giò/)).toBeNull();
     expect(rows[1].querySelector(".nhieu")).toBeTruthy();
     expect(b.queryByRole("button", { name: "C" })).toBeNull();
     expect(metadata.title).toBe("Vận hành"); expect(screen.getByText(/Ngày bán: 2025-02-03/).textContent).toContain("10:17:29");
   });
-  it("bấm nhãn bàn mở ngay dưới hàng với tổng, đã ra, thiếu, tiền đơn rồi đóng", async () => {
+  it("T-326 A3: bấm nhãn bàn mở chi tiết có Giò, không Canh, giữ tổng, đã ra, thiếu, tiền đơn rồi đóng", async () => {
     mo(); const b = await bang(); const btn = b.getByRole("button", { name: "A + B" });
     fireEvent.click(btn); expect(btn.getAttribute("aria-expanded")).toBe("true");
     const detail = btn.closest("tr")!.nextElementSibling! as HTMLElement;
     expect(detail.id).toBe(btn.getAttribute("aria-controls"));
     expect(within(detail).getAllByText("tổng")).toHaveLength(5); expect(within(detail).getAllByText("đã ra")).toHaveLength(5); expect(within(detail).getAllByText("thiếu")).toHaveLength(5);
     expect(within(detail).queryByRole("heading", { name: "Khác" })).toBeNull();
+    expect(within(detail).getAllByRole("heading").map((h) => h.textContent)).toEqual(["Thịt", "Mộc nhĩ", "Trứng", "Chay", "Giò"]);
+    const gio = within(detail).getByRole("heading", { name: "Giò" }).parentElement!;
+    expect(Array.from(gio.children).slice(1).map((d) => d.textContent)).toEqual(["tổng13", "đã ra6", "thiếu7"]);
     expect(detail.textContent).toContain("Tiền đơn: 79.123đ");
     fireEvent.click(btn); expect(btn.getAttribute("aria-expanded")).toBe("false"); expect(document.getElementById(detail.id)).toBeNull();
   });
@@ -387,6 +391,59 @@ describe("Vận hành", () => {
     const b = await bang();
     fireEvent.click(nut("Chi tiết đem ra A"));
     expect(cells(b.getAllByRole("row")[1])[0]).toBe("0"); expect(b.queryByRole("columnheader", { name: "Khác" })).toBeNull();
-    expect(b.getAllByRole("columnheader").map((c) => c.textContent)).toEqual(["Bàn", "Thịt", "Mộc nhĩ", "Trứng", "Chay", "Canh", "Tiền bánh đã ra"]);
+    expect(b.getAllByRole("columnheader").map((c) => c.textContent)).toEqual(["Bàn", "Thịt", "Mộc nhĩ", "Trứng", "Chay", "Giò", "Tiền bánh đã ra"]);
+  });
+  it.each([
+    ["có giò", data.sessions],
+    ["không phiên nào có giò", data.sessions.map((p) => ({ ...p, items: p.items.filter((i) => i.component_name !== "Giò") }))],
+    ["không có phiên", []],
+  ])("T-326 A1: tiêu đề bảng tổng thiếu cố định khi %s", async (_ten, sessions) => {
+    mo(() => ({ status: 200, body: { ...data, sessions } }));
+    const b = await bang();
+    expect(b.getAllByRole("columnheader").map((c) => c.textContent)).toEqual(["Bàn", "Thịt", "Mộc nhĩ", "Trứng", "Chay", "Giò", "Tiền bánh đã ra"]);
+    expect(b.queryByRole("columnheader", { name: "Canh" })).toBeNull();
+  });
+  it("T-326 A2: cột Giò chỉ đếm đúng tên, hiện số thiếu hoặc 0 và cộng thử +N vào tổng", async () => {
+    mo(() => ({ status: 200, body: { ...data, sessions: [
+      phien(21, "serving", "A", [thu("Giò"), thu("Canh bánh cuốn", undefined, { missing: 19 }), thu("Nước chấm"), thu("Giò bán rời"), thu("Giò "), thu("giò")]),
+      phien(22, "serving", "B", [thu("Giò", undefined, { ordered: 2, served: 0, missing: 2 })]),
+      phien(23, "serving", "C", [thu("Giò", undefined, { served: 13, missing: 0 })]),
+      phien(24, "serving", "D", [thu("Canh bánh cuốn")]),
+      phien(31, "waiting", "E", [thu("Giò", undefined, { ordered: 3, served: 0, missing: 3 }), thu("Canh bánh cuốn")]),
+      phien(41, "no_order", "F", [thu("Giò")]),
+    ] } }));
+    const b = await bang();
+    const oGio = (ten: string) => within(b.getByRole("button", { name: ten }).closest("tr")!).getAllByRole("cell")[4];
+    for (const [ten, so] of [["A", "7"], ["B", "2"], ["C", "0"], ["D", "0"]]) {
+      fireEvent.click(b.getByRole("button", { name: `Chi tiết đem ra ${ten}` }));
+      expect(oGio(ten).textContent).toBe(so);
+      expect(within(oGio(ten)).queryByRole("button")).toBeNull();
+    }
+    expect(cells(b.getAllByRole("row").at(-1)!)[4]).toBe("9");
+    fireEvent.click(screen.getByRole("checkbox", { name: "E · 79.123đ" }));
+    fireEvent.click(b.getByRole("button", { name: "Chi tiết đem ra E" }));
+    expect(oGio("E").textContent).toBe("3");
+    expect(within(oGio("E")).queryByRole("button")).toBeNull();
+    expect(cells(b.getAllByRole("row").at(-1)!)[4]).toBe("9+3");
+    expect(b.getByText("+3").className).toContain("them");
+    fireEvent.click(nut("Bỏ chọn hết"));
+    expect(cells(b.getAllByRole("row").at(-1)!)[4]).toBe("9");
+  });
+  it("T-326 A4: Bàn đang phục vụ giữ Canh và Khác chứa giò ở bảng đầy đủ và chi tiết", async () => {
+    mo(); await bang();
+    fireEvent.click(nut("Chi tiết bàn đang phục vụ"));
+    const b = within(screen.getByRole("region", { name: "Bảng đầy đủ" }));
+    expect(b.getByRole("columnheader", { name: "Canh đặt / đã ra" })).toBeTruthy();
+    expect(b.getByRole("columnheader", { name: "Khác đặt / đã ra" })).toBeTruthy();
+    expect(b.queryByRole("columnheader", { name: "Giò đặt / đã ra" })).toBeNull();
+    const row = b.getByRole("rowheader", { name: "A + B" }).closest("tr")!;
+    expect(row.querySelector('td[data-label="Canh đặt / đã ra"]')!.textContent).toBe("13 / 6");
+    expect(row.querySelector('td[data-label="Khác đặt / đã ra"]')!.textContent).toBe("13 Giò / 6 Giò");
+    const hien = nut("Hiện A + B"); fireEvent.click(hien);
+    const ct = within(vungAn(hien));
+    expect(ct.getByRole("heading", { name: "Canh" })).toBeTruthy();
+    const khac = ct.getByRole("heading", { name: "Khác" }).parentElement!;
+    expect(Array.from(khac.children).slice(1).map((d) => d.textContent)).toEqual(["tổng13 Giò", "đã ra6 Giò", "thiếu7 Giò"]);
+    expect(ct.queryByRole("heading", { name: "Giò" })).toBeNull();
   });
 });
