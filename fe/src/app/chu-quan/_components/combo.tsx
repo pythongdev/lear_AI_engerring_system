@@ -6,9 +6,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { mucChuQuan } from "./muc-chu-quan";
 import "./combo.css";
 import { FieldError } from "@/components/ui/field";
 import { useSanPham, type Mon } from "./du-lieu-san-pham";
@@ -108,21 +106,6 @@ function ThanhPhan({ c }: { c: Combo }) {
     {mon.surcharges.map((s) => <small key={s.menu_option_id}>{s.option_group_name} · {s.option_name}: {tienMenu(s.surcharge_vnd)}</small>)}
   </li>)}</ul>;
 }
-function DieuHuongCombo() {
-  const nhom = [
-    { ten: "Hôm nay", routes: ["/chu-quan", "/chu-quan/van-hanh", "/chu-quan/tong-ket"] },
-    { ten: "Thực đơn", routes: ["/chu-quan/san-pham", "/chu-quan/menu-gia", "/chu-quan/danh-muc", "/chu-quan/combo", "/chu-quan/topping"] },
-    { ten: "Con người", routes: ["/chu-quan/nhan-vien", "/chu-quan/giao-viec", "/chu-quan/dao-tao"] },
-    { ten: "Hàng & tiền", routes: ["/chu-quan/nguyen-lieu", "/chu-quan/kho", "/chu-quan/khoan-chi"] },
-  ];
-  return <nav className="cb-nav" aria-label="Trang chủ quán">
-    <Link className="cb-brand" href="/chu-quan"><b>BT</b><span>Bánh cuốn Bà Thanh<small>Chủ quán</small></span></Link>
-    {nhom.map((n) => <details key={n.ten}><summary>{n.ten}</summary><div>{n.routes.map((r) => {
-      const muc = mucChuQuan.find((m) => m.route === r)!;
-      return <Link key={r} href={r} aria-current={r === "/chu-quan/combo" ? "page" : undefined}>{muc.nhan}</Link>;
-    })}</div></details>)}
-  </nav>;
-}
 export function TrangCombo() {
   const query = useCombo();
   const sanPham = useSanPham();
@@ -135,12 +118,12 @@ export function TrangCombo() {
   const data = query.data;
   const combos = data?.combos ?? [];
   const hien = combos.filter((c) => (loc === "all" || (c.hidden_at !== null) === (loc === "hidden")) && c.name.toLocaleLowerCase("vi").includes(tim.trim().toLocaleLowerCase("vi")));
-  const c = hien.find((c) => c.menu_combo_id === chon) ?? hien[0];
+  const c = combos.find((item) => item.menu_combo_id === chon);
   const mon = sanPham.data && [...sanPham.data.categories.flatMap((c) => c.items), ...sanPham.data.uncategorized_items].filter((m) => !m.discontinued);
   const dong = () => setSua(null);
-  return <div className="combo-shell"><DieuHuongCombo /><div className="cb-page">
-    <header className="cb-header"><div><p className="cb-eyebrow">THỰC ĐƠN / COMBO</p><h1>Combo</h1><p className="cb-muted">Ghép những món ngon thành một lựa chọn trọn vẹn.</p></div>
-      <div className="cb-actions"><Button variant="outline" disabled={query.isFetching || sanPham.isFetching} onClick={() => { void query.refetch(); void sanPham.refetch(); void topping.refetch(); }}>↻ Đọc lại</Button><Button disabled={!mon} onClick={() => setSua("lap")}>＋ Lập combo</Button></div>
+  return <div className="combo-shell">
+    <header className="cb-header"><h1>Combo {data && <span className="cb-badge">{combos.length} combo</span>}</h1>
+      <div className="cb-actions"><Button variant="outline" disabled={query.isFetching || sanPham.isFetching} onClick={() => { void query.refetch(); void sanPham.refetch(); void topping.refetch(); }}>Đọc lại danh sách</Button><Button disabled={!mon} onClick={() => { setChon(null); setSua("lap"); }}>＋ Lập combo</Button></div>
     </header>
     {query.isPending && <p role="status">{query.fetchStatus === "paused" ? "Đang chờ kết nối." : "Đang đọc danh sách combo…"}</p>}
     {query.isError && <Alert role="alert"><AlertDescription>Chưa đọc được danh sách combo.
@@ -150,39 +133,43 @@ export function TrangCombo() {
     {thongBao && <p className="cb-feedback" role="status">{thongBao}</p>}
     {data && <>
       {query.isFetching && <p role="status">Đang đọc lại danh sách combo…</p>}
-      <section className="cb-overview" aria-label="Tóm tắt danh sách">
-        <article><small>Tổng combo</small><strong>{combos.length}</strong><p>Trong danh sách combo</p></article>
-        <article className="cb-attention"><small>Đang hiển thị</small><strong>{combos.filter((c) => c.hidden_at === null).length}</strong><p>Có trong thực đơn</p></article>
-        <article><small>Đang ẩn</small><strong>{combos.filter((c) => c.hidden_at !== null).length}</strong><p>Tạm ẩn khỏi thực đơn</p></article>
-      </section>
-      <div className="cb-layout"><section aria-label="Danh sách combo">
+      <section className="cb-panel" aria-label="Danh sách combo">
         <div className="cb-toolbar"><div className="cb-tabs" aria-label="Lọc combo">{[["all", "Tất cả"], ["visible", "Hiển thị"], ["hidden", "Đã ẩn"]].map(([id, ten]) => <button key={id} aria-pressed={loc === id} onClick={() => setLoc(id)}>{ten}</button>)}</div><input type="search" aria-label="Tìm tên combo" placeholder="Tìm tên combo…" value={tim} onChange={(e) => setTim(e.target.value)} /></div>
-        <div className="cb-list">{hien.map((item) => <section className="cb-item" aria-label={item.name} key={item.menu_combo_id} data-selected={c?.menu_combo_id === item.menu_combo_id}>
-          <button className="cb-select" aria-label={`Xem ${item.name}`} aria-pressed={c?.menu_combo_id === item.menu_combo_id} onClick={() => { setChon(item.menu_combo_id); dong(); }}>
-            <AnhSanPham ten={item.name} combo className="cb-photo" />
-            <span className="cb-row"><span className="cb-badge">{item.hidden_at ? "Đã ẩn" : "Hiển thị"}</span></span>
-            <span className="cb-name">{item.name}</span>
-          </button>
-          <ThanhPhan c={item} /><div className="cb-total"><small>Giá combo</small><strong className="cb-price">{tienMenu(item.price_vnd)}</strong></div>
-        </section>)}</div>
-        {hien.length === 0 && <p className="cb-empty">{combos.length === 0 ? "Chưa có combo." : "Không có combo phù hợp."}</p>}
-      </section><aside className="cb-detail" aria-label="Chi tiết combo">{c ? <>
-        <AnhSanPham key={c.menu_combo_id} ten={c.name} combo className="cb-photo" /><h2>{c.name}</h2><span className="cb-badge">{c.hidden_at ? "Đã ẩn" : "Đang hiển thị"}</span>
-        <p className="cb-price">{tienMenu(c.price_vnd)}</p><h3>THÀNH PHẦN COMBO</h3><ThanhPhan c={c} />
-        {c.hidden_at === null && <div className="cb-actions"><Button aria-label={`Đổi giá ${c.name}`} onClick={() => setSua("gia")}>Đổi giá</Button><Button variant="outline" aria-label={`Ẩn ${c.name}`} onClick={() => setSua("an")}>Ẩn combo</Button>{topping.data && <Button variant="outline" aria-label={`Đặt phụ thu ${c.name}`} onClick={() => setSua("phu-thu")}>Đặt phụ thu</Button>}</div>}
-      </> : <p className="cb-muted">Chọn một combo để xem chi tiết.</p>}</aside></div>
+        {hien.length === 0 ? <p className="cb-empty">{combos.length === 0 ? "Chưa có combo." : "Không có combo phù hợp."}</p> :
+          <div className="cb-table-scroll" role="region" aria-label="Bảng combo" tabIndex={0}>
+            <table><thead><tr><th scope="col">Combo</th><th scope="col">Trạng thái</th><th scope="col">Giá</th><th scope="col">Thành phần</th><th scope="col">Thao tác</th></tr></thead>
+              <tbody>{hien.map((item) => <tr key={item.menu_combo_id}>
+                <td><div className="cb-product"><AnhSanPham ten={item.name} combo className="cb-photo" /><span>{item.name}</span></div></td>
+                <td>{item.hidden_at ? <span className="cb-badge cb-hidden">Đã ẩn</span> : "Hiển thị"}</td>
+                <td><span className="cb-price">{tienMenu(item.price_vnd)}</span></td>
+                <td><ThanhPhan c={item} /></td>
+                <td><Button variant="outline" aria-label={`${item.hidden_at ? "Chi tiết" : "Cập nhật"} ${item.name}`} onClick={() => { setChon(item.menu_combo_id); dong(); }}>{item.hidden_at ? "Chi tiết" : "Cập nhật"}</Button></td>
+              </tr>)}</tbody>
+            </table>
+          </div>}
+      </section>
     </>}
     {sanPham.isPending && <p role="status">{sanPham.fetchStatus === "paused" ? "Đang chờ kết nối để đọc món." : "Đang đọc danh sách món…"}</p>}
     {sanPham.isError && <Alert role="alert"><AlertDescription>Chưa đọc được danh sách món.
       {sanPham.data && ` Đang hiện bản đọc trước, lúc ${new Date(sanPham.dataUpdatedAt).toLocaleTimeString("vi-VN")}.`}
     </AlertDescription></Alert>}
+    <Dialog open={!!c && sua === null} onOpenChange={(open) => { if (!open) setChon(null); }}>
+      <DialogContent className="cb-dialog cb-drawer" aria-describedby={undefined}>
+        {c && <><DialogTitle>{c.hidden_at ? "Chi tiết" : "Cập nhật"} {c.name}</DialogTitle>
+          <AnhSanPham key={c.menu_combo_id} ten={c.name} combo className="cb-drawer-photo" />
+          <div className="cb-drawer-summary"><span className={`cb-badge${c.hidden_at ? " cb-hidden" : ""}`}>{c.hidden_at ? "Đã ẩn" : "Hiển thị"}</span><strong className="cb-price">{tienMenu(c.price_vnd)}</strong></div>
+          <section className="cb-drawer-section"><h2>Thành phần combo</h2><ThanhPhan c={c} /></section>
+          {c.hidden_at === null && <section className="cb-drawer-section"><h2>Thao tác</h2><div className="cb-actions"><Button aria-label={`Đổi giá ${c.name}`} onClick={() => setSua("gia")}>Đổi giá</Button><Button variant="outline" aria-label={`Ẩn ${c.name}`} onClick={() => setSua("an")}>Ẩn combo</Button>{topping.data && <Button variant="outline" aria-label={`Đặt phụ thu ${c.name}`} onClick={() => setSua("phu-thu")}>Đặt phụ thu</Button>}</div></section>}
+        </>}
+      </DialogContent>
+    </Dialog>
     <Dialog open={sua !== null} onOpenChange={(open) => { if (!open) dong(); }}><DialogContent className="cb-dialog" showCloseButton={false}>
-      <div className="cb-row"><div><p className="cb-eyebrow">COMBO</p><DialogTitle>{sua === "lap" ? "Lập combo" : sua === "gia" ? "Đổi giá combo" : sua === "an" ? "Ẩn combo" : "Đặt phụ thu combo"}</DialogTitle></div><button aria-label="Đóng hộp thoại" onClick={dong}>×</button></div>
+      <div className="cb-row"><DialogTitle>{sua === "lap" ? "Lập combo" : sua === "gia" ? "Đổi giá combo" : sua === "an" ? "Ẩn combo" : "Đặt phụ thu combo"}</DialogTitle><button aria-label="Đóng hộp thoại" onClick={dong}>×</button></div>
       <DialogDescription>{sua === "lap" ? "Chọn món và số suất. Giá combo được nhập riêng." : c?.name}</DialogDescription>
       {sua === "lap" && mon && <FormLapCombo mon={mon} bao={bao} dong={dong} />}
       {sua === "gia" && c && <FormDoiGiaCombo key={c.menu_combo_id} c={c} dong={dong} bao={bao} />}
       {sua === "an" && c && <FormAnCombo key={c.menu_combo_id} c={c} dong={dong} bao={bao} />}
       {sua === "phu-thu" && c && topping.data && <FormDatPhuThu key={c.menu_combo_id} c={c} nhom={topping.data.option_groups} dong={dong} bao={bao} />}
     </DialogContent></Dialog>
-  </div></div>;
+  </div>;
 }

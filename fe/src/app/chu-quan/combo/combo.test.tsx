@@ -80,7 +80,7 @@ function go(o: HTMLElement, nhan: string, giaTri: string) {
 }
 const oSai = (o: HTMLElement, nhan: string) => within(o).getByLabelText(nhan).getAttribute("aria-invalid");
 async function mo(nhanNut: string) {
-  if (nhanNut.endsWith("Combo Chay")) fireEvent.click(await screen.findByRole("button", { name: "Xem Combo Chay" }));
+  fireEvent.click(await screen.findByRole("button", { name: `Cập nhật ${nhanNut.endsWith("Combo Chay") ? "Combo Chay" : "Combo Đầy đủ"}` }));
   fireEvent.click(await screen.findByRole("button", { name: nhanNut }));
   return screen.getByRole("form", { name: nhanNut });
 }
@@ -103,7 +103,9 @@ function dienComboHopLe(f: HTMLElement) {
 describe("trang combo — danh sách", () => {
   it("bày combo đúng thứ backend, giá đúng price_vnd, món kèm số suất, món ngừng bán có nhãn, mức phụ thu chỉ đọc", async () => {
     const goi = moTrang();
-    const day = await screen.findByRole("region", { name: "Combo Đầy đủ" });
+    const day = (await screen.findByRole("button", { name: "Cập nhật Combo Đầy đủ" })).closest("tr")!;
+    expect(within(screen.getByRole("region", { name: "Bảng combo" })).getAllByRole("columnheader").map((o) => o.textContent))
+      .toEqual(["Combo", "Trạng thái", "Giá", "Thành phần", "Thao tác"]);
     expect(day.textContent ?? "").toMatch(/45\.000\s*đ/);
     const mon = within(day).getAllByRole("listitem").map((li) => li.textContent ?? "");
     expect(mon[0]).toMatch(/Bánh cuốn trứng.*×\s*2/);
@@ -111,7 +113,7 @@ describe("trang combo — danh sách", () => {
     expect(mon[0]).not.toContain("Ngừng bán");
     expect(mon[1]).toContain("Chả quế");
     expect(mon[1]).toContain("Ngừng bán");
-    const chay = screen.getByRole("region", { name: "Combo Chay" });
+    const chay = screen.getByRole("button", { name: "Cập nhật Combo Chay" }).closest("tr")!;
     expect(day.compareDocumentPosition(chay) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(chay.textContent ?? "").toMatch(/30\.000\s*đ/);
     // Không đọc giá món hay tính thử: giá combo là giá riêng backend trả.
@@ -120,7 +122,7 @@ describe("trang combo — danh sách", () => {
 
   it("không có nút xoá, đổi tên, sửa món hay đặt phụ thu — hợp đồng không có cửa ấy ở bước này", async () => {
     moTrang();
-    await screen.findByRole("region", { name: "Combo Đầy đủ" });
+    await screen.findByRole("button", { name: "Cập nhật Combo Đầy đủ" });
     expect(screen.queryByRole("button", { name: /xoá|xóa|đổi tên|sửa món|phụ thu/i })).toBeNull();
   });
 
@@ -311,6 +313,7 @@ describe("trang combo — đặt phụ thu theo món (T-211)", () => {
     });
   }
   async function moForm() {
+    fireEvent.click(await screen.findByRole("button", { name: "Cập nhật Combo Đầy đủ" }));
     fireEvent.click(await screen.findByRole("button", { name: "Đặt phụ thu Combo Đầy đủ" }));
     return screen.getByRole("form", { name: "Đặt phụ thu Combo Đầy đủ" });
   }
@@ -361,32 +364,33 @@ describe("trang combo — lọc và chi tiết", () => {
       const body = url.pathname.endsWith("/menu-combos") ? mauCombo : url.pathname.endsWith("/menu-categories") ? mauMon : { option_groups: [] };
       return new Response(JSON.stringify(body), { status: 200, headers: { "content-type": "application/json" } });
     }}><Page /></ApiProvider>);
-    await screen.findByRole("region", { name: "Combo Đầy đủ" });
+    await screen.findByRole("button", { name: "Cập nhật Combo Đầy đủ" });
     expect(urls.find((url) => url.pathname.endsWith("/menu-combos"))?.searchParams.get("include_hidden")).toBe("true");
   });
-  it("tìm theo tên không phân biệt hoa thường, chọn thẻ cập nhật chi tiết", async () => {
+  it("tìm theo tên không phân biệt hoa thường, mở ngăn cập nhật chi tiết", async () => {
     const goi = moTrang();
-    await screen.findByRole("button", { name: "Xem Combo Chay" });
-    fireEvent.click(screen.getByRole("button", { name: "Xem Combo Chay" }));
-    expect(within(screen.getByRole("complementary", { name: "Chi tiết combo" })).getByRole("heading", { name: "Combo Chay" })).toBeTruthy();
+    fireEvent.click(await screen.findByRole("button", { name: "Cập nhật Combo Chay" }));
+    expect(within(screen.getByRole("dialog")).getByRole("heading", { name: "Cập nhật Combo Chay" })).toBeTruthy();
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Close" }));
     fireEvent.change(screen.getByRole("searchbox", { name: "Tìm tên combo" }), { target: { value: "ĐẦY ĐỦ" } });
-    expect(screen.queryByRole("region", { name: "Combo Chay" })).toBeNull();
-    expect(screen.getByRole("region", { name: "Combo Đầy đủ" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Cập nhật Combo Chay" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Cập nhật Combo Đầy đủ" })).toBeTruthy();
     fireEvent.change(screen.getByRole("searchbox", { name: "Tìm tên combo" }), { target: { value: "không khớp" } });
     expect(screen.getByText("Không có combo phù hợp.")).toBeTruthy();
     expect(ghi(goi)).toEqual([]);
   });
-  it("lọc combo ẩn, thống kê theo toàn danh sách và không cho sửa combo đã ẩn", async () => {
+  it("lọc combo ẩn, đếm theo toàn danh sách và không cho sửa combo đã ẩn", async () => {
     moTrang({ doc: () => ({ status: 200, body: { combos: [mauCombo.combos[0], { ...mauCombo.combos[1], hidden_at: "2026-10-25T01:00:00Z" }] } }) });
-    await screen.findByRole("region", { name: "Combo Chay" });
+    await screen.findByRole("button", { name: "Chi tiết Combo Chay" });
     fireEvent.click(screen.getByRole("button", { name: "Đã ẩn" }));
-    expect(screen.queryByRole("region", { name: "Combo Đầy đủ" })).toBeNull();
-    expect(screen.getByRole("region", { name: "Combo Chay" })).toBeTruthy();
-    expect(screen.queryByRole("button", { name: "Đổi giá Combo Chay" })).toBeNull();
-    const tomTat = screen.getByRole("region", { name: "Tóm tắt danh sách" });
-    expect([...tomTat.querySelectorAll("strong")].map((n) => n.textContent)).toEqual(["2", "1", "1"]);
+    expect(screen.queryByRole("button", { name: "Cập nhật Combo Đầy đủ" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Chi tiết Combo Chay" }));
+    expect(within(screen.getByRole("dialog")).getByRole("heading", { name: "Chi tiết Combo Chay" })).toBeTruthy();
+    expect(within(screen.getByRole("dialog")).queryByRole("button", { name: /Đổi giá|Ẩn combo|Đặt phụ thu/ })).toBeNull();
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Close" }));
+    expect(screen.getByRole("heading", { name: /Combo 2 combo/ })).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Hiển thị" }));
-    expect(screen.queryByRole("region", { name: "Combo Chay" })).toBeNull();
-    expect(screen.getByRole("region", { name: "Combo Đầy đủ" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Chi tiết Combo Chay" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Cập nhật Combo Đầy đủ" })).toBeTruthy();
   });
 });

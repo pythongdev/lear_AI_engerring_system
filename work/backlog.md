@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-328 **Trang Combo cần cùng cách bày với trang Sản phẩm** — L1 (đổi giao diện và cách mở chi tiết, không đổi giá hay cửa ghi), xong 2026-11-13 theo yêu cầu chủ repo; bảng combo, đầu trang và ngăn chi tiết theo khuôn Sản phẩm; giữ tìm, lọc và thao tác cũ; test 22/22 và gate đạt · [chi tiết](#t-328)
 - [x] T-326 **Tổng thiếu theo bàn có cột Canh nhưng giò không có chỗ hiện để đem ra** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-12; ở riêng mục này cột *Canh* thay bằng cột *Giò*, *Bàn đang phục vụ* giữ nguyên; Codex làm, Claude duyệt; fe-check 790/790 và gate đạt · [chi tiết](#t-326)
 - [x] T-318 **Cột Khác ở Tổng thiếu theo bàn hiện "N nước chấm" làm nhân viên hiểu sai** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; chủ repo chọn bỏ hẳn cột Khác khỏi mục này (cả giò lẫn nước chấm), *Bàn đang phục vụ* giữ cột Khác; Claude làm; fe-check và gate đạt · [chi tiết](#t-318)
 - [x] T-325 **`db-check` đỏ ngay ở bản đã commit: I-043 và I-044 không có câu đối chiếu và không có dòng lý do ở bộ đối chiếu** — L1 (chỉ tài liệu ánh xạ, không đổi bất biến), xong 2026-11-12, F-080; thêm hai dòng §2.1 nêu vì sao hai mệnh đề không đọc lại được từ dữ liệu và test tầng 3 nào giữ chúng; Codex làm, Claude duyệt và chạy `db-check` đạt · [chi tiết](#t-325)
@@ -787,6 +788,17 @@ Acceptance viết trước sửa:
 Phạm vi (`work/scope/T-317.txt`): `fe/src/app/chu-quan/_components/van-hanh.tsx`, `fe/src/app/chu-quan/van-hanh/`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-317`, nhánh `codex/T-317`, nền `47e57a9` cộng phần T-316 của hai file `van-hanh` đã stage sẵn (T-316 chưa commit). Duyệt: Claude, chưa duyệt.
 
 Duyệt và bàn giao 2026-11-11 (Claude): Codex đổi nút chuyển trong `HangThieu` thành `Button` `size="icon"` với `LayoutGrid` / `ClipboardList` (`aria-hidden`), giữ `aria-label` và `aria-pressed`, thêm `title`; đổi câu hướng dẫn; ở `van-hanh.test.tsx` thay hai khẳng định chữ nút bằng hàm `kiemIcon` (kích thước, kiểu, `title`, chữ rỗng, đúng một `svg` có `aria-hidden`) ở cả hai trạng thái và khi chuyển về, ở `dem-ra.test.tsx` và `van-hanh.test.tsx` đổi câu hướng dẫn; không bỏ khẳng định nào (A1–A4). Gate của Codex đỏ ở `next build` vì sandbox cấm mở cổng, không do mã. Claude đọc diff thật, đưa patch về cây chính: `./scripts/fe-check.sh` exit 0, 784/784, build qua; `./scripts/gate.sh` exit 0 (A5). Worktree `../lean_wt/T-317` và nhánh `codex/T-317` để chủ repo xoá.
+
+<a id="t-328"></a>
+### T-328 — Trang Combo cần cùng cách bày với trang Sản phẩm
+
+Chủ repo yêu cầu 2026-11-13: làm `/chu-quan/combo` hiển thị giống `/chu-quan/san-pham`. Mức L1 vì chỉ đổi cách bày và cách mở chi tiết; dữ liệu, giá combo riêng và cửa ghi giữ theo hợp đồng. Codex làm trên nhánh `P4A-01` từ cây hiện tại; chưa có người duyệt độc lập. Trang Sản phẩm và nhiều file khác đang có thay đổi chưa commit của việc khác, không đưa phần ấy vào việc này.
+
+Acceptance viết trước sửa: A1 — trang Combo dùng cùng chiều rộng, cỡ tiêu đề, huy hiệu số lượng, nền bảng và ngăn chi tiết bên phải như trang Sản phẩm; không dựng thanh điều hướng thứ hai. A2 — bảng hiện ảnh, tên, trạng thái, giá riêng từ API và các món với số suất, phụ thu; đọc đúng thứ tự backend. A3 — tìm theo tên, lọc hiện/ẩn, lập combo, đổi giá, ẩn và đặt phụ thu vẫn hoạt động; combo ẩn không có thao tác sửa. A4 — test combo kiểm giao diện mới và giữ các khẳng định dữ liệu, cửa ghi; `./scripts/gate.sh` được chạy và đọc kết quả. Việc T-315 thêm nút Sửa combo sau này cần đặt nút ấy vào bảng và ngăn mới khi tích hợp.
+
+Phạm vi (`work/scope/T-328.txt`): `work/backlog.md`, `fe/src/app/chu-quan/_components/combo.tsx`, `fe/src/app/chu-quan/_components/combo.css`, `fe/src/app/chu-quan/combo/combo.test.tsx`.
+
+Bàn giao 2026-11-13: Codex thay thẻ và khung chi tiết cố định bằng bảng cùng kiểu Sản phẩm và ngăn bên phải; bỏ thanh điều hướng thứ hai vì `chu-quan/layout.tsx` đã có thanh chung. Tìm, lọc, lập combo, đổi giá, ẩn và đặt phụ thu vẫn dùng các cửa cũ; combo ẩn chỉ xem chi tiết. `npx vitest run src/app/chu-quan/combo/combo.test.tsx --reporter=dot` đạt 22/22; `npm run typecheck` đạt; `git diff --check` đạt. Gate cây chung xanh hai lượt; sau sửa nhãn combo ẩn, lượt mới FAIL Gate 3 vì `docs/command/ket-boi-iphone.md` vừa đổi ngoài mọi scope, còn các cổng khác PASS hoặc SKIP đúng điều kiện. Worktree kiểm chứng `/tmp/T-328-verify-20261113` lấy HEAD `a00bdb2` và chỉ patch T-328: `./scripts/gate.sh` exit 0, FE 789/789 và build đạt. Chưa xem bằng trình duyệt có phiên đăng nhập; test và build là bằng chứng hiện có. Cây chung còn nhiều thay đổi chưa commit của việc khác, đặc biệt `work/backlog.md`; chỉ tách các dòng T-328 vào commit của việc này. T-315 về nút Sửa combo chưa được tích hợp; khi làm cần đổi chỗ đặt nút theo bảng và ngăn mới.
 
 <a id="t-316"></a>
 ### T-316 — Dòng món ở Tổng thiếu theo bàn và Cộng thử ghép đơn dài như hoá đơn nên nhân viên khó đọc nhanh
