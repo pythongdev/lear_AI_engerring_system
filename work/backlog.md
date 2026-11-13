@@ -97,10 +97,10 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [x] T-327 **Hai ca `--amend` của test Gate 8 đỏ ở nơi `ps` bị chặn, làm gate của Codex đỏ không do diff** — L1 (test tự nói khi không kiểm được, hook nói rõ lý do; không nới luật trùng subject), xong 2026-11-12, F-079; ở nơi `ps` bị chặn hai ca được nêu tên là không kiểm được thay vì đỏ, lời từ chối của hook giải thích và chỉ đường `--amend --no-verify`; Codex làm một vòng, Claude duyệt; gate đạt · [chi tiết](#t-327)
+- [x] T-318 **Cột Khác ở Tổng thiếu theo bàn hiện "N nước chấm" làm nhân viên hiểu sai** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; chủ repo chọn bỏ hẳn cột Khác khỏi mục này (cả giò lẫn nước chấm), *Bàn đang phục vụ* giữ cột Khác; Claude làm; fe-check và gate đạt · [chi tiết](#t-318)
 - [x] T-325 **`db-check` đỏ ngay ở bản đã commit: I-043 và I-044 không có câu đối chiếu và không có dòng lý do ở bộ đối chiếu** — L1 (chỉ tài liệu ánh xạ, không đổi bất biến), xong 2026-11-12, F-080; thêm hai dòng §2.1 nêu vì sao hai mệnh đề không đọc lại được từ dữ liệu và test tầng 3 nào giữ chúng; Codex làm, Claude duyệt và chạy `db-check` đạt · [chi tiết](#t-325)
 - [x] T-324 **Mỗi lượt gate chạy lại mọi `scripts/*.test.sh` dù không script nào đổi, mất 94 trên 143 giây** — L1 (đổi điều kiện chạy một bước của Gate 1), xong 2026-11-12 theo Bước 6 của bản đánh giá; test của script chỉ chạy khi `scripts/` hay đầu vào riêng của từng file đổi, brief tự báo khi vượt trần; lượt không đổi `scripts/` ở cây chính còn 49 giây; Codex làm hai vòng, Claude duyệt; gate đạt · [chi tiết](#t-324)
-- [x] T-323 **Sáu finding "gate đỏ rồi chạy lại thì xanh" chưa được chữa chung: các gói test Go dùng chung một database, F-078 chưa rõ nguyên nhân** — L2, ADR-144, xong 2026-11-12 theo Bước 9 của `work/proposals/danh-gia-he-thong-2026-11-11.md`; lát 1: `db-check` không gỡ database được giữ, test combo tự khai ca quầy gây lỗi; lát 2: mỗi gói test Go một database riêng, lỗi dữ liệu của một gói không còn làm đỏ gói khác; Claude viết test hồi quy trước, Codex làm, Claude duyệt bằng Docker và phép cài lỗi; gate đạt; F-078 vẫn mở · [chi tiết](#t-323)
+- [ ] T-323 **Sáu finding "gate đỏ rồi chạy lại thì xanh" chưa được chữa chung: các gói test Go dùng chung một database, F-078 chưa rõ nguyên nhân** — L2, mở 2026-11-11 theo Bước 9 của `work/proposals/danh-gia-he-thong-2026-11-11.md`; lát 1 (L1, Codex làm, Claude duyệt, mở 2026-11-12): `db-check` không gỡ database `be-check` giữ lại và test combo tự khai ca quầy gây lỗi; lát 2 (tách database theo gói) chờ Claude thiết kế và viết test trước · [chi tiết](#t-323)
 - [x] T-322 **`README.md` vẽ cây thư mục cũ và bảng mục lục viết tay của `work/findings.md` lệch từ F-060** — L1 (chỉ tài liệu), xong 2026-11-11 theo Bước 8 của `work/proposals/danh-gia-he-thong-2026-11-11.md`; cây thư mục chỉ còn đường dẫn có thật, bảng mục lục thay bằng cách xem finding đang mở; Codex làm, Claude duyệt; gate đạt · [chi tiết](#t-322)
 - [x] T-321 **Gate không in thời gian từng cổng nên chưa biết 231 giây nằm ở đâu so với hạn hook 180 giây** — L1 (chỉ đo, không đổi điều kiện đạt/đỏ), xong 2026-11-11 theo Bước 6 của bản đánh giá; gate in thời gian từng cổng, từng bước Gate 1 và ba test chậm nhất; đo ở cây chính: 222 giây, trong đó Gate 3 chiếm 106 giây; Codex làm, Claude duyệt; gate đạt · [chi tiết](#t-321)
 - [x] T-320 **Không có gì dọn sau commit: file scope và dòng đã xong tồn lại vì bước dọn rơi vào lúc không phiên nào chạy** — L1, xong 2026-11-11 theo Bước 4 của bản đánh giá; hook `post-commit` xoá scope của việc đã tick, `scripts/archive-done.sh` chuyển việc đã xong sang Done và archive (chưa chạy `--apply` trên backlog thật); Codex làm, Claude duyệt và sửa nốt một lỗi; gate đạt · [chi tiết](#t-320)
@@ -584,25 +584,6 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
 
-<a id="t-327"></a>
-### T-327 — Hai ca `--amend` của test Gate 8 đỏ ở nơi `ps` bị chặn, làm gate của Codex đỏ không do diff
-
-Chủ repo 2026-11-12 dặn tiếp tục giao Codex làm, Claude kiểm. F-079: `scripts/hooks/commit-msg` nhận biết `--amend` bằng `ps`; sandbox của Codex chặn `ps`, nên hai ca `--amend` của `scripts/commit-msg.test.sh` đỏ ở đó và làm đỏ gate của mọi phiếu việc có đổi `scripts/` (T-321, T-324). Codex khảo sát 2026-11-12 bằng thí nghiệm trên git 2.44.0: **không có tín hiệu nào** ngoài dòng lệnh của tiến trình cha phân biệt được `--amend --no-edit` với `git commit -C HEAD` — tham số hook, message, `HEAD`, mọi biến `GIT_*` và các file trạng thái trong `.git/` đều giống nhau; so mốc tác giả thì nhầm `-C HEAD`, nhầm commit cùng giây và sót `--amend --reset-author`.
-
-Quyết định của Claude 2026-11-12, chưa được chủ repo xác nhận: **không nới Gate 8**. Bỏ `HEAD` khỏi phép so khi `ps` lỗi chính là phương án ADR-062 đã bỏ (nó thả đúng bốn trên năm nhóm commit trùng subject). Thứ cần chữa là cổng đỏ sai lý do ở sandbox, và Codex không bao giờ commit, nên chữa ở phía test và lời báo: test tự dò xem môi trường có đọc được dòng lệnh tiến trình không, không đọc được thì hai ca `--amend` được nêu tên là *không kiểm được ở đây* thay vì đỏ; hook khi từ chối vì trùng `HEAD` mà không đọc được tiến trình thì nói thêm điều đó và đường đi đúng.
-
-Acceptance viết trước sửa:
-- A1 — `scripts/commit-msg.test.sh` dò khả năng đọc dòng lệnh tiến trình bằng đúng lệnh `ps` mà hook dùng; đọc được ⇒ hai ca `--amend` giữ subject chạy và chấm như hiện nay; không đọc được ⇒ hai ca ấy không tính là đỏ, in một dòng nêu tên từng ca, lý do và F-079; mọi ca khác vẫn chạy và chấm ở cả hai môi trường.
-- A2 — Có ca chứng minh A1 bằng một `ps` giả luôn lỗi đặt trước trong `PATH`: file test thoát 0 và in dòng *không kiểm được*; với `ps` thật thì hai ca chạy và đạt.
-- A3 — `scripts/hooks/commit-msg`: luật trùng subject không đổi một ca nào; khi từ chối vì trùng chính `HEAD` **và** không đọc được dòng lệnh tiến trình, lời từ chối có thêm một đoạn nói hook không nhận ra được `--amend` ở môi trường này và nếu đang amend thì dùng `git commit --amend --no-verify`.
-- A4 — `./scripts/gate.sh` xanh ngoài sandbox (Claude chạy); trong sandbox của Codex file test này không còn làm gate đỏ.
-
-Phạm vi (`work/scope/T-327.txt`): `scripts/commit-msg.test.sh`, `scripts/hooks/commit-msg`; phần của Claude: `work/findings.md` (F-079), `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-327`, nhánh `codex/T-327`, nền `9d75279`. Duyệt: Claude.
-
-Duyệt và bàn giao 2026-11-12 (thực hiện: Codex một vòng, duyệt: Claude). `scripts/commit-msg.test.sh`: dò bằng đúng lệnh `ps -o args=` của hook; đọc được thì hai ca `--amend` giữ subject chạy và chấm như cũ, không đọc được thì mỗi ca in một dòng `NOTE … không kiểm được ở môi trường này … F-079` và dòng tổng kết nói rõ; thêm ca `ps giả luôn lỗi: hai NOTE, không tính ca hỏng` và bốn ca cho lời từ chối. `scripts/hooks/commit-msg`: ghi nhận khi một trong hai lệnh `ps` của vòng dò thất bại; khi từ chối vì trùng **chính `HEAD`** mà `ps` đã thất bại thì thêm đoạn giải thích và đường `git commit --amend --no-verify`; điều kiện chọn lịch sử để so, tìm subject trùng và từ chối không đổi (Claude đọc từng hunk). Bằng chứng: trong sandbox của Codex (`ps` trả `operation not permitted`) file test thoát 0 với hai dòng NOTE và gate của Codex xanh; Claude chạy ngoài sandbox — hai ca `--amend` chạy thật và đạt, ca `ps` giả đạt, `./scripts/gate.sh` ở worktree và ở cây chính đều không cổng nào đỏ, 21 file test qua.
-
-Còn lại: ở môi trường chặn `ps`, `git commit --amend` giữ nguyên subject vẫn bị hook từ chối (nay có lời giải thích) — giới hạn đã chấp nhận, vì không có tín hiệu nào khác để nhận ra amend; worktree `../lean_wt/T-327` và nhánh `codex/T-327` chờ chủ repo gỡ.
-
 <a id="t-325"></a>
 ### T-325 — `db-check` đỏ ngay ở bản đã commit: I-043 và I-044 không có câu đối chiếu và không có dòng lý do ở bộ đối chiếu
 
@@ -674,22 +655,7 @@ Claude kiểm bằng Docker trong worktree: `./scripts/be-check.sh` đạt (208 
 
 Chưa kiểm bằng lượt chạy thật: nhánh *giữ database* của `be-check` cùng nhánh *bỏ qua project có dấu* của `db-check` trên Docker thật — phép ấy để lại một project và một file dấu mà phiên không được phép xoá; hai nhánh mới chỉ được chứng minh bằng test không Docker và đọc code.
 
-Lát 2 — mở 2026-11-12, mức L2, **ADR-144**: mỗi gói test Go một database riêng, sao từ database đã migrate của chính lượt `be-check` ấy. Claude chốt phương án và viết test hồi quy trước (cả hai đỏ với bản hiện tại); Codex làm cho test xanh; Claude chạy `be-check` thật và lặp lại phép cài lỗi của lát 1.
-
-Acceptance lát 2, viết trước sửa:
-- B1 — `TestQC16_GoiTestChayTrenDatabaseRiengKhongPhaiDatabaseMau` (`be/internal/testhelper/rieng_test.go`, Claude viết) đạt trong `./scripts/be-check.sh`: gói test không chạy trên database mẫu `banhcuon`, hai chuỗi kết nối cùng trỏ một database.
-- B2 — Các ca *mỗi gói một database* của `scripts/be-check.test.sh` (Claude viết, `docker` và `go` giả) đạt: mỗi gói một lệnh `go test` riêng, tên database khác nhau và khác `banhcuon`, mỗi database có lệnh `CREATE DATABASE … TEMPLATE banhcuon`, không còn `go test ./...`; một gói đỏ không làm gói sau bị bỏ chạy và `be-check` đỏ nêu tên gói.
-- B3 — Vai và quyền giữ nguyên trên database của gói: mọi test hiện có đạt, trong đó các test chứng minh `shop_app` không xoá được và múi giờ kết nối.
-- B4 — Phép cài lỗi của lát 1 (một ca quầy mở ở tương lai dựng trong `combo`) chỉ còn làm đỏ gói `combo`.
-- B5 — `./scripts/gate.sh` xanh ở cây chính; thời gian `be-check` trước và sau được ghi lại; `QC-16` đổi lời cho khớp (Claude sửa lúc tích hợp).
-
-Phạm vi lát 2 (`work/scope/T-323.txt`): `scripts/be-check.sh`, `scripts/be-check.test.sh`, `be/internal/testhelper/`; phần của Claude: `docs/decisions.md` (ADR-144), `docs/product/2-db/10-quy-uoc-code.md` (QC-16), `work/findings.md`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-323-lat-2`, nhánh `codex/T-323-lat-2`, nền `9d75279`. Duyệt: Claude.
-
-Duyệt và bàn giao lát 2, 2026-11-12 (test hồi quy: Claude; thực hiện: Codex hai vòng; duyệt: Claude). **Đỏ trước khi sửa:** `./scripts/be-check.sh` thật trên bản cũ — `TestQC16_GoiTestChayTrenDatabaseRiengKhongPhaiDatabaseMau` đỏ với *gói test đang chạy thẳng trên database mẫu "banhcuon"*; các ca *mỗi gói một database* của `scripts/be-check.test.sh` đỏ 5 khẳng định. **Vòng một** làm test ở mức script xanh, nhưng Claude chạy `be-check` thật thì chỉ **1/32 gói** chạy mà script báo PASS sau 16 giây: vòng `while read … <<< "$packages"` bị `docker compose exec` trong thân vòng lặp đọc mất phần còn lại của danh sách. Test của Claude không bắt được vì `docker` và `go` giả không đọc đầu vào chuẩn — Claude sửa hai bản giả cho đọc như bản thật (test đỏ lại đúng chỗ). **Vòng hai:** vòng lặp đọc danh sách qua mô tả file 3, `compose exec` và `go test` nhận `</dev/null`, thêm phép tự kiểm *số gói đã xử lý khác số gói `go list` in ra ⇒ FAIL*.
-
-Claude kiểm bằng Docker trong worktree: `be-check: PASS — … (32/32 gói, 32 database)`, 32 lệnh `CREATE DATABASE`, 420 test đạt (419 trước đó cộng test hồi quy mới), 207 giây — không chậm hơn bản cũ (188–208 giây). **Phép cài lỗi của lát 1 lặp lại** (một ca quầy mở sau một giờ dựng trong `dung` của `combo`, gỡ ngay sau lượt chạy): `be-check: FAIL — 1/32 gói đỏ: banhcuon/be/internal/combo (banhcuon_g005)`, 31 gói còn lại đạt; ở lát 1 cùng phép ấy làm đỏ thêm ít nhất tám gói. Quyền trên database của gói: `REVOKE ALL … FROM PUBLIC` và `GRANT CONNECT … TO shop_app` như `db/init/001-vai-va-schema.sql`; mọi test về vai và múi giờ vẫn đạt. Tài liệu: ADR-144; `QC-16` đổi lời và thêm một dòng phép kiểm (`docs/product/2-db/10-quy-uoc-code.md`) — bản đầu của câu ấy làm Gate 1d đỏ vì một chuỗi có dấu ngoặc nhọn, Claude viết lại. `./scripts/gate.sh` ở cây chính: `be-check` 32/32 gói, `db-check` đạt, 21 file test của script đạt.
-
-Không chữa trong task này, vẫn mở: **F-078** chưa rõ nguyên nhân — lần tái diễn kế tiếp sẽ nằm gọn trong gói `combo` và có lời chẩn đoán của lát 1; dữ liệu lan giữa các test **trong cùng một gói**; F-051 chưa có phép chạy `db-check` dưới một giờ giả ngoài giờ bán; nhánh *giữ database* và *bỏ qua project có dấu* chưa kiểm bằng Docker thật. Worktree `../lean_wt/T-323`, `../lean_wt/T-323-lat-2` và hai nhánh `codex/T-323`, `codex/T-323-lat-2` chờ chủ repo gỡ.
+Lát 2 — tách database theo gói test: chưa khai phạm vi. Người nhận: Claude chốt phương án bằng ADR và viết test hồi quy trước, Codex làm cho test xanh (`docs/prompt-guideline.md` §6.1, mức L2).
 
 <a id="t-319"></a>
 ### T-319 — Scope của việc đã xong làm Gate 3 cho qua gần mọi file và làm brief phình tới mức không tới được phiên Claude
@@ -768,6 +734,21 @@ Acceptance viết trước sửa:
 Phạm vi (`work/scope/T-322.txt`): `README.md`, `work/findings.md`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-322`, nhánh `codex/T-322`, nền `9ecd6b6`. Duyệt: Claude.
 
 Duyệt và bàn giao 2026-11-11 (thực hiện: Codex, duyệt: Claude): `README.md` chỉ đổi khối cây thư mục (42 đường dẫn, Codex kiểm 42/42 tồn tại; phần ngoài khối giống `HEAD` từng byte), Claude căn lại hai dòng chú thích lệch cột. `work/findings.md` bỏ mục *Mục lục* (câu đếm, ghi chú dựng bảng, bảng 59 hàng), thay bằng mục *Xem finding đang mở*; từ `### F-001` tới hết file giống `HEAD` từng byte. Không script nào đọc bảng ấy (`scripts/brief.sh` đọc tiêu đề `### F-` và dòng `**Status:**`); mục *OPEN FINDINGS* của brief trước và sau như nhau. Claude chạy lại `./scripts/gate.sh` trong worktree: không cổng nào đỏ (Gate 1 bỏ qua vì chỉ tài liệu đổi). Còn lại: worktree `../lean_wt/T-322` và nhánh `codex/T-322` chờ chủ repo gỡ.
+
+<a id="t-318"></a>
+### T-318 — Cột Khác ở Tổng thiếu theo bàn hiện "N nước chấm" làm nhân viên hiểu sai
+
+Chủ repo báo 2026-11-11: trên `/chu-quan/van-hanh`, cột *Khác* của *Tổng thiếu theo bàn* hiện "4 Giò · 2 nước chấm", và "2 nước chấm" bị đọc là thông tin sai (chủ repo nghĩ tới tổng số canh 1 + 2 + 2 = 5). Claude giải thích: "nước chấm" là việc cấp đơn, mỗi đơn có một việc (`master_plan/shop-facts.md` §5.3), còn số bát canh nằm ở cột *Canh*. Chủ repo được hỏi qua hộp chọn, trả lời "bỏ cả cột nước khác"; hỏi lại vì bỏ cả cột thì giò mất ô đem ra ở mục này, chủ repo chọn **"Bỏ hẳn cột Khác"** (2026-11-11). Luật nước chấm và backend không đổi.
+
+Suy luận của Claude, chưa được chủ repo xác nhận: chỉ bỏ ở mục *Tổng thiếu theo bàn* (bảng, dòng Tổng, chế độ cột và chi tiết bàn mở từ nhãn bàn trong mục này); mục *Bàn đang phục vụ* vẫn hiện cột Khác như cũ nên giò và nước chấm còn xem được ở đó.
+
+Acceptance viết trước sửa:
+- A1 — Bảng *Tổng thiếu theo bàn* không bao giờ có cột *Khác*, kể cả khi phiên có giò hay nước chấm; dòng Tổng, chế độ cột và chi tiết bàn của mục này cũng không có ô Khác; ô dòng món gọn trải đúng số cột còn lại.
+- A2 — *Bàn đang phục vụ* giữ cột "Khác đặt / đã ra" khi có thứ rơi vào Khác, ẩn khi không có, như trước.
+- A3 — Test ở `van-hanh.test.tsx` đổi theo (khẳng định cột Khác của bảng tổng thiếu chuyển sang bảng đầy đủ, bỏ ô "7 Giò" khỏi hàng tổng thiếu); `./scripts/fe-check.sh` và `./scripts/gate.sh` xanh.
+- A4 — Dòng `/chu-quan/van-hanh` ở bảng nguồn dữ liệu của `docs/product/4-fe/01-khung-fe.md` nói Tổng thiếu không có cột Khác (T-318), thêm `T-318` vào cột task.
+
+Phạm vi (`work/scope/T-318.txt`): `fe/src/app/chu-quan/_components/van-hanh.tsx`, `fe/src/app/chu-quan/van-hanh/`, `docs/product/4-fe/01-khung-fe.md`, `work/backlog.md`. Thi công: Claude, cây chính.
 
 <a id="t-317"></a>
 ### T-317 — Nút chuyển chế độ của từng bàn ở Tổng thiếu theo bàn là chữ dài, chiếm chỗ ô bàn

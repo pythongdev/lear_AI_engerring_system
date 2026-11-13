@@ -250,7 +250,8 @@ function NoiDung({ data, demRa }: { data: BangVanHanh; demRa?: (chon: ChonDemRa)
   const serving = data.sessions.filter((p) => p.service_group === "serving").sort((a, b) => Math.min(...a.tables.map((t) => t.dining_table_id)) - Math.min(...b.tables.map((t) => t.dining_table_id)));
   const cot = tenCot.filter((c) => c !== "Khác" || data.sessions.some((p) => p.items.some((i) => cotVanHanh(i).cot === "Khác")));
   return <>
-    <BangThieuTheoBan serving={serving} chon={waiting.filter((p) => chon.includes(p.table_session_id))} cot={cot} demRa={demRa} />
+    {/* T-318: chủ repo bỏ hẳn cột Khác ở Tổng thiếu (2026-11-11); Bàn đang phục vụ vẫn giữ. */}
+    <BangThieuTheoBan serving={serving} chon={waiting.filter((p) => chon.includes(p.table_session_id))} cot={cot.filter((c) => c !== "Khác")} demRa={demRa} />
     <CongThuGhepDon waiting={waiting} chon={chon} doi={doi} />
     <KhoiBanDangPhucVu serving={serving} cot={cot} /><SoDoBan data={data} /><LichSuDemRa history={data.serve_history} />
   </>;

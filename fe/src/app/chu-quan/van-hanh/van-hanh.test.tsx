@@ -243,21 +243,25 @@ describe("Vận hành", () => {
     expect(signal.aborted).toBe(true);
     expect(goi.every((g) => g.method === "GET")).toBe(true);
   });
-  it("ánh xạ mỗi thứ đúng một cột, giữ chính xác tên và không giấu Khác", async () => {
+  it("ánh xạ mỗi thứ đúng một cột, giữ chính xác tên; Khác chỉ ở Bàn đang phục vụ, không ở Tổng thiếu (T-318)", async () => {
     expect(items.map(cotVanHanh)).toEqual([{ cot: "Thịt", dong: "" }, { cot: "Mộc nhĩ", dong: "" }, { cot: "Chay", dong: "" }, { cot: "Trứng", dong: "tái" }, { cot: "Trứng", dong: "chín" }, { cot: "Canh", dong: "" }, { cot: "Khác", dong: "Giò" }]);
     for (const i of [thu("Bánh cuốn ", "Thịt"), thu("Bánh cuốn", "Thit"), thu("Bánh cuốn", " Thịt"), thu("Món đổi tên"), thu("Nước chấm")]) expect(cotVanHanh(i).cot).toBe("Khác");
     mo((n) => ({ status: 200, body: n === 1 ? data : { ...data, sessions: data.sessions.map((p) => ({ ...p, items: p.items.filter((i) => i.component_name !== "Giò") })) } }));
-    expect((await bang()).getByRole("columnheader", { name: "Khác" })).toBeTruthy();
+    const b = await bang();
+    expect(b.queryByRole("columnheader", { name: "Khác" })).toBeNull();
+    expect(screen.getByRole("columnheader", { name: "Khác đặt / đã ra", hidden: true })).toBeTruthy();
     fireEvent.click(nut("Đọc lại"));
-    await waitFor(() => expect(screen.queryByRole("columnheader", { name: "Khác" })).toBeNull());
+    await waitFor(() => expect(screen.queryByRole("columnheader", { name: "Khác đặt / đã ra", hidden: true })).toBeNull());
+    expect(b.queryByRole("columnheader", { name: "Khác" })).toBeNull();
   });
   it("chỉ serving, ghép A + B, xếp theo mã bàn, cộng missing và tiền backend, đánh dấu nhiều", async () => {
     mo(); const b = await bang(); const rows = b.getAllByRole("row");
     fireEvent.click(nut("Chi tiết đem ra A + B"));
     expect(rows).toHaveLength(4);
     expect(rows[1].textContent).toContain("A + B"); expect(rows[2].textContent).toContain("D");
-    expect(cells(rows[1])).toEqual(["7*", "7", "7 tái7 chín", "7", "7", "7 Giò", "23.123đ"]);
-    expect(cells(rows[3])).toEqual(["14*", "7", "7 tái7 chín", "7", "7", "7 Giò", "46.246đ"]);
+    expect(cells(rows[1])).toEqual(["7*", "7", "7 tái7 chín", "7", "7", "23.123đ"]);
+    expect(cells(rows[3])).toEqual(["14*", "7", "7 tái7 chín", "7", "7", "46.246đ"]);
+    expect(b.queryByText(/Giò/)).toBeNull();
     expect(rows[1].querySelector(".nhieu")).toBeTruthy();
     expect(b.queryByRole("button", { name: "C" })).toBeNull();
     expect(metadata.title).toBe("Vận hành"); expect(screen.getByText(/Ngày bán: 2025-02-03/).textContent).toContain("10:17:29");
@@ -267,7 +271,8 @@ describe("Vận hành", () => {
     fireEvent.click(btn); expect(btn.getAttribute("aria-expanded")).toBe("true");
     const detail = btn.closest("tr")!.nextElementSibling! as HTMLElement;
     expect(detail.id).toBe(btn.getAttribute("aria-controls"));
-    expect(within(detail).getAllByText("tổng")).toHaveLength(6); expect(within(detail).getAllByText("đã ra")).toHaveLength(6); expect(within(detail).getAllByText("thiếu")).toHaveLength(6);
+    expect(within(detail).getAllByText("tổng")).toHaveLength(5); expect(within(detail).getAllByText("đã ra")).toHaveLength(5); expect(within(detail).getAllByText("thiếu")).toHaveLength(5);
+    expect(within(detail).queryByRole("heading", { name: "Khác" })).toBeNull();
     expect(detail.textContent).toContain("Tiền đơn: 79.123đ");
     fireEvent.click(btn); expect(btn.getAttribute("aria-expanded")).toBe("false"); expect(document.getElementById(detail.id)).toBeNull();
   });
@@ -317,7 +322,7 @@ describe("Vận hành", () => {
       expect(ct.getByText("Trứng chín · · Số lượng 1 · 7.000đ")).toBeTruthy();
       expect(ct.getByText("Tổng 63.000đ")).toBeTruthy();
       expect(ct.getByText("Tiền đơn: 79.123đ")).toBeTruthy();
-      expect(ct.getAllByText("thiếu")).toHaveLength(6);
+      expect(ct.getAllByText("thiếu")).toHaveLength(5);
       expect(detail.textContent!.indexOf("Combo bữa sáng")).toBeGreaterThan(detail.textContent!.lastIndexOf("thiếu"));
       expect(cells(btn.closest("tr")!)).toEqual(hangTruoc);
     }
@@ -377,10 +382,11 @@ describe("Vận hành", () => {
     expect(screen.getAllByRole("button").every((b) => !/[\d.]+đ/.test(b.textContent!))).toBe(true);
     expect(document.body.textContent).toContain("Chỉ chủ quán hoặc người đang đứng quầy ghi được đem ra. Các ô này chỉ để xem.");
   });
-  it("không đánh dấu nhiều khi không thiếu, Khác hiện cả khi chỉ có ở phiên no_order", async () => {
+  it("không đánh dấu nhiều khi không thiếu, Tổng thiếu không có cột Khác cả khi phiên no_order có giò", async () => {
     mo(() => ({ status: 200, body: { ...data, sessions: [phien(21, "serving", "A", [thu("Bánh cuốn", "Thịt", { extra_filling: true, missing: 0, served: 13 })]), phien(41, "no_order", "E", [thu("Giò")])] } }));
     const b = await bang();
     fireEvent.click(nut("Chi tiết đem ra A"));
-    expect(cells(b.getAllByRole("row")[1])[0]).toBe("0"); expect(b.getByRole("columnheader", { name: "Khác" })).toBeTruthy();
+    expect(cells(b.getAllByRole("row")[1])[0]).toBe("0"); expect(b.queryByRole("columnheader", { name: "Khác" })).toBeNull();
+    expect(b.getAllByRole("columnheader").map((c) => c.textContent)).toEqual(["Bàn", "Thịt", "Mộc nhĩ", "Trứng", "Chay", "Canh", "Tiền bánh đã ra"]);
   });
 });
