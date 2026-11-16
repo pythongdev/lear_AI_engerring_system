@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-333 **Thiết kế lại bản mẫu Tổng quan chủ quán theo dữ liệu đang chạy trên máy dev** — L1 (chỉ bản HTML tĩnh, không đổi FE hay hợp đồng), chủ repo giao 2026-11-16; cập nhật bố cục, trạng thái thiếu dữ liệu và điều hướng theo `/chu-quan` · [chi tiết](#t-333)
 - [ ] T-331 **`make dev-iphone` chỉ có trong worktree Codex, gõ ở repo chính thì báo không có lệnh** — L2 (Origin của dev server và cookie phiên), mở 2026-11-16 theo yêu cầu chủ repo; đưa bản Codex làm dưới nhãn T-328 (trùng mã với việc bố cục Combo) từ `codex/T-328-iphone` vào cây chính · [chi tiết](#t-331)
 - [x] T-330 **`fe-check` coi thư mục `fe/node_modules` rỗng là đã cài, nên đỏ bằng một lỗi `ENOENT` khó hiểu thay vì tự cài lại** — L1, xong 2026-11-16; script kiểm công cụ nó sắp gọi trước và sau một lần `npm ci`, không cài được thì nêu tên thứ thiếu và lệnh cần chạy; Codex làm một vòng, Claude duyệt; gate đạt · [chi tiết](#t-330)
 - [x] T-328 **Trang Combo cần cùng cách bày với trang Sản phẩm** — L1 (đổi giao diện và cách mở chi tiết, không đổi giá hay cửa ghi), xong 2026-11-13 theo yêu cầu chủ repo; bảng combo, đầu trang và ngăn chi tiết theo khuôn Sản phẩm; giữ tìm, lọc và thao tác cũ; test 22/22 và gate đạt · [chi tiết](#t-328)
@@ -587,6 +588,27 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-333"></a>
+### T-333 — Thiết kế lại bản mẫu Tổng quan chủ quán theo dữ liệu đang chạy trên máy dev
+
+Chủ repo yêu cầu 2026-11-16 thiết kế lại `docs/product/4-fe/thiet_ke/chu_quan/tong_quan/tong-quan.html` dựa trên `/chu-quan` ở `localhost:3000`. Đây là bản thiết kế tĩnh, số chụp từ database dev để minh hoạ; route và hành vi thật vẫn do `fe/` cùng hợp đồng API nắm. Mức L1 vì đổi cách trình bày đề xuất, không đổi dữ liệu, tiền hay luồng thật.
+
+Acceptance ghi trước khi sửa: A1 — trang mẫu bày đúng các mục mà `TrangTongQuan` đang đọc, với số/trạng thái lấy từ `GET /owner-overview` trên máy dev ngày 2026-11-16 và ghi rõ mốc chụp; không bịa số khi backend báo `unavailable`. A2 — bố cục đọc được trên máy tính và điện thoại, nhãn `data-component` khớp chú giải; liên kết từ mục lục và trong trang mở đúng file. A3 — `./scripts/gate.sh` được chạy và đọc kết quả; các thay đổi sẵn của việc khác không bị tính vào việc này.
+
+Chủ repo bổ sung ngày 2026-11-16: chuyển chữ hiển thị của bản mẫu sang tiếng Việt. A4 ghi trước lượt sửa này — các nhãn và lời giải thích nhìn thấy mặc định dùng tiếng Việt; mã component vẫn giữ nguyên để đối chiếu với code và chỉ hiện khi bật công tắc; số liệu, liên kết và thao tác của bản mẫu không đổi.
+
+Chủ repo đối chiếu lại ngày 2026-11-16 bằng toàn bộ chữ trên trang thật lúc 16:21:23. A5 ghi trước lượt sửa này — bản mẫu bày đủ 11 dòng *Đã ra*, 11 dòng *Còn thiếu*, 30 nguyên liệu và 10 món đúng thứ tự và số được cung cấp; mỗi nhóm phần có mốc nguồn riêng; nguyên liệu không bị giấu mặc định; lời giải thích không rút ngắn hoặc thêm đơn vị không có trong nguồn. Chữ hiển thị thông thường đều là tiếng Việt; mã kỹ thuật chỉ ở phần chú giải chủ động mở. Vế cuối này thay cách hiện mã đã ghi ở A4: công tắc chỉ hiện tên tiếng Việt của các khối.
+
+Phạm vi (`work/scope/T-333.txt`): `work/backlog.md`, `docs/product/4-fe/thiet_ke/chu_quan/tong_quan/`, `docs/product/4-fe/thiet_ke/chu_quan/index.html`. Người làm: Codex trên nhánh `P4A-01`; chưa duyệt độc lập. Cây có thay đổi chưa commit từ các việc khác, kể cả cùng `work/backlog.md`; khi bàn giao phải tách đúng hunk của việc này.
+
+**Kết quả 2026-11-16:** A1 — `GET /owner-overview` qua localhost trả 200; bản chụp lúc 15:55:46 có 2 bàn, 0 đồng tạm tính, tiến độ và người đang làm `unavailable` với đúng hai lý do trên màn thật, 11 dòng cho mỗi nhóm phần phục vụ, 30 nguyên liệu và 10 món. Trang mẫu giữ từng dòng theo trạm, không cộng số. A2 — kiểm HTML cho thấy 19 khối `data-component`, 10 tên trùng chú giải, 16 liên kết trong trang đều mở đúng file; mục lục mở đúng bản mới. Chrome headless ở 1440 px và 390 px đã xem ảnh; qua Chrome DevTools, ở khung 390 px `document.documentElement.scrollWidth` là 390 px (bảng chú giải cuộn trong hộp). A3 — trong worktree tách riêng bốn file của T-333, `./scripts/gate.sh` đạt toàn bộ cổng được chạy, lượt cuối 5 giây; Gate 1 `SKIP` vì chỉ tài liệu đổi. Lượt gate ở cây chung được dừng sau khi thấy nó kéo theo thay đổi database/FE của việc khác. Chưa có người duyệt độc lập. Bản HTML là đề xuất tĩnh, không đổi `fe/` hay dữ liệu.
+
+**Bổ sung tiếng Việt 2026-11-16:** A4 — đổi các chữ còn tiếng Anh trong phần hiển thị (ví dụ *backend*, *dev*, *online*, *form*, *Topping*, *Combo*) sang tiếng Việt; giữ mã kỹ thuật trong chú giải và mặc định ẩn nhãn mã trên các khối. Chrome ở 1440 px và 390 px đã xem ảnh; DevTools tại 390 px báo `lang=vi`, công tắc tắt, nhãn mã `display:none`, `scrollWidth=390`. Số liệu và đường dẫn không đổi. `./scripts/gate.sh` trong worktree tách riêng đạt sau lượt sửa tiếng Việt (4 giây; Gate 1 `SKIP` vì chỉ tài liệu đổi).
+
+**Đối chiếu nội dung chủ repo gửi 2026-11-16:** A5 — phép kiểm HTML độc lập so từng dòng theo thứ tự: *Đã ra* 11/11, *Còn thiếu* 11/11, nguyên liệu 30/30 và món 10/10; tên lặp được giữ nguyên, lời nhắc *Nên kiểm tra* có ở 29 nguyên liệu đúng danh sách, hai mốc nguồn đều là 16:21:23. Trên Chrome, khung 390 px có `scrollWidth=390`, đủ 30 dòng nguyên liệu hiện trong bảng chính, bảng mã kỹ thuật đóng mặc định và nhãn trên khối là tiếng Việt. Bố cục rộng 1440 px đã được xem ảnh. Chữ *POS* trên trang thật được diễn đạt bằng tiếng Việt là *hệ thống bán hàng tại quầy*; mốc, lý do và số không đổi. `./scripts/gate.sh` trong worktree tách riêng đạt sau lượt sửa này (5 giây; Gate 1 `SKIP` vì chỉ tài liệu đổi).
+
+[↑ đầu file](#top)
 
 <a id="t-331"></a>
 ### T-331 — `make dev-iphone` chỉ có trong worktree Codex, gõ ở repo chính thì báo không có lệnh

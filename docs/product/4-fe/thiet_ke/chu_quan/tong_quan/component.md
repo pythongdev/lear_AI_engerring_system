@@ -1,88 +1,25 @@
-# Component của trang Tổng quan
+# Các khối giao diện của trang Tổng quan
 
-Danh mục các khối có tên trong bản thiết kế [tong-quan.html](tong-quan.html).
-Mỗi khối trong trang mang thuộc tính `data-component="<Tên>"`. Dùng đúng tên
-đó khi mô tả chỗ cần sửa.
+Bản thiết kế nằm ở [tong-quan.html](tong-quan.html). Trang mở trực tiếp từ file,
+không kết nối hệ thống. Nội dung và số liệu được đối chiếu với toàn bộ chữ chủ
+repo cung cấp từ `/chu-quan` ngày 16/11/2026 lúc 16:21:23 (giờ Việt Nam). Trang
+thật có thể đổi số liệu theo thời gian. Đường dẫn và các khối giao diện thật
+vẫn do [01-khung-fe.md](../../../01-khung-fe.md) cùng `fe/` nắm.
 
-> Đây là bản thiết kế tĩnh, số liệu chỉ để minh hoạ, **không phải hợp đồng**.
-> Route và component thật nằm ở
-> [01-khung-fe.md](../../../01-khung-fe.md).
+Trên máy tính, thanh điều hướng nằm bên trái, nội dung nằm bên phải. Trang bày
+ngày bán, mốc đọc và số bàn đang phục vụ; tiếp đó là *Đã ra* rồi *Còn thiếu*.
+Mỗi nhóm có mốc nguồn riêng, mười một dòng tại quán đúng thứ tự, kể cả những
+tên xuất hiện hai lần, và nhóm giao hàng trực tuyến đang trống. Sau đó là tiến
+độ bán, tiền bán tạm tính và số người đang làm. Lý do chưa có số liệu được giữ
+đúng nghĩa, không thay bằng một con số tự tính.
 
-## Bố cục trên máy tính
+Phần *Còn thiếu gì* bày đủ ba mục: cả ba mươi nguyên liệu hiện ngay trong bảng,
+trạng thái thiếu người, và mười món với số khách đặt và đã ra. Bảng nguyên liệu
+không gắn thêm đơn vị cho các mục mà nguồn không có đơn vị. Biểu mẫu số tối
+thiểu ở cuối trang là bản mẫu tĩnh, không lưu dữ liệu. Trên điện thoại, các
+khối xếp một cột và điều hướng chuyển xuống đáy màn hình.
 
-Bản phác dưới đây vẽ lại trang ở màn rộng: thanh điều hướng cố định bên trái,
-nội dung bên phải, thẻ số và bảng xếp lưới hai cột. Tên trên mỗi khung là tên
-component; chữ bên trong là số minh hoạ lấy từ trang.
-
-```text
-┌─ KhungChuQuan ───────────────────────────────────────────────────────────────────┐
-│ ┌─ ThanhDieuHuong ─────┐ ┌─ TrangTongQuan ─────────────────────────────────────┐ │
-│ │ [BT] Bánh cuốn       │ │ ┌─ DauTrang ──────────────────────────────────────┐ │ │
-│ │      Bà Thanh        │ │ │ TỔNG QUAN                                       │ │ │
-│ │      Chủ quán        │ │ │ Ngày bán 20/10/2026 · Đọc lúc 09:42:15          │ │ │
-│ │                      │ │ └─────────────────────────────────────────────────┘ │ │
-│ │ ┌─ NhomDieuHuong ──┐ │ │                                                     │ │
-│ │ │ HÔM NAY          │ │ │ ┌─ DaiCanDeY ─────────────────────────────────────┐ │ │
-│ │ │ > Tổng quan      │ │ │ │ ! Còn thiếu gì                                  │ │ │
-│ │ │   Tổng kết       │ │ │ │ Thiếu 1 người · Trứng: Nên kiểm tra             │ │ │
-│ │ └──────────────────┘ │ │ └─────────────────────────────────────────────────┘ │ │
-│ │                      │ │                                                     │ │
-│ │ ┌─ NhomDieuHuong ──┐ │ │ ┌─ TheSo ───────────────┐ ┌─ TheSo ───────────────┐ │ │
-│ │ │ THỰC ĐƠN         │ │ │ │ Tiến độ bán           │ │ Tiền bán tạm tính     │ │ │
-│ │ │   Sản phẩm       │ │ │ │ 412 / 600 bánh        │ │ [GIÁ]                 │ │ │
-│ │ │   Menu & giá …   │ │ │ └───────────────────────┘ └───────────────────────┘ │ │
-│ │ └──────────────────┘ │ │ ┌─ TheSo ───────────────┐ ┌─ TheSo ───────────────┐ │ │
-│ │                      │ │ │ Khách đang phục vụ    │ │ Người đang làm        │ │ │
-│ │ ┌─ NhomDieuHuong ──┐ │ │ │ 7 bàn                 │ │ 4 người               │ │ │
-│ │ │ CON NGƯỜI        │ │ │ └───────────────────────┘ └───────────────────────┘ │ │
-│ │ │   Nhân viên …    │ │ │                                                     │ │
-│ │ └──────────────────┘ │ │ ┌─ BangDuLieu ──────────┐ ┌─ BangDuLieu ──────────┐ │ │
-│ │                      │ │ │ Còn thiếu             │ │ Đã ra                 │ │ │
-│ │ ┌─ NhomDieuHuong ──┐ │ │ │ ──────────────────    │ │ ──────────────────    │ │ │
-│ │ │ HÀNG & TIỀN      │ │ │ │ Bánh cuốn   36  12    │ │ Bánh cuốn  318  94    │ │ │
-│ │ │   Nguyên liệu …  │ │ │ │ Trứng        5   2    │ │ Trứng       41  13    │ │ │
-│ │ └──────────────────┘ │ │ └───────────────────────┘ └───────────────────────┘ │ │
-│ └──────────────────────┘ │ Mốc nguồn: 09:42:10                                 │ │
-│                          │                                                     │ │
-│                          │ ┌─ BangDuLieu ──────────┐ ┌─ BangDuLieu ──────────┐ │ │
-│                          │ │ Nguyên liệu           │ │ Món                   │ │ │
-│                          │ │ ──────────────────    │ │ ──────────────────    │ │ │
-│                          │ │ Trứng  4 quả          │ │ Bánh cuốn   14   9    │ │ │
-│                          │ │ ┌─ HuyHieuTrangThai ┐ │ └───────────────────────┘ │ │
-│                          │ │ │ Nên kiểm tra      │ │                           │ │
-│                          │ │ └───────────────────┘ │                           │ │
-│                          │ └───────────────────────┘                           │ │
-│                          │                                                     │ │
-│                          │ ┌─ FormToiThieu ──────────────────────────────────┐ │ │
-│                          │ │ Số tối thiểu của ngày                           │ │ │
-│                          │ │ Số bánh [ 600 ]    Số người [ 5 ]               │ │ │
-│                          │ │                          [ Lưu số tối thiểu ]   │ │ │
-│                          │ └─────────────────────────────────────────────────┘ │ │
-│                          └─────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────────────────────────────┘
-```
-
-Trên điện thoại (rộng ≤ 640px), `ThanhDieuHuong` chuyển xuống đáy màn hình
-thành bốn nút, mỗi nút là một `NhomDieuHuong`. Mọi lưới hai cột thành một cột.
-
-## Dùng chung
-
-Các khối này cũng xuất hiện ở trang khác của chủ quán.
-
-| Tên | Nó là gì |
-|---|---|
-| `KhungChuQuan` | Vỏ trang, nối điều hướng với nội dung quản trị. |
-| `ThanhDieuHuong` | Thanh bên trên máy tính, thanh bốn nhóm ở đáy trên điện thoại. |
-| `NhomDieuHuong` | Một nhóm liên kết đến các trang cùng mảng. |
-| `DauTrang` | Tiêu đề trang, lời dẫn và thao tác chính. |
-| `DaiCanDeY` | Dải nhắc việc cần chú ý, lấy từ dữ liệu đang xem. |
-| `TheSo` | Một chỉ số được trả về, chỉ định dạng để đọc. |
-| `BangDuLieu` | Bảng dữ liệu có vùng cuộn ngang riêng. |
-| `HuyHieuTrangThai` | Nhãn trạng thái của một bản ghi. |
-
-## Riêng trang này
-
-| Tên | Nó là gì |
-|---|---|
-| `TrangTongQuan` | Nội dung riêng của trang Tổng quan. |
-| `FormToiThieu` | Hai số tối thiểu của ngày bán và nút lưu. |
+Chữ hiển thị trên trang dùng tiếng Việt. Công tắc *Hiện tên các khối* mặc định
+tắt; khi bật, mỗi khối hiện một tên tiếng Việt dễ đọc. Thuộc tính
+`data-component` vẫn giữ mã kỹ thuật để đối chiếu với mã nguồn. Bảng mã ở cuối
+trang mặc định đóng và chỉ mở khi cần tra cứu.

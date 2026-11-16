@@ -4,206 +4,127 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tổng quan · Chủ quán</title>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com/3.4.16"></script>
-<script>
-tailwind.config = {
-  theme: {
-    extend: {
-      colors: { paper: '#F6F5F1', ink: '#1C1B19', muted: '#5F5B53', line: '#E4E1DA', accent: '#1E6B50', selected: '#E8F1EC', 'selected-ink': '#14432F' },
-      fontFamily: { sans: ['"Be Vietnam Pro"', 'ui-sans-serif', 'system-ui', 'sans-serif'], mono: ['ui-monospace', 'SFMono-Regular', 'Consolas', 'monospace'] }
-    }
-  }
-}
-</script>
-<style type="text/tailwindcss">
-@layer base {
-  body { @apply m-0 bg-paper text-ink font-sans text-sm leading-relaxed antialiased; }
-  a { @apply text-accent underline-offset-[3px] hover:underline; }
-  button { @apply min-h-[44px] px-4 py-2 bg-white border border-line rounded-xl cursor-pointer shadow-sm transition-colors hover:border-accent hover:bg-paper disabled:text-muted disabled:bg-paper disabled:cursor-default disabled:shadow-none; }
-  button.primary { @apply bg-accent border-accent text-white font-semibold hover:bg-[#185a43] hover:border-[#185a43]; }
-  :focus-visible { @apply outline outline-[3px] outline-accent outline-offset-[3px]; }
-  h1 { @apply text-[28px] leading-tight font-bold tracking-tight; }
-  h2 { @apply text-base font-semibold; }
-  h3 { @apply text-sm font-semibold; }
-  small { @apply text-muted; }
-  p + p { @apply mt-2; }
-  table { @apply w-full border-collapse text-left; }
-  th { @apply text-muted font-medium text-xs bg-[#FAF9F6] uppercase tracking-wide; }
-  th, td { @apply px-3.5 py-3 border-b border-line align-top; }
-  td { @apply tabular-nums; }
-  tbody tr:last-child td { @apply border-b-0; }
-  tbody tr { @apply transition-colors hover:bg-[#FCFBF9]; }
-  input[type="checkbox"] { @apply w-[18px] h-[18px] accent-accent shrink-0; }
-  input:not([type="checkbox"]), select, textarea { @apply w-full min-w-0 min-h-[44px] px-3 py-2.5 border border-[#B9B3A7] rounded-lg bg-white text-sm font-normal focus:border-accent; }
-  textarea { @apply resize-y; }
-  fieldset { @apply m-0 min-w-0 border border-line rounded-xl p-3.5 gap-3; display: grid; }
-  legend { @apply px-1.5; }
-  dl { display: grid; @apply grid-cols-[1fr_auto] gap-3; }
-  dd { @apply m-0 font-semibold; }
-  code { @apply font-mono text-xs bg-paper px-1 py-0.5 rounded; }
-}
-@layer components {
-  .muted { @apply text-muted; }
-  [data-component] { @apply relative min-w-0; }
-  .nhan-component { @apply table w-fit self-start max-w-full [overflow-wrap:anywhere] px-1.5 py-0.5 mb-2 rounded bg-ink text-white font-mono text-[10px] leading-normal font-normal normal-case tracking-normal; }
-  body:has(#hien-ten:not(:checked)) .nhan-component { @apply hidden; }
-  .design-toggle { @apply flex gap-2 items-center flex-wrap px-6 py-2.5 border-b border-line bg-white text-xs; }
-  .design-toggle label { @apply cursor-pointer; }
-  .design-toggle a { @apply ml-auto; }
-  .shell { display: grid; @apply grid-cols-[232px_minmax(0,1fr)] min-h-screen; }
-  .shell > .nhan-component { @apply absolute top-0 left-0 z-[2]; }
-  .navigation { @apply px-3.5 py-6 bg-white border-r border-line; }
-  .brand { @apply flex items-center gap-2.5 text-ink no-underline hover:no-underline text-xs font-semibold mx-1 mb-8; }
-  .brand b { display: grid; @apply place-items-center shrink-0 w-9 h-9 bg-accent rounded-xl text-white; }
-  .brand small { @apply block text-[11px] font-normal; }
-  .nav-group { @apply mb-5; }
-  .nav-group summary { @apply text-muted text-[11px] font-semibold tracking-wider uppercase px-3 pb-2 list-none; }
-  .nav-group summary::-webkit-details-marker { display: none; }
-  .nav-links a { @apply block px-3 py-2 text-ink no-underline hover:no-underline rounded-lg hover:bg-paper; }
-  .nav-links a[aria-current="page"] { @apply text-selected-ink bg-selected font-semibold; }
-  .page-content { @apply px-8 pt-7 pb-11; }
-  .page-content > * + * { @apply mt-6; }
-  .page-header { @apply flex flex-wrap items-end justify-between gap-3.5 pt-6; }
-  .page-header > .nhan-component { @apply absolute top-0 left-0; }
-  .page-header p { @apply mt-2; }
-  .card { @apply bg-white border border-line rounded-2xl p-5 min-w-0 shadow-sm; }
-  .card > h2 { @apply mb-3.5; }
-  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-  .number { @apply text-[28px] font-bold tracking-tight leading-snug my-2 [overflow-wrap:anywhere]; }
-  .notice { @apply px-5 py-4 border border-[#F1DDBE] rounded-2xl bg-[#FFF6E8] text-[#7A4100]; }
-  .notice p { @apply mt-1; }
-  .split { display: grid; @apply grid-cols-[minmax(0,1fr)_300px] gap-6 items-start; }
-  .stack { @apply flex flex-col gap-5 min-w-0; }
-  .drawer { @apply bg-white p-5 border border-line rounded-2xl shadow-lg shadow-ink/5 min-w-0; }
-  .drawer > .card { @apply p-0 border-0 shadow-none my-3.5; }
-  .drawer .number { @apply text-2xl; }
-  .table-scroll { @apply max-w-full overflow-x-auto rounded-xl border border-line; }
-  .card table { @apply min-w-[480px]; }
-  td .actions { @apply min-w-[130px]; }
-  td > a { @apply inline-block pt-2.5; }
-  .actions { @apply flex flex-wrap gap-2 items-center; }
-  .form-body { @apply flex flex-col gap-4; }
-  .field { @apply flex flex-col gap-1.5 text-[13px] font-medium; }
-  .field.check { @apply flex-row items-center justify-start font-normal; }
-  .filters { @apply flex flex-wrap items-end gap-3.5 pt-7; }
-  .filters > .nhan-component { @apply absolute top-0; }
-  .filters .field { @apply grow shrink basis-40; }
-  .badge { @apply inline-block text-selected-ink bg-selected px-2.5 py-1 rounded-lg text-xs font-medium; }
-  .badge > .nhan-component { @apply mb-1; }
-  .badge.red { @apply text-[#8C1D18] bg-[#FBE3E1]; }
-  .badge.warning { @apply text-[#7A4100] bg-[#FFF6E8]; }
-  .empty { @apply py-4 text-muted; }
-  #chu-giai { @apply max-w-[1200px] mx-auto my-9 p-6 border-t border-line; }
-  #chu-giai h2 { @apply mb-3.5; }
-  #chu-giai table { @apply min-w-[600px]; }
-  .index-content { @apply max-w-[1200px] mx-auto px-6 py-8; }
-  .index-content > * + * { @apply mt-7; }
-  .index-content .page-header { @apply block; }
-  .page-directory { display: grid; @apply grid-cols-3 gap-3; }
-  .directory-item { @apply flex flex-col p-5 bg-white border border-line rounded-2xl no-underline hover:no-underline shadow-sm transition hover:border-accent hover:shadow-md; }
-  .directory-item small { @apply [overflow-wrap:anywhere] mt-1.5; }
-  @media (min-width: 641px) {
-    .nav-group details::details-content { content-visibility: visible; display: block; }
-    .nav-group details:not([open]) > .nav-links { display: block; }
-  }
-  @media (min-width: 1500px) { .page-content { @apply max-w-[1500px] w-full mx-auto; } }
-  @media (min-width: 641px) and (max-width: 1050px) {
-    .shell { @apply grid-cols-[190px_minmax(0,1fr)]; }
-    .page-content { @apply px-5 py-6; }
-    .split { @apply grid-cols-1; }
-  }
-  @media (max-width: 640px) {
-    body { @apply pb-[150px]; }
-    .design-toggle { @apply px-3.5; }
-    .design-toggle a { @apply ml-6; }
-    .shell { @apply block min-h-0; }
-    .shell > .nhan-component { @apply static mx-3.5 mt-1.5 mb-0; }
-    .page-content { @apply px-3.5 pt-4 pb-6; }
-    .page-content > * + * { @apply mt-4; }
-    h1 { @apply text-2xl; }
-    .page-header { @apply gap-3; }
-    .page-header .actions { @apply w-full; }
-    .grid, .split { @apply grid-cols-1 gap-3.5; }
-    .number { @apply text-[26px]; }
-    .card, .drawer { @apply p-4; }
-    .navigation { @apply fixed z-10 bottom-0 inset-x-0 px-1.5 pt-2 pb-[max(12px,env(safe-area-inset-bottom))] border-0 border-t border-line grid-cols-4 gap-1; display: grid; }
-    .navigation > .nhan-component { @apply col-span-full m-0 justify-self-start; }
-    .navigation .brand { @apply hidden; }
-    .nav-group { @apply m-0 static; }
-    .nav-group > .nhan-component { @apply text-[8px] mb-1 p-0.5; }
-    .nav-group summary { @apply min-h-[44px] px-0.5 py-3 text-center text-[10px] normal-case tracking-normal rounded-lg cursor-pointer; }
-    .nav-group.selected summary { @apply text-selected-ink bg-selected; }
-    .nav-group details[open] summary { @apply outline outline-2 outline-accent; }
-    .nav-links { @apply absolute bottom-[calc(100%+8px)] inset-x-2.5 p-3 border border-line rounded-2xl bg-white shadow-xl; }
-    .nav-links a { @apply min-h-[44px]; }
-    .index-content { @apply px-3.5 py-5; }
-    .page-directory { @apply grid-cols-2; }
-    .directory-item { @apply p-3.5; }
-    #chu-giai { @apply px-3.5 py-4 mt-4; }
-  }
-}
+<style>
+:root{--forest:#183c32;--forest-deep:#102b24;--mint:#dceee4;--mint-ink:#225d44;--paper:#f6f6f2;--white:#fff;--ink:#202b27;--muted:#62716a;--line:#e1e7e0;--amber:#fff3da;--amber-ink:#86520a;--red:#9b422b;--shadow:0 12px 34px rgba(29,57,43,.055)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:14px;line-height:1.5}button,input{font:inherit}a{color:inherit}button:focus-visible,input:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #5d9d78;outline-offset:3px}h1,h2,h3,p,ul{margin-top:0}h1{font-size:clamp(30px,3.3vw,43px);line-height:1.12;letter-spacing:-.045em;margin-bottom:8px}h2{font-size:19px;line-height:1.25;letter-spacing:-.02em}h3{font-size:14px}small{font-size:12px}button{min-height:44px;border:0;border-radius:10px;padding:0 20px;background:var(--forest);color:#fff;font-weight:700;cursor:pointer}button:hover{background:var(--forest-deep)}input[type=number]{width:100%;min-height:46px;border:1px solid #aebbb0;border-radius:10px;padding:9px 12px;background:#fff;color:var(--ink)}input[type=checkbox]{accent-color:var(--forest);width:17px;height:17px}ul{padding-left:0;list-style:none}
+[data-component]{position:relative;min-width:0}.component-name{display:inline-block;max-width:100%;overflow-wrap:anywhere;background:#182d28;color:#fff;border-radius:5px;padding:3px 6px;font:10px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:0;margin-bottom:9px}body:has(#show-names:not(:checked)) .component-name{display:none}.design-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:9px 24px;background:#e8eee9;border-bottom:1px solid #d2ded5;color:#365348;font-size:12px}.design-bar label{display:flex;align-items:center;gap:8px;cursor:pointer}.design-bar a{margin-left:auto;text-underline-offset:3px}.design-bar strong{font-weight:700}
+.shell{display:grid;grid-template-columns:246px minmax(0,1fr);min-height:100vh}.shell-name{position:absolute;z-index:2;top:50px;left:7px}.sidebar{background:var(--forest-deep);color:#dce7e0;padding:26px 18px;display:flex;flex-direction:column;gap:18px}.sidebar>.component-name{background:#d9eee0;color:#17382d;align-self:flex-start}.brand{display:flex;gap:11px;align-items:center;text-decoration:none;padding:8px 8px 23px;border-bottom:1px solid #ffffff22}.brand-mark{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:#bce2c6;color:#17382d;font-size:15px;font-weight:800;flex:none}.brand b{display:block;font-size:14px;line-height:1.25}.brand small{display:block;color:#a8beb0;margin-top:3px}.nav-groups{display:flex;flex-direction:column;gap:18px}.nav-group>.component-name{background:#d9eee0;color:#17382d}.nav-group summary{list-style:none;color:#9fbbaa;text-transform:uppercase;letter-spacing:.13em;font-size:10px;font-weight:800;padding:5px 11px 7px;cursor:pointer}.nav-group summary::-webkit-details-marker{display:none}.nav-links{display:grid;gap:2px}.nav-links a{text-decoration:none;border-radius:9px;padding:8px 11px;color:#d9e6de;display:block}.nav-links a:hover{background:#ffffff16}.nav-links a[aria-current=page]{background:#dceee4;color:#173c2d;font-weight:800}.sidebar-note{margin-top:auto;color:#a8beb0;font-size:11px;padding:12px 8px;border-top:1px solid #ffffff22}
+.content{width:100%;max-width:1580px;margin:0 auto;padding:27px clamp(20px,3.8vw,58px) 70px}.content>.component-name{margin-bottom:19px}.page-header{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:24px}.eyebrow{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--mint-ink);margin-bottom:10px}.subhead{color:var(--muted);margin:0}.date-card{flex:none;background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px 17px;box-shadow:var(--shadow);min-width:190px}.date-card small{display:block;color:var(--muted)}.date-card b{font-size:18px}.date-card span{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.notice{display:flex;gap:15px;align-items:start;background:var(--amber);color:var(--amber-ink);border:1px solid #ead5a8;border-radius:16px;padding:16px 20px;margin-bottom:25px}.notice-icon{flex:none;width:30px;height:30px;border:1px solid #d8b975;border-radius:50%;display:grid;place-items:center;font-weight:800}.notice h2{font-size:15px;margin-bottom:3px}.notice p{margin:0;font-size:13px}.notice .component-name{background:#795116}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:31px}.stat{min-height:167px;background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);padding:17px 19px;display:flex;flex-direction:column}.stat.first{background:var(--forest);border-color:var(--forest);color:#fff}.stat.first .component-name{background:#dceee4;color:#173c2d}.stat-kicker{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:auto}.stat.first .stat-kicker,.stat.first .stat-foot{color:#c1d9c8}.stat-value{font-size:clamp(27px,2.6vw,38px);line-height:1.06;font-weight:800;letter-spacing:-.05em;margin:15px 0 7px}.stat-value.unavailable{font-size:19px;line-height:1.22;letter-spacing:-.025em}.stat-foot{font-size:12px;color:var(--muted);margin:0}.stat-foot.important{color:var(--red)}
+.section-heading{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 0 13px}.section-heading h2{font-size:21px;margin:0}.section-heading p{font-size:12px;color:var(--muted);margin:0}.two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:30px}.panel{background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);padding:20px;min-width:0}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding-bottom:13px;margin-bottom:14px}.panel-head h2{margin:0}.panel-head small{color:var(--muted)}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:4px 9px;background:var(--mint);color:var(--mint-ink);font-size:11px;font-weight:750;white-space:nowrap}.badge.warning{background:#fff0ce;color:#8c5c10}.badge.neutral{background:#edf1ed;color:#53645b}.badge .component-name{margin:0 5px 0 0}.group-title{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:800;margin:18px 0 8px}.row-list{margin:0}.row-list li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #edf0ec}.row-list li:last-child{border:0}.row-list b{font-variant-numeric:tabular-nums}.row-list small{display:block;color:var(--muted)}.empty-line{padding:10px 0;color:var(--muted);font-size:13px}.table-scroll{overflow:auto;max-width:100%}table{width:100%;border-collapse:collapse;text-align:left}th,td{border-bottom:1px solid #edf0ec;padding:10px 9px;vertical-align:top}th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}td{font-variant-numeric:tabular-nums}tbody tr:last-child td{border-bottom:0}.quantity{text-align:right;white-space:nowrap;font-weight:700}.menu-table{min-width:360px}.stock-table{min-width:350px}.stock-table td:last-child{text-align:right}.stock-table small{display:block;color:var(--muted)}details.more{margin-top:10px;border-top:1px solid var(--line)}details.more summary{cursor:pointer;color:var(--mint-ink);font-weight:700;padding:13px 0 3px}.workers-note{margin-top:15px;padding:14px;background:#f3f6f2;border-radius:12px}.workers-note h3{margin-bottom:4px}.workers-note p{margin:0;color:var(--muted)}.snapshot-note{color:var(--muted);font-size:12px;margin:-19px 0 31px}
+.minimum{background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);padding:22px;max-width:760px}.minimum h2{margin:0 0 4px}.minimum p{color:var(--muted);margin:0 0 18px;font-size:13px}.minimum-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.minimum label{display:block;font-size:13px;font-weight:700}.minimum input{display:block;margin-top:7px}.minimum-actions{margin-top:18px}.legend{max-width:1000px;margin:0 auto;padding:25px 24px 50px;border-top:1px solid var(--line)}.legend h2{font-size:16px}.legend table{min-width:520px}.legend code{font-size:12px;background:#e9efea;padding:3px 5px;border-radius:4px}
+@media(min-width:701px){.nav-group details:not([open]) .nav-links{display:grid}}
+@media(max-width:1120px){.shell{grid-template-columns:205px minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.two-col{grid-template-columns:1fr}}
+@media(max-width:700px){body{padding-bottom:105px}.design-bar{padding:9px 14px}.design-bar a{margin-left:0}.shell{display:block}.sidebar{position:fixed;z-index:10;bottom:0;left:0;right:0;display:block;padding:7px 8px max(8px,env(safe-area-inset-bottom));box-shadow:0 -8px 28px #102b2420}.shell-name,.sidebar>.component-name,.sidebar .brand,.sidebar-note{display:none}.nav-groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.nav-group{position:relative}.nav-group>.component-name{display:block;font-size:8px;padding:2px;margin:0 0 2px}.nav-group summary{min-height:46px;padding:9px 3px;text-align:center;font-size:10px;letter-spacing:0;text-transform:none;border-radius:9px;color:#d7eadc}.nav-group:has(a[aria-current=page]) summary{background:#dceee4;color:#173c2d}.nav-links{position:absolute;bottom:calc(100% + 9px);left:0;min-width:185px;max-height:65vh;overflow:auto;background:var(--forest-deep);border:1px solid #a3c2ab;border-radius:11px;padding:8px;box-shadow:0 15px 34px #102b2460}.nav-group:last-child .nav-links{left:auto;right:0}.nav-group details:not([open]) .nav-links{display:none}.content{padding:18px 14px 35px}.content>.component-name{margin-bottom:14px}.page-header{display:block}.date-card{margin-top:16px;display:inline-block}.stats{gap:9px}.stat{min-height:157px;padding:13px}.stat-value{font-size:28px}.stat-value.unavailable{font-size:17px}.stat-kicker{font-size:11px}.two-col{gap:12px}.panel{padding:15px}.notice{padding:14px}.minimum{padding:17px}.minimum-fields{grid-template-columns:1fr}.legend{padding:20px 14px 35px}}
+@media(max-width:380px){.stats{grid-template-columns:1fr}.stat{min-height:120px}.stat-value{margin-top:8px}}
+
+.stats.three{grid-template-columns:repeat(3,minmax(0,1fr))}.lead-stat{max-width:360px;min-height:145px;margin-bottom:28px}.lead-stat .stat-value{font-size:28px;letter-spacing:-.015em}.workers-note{margin:0 0 18px}.workers-note h2{font-size:17px;margin-bottom:5px}.technical-legend{margin:12px 0 18px}.technical-legend summary{cursor:pointer;font-weight:700;color:var(--mint-ink);padding:8px 0}.technical-legend .table-scroll{margin-top:8px}
+@media(max-width:1120px){.stats.three{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.stats.three{grid-template-columns:1fr}.lead-stat{max-width:none}}
 </style>
 </head>
 <body>
-<div class="design-toggle"><input type="checkbox" id="hien-ten" checked><label for="hien-ten">Hiện tên component</label><a href="index.html">Mục lục thiết kế</a></div>
-<div data-component="KhungChuQuan" class="shell" ><span class="nhan-component">KhungChuQuan</span>
-<nav data-component="ThanhDieuHuong" class="navigation" aria-label="Trang chủ quán"><span class="nhan-component">ThanhDieuHuong</span>
-<a class="brand" href="index.html"><b>BT</b><span>Bánh cuốn Bà Thanh<small>Chủ quán</small></span></a><div data-component="NhomDieuHuong" class="nav-group selected" ><span class="nhan-component">NhomDieuHuong</span>
-<details><summary>Hôm nay</summary><div class="nav-links"><a href="tong-quan.html" aria-current="page">Tổng quan</a><a href="tong-ket.html">Tổng kết</a></div></details>
-</div>
-<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
-<details><summary>Thực đơn</summary><div class="nav-links"><a href="san-pham.html">Sản phẩm</a><a href="menu-gia.html">Menu &amp; giá</a><a href="danh-muc.html">Danh mục</a><a href="combo.html">Combo</a><a href="topping.html">Topping</a></div></details>
-</div>
-<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
-<details><summary>Con người</summary><div class="nav-links"><a href="nhan-vien.html">Nhân viên</a><a href="giao-viec.html">Giao việc</a><a href="dao-tao.html">Đào tạo</a></div></details>
-</div>
-<div data-component="NhomDieuHuong" class="nav-group" ><span class="nhan-component">NhomDieuHuong</span>
-<details><summary>Hàng &amp; tiền</summary><div class="nav-links"><a href="nguyen-lieu.html">Nguyên liệu</a><a href="kho.html">Kho</a><a href="khoan-chi.html">Khoản chi</a></div></details>
-</div>
-
+<div class="design-bar"><label><input id="show-names" type="checkbox"> Hiện tên các khối</label><strong>Bản thiết kế · số liệu từ máy phát triển</strong><a href="../index.html">Mục lục thiết kế</a></div>
+<div data-component="KhungChuQuan" class="shell"><span class="component-name shell-name">Khung trang chủ quán</span>
+<nav data-component="ThanhDieuHuong" class="sidebar" aria-label="Trang chủ quán"><span class="component-name">Thanh điều hướng</span>
+<a class="brand" href="../index.html"><span class="brand-mark">BT</span><span><b>Bánh cuốn Bà Thanh</b><small>Không gian chủ quán</small></span></a>
+<div class="nav-groups">
+<div data-component="NhomDieuHuong" class="nav-group"><span class="component-name">Nhóm điều hướng</span><details open><summary>Hôm nay</summary><div class="nav-links"><a href="tong-quan.html" aria-current="page">Tổng quan</a><a href="../van_hanh/van-hanh.html">Vận hành</a><a href="../tong-ket/tong-ket.html">Tổng kết</a></div></details></div>
+<div data-component="NhomDieuHuong" class="nav-group"><span class="component-name">Nhóm điều hướng</span><details open><summary>Thực đơn</summary><div class="nav-links"><a href="../san-pham.html">Sản phẩm</a><a href="../menu-gia.html">Thực đơn và giá</a><a href="../danh-muc.html">Danh mục</a><a href="../combos/combo.html">Suất kết hợp</a><a href="../topping/topping.html">Đồ thêm</a></div></details></div>
+<div data-component="NhomDieuHuong" class="nav-group"><span class="component-name">Nhóm điều hướng</span><details open><summary>Con người</summary><div class="nav-links"><a href="../nhan-vien/nhan-vien.html">Nhân viên</a><a href="../giao-viec/giao-viec.html">Giao việc</a><a href="../dao_tao/dao-tao.html">Đào tạo</a></div></details></div>
+<div data-component="NhomDieuHuong" class="nav-group"><span class="component-name">Nhóm điều hướng</span><details open><summary>Hàng &amp; tiền</summary><div class="nav-links"><a href="../nguyen-lieu/nguyen-lieu.html">Nguyên liệu</a><a href="../kho/kho.html">Kho</a><a href="../khoan-chi/khoan-chi.html">Khoản chi</a></div></details></div>
+</div><p class="sidebar-note">Số trên trang này là bản chụp để duyệt thiết kế. Trang thật đọc dữ liệu mới từ hệ thống.</p>
 </nav>
-<main data-component="TrangTongQuan" class="page-content" ><span class="nhan-component">TrangTongQuan</span>
-<header data-component="DauTrang" class="page-header" ><span class="nhan-component">DauTrang</span>
-<div><h1>Tổng quan</h1><p class="muted">Ngày bán 20/10/2026 · Đọc lúc 09:42:15 · số liệu minh hoạ</p></div>
-</header>
-<section data-component="DaiCanDeY" class="notice" ><span class="nhan-component">DaiCanDeY</span>
-<strong>Còn thiếu gì</strong><p>Thiếu 1 người · Trứng: Nên kiểm tra</p>
-</section>
-<div class="grid"><section data-component="TheSo" class="card" ><span class="nhan-component">TheSo</span>
-<h2>Tiến độ bán</h2><p class="number">412 / 600 bánh</p>
-</section>
-<section data-component="TheSo" class="card" ><span class="nhan-component">TheSo</span>
-<h2>Tiền bán tạm tính</h2><p class="number">[GIÁ]</p><p class="muted">Tiền bán tạm tính, chưa đối soát.</p>
-</section>
-<section data-component="TheSo" class="card" ><span class="nhan-component">TheSo</span>
-<h2>Khách đang phục vụ</h2><p class="number">7 bàn đang phục vụ</p>
-</section>
-<section data-component="TheSo" class="card" ><span class="nhan-component">TheSo</span>
-<h2>Người đang làm</h2><p class="number">4 người</p>
-</section>
-</div><div class="grid"><section data-component="BangDuLieu" class="card" ><span class="nhan-component">BangDuLieu</span>
-<h2>Còn thiếu</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Còn thiếu"><table><thead><tr><th scope="col">Thành phần</th><th scope="col">Tại quán</th><th scope="col">Giao hàng online</th></tr></thead><tbody><tr><td>Bánh cuốn</td><td>36</td><td>12</td></tr><tr><td>Trứng</td><td>5</td><td>2</td></tr><tr><td>Giò</td><td>3</td><td>0</td></tr></tbody></table></div>
-</section>
-<section data-component="BangDuLieu" class="card" ><span class="nhan-component">BangDuLieu</span>
-<h2>Đã ra</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Đã ra"><table><thead><tr><th scope="col">Thành phần</th><th scope="col">Tại quán</th><th scope="col">Giao hàng online</th></tr></thead><tbody><tr><td>Bánh cuốn</td><td>318</td><td>94</td></tr><tr><td>Trứng</td><td>41</td><td>13</td></tr><tr><td>Giò</td><td>22</td><td>8</td></tr></tbody></table></div>
-</section>
-</div><p class="muted">Mốc nguồn: 09:42:10</p><div class="grid"><section data-component="BangDuLieu" class="card" ><span class="nhan-component">BangDuLieu</span>
-<h2>Còn thiếu gì · Nguyên liệu</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Còn thiếu gì · Nguyên liệu"><table><thead><tr><th scope="col">Nguyên liệu</th><th scope="col">Còn</th><th scope="col">Nhắc</th></tr></thead><tbody><tr><td>Trứng</td><td>4 quả</td><td><span data-component="HuyHieuTrangThai" class="badge red" ><span class="nhan-component">HuyHieuTrangThai</span>
-Nên kiểm tra
-</span>
-</td></tr></tbody></table></div>
-</section>
-<section data-component="BangDuLieu" class="card" ><span class="nhan-component">BangDuLieu</span>
-<h2>Món</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Món"><table><thead><tr><th scope="col">Món</th><th scope="col">Khách đặt</th><th scope="col">Đã ra</th></tr></thead><tbody><tr><td>Bánh cuốn</td><td>14</td><td>9</td></tr></tbody></table></div>
-</section>
-</div><form data-component="FormToiThieu" class="card form-body" aria-label="Số tối thiểu của ngày"><span class="nhan-component">FormToiThieu</span>
-<h2>Số tối thiểu của ngày</h2><label class="field">Số bánh tối thiểu<input type="number" value="600"></label><label class="field">Số người tối thiểu<input type="number" value="5"></label><div class="actions"><button type="button" class="primary">Lưu số tối thiểu</button></div>
-</form>
-
-</main>
-
+<main data-component="TrangTongQuan" class="content"><span class="component-name">Trang tổng quan</span>
+<header data-component="DauTrang" class="page-header"><div><span class="component-name">Đầu trang</span><p class="eyebrow">Báo cáo trong ngày</p><h1>Tổng quan</h1><p class="subhead">Theo dõi phục vụ, món còn thiếu và tình hình nguyên liệu.</p></div><div class="date-card"><small>Ngày bán</small><b>16/11/2026</b><span>Đọc lúc 16:21:23</span></div></header>
+<section data-component="DaiCanDeY" class="notice"><span class="notice-icon" aria-hidden="true">!</span><div><span class="component-name">Dải cần chú ý</span><h2>Hai chỉ số đang chờ dữ liệu</h2><p>Chưa nhập số tối thiểu của ngày và hệ thống bán hàng tại quầy chưa khai số người đang làm. Phần nguyên liệu có mục cần kiểm tra.</p></div></section>
+<section data-component="TheSo" class="stat first lead-stat"><span class="component-name">Thẻ chỉ số</span><p class="stat-kicker">Khách đang được phục vụ</p><p class="stat-value">2 bàn đang phục vụ</p></section>
+<div class="section-heading"><h2>Phần phục vụ</h2></div><div class="two-col">
+<section data-component="BangDuLieu" class="panel"><span class="component-name">Bảng dữ liệu</span><div class="panel-head"><h2>Đã ra</h2><small>Mốc nguồn: 16:21:23</small></div><h3 class="group-title">Tại quán</h3><ul class="row-list">
+<li><span>Canh bánh cuốn</span><b>× 0</b></li>
+<li><span>nước chấm</span><b>× 0</b></li>
+<li><span>Bánh cuốn</span><b>× 0</b></li>
+<li><span>Trứng chín</span><b>× 0</b></li>
+<li><span>Trứng tái</span><b>× 0</b></li>
+<li><span>Trứng vàng</span><b>× 0</b></li>
+<li><span>Giò</span><b>× 0</b></li>
+<li><span>Bánh cuốn</span><b>× 0</b></li>
+<li><span>Trứng chín</span><b>× 0</b></li>
+<li><span>Trứng tái</span><b>× 0</b></li>
+<li><span>Trứng vàng</span><b>× 0</b></li>
+</ul><h3 class="group-title">Giao hàng trực tuyến</h3><p class="empty-line">Chưa có dòng nào.</p></section>
+<section data-component="BangDuLieu" class="panel"><span class="component-name">Bảng dữ liệu</span><div class="panel-head"><h2>Còn thiếu</h2><small>Mốc nguồn: 16:21:23</small></div><h3 class="group-title">Tại quán</h3><ul class="row-list">
+<li><span>Canh bánh cuốn</span><b>× 25</b></li>
+<li><span>nước chấm</span><b>× 5</b></li>
+<li><span>Bánh cuốn</span><b>× 122</b></li>
+<li><span>Trứng chín</span><b>× 15</b></li>
+<li><span>Trứng tái</span><b>× 20</b></li>
+<li><span>Trứng vàng</span><b>× 4</b></li>
+<li><span>Giò</span><b>× 30</b></li>
+<li><span>Bánh cuốn</span><b>× 122</b></li>
+<li><span>Trứng chín</span><b>× 15</b></li>
+<li><span>Trứng tái</span><b>× 20</b></li>
+<li><span>Trứng vàng</span><b>× 4</b></li>
+</ul><h3 class="group-title">Giao hàng trực tuyến</h3><p class="empty-line">Chưa có dòng nào.</p></section>
 </div>
-<section id="chu-giai"><h2>Chú giải component</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Chú giải component"><table><thead><tr><th scope="col">Tên</th><th scope="col">Nó là gì</th><th scope="col">Phạm vi</th></tr></thead><tbody><tr><td><code>BangDuLieu</code></td><td>Bảng dữ liệu có vùng cuộn ngang riêng.</td><td>dùng chung</td></tr><tr><td><code>DaiCanDeY</code></td><td>Dải nhắc việc cần chú ý từ dữ liệu đang xem.</td><td>dùng chung</td></tr><tr><td><code>DauTrang</code></td><td>Tiêu đề trang, lời dẫn và thao tác chính.</td><td>dùng chung</td></tr><tr><td><code>FormToiThieu</code></td><td>Hai số tối thiểu của ngày bán và nút lưu.</td><td>riêng trang</td></tr><tr><td><code>HuyHieuTrangThai</code></td><td>Nhãn trạng thái của một bản ghi.</td><td>dùng chung</td></tr><tr><td><code>KhungChuQuan</code></td><td>Vỏ trang nối điều hướng với nội dung quản trị.</td><td>dùng chung</td></tr><tr><td><code>NhomDieuHuong</code></td><td>Một nhóm liên kết đến các trang cùng mảng.</td><td>dùng chung</td></tr><tr><td><code>ThanhDieuHuong</code></td><td>Thanh bên trên máy tính và thanh bốn nhóm ở đáy điện thoại.</td><td>dùng chung</td></tr><tr><td><code>TheSo</code></td><td>Một chỉ số được trả về, chỉ định dạng để đọc.</td><td>dùng chung</td></tr><tr><td><code>TrangTongQuan</code></td><td>Nội dung riêng của trang Tổng quan.</td><td>riêng trang</td></tr></tbody></table></div></section>
+<div class="stats three">
+<section data-component="TheSo" class="stat"><span class="component-name">Thẻ chỉ số</span><p class="stat-kicker">Tiến độ bán trong buổi</p><p class="stat-value unavailable">Chưa nhập số tối thiểu của ngày</p></section>
+<section data-component="TheSo" class="stat"><span class="component-name">Thẻ chỉ số</span><p class="stat-kicker">Tiền bán tạm tính</p><p class="stat-value">0 đ</p><p class="stat-foot">Tiền bán tạm tính, chưa đối soát.</p></section>
+<section data-component="TheSo" class="stat"><span class="component-name">Thẻ chỉ số</span><p class="stat-kicker">Người thực tế đang làm</p><p class="stat-value unavailable">Hệ thống bán hàng tại quầy chưa khai số người đang làm</p></section>
+</div>
+<div class="section-heading"><h2>Còn thiếu gì</h2><p>Nguyên liệu, người và món</p></div><div class="two-col">
+<section data-component="BangDuLieu" class="panel"><span class="component-name">Bảng dữ liệu</span><div class="panel-head"><h2>Nguyên liệu</h2><span data-component="HuyHieuTrangThai" class="badge warning"><span class="component-name">Nhãn trạng thái</span>Nên kiểm tra</span></div><div class="table-scroll"><table class="stock-table"><thead><tr><th scope="col">Nguyên liệu</th><th scope="col">Số còn</th><th scope="col">Nhắc</th></tr></thead><tbody>
+<tr><td>Bột bánh cuốn</td><td>Còn 7</td><td>—</td></tr>
+<tr><td>Cốc đựng canh</td><td>Còn 0 túi</td><td>Nên kiểm tra</td></tr>
+<tr><td>Dầu rửa bát</td><td>Còn 0</td><td>Nên kiểm tra</td></tr>
+<tr><td>Đũa dùng một lần</td><td>Còn 0 túi</td><td>Nên kiểm tra</td></tr>
+<tr><td>Đường đen</td><td>Còn 0</td><td>Nên kiểm tra</td></tr>
+<tr><td>Đường trắng</td><td>Còn 0</td><td>Nên kiểm tra</td></tr>
+<tr><td>Gạo</td><td>Còn 0 kg</td><td>Nên kiểm tra</td></tr>
+<tr><td>Găng tay</td><td>Còn 0 hộp</td><td>Nên kiểm tra</td></tr>
+<tr><td>Giấy ăn</td><td>Còn 0 túi</td><td>Nên kiểm tra</td></tr>
+<tr><td>Giò</td><td>Còn 0 cái</td><td>Nên kiểm tra</td></tr>
+<tr><td>Hành tây</td><td>Còn 0</td><td>Nên kiểm tra</td></tr>
+<tr><td>Hạt nêm</td><td>Còn 0</td><td>Nên kiểm tra</td></tr>
+<tr><td>Hạt tiêu</td><td>Còn 0</td><td>Nên kiểm tra</td></tr>
+<tr><td>Hộp đựng bánh cuốn</td><td>Còn 0 túi</td><td>Nên kiểm tra</td></tr>
+<tr><td>Măng</td><td>Còn 0 kg</td><td>Nên kiểm tra</td></tr>
+<tr><td>Mì chính</td><td>Còn 0</td><td>Nên kiểm tra</td></tr>
+<tr><td>Mộc nhĩ</td><td>Còn 0 kg</td><td>Nên kiểm tra</td></tr>
+<tr><td>Nhân thịt</td><td>Còn 0</td><td>Nên kiểm tra</td></tr>
+<tr><td>Nhân thịt mộc nhĩ</td><td>Còn 0</td><td>Nên kiểm tra</td></tr>
+<tr><td>Nước mắm</td><td>Còn 0</td><td>Nên kiểm tra</td></tr>
+<tr><td>Ớt</td><td>Còn 0 kg</td><td>Nên kiểm tra</td></tr>
+<tr><td>Quất</td><td>Còn 0</td><td>Nên kiểm tra</td></tr>
+<tr><td>Rau mùi tàu</td><td>Còn 0 túi</td><td>Nên kiểm tra</td></tr>
+<tr><td>Thìa dùng một lần</td><td>Còn 0 túi</td><td>Nên kiểm tra</td></tr>
+<tr><td>Trứng</td><td>Còn 0 vỉ</td><td>Nên kiểm tra</td></tr>
+<tr><td>Túi bóng</td><td>Còn 0 kg</td><td>Nên kiểm tra</td></tr>
+<tr><td>Túi chữ T đựng hộp canh</td><td>Còn 0 kg</td><td>Nên kiểm tra</td></tr>
+<tr><td>Túi nóng</td><td>Còn 0 kg</td><td>Nên kiểm tra</td></tr>
+<tr><td>Túi zip đựng rau</td><td>Còn 0 kg</td><td>Nên kiểm tra</td></tr>
+<tr><td>Xương</td><td>Còn 0 kg</td><td>Nên kiểm tra</td></tr>
+</tbody></table></div></section>
+<section data-component="BangDuLieu" class="panel"><span class="component-name">Bảng dữ liệu</span><div class="workers-note"><h2>Thiếu người</h2><p>Hệ thống bán hàng tại quầy chưa khai số người đang làm.</p></div><div class="panel-head"><h2>Món</h2><small>Khách đặt / Đã ra</small></div><div class="table-scroll"><table class="menu-table"><thead><tr><th scope="col">Món</th><th scope="col" class="quantity">Khách đặt</th><th scope="col" class="quantity">Đã ra</th></tr></thead><tbody>
+<tr><td>Bánh cuốn</td><td class="quantity">7</td><td class="quantity">0</td></tr>
+<tr><td>Giò bán rời</td><td class="quantity">7</td><td class="quantity">0</td></tr>
+<tr><td>Canh bánh cuốn</td><td class="quantity">25</td><td class="quantity">0</td></tr>
+<tr><td>Bánh trứng chín</td><td class="quantity">6</td><td class="quantity">0</td></tr>
+<tr><td>Bánh trứng tái</td><td class="quantity">6</td><td class="quantity">0</td></tr>
+<tr><td>Đầy đủ trứng chín</td><td class="quantity">45</td><td class="quantity">0</td></tr>
+<tr><td>Đầy đủ trứng tái</td><td class="quantity">40</td><td class="quantity">0</td></tr>
+<tr><td>Suất giò</td><td class="quantity">30</td><td class="quantity">0</td></tr>
+<tr><td>Suất trứng tái</td><td class="quantity">30</td><td class="quantity">0</td></tr>
+<tr><td>Suất trứng vàng</td><td class="quantity">20</td><td class="quantity">0</td></tr>
+</tbody></table></div></section></div>
+<form data-component="FormToiThieu" class="minimum" aria-label="Số tối thiểu của ngày" onsubmit="event.preventDefault(); document.getElementById('form-note').hidden = false;"><span class="component-name">Biểu mẫu số tối thiểu</span><h2>Số tối thiểu của ngày</h2><p>Hiện chưa nhập số tối thiểu. Nhập hai số để xem cách biểu mẫu hiển thị; bản thiết kế này không lưu dữ liệu.</p><div class="minimum-fields"><label for="minimum-banh">Số bánh tối thiểu<input id="minimum-banh" type="number" min="1" step="1" required placeholder="Từ 1 trở lên"></label><label for="minimum-workers">Số người tối thiểu<input id="minimum-workers" type="number" min="1" step="1" required placeholder="Từ 1 trở lên"></label></div><div class="minimum-actions"><button type="submit">Lưu số tối thiểu</button></div><p id="form-note" role="status" hidden>Đây là bản thiết kế tĩnh. Muốn lưu, mở trang chủ quán đang chạy.</p></form>
+</main></div>
+<section id="chu-giai" class="legend"><h2>Chú giải các khối giao diện</h2><p>Tên tiếng Việt hiện trên trang. Khi cần đối chiếu mã trong nguồn, mở bảng dưới đây.</p><details class="technical-legend"><summary>Xem mã kỹ thuật của các khối</summary><div class="table-scroll"><table><thead><tr><th scope="col">Mã khối</th><th scope="col">Nó là gì</th><th scope="col">Phạm vi</th></tr></thead><tbody><tr><td><code>KhungChuQuan</code></td><td>Vỏ trang nối điều hướng với nội dung quản trị.</td><td>Dùng chung</td></tr><tr><td><code>ThanhDieuHuong</code></td><td>Thanh điều hướng theo nhóm trang.</td><td>Dùng chung</td></tr><tr><td><code>NhomDieuHuong</code></td><td>Một nhóm liên kết cùng mảng.</td><td>Dùng chung</td></tr><tr><td><code>TrangTongQuan</code></td><td>Nội dung riêng của trang Tổng quan.</td><td>Riêng trang</td></tr><tr><td><code>DauTrang</code></td><td>Tiêu đề và mốc đọc.</td><td>Dùng chung</td></tr><tr><td><code>DaiCanDeY</code></td><td>Lời nhắc về các trạng thái chưa có dữ liệu.</td><td>Dùng chung</td></tr><tr><td><code>TheSo</code></td><td>Một chỉ số do hệ thống trả về.</td><td>Dùng chung</td></tr><tr><td><code>BangDuLieu</code></td><td>Danh sách hoặc bảng dữ liệu trong một khối.</td><td>Dùng chung</td></tr><tr><td><code>HuyHieuTrangThai</code></td><td>Nhãn trạng thái trong khối.</td><td>Dùng chung</td></tr><tr><td><code>FormToiThieu</code></td><td>Hai số tối thiểu và nút lưu.</td><td>Riêng trang</td></tr></tbody></table></div></details><p><small>Số liệu chụp từ trang chủ quán trên máy phát triển lúc 16:21:23 ngày 16/11/2026 (giờ Việt Nam). Số có thể khác khi mở trang thật.</small></p></section>
+<script>
+const mobileNav = window.matchMedia('(max-width: 700px)');
+function syncNav() { document.querySelectorAll('.nav-group details').forEach((item) => { item.open = !mobileNav.matches; }); }
+syncNav(); mobileNav.addEventListener('change', syncNav);
+</script>
 </body>
 </html>
