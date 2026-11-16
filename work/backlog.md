@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-335 **Thu gọn điều hướng 14 trang chủ quán** — L1 (chỉ đổi cách hiển thị và mở trang, giữ route và quyền), xong 2026-11-16; ba trang theo dõi hiện trực tiếp, các trang còn lại gom thành ba nhóm; test 16/16 và gate đạt · [chi tiết](#t-335)
 - [x] T-334 **Gộp duyệt đơn vào Cộng thử ghép đơn trên trang Vận hành** — L1 (đổi vị trí thao tác, giữ API và quyền), xong 2026-11-16; bỏ khối Đơn chờ xác nhận riêng, xử lý đơn trong Cộng thử ghép đơn; test 33/33 và gate đạt · [chi tiết](#t-334)
 - [x] T-333 **Thiết kế lại bản mẫu Tổng quan chủ quán theo dữ liệu đang chạy trên máy dev** — L1 (chỉ bản HTML tĩnh, không đổi FE hay hợp đồng), chủ repo giao 2026-11-16; cập nhật bố cục, trạng thái thiếu dữ liệu và điều hướng theo `/chu-quan` · [chi tiết](#t-333)
 - [ ] T-331 **`make dev-iphone` chỉ có trong worktree Codex, gõ ở repo chính thì báo không có lệnh** — L2 (Origin của dev server và cookie phiên), mở 2026-11-16 theo yêu cầu chủ repo; đưa bản Codex làm dưới nhãn T-328 (trùng mã với việc bố cục Combo) từ `codex/T-328-iphone` vào cây chính · [chi tiết](#t-331)
@@ -589,6 +590,19 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-335"></a>
+### T-335 — Thu gọn điều hướng 14 trang chủ quán
+
+Chủ repo yêu cầu 2026-11-16 thiết kế lại thanh điều hướng của `/chu-quan` cho gọn hơn; danh sách hiện có 14 liên kết tự xuống dòng, chiếm nhiều chỗ trên điện thoại. Mức L1 vì đổi giao diện điều hướng, không đổi route, quyền hoặc dữ liệu. Ba trang theo dõi *Tổng quan*, *Vận hành*, *Tổng kết* vẫn là liên kết trực tiếp; năm trang cấu hình bán hàng vào nhóm *Bán hàng*, ba trang về người vào *Nhân sự*, ba trang nguyên liệu/kho/chi vào *Kho & chi*.
+
+Acceptance ghi trước khi sửa: A1 — mặc định thanh điều hướng có sáu lựa chọn cấp đầu, không trải đủ 14 liên kết; cả 14 route còn mở được từ đúng tên và không trùng. A2 — trang hiện tại được nhận biết ở liên kết trực tiếp hoặc nhãn nhóm đang mở; chọn mục trong nhóm thu menu, thao tác bàn phím và bấm ngoài đóng menu. A3 — ở màn nhỏ, sáu lựa chọn không tràn ngang và menu mở trong bề rộng màn; quyền gác của layout không đổi. A4 — test điều hướng và `./scripts/gate.sh` đạt, diff không kéo việc khác.
+
+Phạm vi (`work/scope/T-335.txt`): `work/backlog.md`, `docs/product/4-fe/01-khung-fe.md`, `fe/src/app/chu-quan/_components/muc-chu-quan.ts`, `fe/src/app/chu-quan/_components/thanh-dieu-huong.tsx`, `fe/src/app/chu-quan/chu-quan.test.tsx`. Codex làm trên nhánh `P4A-01`; chưa duyệt độc lập. `work/backlog.md` và tài liệu khung FE đang chứa hunk chưa commit của các việc khác, cần tách riêng khi bàn giao commit.
+
+Kết quả 2026-11-16: thanh điều hướng có ba liên kết trực tiếp *Tổng quan*, *Vận hành*, *Tổng kết* và ba nút nhóm *Bán hàng*, *Nhân sự*, *Kho & chi*. Mỗi nhóm mở danh sách ngay dưới thanh, hiển thị tên trang đang xem, chỉ một nhóm mở cùng lúc; Escape, bấm ngoài và chọn trang thu nhóm. Danh sách 14 route giữ nguyên trong một owner và test vẫn kiểm mỗi route có `page.tsx`. A1–A3: `npm test -- --run src/app/chu-quan/chu-quan.test.tsx` đạt 16/16, `npx tsc --noEmit` exit 0. A4: `./scripts/gate.sh` exit 0, dòng cuối `PASS gate không cổng nào đỏ`; `fe-check` 46 giây, `db-check` 1.529 giây và 21 file test scripts qua. `git diff --check` đạt. Chưa kiểm bằng trình duyệt có đăng nhập trên thiết bị thật; layout dùng `flex-wrap`, panel nằm trong khung trang và chia hai cột ở màn nhỏ. Bản vá `/tmp/t335-after-t334.patch` stage riêng hunk T-335 của backlog và tài liệu sau T-334; đã thử trong index tạm với `git diff --cached --check` và `git write-tree` đạt.
+
+[↑ đầu file](#top)
 
 <a id="t-334"></a>
 ### T-334 — Gộp duyệt đơn vào Cộng thử ghép đơn trên trang Vận hành
