@@ -8870,6 +8870,9 @@ lại: file scope mang tên không gắn task (lượt đo có 52 file `L0-…`)
 `post-commit` của T-320 chỉ in gợi ý xoá cho loại này, không tự xoá (F-014: xoá scope của phiên đang chạy). Trần 9 000 byte dựa
 trên suy luận rằng hook nạp khoảng 10 000 ký tự; kiểm bằng phiên Claude mới sau khi tích hợp. Lùi: trả `scripts/check-scope.sh`
 và `scripts/brief.sh` về bản trước T-319.
+*Kiểm 2026-11-13 và 2026-11-16 (Claude Code):* mở lại phiên hai lần, hook `SessionStart` đưa trọn brief (khoảng 7 KB) vào ngữ
+cảnh, tới hết mục *UNCOMMITTED* — trước T-319 phiên chỉ nhận 2 KB đầu. Trần 9 000 byte vì thế đã được quan sát là đủ thấp; con số
+giới hạn thật của hook vẫn chưa đo.
 
 **Applies to:** ADR-063 · ADR-002 · F-010 · F-014 · `T-319` · `T-320` · `scripts/check-scope.sh` · `scripts/brief.sh` · `CLAUDE.md` §5 · §7.1.
 
