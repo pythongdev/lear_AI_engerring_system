@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-334 **Gộp duyệt đơn vào Cộng thử ghép đơn trên trang Vận hành** — L1 (đổi vị trí thao tác, giữ API và quyền), xong 2026-11-16; bỏ khối Đơn chờ xác nhận riêng, xử lý đơn trong Cộng thử ghép đơn; test 33/33 và gate đạt · [chi tiết](#t-334)
 - [x] T-333 **Thiết kế lại bản mẫu Tổng quan chủ quán theo dữ liệu đang chạy trên máy dev** — L1 (chỉ bản HTML tĩnh, không đổi FE hay hợp đồng), chủ repo giao 2026-11-16; cập nhật bố cục, trạng thái thiếu dữ liệu và điều hướng theo `/chu-quan` · [chi tiết](#t-333)
 - [ ] T-331 **`make dev-iphone` chỉ có trong worktree Codex, gõ ở repo chính thì báo không có lệnh** — L2 (Origin của dev server và cookie phiên), mở 2026-11-16 theo yêu cầu chủ repo; đưa bản Codex làm dưới nhãn T-328 (trùng mã với việc bố cục Combo) từ `codex/T-328-iphone` vào cây chính · [chi tiết](#t-331)
 - [x] T-330 **`fe-check` coi thư mục `fe/node_modules` rỗng là đã cài, nên đỏ bằng một lỗi `ENOENT` khó hiểu thay vì tự cài lại** — L1, xong 2026-11-16; script kiểm công cụ nó sắp gọi trước và sau một lần `npm ci`, không cài được thì nêu tên thứ thiếu và lệnh cần chạy; Codex làm một vòng, Claude duyệt; gate đạt · [chi tiết](#t-330)
@@ -588,6 +589,19 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-334"></a>
+### T-334 — Gộp duyệt đơn vào Cộng thử ghép đơn trên trang Vận hành
+
+Chủ repo yêu cầu 2026-11-16 tại `/chu-quan/van-hanh`: bỏ component *Đơn chờ xác nhận*; thao tác xác nhận đặt đơn nằm trong *Cộng thử ghép đơn*. Mức L1 vì đổi chỗ bày và bấm trên FE, không đổi trạng thái đơn, giá, API hoặc quyền. Hàng chờ vẫn lấy từ `GET /counter/queue`, bảng bàn từ `GET /service-board`; cả đơn QR và đơn không gắn bàn cần tiếp tục được xử lý.
+
+Acceptance ghi trước khi sửa: A1 — trang chỉ còn một khu *Cộng thử ghép đơn*, không còn khu *Đơn chờ xác nhận* riêng; thẻ đơn chờ cùng nút duyệt/từ chối nằm trong khu ấy, cả đơn QR lẫn đơn không gắn bàn. A2 — chọn bàn để cộng thử, cập nhật Tổng thiếu theo bàn, duyệt đơn, xác nhận từ chối và mở lại nhận đơn tiếp tục gọi đúng cửa; sau ghi hàng chờ đọc lại. A3 — khi `GET /service-board` chưa có dữ liệu hoặc lỗi, đơn chờ và nút xử lý vẫn hiện; khi hàng chờ rỗng, khu ghép thử không bày thẻ đơn trống gây nhiễu. A4 — chạy test FE liên quan và `./scripts/gate.sh`, đọc kết quả.
+
+Phạm vi (`work/scope/T-334.txt`): `work/backlog.md`, `docs/product/4-fe/01-khung-fe.md`, `fe/src/app/chu-quan/_components/van-hanh.tsx`, `fe/src/app/chu-quan/van-hanh/van-hanh.test.tsx`. Codex làm trên nhánh `P4A-01`; chưa duyệt độc lập. Cây chung có thay đổi chưa commit của các việc khác trong backlog và tài liệu khung FE; phần bàn giao commit phải tách đúng hunk của T-334.
+
+Kết quả 2026-11-16: `CongThuGhepDon` đọc thêm hàng chờ và bày thẻ đơn chờ cùng nút duyệt/từ chối trước các bàn chọn thử; không còn khu *Đơn chờ xác nhận* riêng. Giữ cảnh báo tạm dừng, khoảng mù và nút mở lại trong cùng khu; khi bảng phục vụ lỗi, hàng chờ và thao tác vẫn dùng được. A1–A3: `npm test -- --run src/app/chu-quan/van-hanh/van-hanh.test.tsx` đạt 33/33, gồm QR, đến lấy, giao tận nơi, duyệt, từ chối, mở lại và lỗi bảng phục vụ. A4: `./scripts/gate.sh` exit 0, dòng cuối `PASS gate không cổng nào đỏ`; Gate 1 gồm `fe-check` 50 giây, `db-check` 780 giây và 21 file `scripts/*.test.sh` đều qua. `git diff --check` đạt. Chưa kiểm trực tiếp bằng trình duyệt có đăng nhập; server dev cổng 3000 đang chạy từ thư mục `fe/` của cây này. Tài liệu khung FE và backlog có thay đổi chưa commit của việc khác, nên đã chuẩn bị `/tmp/t334-stage.patch` để tách đúng hai file dùng chung khi bàn giao commit.
+
+[↑ đầu file](#top)
 
 <a id="t-333"></a>
 ### T-333 — Thiết kế lại bản mẫu Tổng quan chủ quán theo dữ liệu đang chạy trên máy dev

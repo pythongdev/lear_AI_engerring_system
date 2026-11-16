@@ -181,14 +181,17 @@ describe("Vận hành", () => {
     const ban3 = { ...data, sessions: [...data.sessions, phien(3, "waiting", "3")] };
     const goi = mo(() => ({ status: 200, body: ban3 }), (n) => ({ status: 200, body: n === 1 ? { ...hangRong, orders: [don] } : hangRong }), true);
     await bang();
-    const vung = within(await screen.findByRole("region", { name: "Đơn chờ chủ quán xử lý" }));
+    const vung = within(await screen.findByRole("region", { name: "Cộng thử ghép đơn" }));
+    expect(screen.queryByRole("region", { name: "Đơn chờ chủ quán xử lý" })).toBeNull();
+    expect(screen.queryByRole("heading", { name: "Đơn chờ xác nhận" })).toBeNull();
     expect((await vung.findByRole("article", { name: "Đơn 77" })).textContent).toContain("Bàn 3");
     expect(vung.getByText(/Bánh cuốn ·/).textContent).toContain("Số lượng 2");
     await waitFor(() => expect(luong).toHaveLength(1));
     expect(goi.some((g) => g.path === "/counter/events")).toBe(true);
     fireEvent.click(vung.getByRole("button", { name: "Duyệt đơn 77" }));
     await waitFor(() => expect(goi.some((g) => g.method === "POST" && g.path === "/orders/77/approval")).toBe(true));
-    await waitFor(() => expect(vung.getByText("Không có đơn chờ xác nhận.")).toBeTruthy());
+    await waitFor(() => expect(vung.queryByRole("article", { name: "Đơn 77" })).toBeNull());
+    expect(vung.getByRole("checkbox", { name: "3 · 79.123đ" })).toBeTruthy();
     fireEvent.click(nut("Chi tiết đem ra D"));
     expect(screen.getByRole("button", { name: /Đem ra D/ })).toBeTruthy();
   });
@@ -197,13 +200,25 @@ describe("Vận hành", () => {
       created_at: data.read_at, customer_phone: "0900", customer_needed_at: null, total_vnd: 0, lines: [] };
     const goi = mo(undefined, (n) => ({ status: 200, body: n === 1 ? { ...hangRong, blind_since: data.read_at, orders: [don] } : { ...hangRong, orders: [don] } }), true);
     await bang();
-    const vung = within(screen.getByRole("region", { name: "Đơn chờ chủ quán xử lý" }));
+    const vung = within(screen.getByRole("region", { name: "Cộng thử ghép đơn" }));
+    expect((await vung.findByRole("article", { name: "Đơn 78" })).textContent).toContain("Khách đến lấy");
     fireEvent.click(await vung.findByRole("button", { name: "Mở lại nhận đơn" }));
     await waitFor(() => expect(goi.some((g) => g.path === "/shop-blind/reopening" && g.method === "POST")).toBe(true));
     fireEvent.click(vung.getByRole("button", { name: "Từ chối đơn 78" }));
     expect(goi.some((g) => g.path === "/orders/78/rejection")).toBe(false);
     fireEvent.click(screen.getByRole("button", { name: "Xác nhận từ chối" }));
     await waitFor(() => expect(goi.some((g) => g.path === "/orders/78/rejection" && g.method === "POST")).toBe(true));
+  });
+  it("bảng phục vụ lỗi vẫn duyệt được đơn chờ trong Cộng thử ghép đơn", async () => {
+    const don: HangChoChuQuan["orders"][number] = { sales_order_id: 79, channel_code: "delivery", dining_table_id: null,
+      created_at: data.read_at, customer_phone: "0900", customer_needed_at: null, total_vnd: 7000, lines: [dong("Canh bánh cuốn")] };
+    const goi = mo(() => ({ status: 403, body: { code: "not_on_counter_duty" } }),
+      () => ({ status: 200, body: { ...hangRong, orders: [don] } }), true);
+    const vung = within(screen.getByRole("region", { name: "Cộng thử ghép đơn" }));
+    expect((await vung.findByRole("article", { name: "Đơn 79" })).textContent).toContain("Giao tận nơi");
+    expect(screen.queryByRole("region", { name: "Bảng tổng thiếu" })).toBeNull();
+    fireEvent.click(vung.getByRole("button", { name: "Duyệt đơn 79" }));
+    await waitFor(() => expect(goi.some((g) => g.method === "POST" && g.path === "/orders/79/approval")).toBe(true));
   });
   it("đơn QR mới phát changed thì đọc lại service-board và hiện bàn cùng số món; heartbeat không đọc", async () => {
     const moi = { ...data, sessions: [...data.sessions, { ...phien(3, "waiting", "3", [thu("Bánh cuốn", "Thịt", { ordered: 2, served: 0, missing: 2 })]), lines: [dong("Bánh cuốn", { quantity: 2, line_total_vnd: 14000 })], lines_total_vnd: 14000 }] };
@@ -335,7 +350,7 @@ describe("Vận hành", () => {
   it("đọc lại bỏ tick phiên hết waiting và không tự chọn lại khi nó quay về", async () => {
     mo((n) => ({ status: 200, body: n === 2 ? { ...data, sessions: data.sessions.map((p) => p.table_session_id === 31 ? { ...p, service_group: "serving" } : p) } : data }));
     await bang(); fireEvent.click(screen.getByRole("checkbox")); fireEvent.click(nut("Đọc lại"));
-    await screen.findByText("Chưa bàn nào sắp phục vụ."); expect(screen.getByText("Đã chọn 0 bàn.")).toBeTruthy();
+    await screen.findByText("Không có đơn chờ xác nhận hoặc bàn sắp phục vụ."); expect(screen.getByText("Đã chọn 0 bàn.")).toBeTruthy();
     fireEvent.click(nut("Đọc lại")); expect((await screen.findByRole("checkbox")).getAttribute("aria-checked")).toBe("false");
   });
   it("các phần mặc định ẩn; Hiện và Chi tiết đổi aria-expanded cùng hidden, bảng đủ data-label", async () => {
@@ -371,7 +386,7 @@ describe("Vận hành", () => {
   });
   it("dữ liệu rỗng có ba câu rỗng, không lỗi", async () => {
     mo(() => ({ status: 200, body: { ...data, sessions: [], empty_tables: [], serve_history: [] } }));
-    expect(await screen.findByText("Chưa bàn nào đang phục vụ.")).toBeTruthy(); expect(screen.getByText("Chưa bàn nào sắp phục vụ.")).toBeTruthy(); expect(screen.getByText("Chưa có lần đem ra nào hôm nay.")).toBeTruthy(); expect(screen.queryByRole("alert")).toBeNull();
+    expect(await screen.findByText("Chưa bàn nào đang phục vụ.")).toBeTruthy(); expect(screen.getByText("Không có đơn chờ xác nhận hoặc bàn sắp phục vụ.")).toBeTruthy(); expect(screen.getByText("Chưa có lần đem ra nào hôm nay.")).toBeTruthy(); expect(screen.queryByRole("alert")).toBeNull();
   });
   it("lỗi đọc lại giữ bản cũ và giờ read_at backend", async () => {
     mo((n) => n === 1 ? { status: 200, body: data } : { status: 403, body: { code: "not_on_counter_duty" } }); await bang(); fireEvent.click(nut("Đọc lại"));
