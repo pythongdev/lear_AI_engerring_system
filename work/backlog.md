@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] T-331 **`make dev-iphone` chỉ có trong worktree Codex, gõ ở repo chính thì báo không có lệnh** — L2 (Origin của dev server và cookie phiên), mở 2026-11-16 theo yêu cầu chủ repo; đưa bản Codex làm dưới nhãn T-328 (trùng mã với việc bố cục Combo) từ `codex/T-328-iphone` vào cây chính · [chi tiết](#t-331)
 - [x] T-330 **`fe-check` coi thư mục `fe/node_modules` rỗng là đã cài, nên đỏ bằng một lỗi `ENOENT` khó hiểu thay vì tự cài lại** — L1, xong 2026-11-16; script kiểm công cụ nó sắp gọi trước và sau một lần `npm ci`, không cài được thì nêu tên thứ thiếu và lệnh cần chạy; Codex làm một vòng, Claude duyệt; gate đạt · [chi tiết](#t-330)
 - [x] T-328 **Trang Combo cần cùng cách bày với trang Sản phẩm** — L1 (đổi giao diện và cách mở chi tiết, không đổi giá hay cửa ghi), xong 2026-11-13 theo yêu cầu chủ repo; bảng combo, đầu trang và ngăn chi tiết theo khuôn Sản phẩm; giữ tìm, lọc và thao tác cũ; test 22/22 và gate đạt · [chi tiết](#t-328)
 - [x] T-326 **Tổng thiếu theo bàn có cột Canh nhưng giò không có chỗ hiện để đem ra** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-12; ở riêng mục này cột *Canh* thay bằng cột *Giò*, *Bàn đang phục vụ* giữ nguyên; Codex làm, Claude duyệt; fe-check 790/790 và gate đạt · [chi tiết](#t-326)
@@ -586,6 +587,23 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-331"></a>
+### T-331 — `make dev-iphone` chỉ có trong worktree Codex, gõ ở repo chính thì báo không có lệnh
+
+Chủ repo 2026-11-16 muốn chạy `make dev-iphone` ngay ở thư mục repo chính. Codex làm cách mở `/chu-quan` trên iPhone cùng Wi-Fi ở worktree `../lean_wt/T-328-iphone` (nhánh `codex/T-328-iphone`, nền `a00bdb2`), nhưng ghi nó dưới mã T-328, mã đã thuộc việc bố cục Combo đã commit. Việc này nhận đúng diff ấy vào cây chính dưới mã mới. Chẩn đoán gốc của Codex (Next dev chặn JS từ Origin là IP, backend chặn Origin khác `localhost`, cookie phiên mang `Secure`) giữ nguyên. Mức L2 vì chạm nguồn được phép của dev server và đường đăng nhập; không đổi luật xác thực hay hành vi bán hàng.
+
+Acceptance viết trước sửa (A1–A5 lấy từ bản bàn giao của Codex, A6 Claude thêm):
+- A1 — `make dev-iphone` ở gốc repo chính chạy frontend HTTPS ở 3002 và backend 8082 với `BANHCUON_ORIGIN` khớp IP; `make dev` mặc định không đổi, cookie vẫn `Secure`.
+- A2 — Next dev cho đúng IP khai báo tải JS (200), Origin IP khác bị 403.
+- A3 — Đăng nhập tài khoản dev qua HTTPS IP trả 201, cookie `HttpOnly; Secure; SameSite=Strict`; Origin lạ vẫn `cross_origin_write`.
+- A4 — Hướng dẫn `docs/command/ket-boi-iphone.md` nêu các bước chạy ở gốc repo, không còn bước `cd` vào worktree.
+- A5 — `./scripts/gate.sh` xanh.
+- A6 — Khoá riêng trong `.dev/` không hiện thành file chưa theo dõi: script tự ghi `.dev/.gitignore` (bản Codex dựa vào một file tạo tay, cây chính không có).
+
+Phạm vi (`work/scope/T-331.txt`): `Makefile`, `fe/next.config.ts`, `scripts/dev-iphone.sh`, `docs/command/ket-boi-iphone.md`, `docs/command/make.md`, `work/backlog.md`. Thi công: Codex (bản gốc), Claude tích hợp và duyệt ở cây chính, nhánh `P4A-01`.
+
+Bàn giao 2026-11-16 (Claude): áp đúng diff `Makefile`, `fe/next.config.ts`, `docs/command/make.md` và chép `scripts/dev-iphone.sh` từ `codex/T-328-iphone`; nền khớp, ba file ấy không đổi ở cây chính từ `a00bdb2`. Claude thêm hai chỗ: script tự ghi `.dev/.gitignore` (A6), và tự dừng với lời báo tiếng Việt khi đang có `make dev` trên cùng `fe/`. Lý do: chạy thử ở cây chính thì Next 16 từ chối dev server thứ hai cùng thư mục dù khác cổng, nên câu "không đụng `make dev`" của bản Codex sai ở cây chính (Codex không gặp vì worktree có `fe/` riêng); tài liệu và chú thích `Makefile` đã sửa theo. Bằng chứng: A2, A3 đo bằng curl trên đúng mã này ở worktree (JS Origin đúng 200, IP khác 403; đăng nhập dev 201 với cookie `HttpOnly; Secure; SameSite=Strict`; Origin lạ `cross_origin_write`); iPhone thật của chủ repo đã tải được JS và hydrate trang (cảnh báo hydration dev, chưa rõ thẻ lệch). Ở cây chính: `make dev-iphone` khi `make dev` đang chạy in lời báo và exit khác 0; IP `8.8.8.8` bị từ chối exit 1; `git status .dev` rỗng; `./scripts/gate.sh` xanh. Còn chờ (A1): chủ repo `make stop-dev` rồi chạy `make dev-iphone` ở gốc repo và mở `/chu-quan` trên iPhone — Claude không tắt `make dev` của chủ repo để tự đo. Worktree `../lean_wt/T-328-iphone` và nhánh `codex/T-328-iphone` chờ chủ repo gỡ sau commit.
 
 <a id="t-330"></a>
 ### T-330 — `fe-check` coi thư mục `fe/node_modules` rỗng là đã cài, nên đỏ bằng một lỗi `ENOENT` khó hiểu thay vì tự cài lại

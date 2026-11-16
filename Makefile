@@ -29,7 +29,8 @@ export DB_PORT
 # Tắt bỏ giờ bán bằng make dev BANHCUON_DEV_BO_GIO_BAN=0.
 BE_ENV = CHAT_MODEL_PROVIDER="$(CHAT_MODEL_PROVIDER)" BANHCUON_GOOGLE_CLIENT_ID="$(BANHCUON_GOOGLE_CLIENT_ID)" BANHCUON_DATABASE_URL="$(BANHCUON_DATABASE_URL)" BANHCUON_SHOP_TZ="$(BANHCUON_SHOP_TZ)" BANHCUON_ORIGIN="$(BANHCUON_ORIGIN)" BANHCUON_DEV_BO_GIO_BAN="$(BANHCUON_DEV_BO_GIO_BAN)" BANHCUON_FILE_DIR="$(BANHCUON_FILE_DIR)"
 BE_RUN = cd be && $(BE_ENV) go run ./cmd/server
-FE_RUN = cd fe && NEXT_PUBLIC_GOOGLE_CLIENT_ID="$(NEXT_PUBLIC_GOOGLE_CLIENT_ID)" NEXT_PUBLIC_CHAT_ENABLED="$(NEXT_PUBLIC_CHAT_ENABLED)" BANHCUON_BE_URL="$(BANHCUON_BE_URL)" npm run dev
+FE_DEV_FLAGS ?=
+FE_RUN = cd fe && NEXT_PUBLIC_GOOGLE_CLIENT_ID="$(NEXT_PUBLIC_GOOGLE_CLIENT_ID)" NEXT_PUBLIC_CHAT_ENABLED="$(NEXT_PUBLIC_CHAT_ENABLED)" BANHCUON_BE_URL="$(BANHCUON_BE_URL)" BANHCUON_DEV_IP="$(BANHCUON_DEV_IP)" npm run dev $(if $(FE_DEV_FLAGS),-- $(FE_DEV_FLAGS))
 
 # Bash 3.2: monitor mode tạo nhóm riêng; tắt monitor trong nhóm để con cùng nhóm.
 # Bộ đọc log nằm trong nhóm đó. Theo dõi PID server, không chờ pipe log đóng.
@@ -51,13 +52,21 @@ if ! kill -0 "$$be_pid" 2>/dev/null; then wait "$$be_pid"; else wait "$$fe_pid";
 endef
 
 .DEFAULT_GOAL := help
-.PHONY: help setup up migrate seed seed-thu tai-khoan-dev ma-qr-so-ban psql shell status stop stop-dev reset swagger swagger-stop check-tz dev be fe check-go check-fe dev-files
+.PHONY: help setup up migrate seed seed-thu tai-khoan-dev ma-qr-so-ban psql shell status stop stop-dev reset swagger swagger-stop check-tz dev dev-iphone dev-iphone-serve be fe check-go check-fe dev-files
 
 help: ## Liệt kê các lệnh
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-12s %s\n", $$1, $$2}'
 
 dev: check-tz check-go check-fe dev-files ## Bật database rồi chạy backend + frontend; Ctrl+C tắt cả hai
 	$(MAKE) setup
+	@bash -c '$(DEV_RUN)'
+
+# Cách chạy qua HTTPS cho điện thoại; script đặt Origin, cổng và chứng chỉ tự ký.
+# Cổng riêng 3002/8082, nhưng Next chỉ cho một dev server trên fe/: tắt make dev trước (script tự báo).
+dev-iphone: ## Mở trang trên iPhone cùng Wi-Fi qua HTTPS; IP=<IP của Mac> (mặc định tự đọc en0)
+	@bash scripts/dev-iphone.sh "$(IP)"
+
+dev-iphone-serve: check-tz check-go check-fe dev-files
 	@bash -c '$(DEV_RUN)'
 
 be: check-tz check-go dev-files ## Chạy server Go (cần database đã bật)

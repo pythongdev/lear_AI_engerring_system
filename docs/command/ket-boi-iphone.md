@@ -1,26 +1,25 @@
 # Mở trang trên iPhone cùng Wi-Fi với MacBook
 
-Cập nhật 2026-11-16 (Claude, sau khi chạy thử trên Mac và chủ repo mở được trên iPhone).
+Cập nhật 2026-11-16 (Claude, T-331, sau khi chạy thử trên Mac và chủ repo mở được trên iPhone).
 
 Trang chủ quán cần đăng nhập, mà cookie đăng nhập chỉ chạy qua HTTPS. Mở bằng
 `http://<IP>:3000` thì iPhone chỉ thấy trang đứng ở "Đang mở…". Vì vậy phải dùng lệnh
-`make dev-iphone`: nó chạy trang qua HTTPS ở cổng **3002** (backend ở **8082**), không đụng
-`make dev` ở 3000/8080.
-
-**Lưu ý hiện tại:** lệnh `make dev-iphone` còn nằm trong worktree Codex
-`../lean_wt/T-328-iphone`, chưa đưa vào repo chính. Cho tới khi đưa vào, mọi lệnh dưới đây chạy
-trong thư mục đó; sau khi đưa vào thì chạy ở gốc repo như bình thường.
+`make dev-iphone`: nó chạy trang qua HTTPS ở cổng **3002** (backend ở **8082**). Mọi lệnh dưới
+đây chạy ở **gốc repo**. Next chỉ cho **một** dev server trên repo, nên đang chạy `make dev` thì
+phải tắt trước bằng `make stop-dev`; lệnh tự báo nếu bạn quên.
 
 ## Các bước mỗi lần muốn xem trên iPhone
 
 1. MacBook và iPhone bắt **cùng một Wi-Fi**.
 
-2. Trên Mac, mở Terminal và chạy:
+2. Trên Mac, mở Terminal ở gốc repo và chạy:
 
    ```bash
-   cd ../lean_wt/T-328-iphone   # bỏ dòng này khi lệnh đã vào repo chính
    make dev-iphone
    ```
+
+   Muốn chỉ định IP thì chạy `make dev-iphone IP=192.168.x.x`; không ghi thì lệnh tự đọc IP của
+   Wi-Fi (`en0`).
 
    Dòng đầu tiên lệnh in ra là địa chỉ cần mở, ví dụ
    `Trang iPhone: https://192.168.102.4:3002/chu-quan`. Ghi lại IP trong dòng đó; IP có thể đổi
@@ -56,7 +55,7 @@ trong thư mục đó; sau khi đưa vào thì chạy ở gốc repo như bình 
 
 Chỉ cần khi bước 4 không bấm qua được, hoặc không muốn thấy cảnh báo mỗi lần.
 
-1. Trong Terminal thứ hai, cùng thư mục với bước 2, chạy:
+1. Trong Terminal thứ hai, ở gốc repo, chạy (thư mục này do `make dev-iphone` tạo ra):
 
    ```bash
    python3 -m http.server 8001 --bind 0.0.0.0 --directory .dev/iphone-public
