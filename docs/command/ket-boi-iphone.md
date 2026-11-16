@@ -2,3 +2,4 @@ python3 -m http.server 8000 --directory "/Users/monghoaivu/Desktop/code/lean_ai_
 
 
 http://192.168.102.6:8000/anh-moi.html
+make dev-iphone
