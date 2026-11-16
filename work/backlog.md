@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-330 **`fe-check` coi thư mục `fe/node_modules` rỗng là đã cài, nên đỏ bằng một lỗi `ENOENT` khó hiểu thay vì tự cài lại** — L1, xong 2026-11-16; script kiểm công cụ nó sắp gọi trước và sau một lần `npm ci`, không cài được thì nêu tên thứ thiếu và lệnh cần chạy; Codex làm một vòng, Claude duyệt; gate đạt · [chi tiết](#t-330)
 - [x] T-328 **Trang Combo cần cùng cách bày với trang Sản phẩm** — L1 (đổi giao diện và cách mở chi tiết, không đổi giá hay cửa ghi), xong 2026-11-13 theo yêu cầu chủ repo; bảng combo, đầu trang và ngăn chi tiết theo khuôn Sản phẩm; giữ tìm, lọc và thao tác cũ; test 22/22 và gate đạt · [chi tiết](#t-328)
 - [x] T-326 **Tổng thiếu theo bàn có cột Canh nhưng giò không có chỗ hiện để đem ra** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-12; ở riêng mục này cột *Canh* thay bằng cột *Giò*, *Bàn đang phục vụ* giữ nguyên; Codex làm, Claude duyệt; fe-check 790/790 và gate đạt · [chi tiết](#t-326)
 - [x] T-318 **Cột Khác ở Tổng thiếu theo bàn hiện "N nước chấm" làm nhân viên hiểu sai** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; chủ repo chọn bỏ hẳn cột Khác khỏi mục này (cả giò lẫn nước chấm), *Bàn đang phục vụ* giữ cột Khác; Claude làm; fe-check và gate đạt · [chi tiết](#t-318)
@@ -585,6 +586,23 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-330"></a>
+### T-330 — `fe-check` coi thư mục `fe/node_modules` rỗng là đã cài, nên đỏ bằng một lỗi `ENOENT` khó hiểu thay vì tự cài lại
+
+Claude đo 2026-11-16 ở cây chính: `fe/node_modules` là một thư mục **rỗng** (tạo 2026-11-13 14:33, không rõ ai), và Stop hook đỏ ở `fe-check: FAIL — spawnSync …/fe/node_modules/.bin/openapi-typescript ENOENT`. `scripts/fe-check.sh` dòng 25 chỉ hỏi `[ -d "$FE_DIR/node_modules" ] || npm ci`, nên thư mục rỗng hay cài dở đều được coi là đã cài. Claude chạy `npm ci` trong `fe/` thì `fe-check` đạt lại; lockfile không đổi. Đây là cổng đỏ không do diff — cùng họ với F-078, F-079, F-080.
+
+Acceptance viết trước sửa:
+- A1 — `fe/node_modules` thiếu, rỗng hoặc thiếu công cụ mà `fe-check` sắp gọi ⇒ script chạy `npm ci` trong `fe/` trước, như ca thiếu thư mục hiện nay; cài đủ rồi thì không gọi `npm ci`.
+- A2 — Sau `npm ci` mà công cụ vẫn thiếu, hoặc `npm ci` lỗi ⇒ `fe-check: FAIL — …` nêu tên thứ thiếu và lệnh cần chạy, không còn lỗi `ENOENT` trần.
+- A3 — `scripts/fe-check.test.sh` có ca cho A1 và A2 bằng `npm` giả, không cần mạng; mọi khẳng định cũ giữ nguyên.
+- A4 — `./scripts/gate.sh` xanh; `./scripts/fe-check.sh` ở cây chính đạt.
+
+Phạm vi (`work/scope/T-330.txt`): `scripts/fe-check.sh`, `scripts/fe-check.test.sh`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-330`, nhánh `codex/T-330`, nền `84aadf3`. Duyệt: Claude.
+
+Duyệt và bàn giao 2026-11-16 (thực hiện: Codex một vòng, duyệt: Claude). `scripts/fe-check.sh`: danh sách công cụ gọi trực tiếp nằm ở `REQUIRED_FE_BINS` (hiện một mục, `openapi-typescript`); "đã cài" = có thư mục, có file chạy được và `--version` thoát 0; chưa thì chạy `npm ci` một lần rồi kiểm lại; vẫn thiếu hoặc `npm ci` lỗi ⇒ `fe-check: FAIL — thiếu … hãy chạy: cd fe && npm ci` kèm mã thoát. `scripts/fe-check.test.sh` thêm năm ca bằng `npm` giả (thư mục rỗng, thiếu riêng công cụ, cài đủ, `npm ci` thoát 0 mà vẫn thiếu, `npm ci` thoát 1), output không còn `ENOENT`; hai khẳng định cũ giữ nguyên. Claude kiểm ở cây chính: công cụ thật trả `v7.13.0` cho `--version`; `./scripts/fe-check.test.sh` đạt với gói đã cài thật; `./scripts/gate.sh` không cổng nào đỏ, `fe-check` 30 giây, 21 file test qua.
+
+Còn lại: không rõ ai làm rỗng `fe/node_modules` ngày 2026-11-13; worktree `../lean_wt/T-330` và nhánh `codex/T-330` chờ chủ repo gỡ.
 
 <a id="t-325"></a>
 ### T-325 — `db-check` đỏ ngay ở bản đã commit: I-043 và I-044 không có câu đối chiếu và không có dòng lý do ở bộ đối chiếu

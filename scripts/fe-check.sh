@@ -8,6 +8,8 @@
 #   không ghi fe/. Các bước npm thông thường vẫn tạo cache/build như khi chạy tay.
 #   FE_CHECK_ONLY=apigen chỉ so type; không tự cài gói, phù hợp test không mạng.
 #   gen:api phải là CLI trực tiếp với đối số đơn giản; không thực thi shell từ JSON.
+# T-330 (2026-11-16): node_modules rỗng/cài dở từng lọt qua phép kiểm thư mục,
+#   làm spawnSync báo ENOENT; kiểm CLI cần dùng trước và sau npm ci.
 # EXIT: 0 = đạt hoặc thiếu package.json; khác 0 = bước đầu tiên hỏng.
 set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
@@ -20,9 +22,33 @@ if [ ! -f "$FE_DIR/package.json" ]; then
   exit 0
 fi
 FE_DIR="$(cd "$FE_DIR" && pwd)"
+REQUIRED_FE_BINS=(openapi-typescript)
+missing_fe_bin() {
+  local name path
+  for name in "${REQUIRED_FE_BINS[@]}"; do
+    path="$FE_DIR/node_modules/.bin/$name"
+    if [ ! -d "$FE_DIR/node_modules" ] || [ ! -x "$path" ] || ! "$path" --version >/dev/null 2>&1; then
+      printf '%s\n' "$name"
+      return
+    fi
+  done
+}
 case "${FE_CHECK_ONLY:-}" in
   '')
-    [ -d "$FE_DIR/node_modules" ] || (cd "$FE_DIR" && npm ci)
+    missing_tool="$(missing_fe_bin)"
+    if [ -n "$missing_tool" ]; then
+      npm_rc=0
+      (cd "$FE_DIR" && npm ci) || npm_rc=$?
+      missing_after="$(missing_fe_bin)"
+      if [ "$npm_rc" -ne 0 ] || [ -n "$missing_after" ]; then
+        message="fe-check: FAIL — thiếu ${missing_after:-$missing_tool} trong fe/node_modules sau khi chạy npm ci; hãy chạy: cd fe && npm ci"
+        if [ "$npm_rc" -ne 0 ]; then
+          message+=" (npm ci thoát mã $npm_rc)"
+        fi
+        printf '%s\n' "$message"
+        exit 1
+      fi
+    fi
     ;;
   apigen) ;;
   *) echo 'fe-check: FAIL — FE_CHECK_ONLY chỉ nhận apigen'; exit 1 ;;
