@@ -5258,3 +5258,31 @@ hoặc tách stdout khỏi stderr khi chấm. Cần task riêng trong `scripts/d
 
 **Status:**
 Open
+
+### F-083 — Hai câu đọc của chủ quán chậm dần theo toàn bộ lịch sử bán, không theo ngày đang xem: chỉ mục không cứu được
+
+**Problem:**
+Đo 2026-11-18 (Claude Code, lúc đo T-340) trên dữ liệu giả cỡ ba năm của một quán (220 nghìn đơn, 1,98 triệu việc trạm, 4,18 triệu vết),
+đủ bảy chỉ mục của T-340:
+- `be/internal/tongquan/sql/bang_van_hanh.sql` (trang Vận hành): CTE `viec AS MATERIALIZED` gom **mọi** việc trạm từ trước tới nay,
+  không lọc ngày hay phiên; phần `lich_su` nối từng vết đem ra trong ngày (1 800 vết) với CTE ấy theo `v.id = r.target_row`, CTE không
+  có chỉ mục nên mỗi vết quét lại 1,98 triệu dòng — **595 giây** một lần đọc. Khi không có chỉ mục: 530 giây. Đoạn *khoá gom* trong CTE
+  phải giống từng byte bản ở hai file khác (`TestI019_KhoaGomMotDinhNghia`), nên đây không phải sửa một dòng.
+- `be/internal/tongket/sql/doc.sql` (trang Tổng kết): nhánh tìm đơn của ngày nối hoá đơn với đơn bằng
+  `b.sales_order_id = o.id OR b.table_session_id = o.table_session_id`; phép nối `OR` buộc quét cả 220 nghìn đơn và loại 14,5 triệu
+  cặp — **1,8 giây**, có hay không chỉ mục cũng vậy.
+
+**Impact:**
+Cả hai tăng theo số đơn đã từng bán, nên ngày đầu nhanh, vài tháng sau chậm dần mà không ai đổi code. Câu thứ nhất tệ nhất: chi phí là
+*số món đem ra trong ngày × số việc trạm từng có*. Dữ liệu đo là giả; tỉ lệ bánh mỗi đơn và số đơn mỗi ngày là đoán của Claude, không
+phải số của quán — con số giây sẽ khác, hình tăng thì không.
+
+**Decision / Fix:**
+Chưa sửa. Việc riêng `T-347` (Ready). Hướng (suy luận của Claude, chưa thử): lọc `viec` theo tập việc cần cho phiên đang mở và cho các vết
+của ngày trước khi gom; tách phép nối `OR` thành hai nhánh `UNION ALL`. Mỗi hướng phải chứng minh kết quả đọc ra không đổi.
+
+**Related task:**
+`T-340` (nơi thấy) · `T-347`
+
+**Status:**
+Open

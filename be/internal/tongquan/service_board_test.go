@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"banhcuon/be/internal/phien"
 	"banhcuon/be/internal/testhelper"
@@ -439,6 +440,53 @@ LIMIT 1;`); err != nil {
 	for i := 1; i < len(lai.ServeHistory); i++ {
 		if lai.ServeHistory[i].ServedAt.After(lai.ServeHistory[i-1].ServedAt) {
 			t.Fatal("lịch sử phải mới nhất trước")
+		}
+	}
+}
+
+func TestI019_LichSuDemRaRanhNgayVet(t *testing.T) {
+	ctx, tx, _, _, _, _ := bangFixture(t)
+	// T-340: sao một vết made → served của fixture vào hai phía ranh ngày.
+	// created_at lấy múi giờ kết nối; revised_at giữ mặc định để kiểm đúng cột.
+	tag, err := tx.Exec(ctx, `
+WITH vet AS (
+ SELECT target_table_code,target_row,before_image,after_image,person_id
+ FROM record_revision
+ WHERE target_table_code='station_job' AND reason='test-t225-fixture'
+   AND before_image->>'status'='made' AND after_image->>'status'='served'
+ ORDER BY id LIMIT 1
+)
+INSERT INTO record_revision(target_table_code,target_row,before_image,after_image,reason,person_id,created_at)
+SELECT v.target_table_code,v.target_row,v.before_image,v.after_image,'test-t340-serve-boundary',v.person_id,m.moc
+FROM vet v CROSS JOIN (VALUES
+ (timestamptz '2187-06-01 23:59:59'), (timestamptz '2187-06-02 00:00:00')
+) AS m(moc);`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if tag.RowsAffected() != 2 {
+		t.Fatalf("fixture phải thêm hai vết sát ranh ngày, có %d", tag.RowsAffected())
+	}
+	var cuoiNgay, dauNgaySau time.Time
+	if err := tx.QueryRow(ctx, `SELECT timestamptz '2187-06-01 23:59:59', timestamptz '2187-06-02 00:00:00'`).Scan(&cuoiNgay, &dauNgaySau); err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		day  string
+		want time.Time
+	}{{"2187-06-01", cuoiNgay}, {"2187-06-02", dauNgaySau}} {
+		out, err := docBang(ctx, tx, tc.day)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var got []LanDemRa
+		for _, row := range out.ServeHistory {
+			if strings.HasPrefix(row.TableLabel, "test-t225-") {
+				got = append(got, row)
+			}
+		}
+		if len(got) != 1 || got[0].Quantity != 1 || !got[0].ServedAt.Equal(tc.want) {
+			t.Fatalf("ngày %s phải chỉ có một vết lúc %s, có %+v", tc.day, tc.want, got)
 		}
 	}
 }

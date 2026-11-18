@@ -143,3 +143,35 @@ func TestQC14_StaffBayTruongKhoangTrucVaNguoiBam(t *testing.T) {
 		}
 	}
 }
+
+func TestQC14_StaffHuyDonRanhNgayVet(t *testing.T) {
+	tx := fixtureTx(t)
+	runFixture(t, tx, revenueFixture)
+	// T-340: timestamptz không ghi offset lấy múi giờ của fixtureTx.
+	// created_at giữ mặc định; số huỷ phải theo revised_at của từng vết.
+	runFixture(t, tx, `
+DO $$
+DECLARE p bigint; o bigint; moc timestamptz;
+BEGIN
+ INSERT INTO person(display_name) VALUES ('test-t340-cancel-boundary') RETURNING id INTO p;
+ FOREACH moc IN ARRAY ARRAY[timestamptz '2186-06-01 23:59:59', timestamptz '2186-06-02 00:00:00'] LOOP
+  o := pg_temp.t_order(moc::date);
+  INSERT INTO record_revision(target_table_code,target_row,before_image,after_image,reason,person_id,revised_at)
+  VALUES ('sales_order',o,jsonb_build_object('id',o,'status','confirmed'),
+          jsonb_build_object('id',o,'status','cancelled'),'test-t340-cancel-boundary',p,moc);
+ END LOOP;
+END $$;
+SET CONSTRAINTS ALL IMMEDIATE;`)
+	for _, day := range []string{"2186-06-01", "2186-06-02"} {
+		out := readSummary(t, tx, day)
+		var cancellations int64
+		for _, staff := range out.Staff {
+			if staff.DisplayName == "test-t340-cancel-boundary" {
+				cancellations += staff.Cancellations
+			}
+		}
+		if cancellations != 1 {
+			t.Fatalf("ngày %s phải chỉ đếm vết thuộc ngày ấy, có %d lần huỷ: %+v", day, cancellations, out.Staff)
+		}
+	}
+}

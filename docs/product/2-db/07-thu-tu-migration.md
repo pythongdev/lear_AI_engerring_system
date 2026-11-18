@@ -70,6 +70,7 @@ ngược từ dưới lên, **từng bước một**.
 | 42 | `20261103120000_hop_tin` | `CHAT-12` | `station_message` chỉ thêm, trigger vết; lùi khoá bảng, từ chối khi còn tin, rỗng mới gỡ trigger và bảng cùng sequence/quyền (ADR-137, I-038) | 41 |
 | 43 | `20261104120000_bao_nghi` | `CHAT-30` | `leave_notice`, trigger luật/dấu/vết và chặn hai chiều với `attendance_day` dùng chung khoá người/ngày; lùi khoá bảng, từ chối khi còn báo nghỉ, rỗng mới gỡ trigger trên ô công, hàm riêng và bảng cùng sequence/quyền (ADR-138, I-039) | 10 · 20 · 33 · 42 |
 | 44 | `20261104180000_so_goi_model` | `CHAT-35` | `model_call`, trigger giữ trần tháng/ngày, chốt một lần và vết; quyền ghi theo cột; lùi khoá bảng, từ chối khi còn lần gọi, rỗng mới gỡ trigger, hàm riêng và bảng cùng sequence/quyền (ADR-139, I-040) | 20 · 43 |
+| 45 | `20261117120000_chi_muc_duong_doc` | `T-340` | Bảy chỉ mục không duy nhất phục vụ đường đọc trên `record_revision` · `sales_order` · `order_line` · `station_job` · `bill`; lý do và lưu ý vận hành ở file migration; lùi gỡ bảy chỉ mục theo thứ tự ngược, không cần khoá chặn vì không cất dữ liệu đã ghi | 1 · 6 · 7 · 8 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`

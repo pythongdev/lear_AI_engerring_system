@@ -140,7 +140,7 @@ don_vi AS (
  JOIN dining_table t ON t.id = v.dining_table_id JOIN person p ON p.id = r.person_id
  WHERE r.target_table_code = 'station_job'
    AND r.before_image->>'status' = 'made' AND r.after_image->>'status' = 'served'
-   AND r.created_at::date = $1::text::date
+   AND r.created_at >= $1::text::date AND r.created_at < ($1::text::date + 1)
  GROUP BY r.created_at, r.person_id, p.display_name, v.dining_table_id, t.label,
           v.station_code, v.menu_component_id, v.filling_option_ids
 )

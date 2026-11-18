@@ -32,7 +32,7 @@ WITH bills AS (
 ), cancellations AS (
  SELECT person_id, count(*) AS quantity FROM record_revision
  WHERE target_table_code = 'sales_order' AND after_image->>'status' = 'cancelled'
- AND before_image->>'status' <> 'cancelled' AND revised_at::date = $1::text::date
+ AND before_image->>'status' <> 'cancelled' AND revised_at >= $1::text::date AND revised_at < ($1::text::date + 1)
  GROUP BY person_id
 ), refunds AS (
  SELECT person_id, count(*) AS quantity FROM refund WHERE sale_date = $1::text::date GROUP BY person_id
