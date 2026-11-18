@@ -91,12 +91,16 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## Ready
 
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
+- [ ] T-341 **Vai ứng dụng còn quyền sửa dòng đơn, nên dòng combo sửa được thành hình sai** — L2 (I-034), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database · [chi tiết](#t-341)
+- [ ] T-342 **Ngày bán và mốc ghi tiền không bị buộc khớp nhau ở database, chỉ phát hiện sau bằng bộ đối chiếu** — L2 (QD-31, tiền theo ngày), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database · [chi tiết](#t-342)
+- [ ] T-343 **Trigger giữ số đếm của ngày đã ký không lấy khoá ngày, nên lệnh SQL thẳng chạy cùng lúc với lần ký vẫn lọt** — L3 (ADR-080, I-021), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database · [chi tiết](#t-343)
 
 [↑ đầu file](#top)
 
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-339 **Bộ đối chiếu vết kêu oan với vết không người của mã xác nhận Gmail và sổ gọi model** — L2 (I-018), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; Codex làm, Claude duyệt · [chi tiết](#t-339)
 - [x] T-338 **Ngăn Cập nhật món trên trang Sản phẩm báo lỗi hai phần tử trùng key** — L1 (chỉ đổi key React, không đổi hành vi), chủ repo báo 2026-11-16; Codex làm, Claude duyệt · [chi tiết](#t-338)
 - [x] T-344 **`next build` tự dừng một lần mỗi khi Next.js có khuyến cáo bảo mật mới, làm gate lúc đỏ lúc xanh — lần hai (F-076)** — L1, xong 2026-11-18; `fe-check` nhận ra đúng lời dừng, chạy lại build đúng một lần và in `NOTE` mỗi lượt cho tới khi `next` được nâng; nâng `next` lên 16.4.6 vẫn chờ chủ repo quyết; Codex làm một vòng, Claude duyệt · [chi tiết](#t-344)
 - [x] T-335 **Thu gọn điều hướng 14 trang chủ quán** — L1 (chỉ đổi cách hiển thị và mở trang, giữ route và quyền), xong 2026-11-16; ba trang theo dõi hiện trực tiếp, các trang còn lại gom thành ba nhóm; test 16/16 và gate đạt · [chi tiết](#t-335)
@@ -592,6 +596,42 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-339"></a>
+### T-339 — Bộ đối chiếu vết kêu oan với vết không người của mã xác nhận Gmail và sổ gọi model
+
+Nguồn: bản đánh giá thiết kế database 2026-11-16 (Codex đọc, Claude kiểm; chủ repo lưu ở `work/proposals/improve/data-base/comment.md`, mục 1). Ràng buộc `record_revision_person_check` ở trạng thái cuối (`db/migrations/20261104180000_so_goi_model.up.sql`) cho **sáu** bảng ghi vết với người sửa rỗng — bốn bảng khách của ADR-131 *Sửa đổi 2026-10-28*, `customer_email_verification` của ADR-133 điểm 8, `model_call` của ADR-139 điểm 5. Câu `I-018/1` ở `db/reconcile/i018.sql` và đoạn *Sửa đổi 2026-10-28* của I-018 trong `quality/invariants.md` vẫn chép danh sách **bốn**. Hệ quả: lần đầu một khách dùng mã xác nhận Gmail, hay máy chốt một lần gọi model, bộ đối chiếu sau khi đóng quán đỏ trên dữ liệu đúng. `db-check` hiện xanh chỉ vì ngày bán mẫu chưa có hai ca ấy (`09-doi-chieu-bat-bien.md` §3: *một câu xanh vì chưa có đơn nào không chứng minh nó không đỏ nhầm*). Danh sách đã lệch hai lần liên tiếp (T-270, CHAT-35), nên chữa bằng cách **không chép nữa**: câu đối chiếu đọc danh sách từ chính ràng buộc trong catalog — migration là owner (ADR-053 luật 2).
+
+Mức L2: chạm câu đối chiếu của một bất biến. Không đổi lược đồ, không migration.
+
+Acceptance: (A1) ngày bán mẫu `db/reconcile/proof/baseline.sql` có một lần khách dùng mã xác nhận Gmail và một lần máy chốt lần gọi model, mỗi lần để lại một vết người sửa rỗng; `I-018/1` ra 0 dòng trên ngày ấy — đỏ trên `i018.sql` của HEAD, xanh sau khi sửa (Claude viết ca này trước, tự chạy cả hai lượt). (A2) `I-018/1` không chép tên bảng nào: nó đọc danh sách miễn từ định nghĩa của `record_revision_person_check`; ràng buộc bị gỡ thì mọi vết người rỗng đều kêu. (A3) có một file lỗi cài mới trong `db/reconcile/proof/` gỡ `record_revision_person_check` rồi xoá người sửa trên một vết của bảng **không** được miễn ⇒ kêu đúng tập nó khai. (A4) `09-doi-chieu-bat-bien.md` nói câu này đọc danh sách ở đâu; `quality/invariants.md` I-018 thôi nói *chỉ bốn* và trỏ về ràng buộc cùng ba ADR (Claude sửa file này). (A5) `./scripts/db-check.sh` và `./scripts/gate.sh` xanh — Claude chạy.
+
+Phạm vi (`work/scope/T-339.txt`): `db/reconcile/i018.sql`, `db/reconcile/proof/`, `docs/product/2-db/09-doi-chieu-bat-bien.md`, `quality/invariants.md`, `work/backlog.md`. Thực hiện: Codex trong worktree `../lean_wt/T-339` (nhánh `codex/T-339`, base `9bbd3d3`) cho ba đường đầu; Claude viết ca hồi quy A1 trước và sửa `quality/invariants.md`; duyệt: Claude.
+
+**Kết quả** (2026-11-18; thực hiện: Codex hai vòng trong worktree `../lean_wt/T-339`, nhánh `codex/T-339`, base `9bbd3d3`; ca hồi quy, `quality/invariants.md`, đo và duyệt: Claude). `I-018/1` đọc danh sách bảng được miễn người sửa bằng `pg_get_constraintdef` của `record_revision_person_check`, không chép tên bảng; ràng buộc bị gỡ thì `coalesce` ra chuỗi rỗng nên mọi vết người rỗng đều kêu. Ngày mẫu thêm khối `-- T-339`: một lần khách dùng mã xác nhận Gmail, một lần máy chốt lần gọi model, mỗi lần một vết người rỗng. File lỗi cài mới `db/reconcile/proof/i018_1_person.sql` gỡ ràng buộc rồi xoá người trên một vết `staff_advance`. Vòng 2: hai file lỗi cài cũ `i035_3.sql` · `i040_2.sql` thêm khoá ngoại với `NOT VALID`, vì chúng dựa vào bảng khách và sổ gọi model rỗng mà ngày mẫu nay có dòng — hai câu đối chiếu đọc khoá ngoại theo `contype`, không xét `convalidated`.
+
+Bằng chứng (log ở `../lean_wt/_claude_logs/T-339/`, ngoài repo). A1 đỏ trước khi sửa: `db-check` trên bản sao giữ `i018.sql` của HEAD — mọi file lỗi cài kêu thừa `I-018/1` (ví dụ `FAIL kêu qd10 — khai: QD-10 · kêu: I-018/1 QD-10`), tức `I-018/1` kêu trên ngày mẫu đúng. A1 xanh, A2, A3, A5: `db-check` trên worktree sau vòng 2 — `PASS kêu i018_1 — I-018/1`, `PASS kêu i018_1_person — I-018/1`, `PASS kêu i035_3 — I-035/3`, `PASS kêu i040_2 — I-040/2`, dòng cuối `db-check: PASS — 44 bước xuôi · lùi · xuôi lại, … 163 câu trên dữ liệu mồi và ngày mẫu, 166 lỗi cài …`, `exit=0`. A4: `09-doi-chieu-bat-bien.md` §4 có đoạn *Người sửa của `I-018/1`*; `quality/invariants.md` I-018 có *Sửa đổi 2026-11-16*. Lượt `db-check` giữa hai vòng đỏ ở `CHAT-12` vì dấu xanh bị chen vào dòng NOTICE — không do diff, ghi thành F-082. Codex vòng 1 bị ngắt trước khi viết báo cáo (tiến trình chết theo lần đóng phiên); diff được duyệt trực tiếp.
+
+<a id="t-341"></a>
+### T-341 — Vai ứng dụng còn quyền sửa dòng đơn, nên dòng combo sửa được thành hình sai
+
+Nguồn: bản đánh giá database 2026-11-16, mục 4. Hai luật của I-034 — dòng combo có ít nhất một suất con, dòng combo không mang lựa chọn — chỉ kiểm lúc `INSERT` (`db/migrations/20261015120000_ban_combo.up.sql`, hai trigger ở cuối file). Quyền `UPDATE` mặc định của `shop_app` (`db/init/001-vai-va-schema.sql`) chưa bị thu trên `order_line` và `order_line_option`; đặt `parent_order_line_id` về NULL làm khoá ngoại về cha thôi xét (cột sinh `parent_is_combo_line` thành NULL) và không trigger nào chạy lại. Backend hiện **không có** câu `UPDATE` nào trên hai bảng này (`grep` 2026-11-16), và ADR-117 nói chưa có cửa sửa dòng riêng lẻ. Hướng: thu quyền sửa cho tới khi một cửa sửa dòng được thiết kế.
+
+Acceptance (viết khi mở việc): dự kiến một migration `REVOKE UPDATE` + đường lùi, test từ chối trong `db/tests/` chạy bằng vai `shop_app`, `be-check` xanh chứng minh không cửa nào đang cần quyền ấy, cập nhật `20-luoc-do-ban-combo.md`.
+
+<a id="t-342"></a>
+### T-342 — Ngày bán và mốc ghi tiền không bị buộc khớp nhau ở database, chỉ phát hiện sau bằng bộ đối chiếu
+
+Nguồn: bản đánh giá database 2026-11-16, mục 5. Bốn bảng tiền (`bill`, `debt_collection`, `prepayment`, `refund`) mang `booked_at DEFAULT now()` và `sale_date DEFAULT CURRENT_DATE` độc lập; QD-31 định nghĩa `sale_date` là ngày lịch của `booked_at` theo múi giờ của quán nhưng chỉ câu `QD-31/b` của bộ đối chiếu kiểm, sau khi tiền đã ghi. Một kết nối sai múi giờ, hay một lệnh nhập bù truyền một cột mà quên cột kia, cộng tiền sang ngày khác. Điều phải xét trước khi làm: file lỗi cài `db/reconcile/proof/qd31_b.sql` đang cài đúng trạng thái mà ràng buộc mới sẽ cấm, và hai migration đã gõ cứng múi giờ (`bao_nghi`, `so_goi_model`) trong khi owner của múi giờ là `master_plan/shop-facts.md` §1.
+
+Acceptance (viết khi mở việc): dự kiến ràng buộc kiểm trên bốn bảng + đường lùi, test từ chối, file lỗi cài gỡ ràng buộc trước khi cài lỗi, đường nhập bù sổ giấy vẫn ghi được.
+
+<a id="t-343"></a>
+### T-343 — Trigger giữ số đếm của ngày đã ký không lấy khoá ngày, nên lệnh SQL thẳng chạy cùng lúc với lần ký vẫn lọt
+
+Nguồn: bản đánh giá database 2026-11-16, mục 6. `cash_day_reconciled_guard` (thân cuối ở `db/migrations/20261012120000_mo_lai_so_dem.up.sql`) đọc `reconciled_day` mà không lấy khoá; dưới READ COMMITTED một lần sửa số đếm và một lần ký ngày chạy song song đều qua. Backend đã khoá ngày ở `be/internal/ket/service.go` (`ngayban.Khoa`), nên chỉ đường vượt backend mới lọt — nhưng ADR-080 điểm 1 đặt khoá ở tầng database chính vì các tầng trên có đường vòng. Mức L3: đổi một trigger giữ tiền và phải khớp giao thức khoá của backend (thứ tự khoá, khoá chung/riêng) để không sinh deadlock; cần thiết kế và *Sửa đổi* ADR-080 trước khi viết code. Làm sau cùng trong năm việc.
+
+Acceptance (viết khi mở việc, sau thiết kế).
 
 <a id="t-338"></a>
 ### T-338 — Ngăn Cập nhật món trên trang Sản phẩm báo lỗi hai phần tử trùng key

@@ -5233,3 +5233,28 @@ cổng tĩnh chạy mọi lượt (cùng kiểu Gate 1e). Đây là lần đầu
 
 **Status:**
 Open
+
+### F-082 — Dấu xanh của bảy bước kiểm migration trong `db-check` có thể bị chen vào giữa một dòng NOTICE, làm bước ấy đỏ oan
+
+**Problem:**
+Thấy 2026-11-17 (Claude Code, lúc kiểm T-339): hai lượt `./scripts/db-check.sh` chạy song song trên hai cây gần giống nhau;
+lượt này in `FAIL CHAT-12 test I-038 hoặc khoá chặn — lỗi khác điều cần chứng minh`, lượt kia `PASS` ở cùng bước. Output của lượt đỏ
+có dòng `psql:<stdin>:CHAT12_TEST_GREEN` rồi `238: NOTICE: …` ở dòng sau — dấu `\echo CHAT12_TEST_GREEN` (luồng stdout) bị cắt vào
+giữa tiền tố của một dòng NOTICE (luồng stderr), vì bước ấy gộp hai luồng bằng `2>&1` qua `compose exec`. Phép chấm đòi dấu đứng riêng
+một dòng (`grep -q '^CHAT12_TEST_GREEN$'`), nên trượt dù test đã xanh. Cùng kiểu chấm có ở bảy bước: `CHAT12` · `CHAT30` · `CHAT35` ·
+`T146` · `T175` · `T267` · `T270` (`grep -oE "grep -q '\^[A-Z0-9_]+\$'" scripts/db-check.sh`, 2026-11-17).
+
+**Impact:**
+`db-check` đỏ không do diff, cho bất kỳ task nào, chạy lại thì xanh — thêm một thành viên của họ lỗi "đỏ rồi chạy lại thì xanh" mà
+`T-323` đang gom. Một phiên dễ tưởng thay đổi của mình làm hỏng bước kiểm migration. Thấy một lần; khả năng xảy ra tăng khi máy bận
+(hai lượt `db-check` cùng lúc).
+
+**Decision / Fix:**
+Chưa sửa. Hướng (suy luận của Claude, chưa thử): phép chấm tìm dấu ở bất kỳ vị trí nào trong output (`grep -q 'CHAT12_TEST_GREEN'`),
+hoặc tách stdout khỏi stderr khi chấm. Cần task riêng trong `scripts/db-check.sh`, đang thuộc scope của T-329 và T-336.
+
+**Related task:**
+`T-339` (nơi thấy) · `T-323`
+
+**Status:**
+Open

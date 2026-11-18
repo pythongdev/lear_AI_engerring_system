@@ -10,9 +10,13 @@ SELECT r.id AS vet, r.target_table_code AS bang, r.target_row AS dong
 FROM record_revision r
 WHERE r.before_image IS NULL OR r.after_image IS NULL
    OR btrim(coalesce(r.reason, '')) = ''
-   -- 2026-10-28 (T-264, ADR-131): bảng khách ghi vết với người sửa rỗng; ai sửa là khách của dòng đích.
-   OR (r.person_id IS NULL AND r.target_table_code NOT IN
-        ('customer_account', 'customer_password', 'customer_session', 'customer_password_reset'))
+   -- 2026-11-16 (T-339): đọc bảng được miễn người sửa từ ràng buộc; ADR-131 Sửa đổi 2026-10-28,
+   -- ADR-133 điểm 8, ADR-139 điểm 5. Mất ràng buộc thì mọi vết người rỗng đều kêu.
+   OR (r.person_id IS NULL
+       AND position(quote_literal(r.target_table_code) IN coalesce(
+             (SELECT pg_get_constraintdef(c.oid) FROM pg_constraint c
+              WHERE c.conname = 'record_revision_person_check'
+                AND c.conrelid = (quote_ident(:schema) || '.record_revision')::regclass), '')) = 0)
 
 -- @@ I-018/3 — dòng đơn sửa sau một lần đổi giá giữa buổi mà không đọc ra giá trị trước và sau của đúng dòng ấy
 -- Dòng đã sửa = mốc khoá muộn hơn lúc tạo dòng; giữa hai mốc ấy có một lần đổi giá của thành phần

@@ -268,6 +268,13 @@ làm khác.
   mốc* đọc giá hiện hành, nên `I-013/1` kêu ở mọi dòng cũ mang giá trước: tiếng kêu ấy đúng — nó chỉ
   ra một lần sửa mất vết — nhưng nó mang mã `I-013`, không mang mã `I-018`. Lỗi cài cần lần đổi mất vết
   thì tắt đúng các trigger vết của một bảng rồi bật lại (hàm `bc_vet` của `db/reconcile/proof/baseline.sql`).
+- **Người sửa của `I-018/1`** (2026-11-16, `T-339`, Claude quyết định): danh sách bảng được miễn
+  người sửa được đọc từ định nghĩa ràng buộc `record_revision_person_check` trong catalog,
+  không chép tên bảng — migration là owner (**ADR-053** luật 2).
+  Danh sách chép tay đã lệch hai lần ở `T-270` và `CHAT-35`.
+  Khi ràng buộc bị gỡ, mọi vết người sửa rỗng đều kêu.
+  Ngày mẫu có hai ca hợp lệ từ `T-339`: vết của `customer_email_verification` và `model_call`
+  đều có người sửa rỗng.
 - **Thêm một dòng con không có vết.** Vết cập nhật chụp lần **sửa** một dòng đã có; lần **thêm** một
   dòng con vào một bản ghi đã có — thêm món vào đơn, thêm thành phần vào suất, thêm xấp mệnh giá vào
   tiền đầu két — không để lại *ai thêm*. `I-024/3`, `I-011/1`, `I-021/7` đọc đúng hình ấy và **kêu**

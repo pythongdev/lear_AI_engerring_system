@@ -654,6 +654,37 @@ BEGIN
   PERFORM set_config('shop.revision_reason', coalesce(old_reason, ''), true);
 END $$;
 
+-- T-339: hai vết HỢP LỆ không có người của quán, ngoài bốn bảng khách của ADR-131 — khách dùng mã
+-- xác nhận Gmail (ADR-133 điểm 8) và máy chốt một lần gọi model (ADR-139 điểm 5). I-018/1 phải xanh
+-- trên cả hai: danh sách bảng được miễn là của `record_revision_person_check`, không của câu đối chiếu.
+DO $$
+DECLARE kh bigint; ma bigint; goi bigint;
+        old_actor text := current_setting('shop.actor_person_id', true);
+        old_reason text := current_setting('shop.revision_reason', true);
+BEGIN
+  PERFORM set_config('shop.actor_person_id', '', true);
+  INSERT INTO customer_account (display_name, pending_email)
+  VALUES ('khách mẫu xác nhận Gmail', 'khach.mau.t339@example.com') RETURNING id INTO kh;
+  INSERT INTO customer_email_verification (customer_account_id, email, token_hash, expires_at)
+  VALUES (kh, 'khach.mau.t339@example.com', sha256(convert_to('mau-t339', 'UTF8')), now() + interval '1 hour')
+  RETURNING id INTO ma;
+  PERFORM set_config('shop.revision_reason', 'khách dùng mã xác nhận Gmail', true);
+  UPDATE customer_email_verification SET used_at = now() WHERE id = ma;
+  INSERT INTO model_call (provider_code, model_code, reserved_microusd)
+  VALUES ('gia', 'mau-t339', 1000) RETURNING id INTO goi;
+  PERFORM set_config('shop.revision_reason', 'máy chốt lần gọi model', true);
+  UPDATE model_call SET settled_at = clock_timestamp(), input_token_count = 10,
+                        output_token_count = 5, cost_microusd = 800
+   WHERE id = goi;
+  IF (SELECT count(*) FROM record_revision
+      WHERE person_id IS NULL AND target_table_code IN ('customer_email_verification', 'model_call')
+        AND target_row IN (ma, goi)) <> 2 THEN
+    RAISE EXCEPTION 'ngày mẫu T-339: hai lần sửa không để lại đúng hai vết người rỗng';
+  END IF;
+  PERFORM set_config('shop.actor_person_id', coalesce(old_actor, ''), true);
+  PERFORM set_config('shop.revision_reason', coalesce(old_reason, ''), true);
+END $$;
+
 -- Ngày mẫu phải qua MỌI ràng buộc hoãn, như lúc COMMIT.
 SET CONSTRAINTS ALL IMMEDIATE;
 SET CONSTRAINTS ALL DEFERRED;

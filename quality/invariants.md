@@ -752,6 +752,14 @@ dòng đích (`customer_account`, hay `customer_account_id` của bảng `custom
 bảng `customer_account` · `customer_password` · `customer_session` · `customer_password_reset` được để `person_id`
 rỗng (`record_revision_person_check`); mọi bảng khác vẫn bắt buộc người của quán như trên.
 
+**Sửa đổi 2026-11-16 (T-339; Claude ghi lại hai lần mở rộng đã có, không quyết gì mới).** Con số *bốn* ở đoạn trên là
+số của ngày 2026-10-28. Sau đó danh sách dài thêm hai bảng, mỗi bảng có nguồn riêng: `customer_email_verification` —
+khách tự dùng mã xác nhận Gmail (ADR-133 điểm 8, T-270); `model_call` — máy chốt một lần gọi model, sổ không có người của
+quán (`docs/product/2-db/28-luoc-do-so-goi-model.md`, CHAT-35, theo ADR-139 điểm 5). **Owner của danh sách là ràng buộc
+`record_revision_person_check` trong `db/migrations/`** (ADR-053 luật 2): mệnh đề này và câu đối chiếu `I-018/1` trỏ về nó,
+không chép lại — bản chép ở câu đối chiếu đã lệch hai lần liên tiếp. Bảng nào ràng buộc ấy không kể thì vẫn bắt buộc
+người của quán.
+
 **Verification:**
 Kịch bản dựng lại: sửa nội dung một đơn rồi đọc bản ghi ⇒ dựng lại được đơn **trước** và **sau**,
 đọc được **lý do** và **tên người sửa**; xoá bất kỳ một trong bốn thứ ⇒ bản ghi **không hợp lệ**.
