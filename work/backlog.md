@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-338 **Ngăn Cập nhật món trên trang Sản phẩm báo lỗi hai phần tử trùng key** — L1 (chỉ đổi key React, không đổi hành vi), chủ repo báo 2026-11-16; Codex làm, Claude duyệt · [chi tiết](#t-338)
 - [x] T-344 **`next build` tự dừng một lần mỗi khi Next.js có khuyến cáo bảo mật mới, làm gate lúc đỏ lúc xanh — lần hai (F-076)** — L1, xong 2026-11-18; `fe-check` nhận ra đúng lời dừng, chạy lại build đúng một lần và in `NOTE` mỗi lượt cho tới khi `next` được nâng; nâng `next` lên 16.4.6 vẫn chờ chủ repo quyết; Codex làm một vòng, Claude duyệt · [chi tiết](#t-344)
 - [x] T-335 **Thu gọn điều hướng 14 trang chủ quán** — L1 (chỉ đổi cách hiển thị và mở trang, giữ route và quyền), xong 2026-11-16; ba trang theo dõi hiện trực tiếp, các trang còn lại gom thành ba nhóm; test 16/16 và gate đạt · [chi tiết](#t-335)
 - [x] T-334 **Gộp duyệt đơn vào Cộng thử ghép đơn trên trang Vận hành** — L1 (đổi vị trí thao tác, giữ API và quyền), xong 2026-11-16; bỏ khối Đơn chờ xác nhận riêng, xử lý đơn trong Cộng thử ghép đơn; test 33/33 và gate đạt · [chi tiết](#t-334)
@@ -591,6 +592,19 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-338"></a>
+### T-338 — Ngăn Cập nhật món trên trang Sản phẩm báo lỗi hai phần tử trùng key
+
+Chủ repo báo 2026-11-16: mở `http://localhost:3000/chu-quan/san-pham` rồi bấm Cập nhật một món đang bán, Next.js hiện *Console Error — Encountered two children with the same key*. Nguyên nhân: trong ngăn Cập nhật (`fe/src/app/chu-quan/_components/san-pham.tsx`), `AnhSanPham` (thêm ở T-266) và `FormThemThanhPhan` (thêm ở T-257) là hai phần tử anh em trong cùng fragment và cùng mang `key={mon.menu_item_id}`. Key ở đây để dựng lại từng component khi đổi món, nên sửa bằng hai key khác nhau cho cùng món, không bỏ key. Mức L1: không đổi dữ liệu, hợp đồng hay luật nghiệp vụ.
+
+Acceptance: (A1) mở ngăn Cập nhật của một món đang bán không còn `console.error` nào về key trùng — có test hồi quy trong `fe/src/app/chu-quan/san-pham/san-pham.test.tsx` đỏ trên code cũ, xanh trên code mới; (A2) đổi từ món này sang món khác vẫn dựng lại ảnh và form thêm thành phần (key vẫn theo `menu_item_id`); (A3) các test hiện có của trang Sản phẩm vẫn xanh và `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-338.txt`): `work/backlog.md`, `fe/src/app/chu-quan/_components/san-pham.tsx`, `fe/src/app/chu-quan/san-pham/san-pham.test.tsx`. Thực hiện: Codex trong worktree `../lean_wt/T-338` (nhánh `codex/T-338`, base `9bbd3d3`); duyệt: Claude. Hai file FE đang có thay đổi chưa commit của T-303 (thu gọn giá) ở clone chính; phần của T-338 không chạm các dòng ấy, khi bàn giao commit phải tách hunk theo task.
+
+**Kết quả** (2026-11-16, thực hiện: Codex, duyệt: Claude): hai key đổi thành `anh-${menu_item_id}` và `thanh-phan-${menu_item_id}`; thêm test `trang sản phẩm — ngăn Cập nhật › mở ngăn Cập nhật của món đang bán không báo trùng key`. A1: Claude chạy test trên bản `san-pham.tsx` của HEAD trong worktree — `1 failed`, `console.error` có *Encountered two children with the same key*; trên bản sửa — xanh. A2: cả hai key vẫn chứa `menu_item_id`. A3: ở clone chính sau `git apply`, `npx vitest run src/app/chu-quan/san-pham/san-pham.test.tsx` — `41 passed (41)` (41 vì có thêm test chưa commit của T-303). A4: gate trong worktree đỏ ở bước build vì `fe/node_modules` là symlink ra ngoài gốc Turbopack (môi trường, không do code); gate chạy lại ở clone chính. Chưa kiểm bằng trình duyệt thật.
+
+[↑ đầu file](#top)
 
 <a id="t-344"></a>
 ### T-344 — `next build` tự dừng một lần mỗi khi Next.js có khuyến cáo bảo mật mới, làm gate lúc đỏ lúc xanh — lần hai (F-076)

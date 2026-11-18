@@ -341,6 +341,21 @@ describe("trang sản phẩm — thêm món", () => {
   });
 });
 
+describe("trang sản phẩm — ngăn Cập nhật", () => {
+  it("mở ngăn Cập nhật của món đang bán không báo trùng key", async () => {
+    const loi = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      moTrang();
+      const ngan = await moCapNhat("Bánh cuốn trứng");
+      expect(await within(ngan).findByRole("form", { name: "Thêm thành phần" })).toBeTruthy();
+      expect(loi.mock.calls.filter((args) => args.some((arg) => typeof arg === "string" && arg.includes("same key"))))
+        .toEqual([]);
+    } finally {
+      loi.mockRestore();
+    }
+  });
+});
+
 describe("trang sản phẩm — đổi tên món", () => {
   async function moDoiTen(ten: string) {
     const ngan = await moCapNhat(ten);

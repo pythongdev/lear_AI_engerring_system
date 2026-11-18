@@ -103,8 +103,8 @@ export function TrangSanPham() {
       <DialogContent className="trang-san-pham sp-drawer" aria-describedby={undefined}>
         {mon && <>
           <DialogTitle>Cập nhật {mon.item_name}</DialogTitle>
-          <AnhSanPham key={mon.menu_item_id} ten={mon.item_name} className="aspect-[4/3] w-full" />
-          {!mon.discontinued && <FormThemThanhPhan key={mon.menu_item_id} mon={mon}
+          <AnhSanPham key={`anh-${mon.menu_item_id}`} ten={mon.item_name} className="aspect-[4/3] w-full" />
+          {!mon.discontinued && <FormThemThanhPhan key={`thanh-phan-${mon.menu_item_id}`} mon={mon}
             components={thanhPhan.filter((c) => !mon.components?.some((x) => x.menu_component_id === c.menu_component_id))} />}
           <section className="space-y-3"><h2>Đổi tên</h2>
             <FormDoiTenMon mon={mon} dong={() => setChon(null)} />
