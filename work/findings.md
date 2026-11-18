@@ -5110,12 +5110,16 @@ qua 5/5 khi chạy riêng).
 Sửa 2026-10-23 (T-235, Codex làm, Claude duyệt): nâng `next` và `eslint-config-next` lên **16.4.2**; `next build` hai lần liền đều exit 0,
 `fe-check` xanh. Ghi chú gốc trước khi sửa: chưa sửa. Đọc output `verify.sh` tìm `SecurityFatalError` trước khi tìm lỗi trong diff; chạy lại một lần là qua. Cách sửa thật là nâng
 Next.js trong một task riêng (đổi dependency `fe/`, chạy lại `fe-check`), chờ chủ repo quyết.
+*Tái diễn 2026-11-17 (Claude Code, Stop hook ở cây chính):* cùng lời `SecurityFatalError`, nay với `next` **16.4.2** — bản đã nâng
+để chữa lần đầu. `npm audit` cùng ngày: `next` 16.3.0–16.4.4, mức *moderate*, GHSA-mfr8-8qww-v76h; bản vá 16.4.6. Bài học: ghim
+một bản vá chỉ chữa tới khuyến cáo kế tiếp. Hướng chữa gốc (T-344): `fe-check` nhận ra lời dừng, chạy lại build đúng một lần và in
+`NOTE` mỗi lượt cho tới khi `next` được nâng; việc nâng `next` vẫn là quyết định của chủ repo.
 
 **Related task:**
 `T-235`
 
 **Status:**
-Resolved
+Open
 
 ### F-077 — Khuôn §2.1 của bộ đối chiếu chỉ nhận *chưa có lát*, không có trạng thái cho bất biến thuần hành vi (lý do D)
 

@@ -97,6 +97,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-344 **`next build` tự dừng một lần mỗi khi Next.js có khuyến cáo bảo mật mới, làm gate lúc đỏ lúc xanh — lần hai (F-076)** — L1, xong 2026-11-18; `fe-check` nhận ra đúng lời dừng, chạy lại build đúng một lần và in `NOTE` mỗi lượt cho tới khi `next` được nâng; nâng `next` lên 16.4.6 vẫn chờ chủ repo quyết; Codex làm một vòng, Claude duyệt · [chi tiết](#t-344)
 - [x] T-335 **Thu gọn điều hướng 14 trang chủ quán** — L1 (chỉ đổi cách hiển thị và mở trang, giữ route và quyền), xong 2026-11-16; ba trang theo dõi hiện trực tiếp, các trang còn lại gom thành ba nhóm; test 16/16 và gate đạt · [chi tiết](#t-335)
 - [x] T-334 **Gộp duyệt đơn vào Cộng thử ghép đơn trên trang Vận hành** — L1 (đổi vị trí thao tác, giữ API và quyền), xong 2026-11-16; bỏ khối Đơn chờ xác nhận riêng, xử lý đơn trong Cộng thử ghép đơn; test 33/33 và gate đạt · [chi tiết](#t-334)
 - [x] T-333 **Thiết kế lại bản mẫu Tổng quan chủ quán theo dữ liệu đang chạy trên máy dev** — L1 (chỉ bản HTML tĩnh, không đổi FE hay hợp đồng), chủ repo giao 2026-11-16; cập nhật bố cục, trạng thái thiếu dữ liệu và điều hướng theo `/chu-quan` · [chi tiết](#t-333)
@@ -590,6 +591,27 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-344"></a>
+### T-344 — `next build` tự dừng một lần mỗi khi Next.js có khuyến cáo bảo mật mới, làm gate lúc đỏ lúc xanh — lần hai (F-076)
+
+Claude đo 2026-11-17 (Stop hook của phiên, cây chính): `fe-check` đỏ ở `npm run build` với `Error [SecurityFatalError]: Your version of Next.js is affected by a known security vulnerability` và *"Retry the same command to continue"*, sau khi lint, typecheck, 794 test và chính lượt build đều xong. Đây là lần hai của F-076: lần đầu 2026-10-23 với `next` 16.4.0, chữa bằng cách nâng lên 16.4.2 (T-235); nay 16.4.2 lại nằm trong một khuyến cáo mới. `npm audit` 2026-11-17: `next` 16.3.0–16.4.4, mức *moderate*, GHSA-mfr8-8qww-v76h (lộ thông tin giữa các root params khi hàm `use cache` được gọi qua `unstable_cache()`); bản vá 16.4.6. Ghim một bản vá chỉ mua thời gian tới khuyến cáo kế tiếp, và mỗi lần như vậy gate của mọi phiên có đổi `fe/` đỏ cách lượt.
+
+Quyết định của Claude 2026-11-17, chưa được chủ repo xác nhận: tách hai việc. (1) Task này làm cho gate **không chập chờn**: `fe-check` nhận ra đúng lời dừng ấy, chạy lại `next build` đúng một lần, và in một dòng `NOTE` mỗi lượt cho tới khi `next` được nâng — lời nhắc vẫn hiện, cổng không còn đỏ sai lý do. (2) Nâng `next` (đổi `fe/package.json`, lockfile và bảng `QC-18`) là việc đổi phụ thuộc, chờ chủ repo quyết như lần trước; không nằm trong task này.
+
+Acceptance viết trước sửa:
+- A1 — `npm run build` thoát khác 0 **và** output có `SecurityFatalError` cùng lời *Retry the same command* ⇒ `fe-check` in `NOTE fe-check — …` nêu bản `next` đang ghim và việc cần làm, rồi chạy lại build đúng một lần; lần hai đạt thì `fe-check` đạt.
+- A2 — Lần hai vẫn lỗi ⇒ `fe-check: FAIL`; lỗi build khác (không có lời dừng ấy) ⇒ không chạy lại, đỏ như hiện nay; lint, typecheck, test không bao giờ được chạy lại.
+- A3 — Dòng `NOTE` lên gate thành một dòng nhãn `NOTE`; build đạt ngay lần đầu thì không có dòng ấy.
+- A4 — `scripts/fe-check.test.sh` có ca cho A1–A3 bằng `npm` giả; mọi khẳng định cũ giữ nguyên; `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-344.txt`): `scripts/fe-check.sh`, `scripts/fe-check.test.sh`; phần của Claude: `work/findings.md` (F-076), `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-344`, nhánh `codex/T-344`, nền `94eafe5`. Duyệt: Claude.
+
+Duyệt và bàn giao 2026-11-18 (thực hiện: Codex một vòng, duyệt: Claude). `scripts/fe-check.sh`: lint · typecheck · test chạy một lần như cũ (script có `set -euo pipefail`, lỗi thì dừng); `npm run build` chạy qua `tee` vào file tạm; thoát khác 0 mà output có **cả** `SecurityFatalError` lẫn `Retry the same command` ⇒ in `NOTE fe-check — next build dừng một lần … (đang ghim next <bản>) …` rồi chạy lại build đúng một lần, lần hai vẫn lỗi ⇒ `fe-check: FAIL — next build vẫn lỗi sau một lần chạy lại`; lỗi build khác ⇒ đỏ ngay, không chạy lại. Script không làm theo đoạn hướng dẫn cho agent trong lời dừng của Next. `scripts/fe-check.test.sh` thêm bảy ca bằng `npm` giả (dừng một lần rồi đạt, thiếu bản `next`, dừng cả hai lần, lỗi khác, chỉ một trong hai chuỗi — mỗi chiều một ca, đạt ngay), đếm số lần build và số lần lint/typecheck/test; mọi ca cũ giữ nguyên.
+
+Bằng chứng ở cây chính (Claude): `./scripts/fe-check.sh` thật — lần build đầu dừng với `Error [SecurityFatalError]`, script in dòng `NOTE … (đang ghim next 16.4.2); đã chạy lại …`, lần hai đạt, `fe-check: PASS`; 21 file `scripts/*.test.sh` đều đạt; tám cổng chỉ đọc file đều đạt. **Chưa chạy được trọn `./scripts/gate.sh`:** Docker Desktop dừng ở hộp thoại xin quyền quản trị, và cây chính đang có `scripts/db-check.sh` đổi (T-329, T-336) nên Gate 1 đòi `db-check`; phần ấy không liên quan T-344.
+
+Còn lại: nâng `next` lên 16.4.6 (GHSA-mfr8-8qww-v76h, `npm audit` 2026-11-17) — chờ chủ repo quyết; khi nâng xong dòng `NOTE` tự hết. Trong worktree của Codex, lượt gate có thể đã tự chạy `npm ci` qua nhánh tự cài của T-330 — chỉ trong `../lean_wt/T-344/fe/node_modules`, không đụng file nào được git theo dõi. Worktree `../lean_wt/T-344` và nhánh `codex/T-344` chờ chủ repo gỡ.
 
 <a id="t-335"></a>
 ### T-335 — Thu gọn điều hướng 14 trang chủ quán

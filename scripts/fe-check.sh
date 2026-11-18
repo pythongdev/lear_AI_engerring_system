@@ -10,6 +10,9 @@
 #   gen:api phải là CLI trực tiếp với đối số đơn giản; không thực thi shell từ JSON.
 # T-330 (2026-11-16): node_modules rỗng/cài dở từng lọt qua phép kiểm thư mục,
 #   làm spawnSync báo ENOENT; kiểm CLI cần dùng trước và sau npm ci.
+# T-344 (2026-11-17): F-076 tái diễn với next 16.4.2. Next build có thể thoát 1
+#   một lần sau khi build xong để báo khuyến cáo bảo mật; chỉ chạy lại đúng một
+#   lần khi output có đủ hai dấu hiệu của lời dừng, và luôn hiện cảnh báo.
 # EXIT: 0 = đạt hoặc thiếu package.json; khác 0 = bước đầu tiên hỏng.
 set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
@@ -91,6 +94,25 @@ if ! diff -u "$FE_DIR/src/lib/api/schema.ts" "$TEMP_TREE/schema.ts" > "$TEMP_TRE
 fi
 echo 'fe-check: apigen PASS — schema.ts khớp hợp đồng'
 if [ "${FE_CHECK_ONLY:-}" != apigen ]; then
-  (cd "$FE_DIR" && npm run lint && npm run typecheck && npm test && npm run build)
+  (cd "$FE_DIR" && npm run lint && npm run typecheck && npm test)
+  if (cd "$FE_DIR" && npm run build) 2>&1 | tee "$TEMP_TREE/build.log"; then
+    :
+  elif grep -Fq 'SecurityFatalError' "$TEMP_TREE/build.log" \
+    && grep -Fq 'Retry the same command' "$TEMP_TREE/build.log"; then
+    next_version="$(node -e '
+      try {
+        const fs = require("node:fs");
+        const version = JSON.parse(fs.readFileSync(process.argv[1], "utf8")).dependencies?.next;
+        process.stdout.write(typeof version === "string" && version ? version : "không rõ");
+      } catch { process.stdout.write("không rõ"); }
+    ' "$FE_DIR/package.json")" || next_version='không rõ'
+    printf 'NOTE fe-check — next build dừng một lần vì khuyến cáo bảo mật của Next.js (đang ghim next %s); đã chạy lại. Nâng next là một task riêng (QC-18, work/findings.md F-076).\n' "$next_version"
+    if ! (cd "$FE_DIR" && npm run build); then
+      echo 'fe-check: FAIL — next build vẫn lỗi sau một lần chạy lại'
+      exit 1
+    fi
+  else
+    exit 1
+  fi
 fi
 echo 'fe-check: PASS'
