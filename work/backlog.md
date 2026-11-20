@@ -101,6 +101,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-353 **Bảng Mua nguyên liệu cần xem nhanh số còn và mở chi tiết từng thứ** — L1 (bản HTML xem thử), chủ repo yêu cầu 2026-11-20 và bổ sung vị trí mở chi tiết; xong 2026-11-20: bảng ba cột, nút tên mở trượt chi tiết ngay dưới dòng được chọn, lịch sử sử dụng theo thứ đang chọn · [chi tiết](#t-353)
 - [x] T-307 **Chủ quán chưa đổi được ảnh món lẻ ở `/chu-quan/san-pham`: ảnh vẫn chọn theo tên món viết cứng trong code** — L2 (cột `menu_item.image_code`, hai cửa API, ghi tệp), chủ repo yêu cầu lại 2026-11-19; hồi sinh bản Codex làm 2026-11-07 ở `../lean_wt/T-307` (chưa ghép, chưa duyệt) lên nền `e69d481` theo ADR-142 điểm 4; Codex làm, Claude duyệt · [chi tiết](#t-307)
 - [x] T-350 **Bản HTML Khoản chi chưa hiện ngày nhập và ước tính hàng còn dùng được bao nhiêu ngày** — L1 (chỉ bản thiết kế minh hoạ), chủ repo yêu cầu 2026-11-19, xong 2026-11-20; ngày nhập tách ngày chi, số còn và mức tiêu thụ tự nhập, ước tính ngày còn; Codex làm · [chi tiết](#t-350)
 - [x] T-340 **Bảng vết và bốn đường đọc chính chưa có chỉ mục, mỗi lần tính giá quét cả lịch sử sửa** — L2 (lược đồ; không đổi dữ liệu hay hành vi), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; Codex làm song song với T-339 từ 2026-11-17 (scope không chạm nhau), Claude duyệt · [chi tiết](#t-340)
@@ -600,6 +601,19 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-353"></a>
+### T-353 — Bảng nguyên liệu gọn và chi tiết mở trượt
+
+Chủ repo yêu cầu 2026-11-20 cho phần *Mua nguyên liệu* trong bản HTML Khoản chi. Codex làm trực tiếp; chỉ sửa bản xem thử, không đổi dữ liệu Kho, API hoặc giao diện chạy thật. Số còn và số ngày dự tính tiếp tục lấy từ ô nhập minh hoạ đã có.
+
+Acceptance viết trước: bảng nguyên liệu chính có tên, ước tính còn dùng và lượng còn lại; tên là nút mở phần chi tiết bằng hiệu ứng trượt ngay dưới dòng nguyên liệu được chọn, trước dòng nguyên liệu kế tiếp (chủ repo làm rõ 2026-11-20 bằng ví dụ Thịt heo nằm trước Bột gạo). Chi tiết giữ ngày nhập gần nhất, mức dùng mỗi ngày, tổng chi trong kỳ và bốn thao tác đang có. Bảng lịch sử sử dụng ở dưới hiện đúng nguyên liệu được chọn, có thể xem tất cả và vẫn báo khi chưa có lần dùng. Đổi tên, xoá, nhập lại số dự tính, lọc ngày và lịch sử mua hàng tiếp tục hoạt động; màn hẹp không tràn. Kiểm tương tác trên HTML và chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao lượt đầu 2026-11-20:** Codex sửa trên nhánh `P4A-01`, chưa review độc lập; tệp đổi của việc này là bản HTML và mục T-353 trong backlog. Bảng nguyên liệu hiện ba cột; nút tên mở ngăn chi tiết trượt với ngày nhập, mức dùng, tổng chi và bốn thao tác. Bảng lịch sử sử dụng dưới ngăn tự lọc theo nguyên liệu đang chọn, chọn *Tất cả nguyên liệu* trả lại đủ dòng; lịch sử mua hàng giữ riêng. Kiểm JavaScript bằng Node: cú pháp đạt; jsdom đạt các ca mở/đóng, đổi tên, xoá, sửa dự tính, lọc ngày, lịch sử rỗng và lịch sử mua độc lập. Chrome ở 390 px: `innerWidth=390`, `scrollWidth=390`, bảng ba cột và ngăn chi tiết mở từ 0 lên 229 px; ảnh hai cỡ 390 px và 1440 px đã xem. `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm tách riêng chỉ chứa hai tệp của T-353 đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Lượt gate ở cây chung được dừng vì kéo theo backend/database đang được việc khác sửa và có gate khác chạy đồng thời. Scope giữ đến khi chủ repo commit.
+
+**Sửa theo lời chủ repo 2026-11-20:** Chủ repo muốn bấm *Thịt heo* thì chi tiết nằm trước *Bột gạo*. Codex chuyển ngăn chi tiết thành hàng ngay sau từng nguyên liệu, giữ hiệu ứng trượt và việc lọc lịch sử. jsdom kiểm thứ tự Thịt heo → chi tiết → Bột gạo, chuyển lựa chọn thì ngăn cũ đóng, đóng/mở lại, đổi tên và lịch sử mua vẫn đúng. Chrome ở 390 px đo `scrollWidth=390`, ngăn Thịt heo cao 275 px; ở 1440 px không tràn ngang, ảnh hai cỡ đã xem. `./scripts/gate.sh` trên bản kiểm tách riêng chỉ chứa hai tệp T-353 đạt: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Scope giữ đến khi chủ repo commit.
 
 <a id="t-307"></a>
 ### T-307 — Chủ quán chưa đổi được ảnh món lẻ ở `/chu-quan/san-pham`
