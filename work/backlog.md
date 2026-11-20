@@ -101,6 +101,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-351 **Bản HTML Khoản chi chưa có lịch sử nguyên liệu đã dùng theo từng ngày** — L1 (chỉ bản xem thử), chủ repo yêu cầu và xong 2026-11-20; dưới danh mục nguyên liệu có lịch sử theo ngày, lọc từng thứ và trạng thái chưa có lần ghi · [chi tiết](#t-351)
 - [x] T-350 **Bản HTML Khoản chi chưa hiện ngày nhập và ước tính hàng còn dùng được bao nhiêu ngày** — L1 (chỉ bản thiết kế minh hoạ), chủ repo yêu cầu 2026-11-19, xong 2026-11-20; ngày nhập tách ngày chi, số còn và mức tiêu thụ tự nhập, ước tính ngày còn; Codex làm · [chi tiết](#t-350)
 - [x] T-340 **Bảng vết và bốn đường đọc chính chưa có chỉ mục, mỗi lần tính giá quét cả lịch sử sửa** — L2 (lược đồ; không đổi dữ liệu hay hành vi), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; Codex làm song song với T-339 từ 2026-11-17 (scope không chạm nhau), Claude duyệt · [chi tiết](#t-340)
 - [x] T-339 **Bộ đối chiếu vết kêu oan với vết không người của mã xác nhận Gmail và sổ gọi model** — L2 (I-018), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; Codex làm, Claude duyệt · [chi tiết](#t-339)
@@ -655,6 +656,17 @@ Acceptance (viết khi mở việc): dự kiến mỗi câu một test so kết 
 Nguồn: bản đánh giá database 2026-11-16, mục 6. `cash_day_reconciled_guard` (thân cuối ở `db/migrations/20261012120000_mo_lai_so_dem.up.sql`) đọc `reconciled_day` mà không lấy khoá; dưới READ COMMITTED một lần sửa số đếm và một lần ký ngày chạy song song đều qua. Backend đã khoá ngày ở `be/internal/ket/service.go` (`ngayban.Khoa`), nên chỉ đường vượt backend mới lọt — nhưng ADR-080 điểm 1 đặt khoá ở tầng database chính vì các tầng trên có đường vòng. Mức L3: đổi một trigger giữ tiền và phải khớp giao thức khoá của backend (thứ tự khoá, khoá chung/riêng) để không sinh deadlock; cần thiết kế và *Sửa đổi* ADR-080 trước khi viết code. Làm sau cùng trong năm việc.
 
 Acceptance (viết khi mở việc, sau thiết kế).
+
+<a id="t-351"></a>
+### T-351 — Lịch sử dùng nguyên liệu trong bản HTML Khoản chi
+
+Chủ repo yêu cầu 2026-11-20: thêm mục *history* dưới khối *Nguyên liệu · 9 loại* để xem những ngày trước mỗi thứ đã dùng thế nào. Chỉ bản HTML minh hoạ; dữ liệu mẫu không phải số thật của quán và không đổi Kho, API hay FE chạy thật. Codex làm trên nhánh `P4A-01`, chưa review độc lập.
+
+Acceptance viết trước: mục *Lịch sử sử dụng* hiện ngày, nguyên liệu và lượng đã dùng theo đơn vị; ngày gần nhất đứng trước; có lọc một nguyên liệu hoặc xem tất cả; nguyên liệu chưa có dòng lịch sử được nói rõ; trên màn hình hẹp các ô vẫn có nhãn và không mất thông tin. Đổi tên hoặc xoá nguyên liệu trong bản xem thử cập nhật lịch sử tương ứng. Số lịch sử không tự đổi mức tiêu thụ mỗi ngày đang nhập cho dự tính. Kiểm tương tác, bố cục và chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-20:** Thêm bảng *Lịch sử sử dụng nguyên liệu* ngay dưới danh mục nguyên liệu, mặc định hiện bốn dòng minh hoạ theo ngày mới trước; chọn xem từng nguyên liệu hoặc tất cả. Nguyên liệu chưa có dòng hiện lời rõ. Lịch sử đứng riêng với bộ lọc khoản chi và mức dùng/ngày dự tính; đổi tên cập nhật lịch sử và lựa chọn đang lọc, xoá nguyên liệu trong bản xem thử dọn các dòng của nó. jsdom: 14 điều kiện PASS về thứ tự ngày, lọc, số và đơn vị, trạng thái rỗng, đổi tên, xoá, và không đổi dự tính. Chrome DevTools: viewport 390px có `scrollWidth=390`, bảng rộng 294px trong khung 322px, ba nhãn hiện; viewport 1440px có `scrollWidth=1440`; đã xem ảnh cả hai cỡ. `git diff --check` đạt. `./scripts/gate.sh` trên bản sao chỉ chứa hai file task đạt: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Chưa review độc lập; scope giữ tới khi chủ repo commit.
 
 <a id="t-350"></a>
 ### T-350 — Ngày nhập và số ngày còn dùng trong bản HTML Khoản chi
