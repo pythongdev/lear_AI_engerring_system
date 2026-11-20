@@ -190,7 +190,7 @@ export function ThucDonKhach({ items, combos = [], categories = [], lines, onCha
       <h2 id={`${id}-category-${k.key}`} className="menu-section-title">{k.name}</h2>
       {k.items.map((mon) => <article className="menu-card" data-component="ProductCard" key={mon.menu_item_id}>
         <Link href={chiTiet("mon", mon.menu_item_id)} aria-label={`Xem chi tiết món ${mon.item_name}`} className="menu-photo">
-          <AnhSanPham ten={mon.item_name} className="menu-image" />
+          <AnhSanPham ten={mon.item_name} imageUrl={mon.image_url} className="menu-image" />
           <span className="menu-photo-caption">Xem chi tiết ảnh</span>
         </Link>
         <div className="menu-card-body">

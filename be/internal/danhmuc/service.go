@@ -29,6 +29,7 @@ type Mon struct {
 	Components   []ThanhPhan `json:"components"`
 	ID           int64       `json:"menu_item_id"`
 	Name         string      `json:"item_name"`
+	ImageURL     *string     `json:"image_url"`
 	Discontinued bool        `json:"discontinued"`
 }
 type DanhMuc struct {

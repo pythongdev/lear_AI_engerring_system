@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.72.0
+  version: 0.73.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -3067,6 +3067,74 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /menu-items/{menu_item_id}/image:
+    get:
+      operationId: getMenuItemImage
+      tags: [menu]
+      summary: Đọc ảnh hiện hành của món.
+      description: Công khai. Ảnh tải lên được đọc theo mã món, không phụ thuộc tên. Chưa có ảnh trả menu_item_image_missing; món không có trả menu_item_not_found. Cache-Control no-store.
+      parameters:
+        - name: menu_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Tệp JPEG, PNG hoặc WebP hiện hành.
+          content:
+            'image/*':
+              schema:
+                type: string
+                format: binary
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: updateMenuItemImage
+      tags: [menu]
+      summary: Chủ quán cập nhật ảnh sản phẩm.
+      description: Lớp chu_quan. Kiểm path, reason, file và nội dung tệp trước quyền. Chỉ nhận JPEG, PNG, WebP tối đa 5 MiB. Lưu tệp trong kho bền vững, cập nhật khoá tệp của món trong giao dịch có vết và lý do. Tệp cũ giữ lại để lượt đọc đang chạy không gãy. Không đổi giá, tên hay thành phần.
+      parameters:
+        - name: menu_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [reason, file]
+              properties:
+                reason:
+                  type: string
+                  minLength: 1
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Đã lưu ảnh.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItemImageUpdate'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /menu-items/{menu_item_id}/components:
     post:
       operationId: addItemComponent
@@ -5883,6 +5951,16 @@ components:
         reason:
           type: string
           minLength: 1
+    MenuItemImageUpdate:
+      type: object
+      required: [menu_item_id, image_url]
+      additionalProperties: false
+      properties:
+        menu_item_id:
+          type: integer
+          format: int64
+        image_url:
+          type: string
     MenuCategoryItem:
       type: object
       required: [menu_item_id, item_name, discontinued, components]
@@ -5896,6 +5974,10 @@ components:
           format: int64
         item_name:
           type: string
+        image_url:
+          type: string
+          nullable: true
+          description: Đường đọc ảnh đã tải lên của món; null khi chưa có ảnh, FE dùng ảnh sẵn.
         discontinued:
           type: boolean
           description: discontinued_at IS NOT NULL; món ngừng bán vẫn có mặt và xếp được.
@@ -8250,6 +8332,7 @@ components:
         - menu_category_hidden
         - menu_category_name_taken
         - menu_item_already_in_category
+        - menu_item_image_missing
         - expense_category_not_found
         - expense_not_found
         - expense_item_in_use
@@ -8389,6 +8472,7 @@ components:
         menu_category_hidden: 409
         menu_category_name_taken: 409
         menu_item_already_in_category: 409
+        menu_item_image_missing: 404
         expense_category_not_found: 404
         expense_not_found: 404
         expense_item_in_use: 409
@@ -8762,6 +8846,10 @@ components:
           format: int64
         item_name:
           type: string
+        image_url:
+          type: string
+          nullable: true
+          description: Đường đọc ảnh đã tải lên của món; null khi chưa có ảnh, FE dùng ảnh sẵn.
         option_groups:
           type: array
           items:
@@ -9565,3 +9653,4 @@ x-constraint-errors:
   customer_email_verification_token_key: internal
   customer_email_verification_used_at_check: internal
   customer_email_verification_used_once_check: internal
+  menu_item_image_code_format_check: internal

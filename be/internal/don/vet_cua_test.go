@@ -6,6 +6,8 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"io"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -26,6 +28,7 @@ import (
 	"banhcuon/be/internal/giaoviec"
 	"banhcuon/be/internal/khach"
 	"banhcuon/be/internal/khoanchi"
+	"banhcuon/be/internal/menu"
 	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/ngayban"
 	"banhcuon/be/internal/nguoi"
@@ -278,6 +281,44 @@ var cacCaVet = []caVet{
 		id := c.id(t, "INSERT INTO shop.menu_item(name, discontinued_at) VALUES ($1, now()) RETURNING id", cu)
 		return dichVet{"menu_item", id, c.chu, "name", cu, moi, func() {
 			c.suaMenu(t, c.chu, "PUT", fmt.Sprintf("/menu-items/%d", id), map[string]any{"name": moi, "reason": "đổi tên món kiểm vết"})
+		}}
+	}},
+	{"menu/cap_nhat_anh", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		menu.Routes(r, menu.NewService(c.pool).WithFileDir(t.TempDir()))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		id := c.id(t, "INSERT INTO shop.menu_item(name, discontinued_at) VALUES ($1, now()) RETURNING id", t.Name())
+		return dichVet{"menu_item", id, c.chu, "image_code", nil, "mốc", func() {
+			var body bytes.Buffer
+			form := multipart.NewWriter(&body)
+			_ = form.WriteField("reason", "đổi ảnh kiểm vết")
+			f, err := form.CreateFormFile("file", "anh.png")
+			if err != nil {
+				t.Fatal(err)
+			}
+			if _, err = f.Write([]byte("\x89PNG\r\n\x1a\nanh")); err != nil {
+				t.Fatal(err)
+			}
+			if err = form.Close(); err != nil {
+				t.Fatal(err)
+			}
+			req, err := http.NewRequestWithContext(c.ctx, "PUT", fmt.Sprintf("%s/menu-items/%d/image", srv.URL, id), &body)
+			if err != nil {
+				t.Fatal(err)
+			}
+			req.Header.Set("Content-Type", form.FormDataContentType())
+			req.AddCookie(&http.Cookie{Name: taikhoan.CookiePhien, Value: testhelper.Session(t, c.chu)})
+			res, err := http.DefaultClient.Do(req)
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer res.Body.Close()
+			if res.StatusCode != 200 {
+				raw, _ := io.ReadAll(res.Body)
+				t.Fatalf("cập nhật ảnh: %d %s", res.StatusCode, raw)
+			}
 		}}
 	}},
 	// T-243 (ADR-126 Sửa đổi 2026-11-04): ô discontinued_at nay thuộc cửa nội bộ menu/moc_ngung_ban; ca đi qua cửa ngừng bán công

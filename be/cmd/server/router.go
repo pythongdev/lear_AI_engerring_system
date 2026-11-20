@@ -61,7 +61,7 @@ func routerWithRealtimeBoGioBan(pool *pgxpool.Pool, auth authz.Authenticator, b 
 	r.Use(middleware.GanNguoi(auth))
 	tongquan.Routes(r, tongquan.NewService(pool))
 	tongket.Routes(r, tongket.NewService(pool))
-	menu.Routes(r, menu.NewService(pool))
+	menu.Routes(r, menu.NewService(pool).WithFileDir(os.Getenv("BANHCUON_FILE_DIR")))
 	qr.Routes(r, qr.NewService(pool))
 	giaService := gia.NewService(pool)
 	gia.Routes(r, giaService)

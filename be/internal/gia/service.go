@@ -399,6 +399,7 @@ type monMenu struct {
 	MenuCategoryID *int64     `json:"menu_category_id"`
 	MenuItemID     int64      `json:"menu_item_id"`
 	ItemName       string     `json:"item_name"`
+	ImageURL       *string    `json:"image_url"`
 	OptionGroups   []nhomMenu `json:"option_groups"`
 	Prices         []giaMenu  `json:"prices"`
 }

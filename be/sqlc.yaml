@@ -14,6 +14,7 @@ sql:
       - internal/menu/sql/sua_thanh_phan
       - internal/menu/sql/them_lua_chon
       - internal/menu/sql/an_lua_chon
+      - internal/menu/sql/cap_nhat_anh
     gen:
       go:
         package: sqlcgen

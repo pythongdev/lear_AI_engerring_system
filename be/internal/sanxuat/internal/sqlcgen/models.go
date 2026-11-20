@@ -323,6 +323,7 @@ type MenuItem struct {
 	Name           string
 	DiscontinuedAt pgtype.Timestamptz
 	CreatedAt      pgtype.Timestamptz
+	ImageCode      pgtype.Text
 }
 
 type MenuItemCategory struct {

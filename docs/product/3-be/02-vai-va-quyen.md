@@ -145,6 +145,7 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `don/tao_luot_goi` | `quay_hoac_khach` | `shop-facts.md` §2 — Staff POS; §1 câu 5 và `I-023` — khách QR; `02-kenh-ban.md` bảng kênh — khách web và người nhập hotline; ADR-087; ADR-088 |
 | `menu/them_mon` | `chu_quan` | Phiếu P3A-07; `shop-facts.md` §8.9, chủ quán tự thêm món |
 | `menu/doi_ten` | `chu_quan` | Phiếu P3A-07; `shop-facts.md` §8.9, chủ quán sửa thông tin món |
+| `menu/cap_nhat_anh` | `chu_quan` | Chủ repo giao T-307 ngày 2026-11-20; chủ quán cập nhật ảnh sản phẩm món lẻ |
 | `menu/doi_gia_thanh_phan` | `chu_quan` | `architecture.md` §6.1 · `I-012` (chủ quán đổi giá) |
 | `menu/doi_phu_thu` | `chu_quan` | `architecture.md` §6.1 · `I-012` |
 | `menu/them_lua_chon` | `chu_quan` | chủ quán quản lý topping (`master_plan/shop-facts.md` §8.9, 2026-10-19, T-210) · `I-012` |

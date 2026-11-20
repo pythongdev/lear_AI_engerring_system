@@ -22,22 +22,25 @@ const anhCombo: Record<string, string> = {
   "day du trung": "suat-day-du.jpeg",
 };
 
-export function AnhSanPham({ ten, combo = false, className = "" }: {
-  ten: string; combo?: boolean; className?: string;
+export function AnhSanPham({ ten, combo = false, className = "", imageUrl, anhVersion }: {
+  ten: string; combo?: boolean; className?: string; imageUrl?: string | null; anhVersion?: number;
 }) {
   const tenChuan = ten.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d")
     .trim().replace(/\s+/g, " ").replace(/\s*\(ban roi\)$/, "").replace(/\s+(chin|tai|vang)$/, "");
   const tep = combo ? anhCombo[tenChuan.replace(/^combo\s+/, "")] ?? "banh-cuon-minh-hoa.jpg"
     : anhTheoTen[tenChuan];
-  const src = tep ? thuMucAnh + tep : null;
+  const anhTaiLen = imageUrl?.startsWith("/menu-items/") ? `/api${imageUrl}${anhVersion ? `?v=${anhVersion}` : ""}` : null;
+  const anhMacDinh = tep ? thuMucAnh + tep : null;
   const [anhLoi, setAnhLoi] = useState<string | null>(null);
+  const src = anhTaiLen && anhLoi !== anhTaiLen ? anhTaiLen : anhMacDinh;
   const coAnh = src !== null && anhLoi !== src;
 
   return <span className={`relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted text-muted-foreground ${className}`}>
     {coAnh ? <>
       <Image src={src} alt={ten} fill sizes="(max-width: 640px) 100vw, 340px"
+        unoptimized={src === anhTaiLen}
         className="object-cover" onError={() => setAnhLoi(src)} />
-      {tep === "banh-cuon-minh-hoa.jpg" && <span className="absolute bottom-1 right-1 rounded bg-black/65 px-1.5 py-0.5 text-[9px] text-white">Ảnh minh hoạ</span>}
+      {src === anhMacDinh && tep === "banh-cuon-minh-hoa.jpg" && <span className="absolute bottom-1 right-1 rounded bg-black/65 px-1.5 py-0.5 text-[9px] text-white">Ảnh minh hoạ</span>}
     </> : <span role="img" aria-label={`Chưa có ảnh ${ten}`} className="flex flex-col items-center gap-1 p-1 text-center">
       <ImageIcon aria-hidden="true" className="size-5 opacity-60" />
       <span className="text-[9px] leading-tight">Chưa có ảnh</span>

@@ -59,9 +59,9 @@ BEGIN
   END IF;
   RAISE NOTICE 'YC-37 danh mục "test-Bánh cuốn" — %; người lập test-chủ quán; test-suất chưa xếp: không danh mục', r.mon;
 
-  -- Món chưa xếp vẫn là món: lát không thêm cột nào vào bảng món, và không bảng nào ngoài lát trỏ tới danh mục.
+  -- Món chưa xếp vẫn là món: cột ảnh T-307 không liên quan xếp danh mục; không bảng nào ngoài lát trỏ tới danh mục.
   IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'shop' AND table_name = 'menu_item'
-             AND column_name NOT IN ('id', 'name', 'discontinued_at', 'created_at'))
+             AND column_name NOT IN ('id', 'name', 'discontinued_at', 'created_at', 'image_code'))
      OR EXISTS (SELECT 1 FROM pg_constraint k WHERE k.contype = 'f'
                 AND k.confrelid IN ('shop.menu_category'::regclass, 'shop.menu_combo'::regclass)
                 -- T-193 (ADR-117): dòng combo trên đơn trỏ tới combo — bán combo, không chặn món chưa xếp.

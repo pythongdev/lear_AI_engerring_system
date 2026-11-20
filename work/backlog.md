@@ -53,7 +53,6 @@ của file ấy chỉ nhận dữ kiện admin của quán).
 | Vế 2026-09-29 | **chủ repo**: *"tôi muốn làm luôn db cho phần admin"* — nhắc lại 2026-09-30 (*"tiếp tục"*) | **đang hiệu lực** — mở thi công **lược đồ** admin cho phần đã đủ luật; `docs/decisions.md` **ADR-068** |
 | Vế 2026-10-14 | **chủ repo**: *"cập nhật backlog … cho db của admin, tôi sẽ làm be cho admin"* (T-184) | **đang hiệu lực** — lược đồ admin lượt hai `P2A-10`…`P2A-16`; backend admin sẽ làm — kế hoạch mở 2026-10-14 ở `T-191` (**ADR-110**: `P3A-01`…`P3A-10`) |
 | Vế 2026-11-01 | **chủ repo**: *"step by step complete above task request codex to do you check"* (nói về `work/backlog_CHAT.md`) | **đang hiệu lực** — mở lane `CHAT` cho nhánh đã đủ lời; không mở pha 5 (`T-109`) |
-| Vế 2026-11-18 | **chủ repo**: *"hãy đưa ra các step để tạo page trên từ data base, be và fe, hãy tạo backlog riêng … yêu cầu codex làm bạn kiểm tra"*, rồi *"thiết kế giống file html trên. nhưng dữ liệu cần được cập nhật theo database của quán"* (nói về `favourite.html`) | **đang hiệu lực** — mở lane `YT` ở `work/backlog_YT.md` (T-348); bước YT-01 giao Codex ngay |
 
 **Vế mới nói chính xác cái gì.** Chủ quán chọn *"Song song: hỏi chủ quán về admin trong khi pha 2
 chạy"*, và phương án ấy nói rõ hai nửa:
@@ -97,20 +96,12 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 - [ ] T-347 **Trang Vận hành và trang Tổng kết đọc chậm dần theo toàn bộ lịch sử bán (đo được 595 giây và 1,8 giây trên dữ liệu ba năm)** — L2 (câu đọc của I-019 và I-014, kết quả không được đổi), Claude mở 2026-11-18 từ số đo của T-340 · F-083 · [chi tiết](#t-347)
 - [ ] T-343 **Trigger giữ số đếm của ngày đã ký không lấy khoá ngày, nên lệnh SQL thẳng chạy cùng lúc với lần ký vẫn lọt** — L3 (ADR-080, I-021), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database · [chi tiết](#t-343)
 
-- [ ] YT-03 **Database chưa có chỗ cất món yêu thích và bộ món riêng của khách** — L2, sau YT-02; Claude viết test trước, Codex làm · [mô tả](backlog_YT.md#yt-03)
-- [ ] YT-04 **Chưa có API đọc và ghi món yêu thích theo tài khoản khách** — L2, sau YT-03; Claude viết test trước, Codex làm · [mô tả](backlog_YT.md#yt-04)
-- [ ] YT-05 **Khách chưa có trang Yêu thích thật trên web** — L2, sau YT-04, theo `favourite.html`; Claude viết test trước, Codex làm · [mô tả](backlog_YT.md#yt-05)
-- [ ] YT-06 **Thực đơn và trang chi tiết chưa có nút thả tim** — L1, sau YT-05; Codex làm, Claude duyệt · [mô tả](backlog_YT.md#yt-06)
-- [ ] YT-07 **Trang Yêu thích chưa được nghiệm thu trên app chạy so với bản thiết kế** — L1, sau YT-06; Claude chạy · [mô tả](backlog_YT.md#yt-07)
 [↑ đầu file](#top)
 
 <a id="in-progress"></a>
 ## In Progress
 
-- [x] T-352 **Bản HTML Khoản chi chưa có lịch sử mua nguyên liệu dễ tìm** — L1 (chỉ bản xem thử), chủ repo yêu cầu và xong 2026-11-20; hiện từng lần mua với ngày nhập, ngày chi, mặt hàng và số tiền · [chi tiết](#t-352)
-- [x] YT-02 **Chưa chốt món yêu thích của khách lưu gì, ở đâu, và món ngừng bán thì hiện ra sao** — L2, xong 2026-11-19: Claude soạn ADR-145, chủ repo chọn *"Duyệt, giao Codex làm"*; U-119 đóng (*"Mời đăng nhập"*); route `/khach/yeu-thich` dự kiến ở `01-khung-fe.md` · [mô tả](backlog_YT.md#yt-02)
-- [x] YT-01 **Bản thiết kế trang Yêu thích còn món bịa, chưa theo menu và giá thật của database quán** — L1 (tệp HTML mẫu, không đổi hành vi app), chủ repo yêu cầu 2026-11-18; dữ liệu chụp từ `GET /menu` và `POST /price-quotes` của app đang chạy, thay phiếu `prompt/t-345.md`; Codex làm, Claude duyệt, xong cùng ngày: 7 món lẻ, 7 combo, 33 ô giá khớp database; trình duyệt 20/20 đạt ở 360px và 430px · [mô tả](backlog_YT.md#yt-01)
-- [x] T-348 **Trang Yêu thích chưa có lộ trình dựng thật từ database, backend tới giao diện** — L1 (mở lane, chỉ tài liệu), chủ repo yêu cầu 2026-11-18; sổ `work/backlog_YT.md` bảy bước, dòng §2 ở `CLAUDE.md`, mở U-119 · [chi tiết](#t-348)
+- [x] T-307 **Chủ quán chưa đổi được ảnh món lẻ ở `/chu-quan/san-pham`: ảnh vẫn chọn theo tên món viết cứng trong code** — L2 (cột `menu_item.image_code`, hai cửa API, ghi tệp), chủ repo yêu cầu lại 2026-11-19; hồi sinh bản Codex làm 2026-11-07 ở `../lean_wt/T-307` (chưa ghép, chưa duyệt) lên nền `e69d481` theo ADR-142 điểm 4; Codex làm, Claude duyệt · [chi tiết](#t-307)
 - [x] T-350 **Bản HTML Khoản chi chưa hiện ngày nhập và ước tính hàng còn dùng được bao nhiêu ngày** — L1 (chỉ bản thiết kế minh hoạ), chủ repo yêu cầu 2026-11-19, xong 2026-11-20; ngày nhập tách ngày chi, số còn và mức tiêu thụ tự nhập, ước tính ngày còn; Codex làm · [chi tiết](#t-350)
 - [x] T-340 **Bảng vết và bốn đường đọc chính chưa có chỉ mục, mỗi lần tính giá quét cả lịch sử sửa** — L2 (lược đồ; không đổi dữ liệu hay hành vi), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; Codex làm song song với T-339 từ 2026-11-17 (scope không chạm nhau), Claude duyệt · [chi tiết](#t-340)
 - [x] T-339 **Bộ đối chiếu vết kêu oan với vết không người của mã xác nhận Gmail và sổ gọi model** — L2 (I-018), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; Codex làm, Claude duyệt · [chi tiết](#t-339)
@@ -610,27 +601,24 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
 
-<a id="t-352"></a>
-### T-352 — Lịch sử mua nguyên liệu trong bản HTML Khoản chi
+<a id="t-307"></a>
+### T-307 — Chủ quán chưa đổi được ảnh món lẻ ở `/chu-quan/san-pham`
 
-Chủ repo nhắc 2026-11-20 rằng sau mục lịch sử sử dụng vẫn chưa thấy lịch sử mua hàng. Chỉ sửa bản HTML minh hoạ trên nhánh `P4A-01`; các lần mua lấy từ khoản chi nguyên liệu đang có, không thêm dữ liệu mua giả hay thay đổi Kho, API, FE chạy thật. Codex thực hiện; chưa review độc lập.
+Chủ repo yêu cầu 2026-11-06 (lần đầu) và lại 2026-11-19 trên `http://localhost:3000/chu-quan/san-pham`: *"cập nhật cho món lẻ tôi cần cập nhật ảnh sản phẩm"*, *"yêu cầu codex làm bạn kiểm tra"*. Hiện `AnhSanPham` chọn ảnh theo tên món chuẩn hoá trong bảng viết cứng (`fe/src/app/chu-quan/_components/anh-san-pham.tsx`), database không có chỗ giữ ảnh. Thiết kế đã chốt ở ADR-142 điểm 4: cột `menu_item.image_code`, tệp ngẫu nhiên trong `BANHCUON_FILE_DIR`, `PUT /menu-items/{menu_item_id}/image` (multipart `file` + `reason`, lớp `chu_quan`, JPEG · PNG · WebP ≤ 5 MiB kiểm theo nội dung, có vết) và `GET /menu-items/{menu_item_id}/image` công khai `no-store`.
 
-Acceptance viết trước: trong khối *Mua nguyên liệu* có lối xem *Lịch sử mua hàng* dễ thấy và danh sách riêng với lịch sử sử dụng. Mỗi lần mua hiện ngày nhập hàng, ngày chi, nguyên liệu, số tiền và người ghi; mặc định ngày nhập gần nhất trước, lọc được một nguyên liệu hoặc tất cả, trường hợp chưa có lần mua có lời rõ. Ghi, sửa, xoá khoản chi và đổi tên nguyên liệu trong bản xem thử phải cập nhật lịch sử; bộ lọc tiền chung không che lịch sử. Màn hình hẹp vẫn đọc được mọi cột. Kiểm tương tác, bố cục và chạy `./scripts/gate.sh`.
+Lịch sử: Codex làm xong 2026-11-07 trên nhánh `codex/T-307`, worktree `../lean_wt/T-307`, nền `145af80`, chưa commit, chưa duyệt, entry chỉ nằm ở worktree ấy; T-315 lấy bản này làm nền (A1, A4) nhưng chưa xong. Claude quyết 2026-11-19 (suy ra của phiên): tách ảnh món lẻ ra khỏi T-315, đưa lên nền hiện tại trước; T-315 sau này dựng trên T-307 đã commit thay vì trên worktree cũ. Ảnh combo vẫn thuộc T-315.
 
-Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+Acceptance viết trước sửa:
+- A1 — Migration mới (mốc sau `20261117120000`) thêm `menu_item.image_code` kèm ràng buộc dạng `images/menu-items/<32 hex>.<jpg|png|webp>`; down từ chối khi còn món đã gắn ảnh. `docs/product/2-db/03-luoc-do-menu-gia.md` và `07-thu-tu-migration.md` khớp; `db-check` xanh (Claude chạy).
+- A2 — `PUT /menu-items/{menu_item_id}/image`: tải hợp lệ thì lưu tệp, ghi khoá trong giao dịch có lý do và vết; `GET …/image` trả đúng byte với `Cache-Control: no-store`. Từ chối và ảnh cũ đứng nguyên khi: không phải chủ quán, sai loại theo nội dung, quá 5 MiB, thiếu lý do, món không có. Chưa có ảnh ⇒ `menu_item_image_missing`. Có test BE cho từng ca; `be-check` xanh (Claude chạy).
+- A3 — Hợp đồng `docs/product/3-be/openapi.yaml` có hai cửa, mã lỗi mới, `image_url` (null được) trên món ở `/menu-items` và thực đơn khách, phiên bản tăng từ `0.72.0`; `02-vai-va-quyen.md` có dòng của cửa ghi; Gate 1g xanh.
+- A4 — FE: ngăn *Cập nhật <món>* ở `/chu-quan/san-pham` có phần *Ảnh sản phẩm* (chọn tệp, xem trước, lý do, nút lưu); lưu xong ảnh mới hiện ở bảng, ngăn và thực đơn khách sau tải lại, kể cả khi đổi tên món. Món chưa tải ảnh vẫn dùng ảnh trình bày sẵn như cũ. Lỗi từ chối hiện thành lời.
+- A5 — Test FE phủ A4 (multipart gửi đúng món và lý do; ảnh tải lên được ưu tiên hơn ảnh sẵn); test cũ của trang sản phẩm và thực đơn khách vẫn xanh; `./scripts/gate.sh` xanh.
+- A6 — Ghép vào cây chính giữ nguyên các thay đổi chưa commit của việc khác ở `anh-san-pham.tsx`, `san-pham.tsx`, `san-pham.test.tsx`, `thuc-don-khach.tsx` (thu gọn giá, ảnh combo `anhMenu`); `docs/product/4-fe/01-khung-fe.md` Claude sửa khi tích hợp.
 
-**Bàn giao 2026-11-20:** Trong đầu khối *Nguyên liệu* có lối nhảy *Lịch sử mua hàng*; bảng mới đặt ngay trên lịch sử sử dụng và mặc định hiện hai lần mua mẫu theo ngày nhập mới trước. Mỗi dòng hiện ngày nhập, ngày chi, mặt hàng, số tiền và người ghi; có lọc nguyên liệu và lời khi chưa có lần mua. Lịch sử đọc trực tiếp từ các khoản chi nguyên liệu nên ghi, sửa, xoá, đổi tên cập nhật cùng dữ liệu; không chịu bộ lọc tiền chung. Không dựng số lượng mua vì bản chi chỉ lưu số tiền. Kiểm jsdom: 13 điều kiện PASS về dữ liệu, thứ tự, lọc, thêm/sửa/xoá, đổi tên và giữ lịch sử sử dụng. Chrome DevTools: viewport 390px có `scrollWidth=390`, khối lịch sử rộng 322px và đủ năm nhãn; viewport 1440px có `scrollWidth=1440`; đã xem ảnh hai cỡ. `git diff --check` đạt. `./scripts/gate.sh` trong bản sao chỉ chứa hai file task đạt: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Chưa review độc lập; scope giữ tới khi chủ repo commit.
+Phạm vi (`work/scope/T-307.txt`): `db/migrations/*_anh_san_pham.*`, `db/tests/`, `be/`, `fe/src/app/chu-quan/`, `fe/src/app/ban/`, `fe/src/app/thuc-don/`, `fe/src/lib/api/schema.ts`, `docs/product/2-db/03-luoc-do-menu-gia.md`, `docs/product/2-db/07-thu-tu-migration.md`, `docs/product/2-db/09-doi-chieu-bat-bien.md`, `docs/product/3-be/`, `docs/product/4-fe/01-khung-fe.md`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-307-port`, nhánh `codex/T-307-port`, nền `e69d481`. Duyệt: Claude.
 
-<a id="t-348"></a>
-### T-348 — Trang Yêu thích chưa có lộ trình dựng thật từ database, backend tới giao diện
-
-Chủ repo yêu cầu 2026-11-18 (nguyên văn ở bảng lời chốt đầu file, *Vế 2026-11-18*): đưa các bước dựng trang `favourite.html` từ database, backend tới FE, backlog riêng, dữ liệu theo database quán đang chạy, Codex làm và Claude kiểm. Mức L1: chỉ thêm tài liệu kế hoạch và một câu hỏi mở, không đổi code, hợp đồng hay dữ liệu.
-
-Acceptance: A1 — `work/backlog_YT.md` có bảy bước DB → BE → FE kèm mức, ai làm, đứng trên và chặn bởi; cách Claude đọc lời chủ repo ghi riêng, có nhãn *suy ra*. A2 — `CLAUDE.md` §2 có dòng owner cho sổ mới. A3 — `docs/product/99-unknowns.md` có U-119 đúng khuôn một gạch dưới `### Đang mở`, brief đọc ra. A4 — `./scripts/gate.sh` xanh.
-
-Phạm vi (`work/scope/T-348.txt`): `work/backlog_YT.md`, `CLAUDE.md`, `docs/product/99-unknowns.md`, `work/backlog.md`. Claude làm.
-
-[↑ đầu file](#top)
+Bàn giao 2026-11-20 (thực hiện: Codex, duyệt và tích hợp: Claude). Codex chuyển bản vá cũ lên `e69d481`: migration `20261119100000_anh_san_pham` (cột `menu_item.image_code`, ràng buộc dạng, down từ chối khi còn ảnh); `be/internal/menu/anh_mon.go` (lưu tệp ngẫu nhiên trong `BANHCUON_FILE_DIR`, ghi khoá trong `authz.Run` có lý do, xoá tệp khi giao dịch lỗi; đọc công khai `no-store`, `nosniff`); cửa `menu/cap_nhat_anh` trong `vet_cua_test.go`; `image_url` nullable trên `/menu-categories` và `/menu`; hợp đồng `0.73.0`; `FormAnhSanPham` và prop `imageUrl` · `anhVersion` của `AnhSanPham` (ảnh tải lên `unoptimized`, `?v=` sau lưu). Khác bản cũ: mốc migration mới, `models.go` sinh lại, thêm `image_url` cho `/menu-categories`. Claude đọc diff, không trả lỗi nào. Lượt ghép hai file FE của Codex dừng vì hết hạn mức nên Claude ghép ba chiều `anh-san-pham.tsx` · `san-pham.tsx` với thay đổi chưa commit của việc khác (thu gọn giá, `anhMenu`), ưu tiên `anhMenu` → ảnh tải lên → ảnh sẵn; sửa dòng `/chu-quan/san-pham` và thêm `FormAnhSanPham` ở `docs/product/4-fe/01-khung-fe.md` (A6). Bằng chứng: `./scripts/gate.sh` trong worktree exit 0 — `be-check` 32/32 gói, `db-check` 46 bước xuôi · lùi · xuôi lại, 60 file test, Gate 1g hợp đồng `0.73.0`, FE 795 test và build (log `../lean_wt/_claude_logs/T-307/gate-wt.log`); ở cây chính sau ghép: `npm run typecheck` sạch, `vitest` 7 file / 114 test (`chu-quan/san-pham`, `chu-quan/combo`, `ban`, `thuc-don`) đạt. Chưa thử tay trên trình duyệt với backend thật. Trang chi tiết món `/thuc-don/mon/[id]` vẫn chưa hiện ảnh nào (như trước). T-315 sau này dựng trên T-307 đã commit; worktree `../lean_wt/T-307`, `../lean_wt/T-307-port` và nhánh `codex/T-307`, `codex/T-307-port` để chủ repo xoá.
 
 <a id="t-339"></a>
 ### T-339 — Bộ đối chiếu vết kêu oan với vết không người của mã xác nhận Gmail và sổ gọi model

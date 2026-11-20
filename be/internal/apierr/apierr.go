@@ -46,6 +46,7 @@ const (
 	CodeAssignedTaskGuideNotText       Code = "assigned_task_guide_not_text"
 	CodeAssignedTaskGuideFileMissing   Code = "assigned_task_guide_file_missing"
 	CodeFileTooLarge                   Code = "file_too_large"
+	CodeMenuItemImageMissing           Code = "menu_item_image_missing"
 	CodeTrainingRecordNotFound         Code = "training_record_not_found"
 	CodeTrainingRecordHidden           Code = "training_record_hidden"
 
@@ -203,6 +204,7 @@ var statusOf = map[Code]int{
 	CodeAssignedTaskGuideNotText:       409,
 	CodeAssignedTaskGuideFileMissing:   404,
 	CodeFileTooLarge:                   413,
+	CodeMenuItemImageMissing:           404,
 	CodeTrainingRecordNotFound:         404,
 	CodeTrainingRecordHidden:           409,
 

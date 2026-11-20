@@ -23,6 +23,7 @@ var NgungBan = authz.Door{Code: "menu/ngung_ban", Need: authz.NeedOwner}
 // giao dịch (ADR-085). Hình yêu cầu đã được handler kiểm trước khi tới đây.
 type Service struct {
 	pool *pgxpool.Pool
+	kho  string
 }
 
 func NewService(pool *pgxpool.Pool) *Service {

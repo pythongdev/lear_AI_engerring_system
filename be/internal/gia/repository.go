@@ -3,6 +3,7 @@ package gia
 import (
 	"context"
 	"encoding/json"
+	"strconv"
 	"time"
 
 	"banhcuon/be/internal/gia/internal/sqlcgen"
@@ -37,7 +38,12 @@ func (r repository) docMonDangBan(ctx context.Context) ([]monMenu, error) {
 	}
 	items := make([]monMenu, 0, len(rows))
 	for _, row := range rows {
-		items = append(items, monMenu{MenuItemID: row.ID, ItemName: row.Name, OptionGroups: []nhomMenu{}, Prices: []giaMenu{}})
+		var imageURL *string
+		if row.ImageCode.Valid {
+			url := "/menu-items/" + strconv.FormatInt(row.ID, 10) + "/image"
+			imageURL = &url
+		}
+		items = append(items, monMenu{MenuItemID: row.ID, ItemName: row.Name, ImageURL: imageURL, OptionGroups: []nhomMenu{}, Prices: []giaMenu{}})
 	}
 	return items, nil
 }

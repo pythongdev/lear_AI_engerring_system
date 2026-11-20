@@ -54,6 +54,19 @@ export function useDoiTenMon(menu_item_id: number) {
   })), retry: false, onSuccess });
 }
 
+export function useCapNhatAnhMon(menu_item_id: number) {
+  const api = useApi();
+  const onSuccess = useDocLaiSauGhi();
+  return useMutation({ mutationFn: ({ file, reason }: { file: File; reason: string }) => {
+    const form = new FormData();
+    form.set("file", file);
+    form.set("reason", reason);
+    return call(api.PUT("/menu-items/{menu_item_id}/image", {
+      params: { path: { menu_item_id } }, body: { file: file.name, reason }, bodySerializer: () => form,
+    }));
+  }, retry: false, onSuccess });
+}
+
 export function useChuyenDanhMuc(menu_item_id: number) {
   const api = useApi();
   const onSuccess = useDocLaiSauGhi();
@@ -99,6 +112,7 @@ export function loiSanPham(failure: ApiFailure) {
     case "menu_category_hidden":
     case "menu_category_not_found": return "Danh mục không còn dùng được. Hãy chọn lại danh mục.";
     case "invalid_request": return "Dữ liệu chưa hợp lệ. Hãy kiểm tra lại.";
+    case "file_too_large": return "Ảnh vượt quá 5 MiB. Hãy chọn ảnh nhỏ hơn.";
     case "unauthenticated": return "Phiên đăng nhập đã hết. Hãy đăng nhập lại.";
     case "owner_only": return "Chỉ chủ quán được sửa món.";
     default: return "Không lưu được món. Mã: " + failure.code;

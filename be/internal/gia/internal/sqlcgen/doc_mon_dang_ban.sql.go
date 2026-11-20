@@ -7,16 +7,19 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const docMonDangBan = `-- name: DocMonDangBan :many
-SELECT id, name FROM menu_item
+SELECT id, name, image_code FROM menu_item
  WHERE discontinued_at IS NULL OR discontinued_at > now() ORDER BY id
 `
 
 type DocMonDangBanRow struct {
-	ID   int64
-	Name string
+	ID        int64
+	Name      string
+	ImageCode pgtype.Text
 }
 
 func (q *Queries) DocMonDangBan(ctx context.Context) ([]DocMonDangBanRow, error) {
@@ -28,7 +31,7 @@ func (q *Queries) DocMonDangBan(ctx context.Context) ([]DocMonDangBanRow, error)
 	var items []DocMonDangBanRow
 	for rows.Next() {
 		var i DocMonDangBanRow
-		if err := rows.Scan(&i.ID, &i.Name); err != nil {
+		if err := rows.Scan(&i.ID, &i.Name, &i.ImageCode); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

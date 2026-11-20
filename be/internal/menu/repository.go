@@ -6,6 +6,7 @@ import (
 
 	"banhcuon/be/internal/menu/internal/sqlcgen"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 // repository chạy câu của menu qua code sqlc sinh, trên giao dịch service nhận từ authz.Run;
@@ -35,6 +36,22 @@ func (r repository) khoaLuaChon(ctx context.Context, id int64) error {
 func (r repository) timMon(ctx context.Context, id int64) error {
 	_, err := r.q.TimMon(ctx, id)
 	return err
+}
+
+func (r repository) capNhatAnh(ctx context.Context, id int64, code string) error {
+	_, err := r.q.CapNhatAnhMon(ctx, sqlcgen.CapNhatAnhMonParams{ID: id, ImageCode: pgtype.Text{String: code, Valid: true}})
+	return err
+}
+
+func (s *Service) docMaAnh(ctx context.Context, id int64) (*string, error) {
+	code, err := sqlcgen.New(s.pool).DocAnhMon(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if !code.Valid {
+		return nil, nil
+	}
+	return &code.String, nil
 }
 
 func (r repository) timThanhPhan(ctx context.Context, id int64) error {

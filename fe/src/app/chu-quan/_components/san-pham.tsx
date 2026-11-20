@@ -14,6 +14,7 @@ import { FormBanLai } from "./form-ban-lai";
 import { FormNgungBan } from "./form-ngung-ban";
 import { FormThemMon } from "./form-them-mon";
 import { AnhSanPham } from "./anh-san-pham";
+import { FormAnhSanPham } from "./form-anh-san-pham";
 
 import { FormThemThanhPhan } from "./form-them-thanh-phan";
 
@@ -32,10 +33,10 @@ function GiaMon({ mon, gia }: { mon: Mon; gia: GiaQuery }) {
   </div>);
 }
 
-function DongMon({ mon, danhMuc, gia, capNhat }: { mon: Mon; danhMuc: string; gia: GiaQuery; capNhat: (mon: Mon) => void }) {
+function DongMon({ mon, danhMuc, gia, capNhat, anhVersion }: { mon: Mon; danhMuc: string; gia: GiaQuery; capNhat: (mon: Mon) => void; anhVersion: number }) {
   return <tr>
     <td><div className="flex items-center gap-3"><span>{mon.item_name}</span>
-      <AnhSanPham ten={mon.item_name} className="order-first h-20 w-20" />
+      <AnhSanPham ten={mon.item_name} imageUrl={mon.image_url} anhVersion={anhVersion} className="order-first h-20 w-20" />
     </div></td><td>{danhMuc}</td>
     <td>{mon.discontinued ? <span className="sp-badge sp-discontinued">Ngừng bán</span> : "Đang bán"}</td>
     <td><GiaMon mon={mon} gia={gia} /></td>
@@ -44,8 +45,8 @@ function DongMon({ mon, danhMuc, gia, capNhat }: { mon: Mon; danhMuc: string; gi
   </tr>;
 }
 
-function DanhMuc({ ten, items, gia, capNhat, chuaXep = false }: {
-  ten: string; items: Mon[]; gia: GiaQuery; capNhat: (mon: Mon) => void; chuaXep?: boolean;
+function DanhMuc({ ten, items, gia, capNhat, anhVersion, chuaXep = false }: {
+  ten: string; items: Mon[]; gia: GiaQuery; capNhat: (mon: Mon) => void; anhVersion: number; chuaXep?: boolean;
 }) {
   const id = useId();
   return <section aria-labelledby={id} className="sp-panel">
@@ -53,7 +54,7 @@ function DanhMuc({ ten, items, gia, capNhat, chuaXep = false }: {
     {items.length === 0 ? <p className="sp-empty">Chưa có món</p> :
       <div className="sp-table-scroll" role="region" aria-label={`Bảng món ${ten}`} tabIndex={0}>
         <table><thead><tr>{["Món", "Danh mục", "Trạng thái", "Giá", "Thành phần", "Thao tác"].map((c) => <th key={c} scope="col">{c}</th>)}</tr></thead>
-          <tbody>{items.map((mon) => <DongMon key={mon.menu_item_id} mon={mon} danhMuc={chuaXep ? "Chưa xếp" : ten} gia={gia} capNhat={capNhat} />)}</tbody>
+          <tbody>{items.map((mon) => <DongMon key={mon.menu_item_id} mon={mon} danhMuc={chuaXep ? "Chưa xếp" : ten} gia={gia} capNhat={capNhat} anhVersion={anhVersion} />)}</tbody>
         </table>
       </div>}
   </section>;
@@ -64,6 +65,8 @@ export function TrangSanPham() {
   const gia = useMenuGia();
   const data = query.data;
   const [chon, setChon] = useState<Mon | null>(null);
+  const [anhVersion, setAnhVersion] = useState(0);
+  const [thongBaoAnh, setThongBaoAnh] = useState("");
   // Ngăn ở cấp trang: món chuyển nhóm không làm mất form và câu báo sau ghi.
   const danhMuc = data?.categories.find((c) => c.items.some((m) => m.menu_item_id === chon?.menu_item_id));
   const mon = chon && (danhMuc?.items.find((m) => m.menu_item_id === chon.menu_item_id)
@@ -92,18 +95,23 @@ export function TrangSanPham() {
     {query.isError && <Alert role="alert"><AlertDescription>
       Chưa đọc được danh sách món.{data ? " Đang hiện bản đọc trước." : " Hãy thử lại."}
     </AlertDescription></Alert>}
+    {thongBaoAnh && <p role="status">{thongBaoAnh}</p>}
 
     {data && <>
       {query.isFetching && <p role="status">Đang đọc lại danh sách…</p>}
-      {data.categories.map((c) => <DanhMuc key={c.menu_category_id} ten={c.name} items={c.items} gia={gia} capNhat={setChon} />)}
-      <DanhMuc ten="Chưa xếp danh mục" items={data.uncategorized_items} gia={gia} capNhat={setChon} chuaXep />
+      {data.categories.map((c) => <DanhMuc key={c.menu_category_id} ten={c.name} items={c.items} gia={gia} capNhat={setChon} anhVersion={anhVersion} />)}
+      <DanhMuc ten="Chưa xếp danh mục" items={data.uncategorized_items} gia={gia} capNhat={setChon} anhVersion={anhVersion} chuaXep />
       {data.categories.length === 0 && <p>Chưa có danh mục. Hãy thêm danh mục trước khi thêm món.</p>}
     </>}
     <Dialog open={!!mon} onOpenChange={(open) => { if (!open) setChon(null); }}>
       <DialogContent className="trang-san-pham sp-drawer" aria-describedby={undefined}>
         {mon && <>
           <DialogTitle>Cập nhật {mon.item_name}</DialogTitle>
-          <AnhSanPham key={`anh-${mon.menu_item_id}`} ten={mon.item_name} className="aspect-[4/3] w-full" />
+          <AnhSanPham key={`anh-${mon.menu_item_id}`} ten={mon.item_name} imageUrl={mon.image_url} anhVersion={anhVersion} className="aspect-[4/3] w-full" />
+          <section className="space-y-3"><h2>Ảnh sản phẩm</h2>
+            <FormAnhSanPham key={`form-anh-${mon.menu_item_id}`} monId={mon.menu_item_id} ten={mon.item_name}
+              daLuu={() => { setAnhVersion(Date.now()); setThongBaoAnh(`Đã cập nhật ảnh ${mon.item_name}.`); }} />
+          </section>
           {!mon.discontinued && <FormThemThanhPhan key={`thanh-phan-${mon.menu_item_id}`} mon={mon}
             components={thanhPhan.filter((c) => !mon.components?.some((x) => x.menu_component_id === c.menu_component_id))} />}
           <section className="space-y-3"><h2>Đổi tên</h2>

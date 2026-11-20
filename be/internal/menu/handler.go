@@ -22,6 +22,8 @@ func Routes(r *gin.Engine, svc *Service) {
 	r.POST("/menu-items", h.themMon)
 	r.POST("/menu-items/:menu_item_id/components", h.themThanhPhanMon)
 	r.PUT("/menu-items/:menu_item_id", h.doiTenMon)
+	r.PUT("/menu-items/:menu_item_id/image", h.capNhatAnh)
+	r.GET("/menu-items/:menu_item_id/image", h.docAnh)
 	r.PUT("/menu-components/:menu_component_id/base-price", h.doiGiaThanhPhan)
 	r.PUT("/menu-options/:menu_option_id/surcharge", h.doiPhuThu)
 	r.PUT("/menu-items/:menu_item_id/components/:menu_component_id", h.suaThanhPhan)
@@ -35,6 +37,103 @@ func Routes(r *gin.Engine, svc *Service) {
 
 type handler struct {
 	svc *Service
+}
+
+func (h handler) capNhatAnh(c *gin.Context) {
+	id, ok := docID(c, "menu_item_id")
+	if !ok {
+		return
+	}
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, (5<<20)+(1<<20))
+	err := c.Request.ParseMultipartForm(1 << 20)
+	if c.Request.MultipartForm != nil {
+		defer c.Request.MultipartForm.RemoveAll()
+	}
+	if err != nil {
+		var large *http.MaxBytesError
+		if errors.As(err, &large) {
+			apierr.Write(c.Writer, apierr.Error{Code: apierr.CodeFileTooLarge})
+		} else {
+			saiTruong(c, "")
+		}
+		return
+	}
+	form := c.Request.MultipartForm
+	files := form.File["file"]
+	if len(files) != 1 || files[0].Size == 0 {
+		saiTruong(c, "file")
+		return
+	}
+	if files[0].Size > 5<<20 {
+		apierr.Write(c.Writer, apierr.Error{Code: apierr.CodeFileTooLarge})
+		return
+	}
+	reason := ""
+	if v := form.Value["reason"]; len(v) == 1 {
+		reason = strings.TrimSpace(v[0])
+	}
+	if !coLyDo(c, reason) {
+		return
+	}
+	f, err := files[0].Open()
+	if err != nil {
+		writeErr(c, err)
+		return
+	}
+	defer f.Close()
+	data, err := io.ReadAll(io.LimitReader(f, (5<<20)+1))
+	if err != nil {
+		writeErr(c, err)
+		return
+	}
+	if len(data) > 5<<20 {
+		apierr.Write(c.Writer, apierr.Error{Code: apierr.CodeFileTooLarge})
+		return
+	}
+	ext := ""
+	switch http.DetectContentType(data) {
+	case "image/jpeg":
+		ext = ".jpg"
+	case "image/png":
+		ext = ".png"
+	case "image/webp":
+		ext = ".webp"
+	}
+	if ext == "" {
+		saiTruong(c, "file")
+		return
+	}
+	if err = h.svc.CapNhatAnh(c.Request.Context(), nguoi(c), id, reason, data, ext); err != nil {
+		writeErr(c, err)
+		return
+	}
+	traVe(c, nil, struct {
+		MenuItemID int64  `json:"menu_item_id"`
+		ImageURL   string `json:"image_url"`
+	}{id, "/menu-items/" + strconv.FormatInt(id, 10) + "/image"})
+}
+
+func (h handler) docAnh(c *gin.Context) {
+	id, ok := docID(c, "menu_item_id")
+	if !ok {
+		return
+	}
+	f, mime, err := h.svc.DocAnh(c.Request.Context(), id)
+	if err != nil {
+		writeErr(c, err)
+		return
+	}
+	defer f.Close()
+	stat, err := f.Stat()
+	if err != nil {
+		writeErr(c, err)
+		return
+	}
+	c.Header("Cache-Control", "no-store")
+	c.Header("X-Content-Type-Options", "nosniff")
+	c.Header("Content-Type", mime)
+	// ServeContent hỗ trợ HEAD/Range; ảnh luôn được đọc từ khoá hiện hành của DB.
+	http.ServeContent(c.Writer, c.Request, stat.Name(), stat.ModTime(), f)
 }
 
 func (h handler) doiGiaThanhPhan(c *gin.Context) {
