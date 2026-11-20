@@ -8914,3 +8914,48 @@ tăng vì mỗi gói thêm một lần sao database và một lần khởi độ
 về một lệnh `go test ./...`.
 
 **Applies to:** ADR-082 điểm 2 · 7 · ADR-083 · `QC-16` · F-045 · F-072 · F-078 · `T-323` · `scripts/be-check.sh` · `be/internal/testhelper`.
+
+## ADR-145 — Món yêu thích và bộ món của khách lưu theo tài khoản, không lưu giá, cùng hình một dòng giỏ
+
+**Status:** **Đã chốt** 2026-11-19 — chủ repo chọn *"Duyệt, giao Codex làm"* trong câu hỏi có sẵn phương án (YT-02); Claude Code
+thiết kế (mức **L2**). Lời chủ repo 2026-11-18 (nguyên
+văn ở `work/backlog.md`, *Vế 2026-11-18*): dựng trang `favourite.html` từ database, backend tới FE, dữ liệu theo database quán.
+Mọi cơ chế dưới đây là thiết kế của phiên, không phải lời quán.
+
+**Context:** bản thiết kế `docs/product/4-fe/thiet_ke/khach_hang/favourite/favourite.html` (YT-01) có ba thứ khách giữ lại: món
+đã thả tim kèm số lượng, *Bộ món riêng* khách tự chọn món và đặt tên, và *Bộ đã lưu* chụp cả danh sách tim thành một bộ có tên.
+Tài khoản khách đã có (ADR-131); đơn lưu món và combo theo hai tầng trong `order_line` (ADR-117); giá chỉ một hàm tính (ADR-086).
+Database cấm `jsonb` ngoài cột `_image` (`QC` kiểu cột) và cấm xoá cứng (`QD-50`).
+
+**Decision:**
+
+1. **Lưu theo tài khoản khách.** Mọi dữ liệu yêu thích thuộc đúng một `customer_account`; chỉ chính khách của phiên đọc và ghi
+   (đường dưới `/customer-accounts/current/`, lớp khách). Người làm không đọc. Khách chưa đăng nhập bấm ♥ hay mở trang: **mời đăng
+   nhập, không lưu gì trên máy** — chủ repo chọn 2026-11-19, đóng U-119.
+2. **Một dòng yêu thích có đúng hình một dòng giỏ** (`PriceLineRequest`): món + các lựa chọn, hoặc combo + các suất (mỗi suất là món
+   + lựa chọn + số suất), cộng số lượng. Cất **quan hệ**, theo khuôn hai tầng của `order_line`: một bảng dòng (món **hoặc** combo,
+   không cả hai; dòng suất con trỏ dòng combo cha cùng chủ), một bảng lựa chọn của dòng món. Khoá ngoại tới món, combo, lựa chọn.
+3. **Không lưu giá, tên hay ảnh.** Giá tính lại mỗi lần đọc bằng `POST /price-quotes` (FE gọi như giỏ); tên và ảnh đọc từ
+   `GET /menu`. Tổng của một bộ là tổng giá các dòng — bộ món của khách **không** phải combo của quán, không có giá riêng hay giảm giá.
+4. **Kiểm khi ghi bằng đúng bước kiểm của hàm giá**: món/combo/lựa chọn không có, nhóm thiếu lựa chọn, suất không khớp combo ⇒ cùng mã
+   lỗi với `price-quotes`. Không viết bước kiểm thứ hai.
+5. **Món ngừng bán, combo ẩn, lựa chọn ẩn sau khi đã lưu:** dòng vẫn giữ và vẫn đọc ra, kèm cờ *không còn bán* do backend tính tại lúc
+   đọc; FE hiện nhãn *Hết bán*, không cho vào giỏ, không hiện giá. Bán lại thì dòng tự trở lại.
+6. **Hai loại bộ cùng một chỗ cất:** một bảng bộ (chủ, tên 1–60 ký tự không rỗng sau btrim, loại `rieng` = *Bộ món riêng* · `da_luu` =
+   *Bộ đã lưu*); dòng của bộ dùng chung bảng dòng ở điểm 2, dòng tim không thuộc bộ nào. Hai loại hiện ở hai danh sách như bản thiết kế.
+7. **Không xoá cứng** (`QD-50`): bỏ tim, xoá bộ, bỏ một dòng khỏi bộ là đặt mốc gỡ; sửa bộ = gỡ các dòng cũ và thêm dòng mới trong một
+   giao dịch. Thả tim lại cùng món + cùng lựa chọn khi đang có dòng chưa gỡ ⇒ cộng số lượng vào dòng ấy; việc này do **cửa ghi
+   backend** làm dưới khoá theo khách, không phải khoá duy nhất ở database (lựa chọn nằm ở bảng con nên một khoá duy nhất không
+   phủ được hình dòng — sửa 2026-11-19, Claude, lúc viết test YT-03). Mỗi bảng có trigger vết (`QD-52`). Dữ liệu này là dữ liệu riêng của khách: khi **U-108** có lời về
+   xoá tài khoản, nó đi theo lời ấy.
+8. **Giới hạn chống phình** (suy ra của phiên, đổi được): tối đa 50 dòng tim chưa gỡ, 20 bộ chưa gỡ mỗi khách, 20 dòng mỗi bộ, số lượng
+   1–99. Vượt ⇒ 422 với mã riêng.
+9. **Không dựng** đặt lại đơn cũ (U-106), đồng bộ giỏ, chia sẻ bộ cho người khác.
+
+**Consequences:** trang Yêu thích luôn hiện giá và tên hiện hành, không bao giờ giá cũ; thêm vào giỏ chỉ là chép dòng, giá tính lại ở
+giỏ như mọi đường khác. Ba bảng mới trong lát khách, không chạm bảng tiền, đơn hay menu. Rủi ro: một đường đọc quên cờ *không còn bán*
+sẽ cho món ngừng bán vào giỏ — nhưng `price-quotes` và cửa tạo đơn vẫn từ chối, nên không sai tiền. Lùi: down migration bỏ ba bảng
+(khoá chặn khi đã có dữ liệu), gỡ đường API và trang.
+
+**Applies to:** `YT-02`…`YT-07` · ADR-131 · ADR-117 · ADR-086 · `QD-50` · `QD-52` · U-108 · `be/internal/khach` ·
+`work/backlog_YT.md`.

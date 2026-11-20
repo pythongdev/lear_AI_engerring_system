@@ -176,11 +176,6 @@ trong sáu câu đụng luật quán đã chốt nên không được suy ra.
   ngoài không? (Mở 2026-11-04, Claude, CHAT-02 lượt hai.) Lời §8.11 điểm 5 cấm gửi dữ liệu cá nhân ra ngoài; bộ lọc của ADR-139 điểm 7 ẩn được
   số điện thoại và địa chỉ thư, **không** nhận ra tên hay địa chỉ gõ tự do. Ai trả lời: chủ repo (chấp nhận chỗ hở, hay chỉ cho dùng model
   chạy trong máy quán, hay chặn câu nghi có tên). Chặn gì: cắm hãng thật vào lane `CHAT`; không chặn thi công với nhà cung cấp giả.
-<a id="u-119"></a>
-- **U-119** — Khách **chưa đăng nhập** bấm ♥ hay mở trang Yêu thích thì sao: mời đăng nhập và không lưu gì, hay lưu tạm
-  trên trình duyệt rồi gộp vào tài khoản khi đăng nhập (gộp trùng thế nào)? (Mở 2026-11-18, Claude, T-348: chủ repo muốn
-  món yêu thích lưu ở database theo tài khoản khách — `work/backlog_YT.md`.) Ai trả lời: chủ quán. Chặn gì: màn khách
-  chưa đăng nhập của YT-05 và YT-06; tạm thời mời đăng nhập, không lưu trên máy. Không chặn YT-01…YT-04.
 
 **Ngày 2026-10-31, T-278 mở U-111 — đóng 2026-11-01** sau khi chủ repo trả lời hai lượt liên tiếp. Nguyên văn: *"cho
 đang kí bằng gmail không cần duyệt"* (lượt một, trả lời câu *"Gmail chưa có tài khoản người làm sẽ được xử lý thế
@@ -211,6 +206,11 @@ vì thế mấy ví dụ dưới đây viết `U-` thoải mái mà không bị 
 
 <a id="da-co-loi-giai"></a>
 ### Đã có lời giải — không ghi lại thành Unknown nữa
+
+**Chủ repo chọn 2026-11-19 (YT-02), trong câu hỏi có sẵn phương án.** **U-119** — khách chưa đăng nhập bấm ♥ hay mở trang
+Yêu thích: *"Mời đăng nhập"* — không lưu gì trên máy, đăng nhập xong mới lưu theo tài khoản. Cùng lượt chủ repo chọn *"Duyệt,
+giao Codex làm"* cho **ADR-145** (món yêu thích lưu theo tài khoản, không lưu giá). Lời đã vào ADR-145 điểm 1. Câu ghi *ai trả
+lời: chủ quán* nhưng lời là của chủ repo; chưa có xác nhận lời đến từ chủ quán.
 
 **Chủ repo chọn 2026-11-01 (CHAT-01), trong câu hỏi có sẵn phương án.** **U-113** — *"Chỉ là tin báo"* và *"Điện thoại riêng của nhân viên"*: POS vẫn là nơi duy nhất ghi tiến độ, ADR-011 giữ nguyên; hộp tin ưu tiên màn điện thoại, mỗi người đăng nhập tài khoản của mình. Bốn câu ghi *ai trả lời: chủ quán* nhưng lời là
 của chủ repo; chưa có xác nhận lời đến từ chủ quán. **U-114** — *"Không vượt, giữ luật cũ"*: chat kiểm quyền đúng như màn

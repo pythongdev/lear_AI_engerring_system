@@ -36,6 +36,7 @@ Mỗi màn thêm **một dòng** ở đây cùng lượt dựng nó, và nhóm n
 | `/khach/xac-nhan-gmail` | công khai | đọc ma từ query, xác nhận một lần, link về tài khoản | `T-270` |
 | `/khach/tai-khoan` | khách | tên · số · thư; sửa hoặc xoá bộ giao đã nhớ, đổi mật khẩu, đăng xuất | `T-265` |
 | `/khach/don` | khách | lịch sử đơn của phiên, mới nhất trước, Xem thêm theo con trỏ backend | `T-265` |
+| `/khach/yeu-thich` | khách | **dự kiến**, chưa dựng: món đã thả tim và bộ món của khách theo `docs/product/4-fe/thiet_ke/khach_hang/favourite/favourite.html`; chưa đăng nhập thì mời đăng nhập, không lưu trên máy (2026-11-19, chủ repo, ADR-145) | `YT-05` |
 | `/khach/quen-mat-khau` | khách | xin mã qua Gmail; nói rõ khách chỉ có số chưa có cách lấy lại mật khẩu | `T-265` |
 | `/khach/dat-lai-mat-khau` | khách | đặt mật khẩu bằng mã trong thư; nhận `token` trên URL hoặc nhập mã | `T-265` |
 | `/dang-nhap` | — | đăng nhập; *tại quầy* mở trực quầy (mốc `C36`, **ADR-109** điểm 7) | `P4-04` |

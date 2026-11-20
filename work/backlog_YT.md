@@ -19,7 +19,7 @@ backlog riêng hãy cập nhật dữ liệu dựa trên dữ liệu thật đan
    Chay · Thịt thường · Thịt nhiều. Lane này theo database; phiếu `prompt/t-345.md` (chép giá §4.3, chưa ai làm) bị
    `YT-01` thay.
 3. "Từ database, BE và FE" = món yêu thích và bộ món của khách **lưu theo tài khoản khách** (ADR-131), không chỉ
-   trên trình duyệt. Khách chưa đăng nhập thì sao là câu của chủ quán: **U-119**.
+   trên trình duyệt. Khách chưa đăng nhập: **mời đăng nhập, không lưu trên máy** (chủ repo chọn 2026-11-19, đóng U-119).
 4. Giá **không bao giờ** được lưu cùng món yêu thích: một dòng yêu thích có đúng hình `PriceLineRequest` của hợp đồng
    (món + `option_ids`, hoặc combo + `portions`, cộng `quantity`), giá tính lại mỗi lần đọc. Tổng của *Bộ món riêng*
    là tổng giá từng dòng, không phải giá combo và không giảm giá — bản thiết kế ghi *"Tổng giá minh hoạ của các món
@@ -35,10 +35,10 @@ trong worktree riêng `../lean_wt/YT-XX`, nhánh `codex/YT-XX`; Claude đọc di
 | Bước | Việc | Mức | Ai | Đứng trên | Chặn bởi |
 |---|---|:--:|---|---|---|
 | YT-01 | Bản thiết kế `favourite.html` dùng menu và giá thật của app đang chạy | L1 | Codex làm, Claude duyệt | — | — |
-| YT-02 | Thiết kế: lưu gì, ở đâu, đọc giá thế nào, món ngừng bán thì sao — ADR | L2 | Claude, chủ repo duyệt | YT-01 | U-119 chỉ chặn điểm khách vãng lai |
+| YT-02 | Thiết kế: lưu gì, ở đâu, đọc giá thế nào, món ngừng bán thì sao — ADR-145 | L2 | Claude, chủ repo duyệt | YT-01 | — |
 | YT-03 | Lược đồ: bảng món yêu thích và bộ món của khách | L2 | Claude test trước, Codex làm | YT-02 | — |
 | YT-04 | Hợp đồng API và backend: đọc, thả tim, bỏ tim, đổi số lượng, tạo/sửa/xoá bộ | L2 | Claude test trước, Codex làm | YT-03 | — |
-| YT-05 | FE: trang Yêu thích theo `favourite.html`, đọc thật, giá qua hàm giá, thêm vào giỏ nháp | L2 | Claude test trước, Codex làm | YT-04 | U-119 cho màn khách chưa đăng nhập |
+| YT-05 | FE: trang Yêu thích theo `favourite.html`, đọc thật, giá qua hàm giá, thêm vào giỏ nháp | L2 | Claude test trước, Codex làm | YT-04 | — |
 | YT-06 | FE: nút tim trên thực đơn và trang chi tiết món/combo | L1 | Codex làm, Claude duyệt | YT-05 | — |
 | YT-07 | Nghiệm thu trên app chạy: so với bản thiết kế, 360px và 430px, sáng/tối | L1 | Claude | YT-06 | — |
 
@@ -107,6 +107,12 @@ thái *dự kiến*), và nếu cần một `I-0xx` mới trong `quality/invaria
 
 **Acceptance.** Chủ repo duyệt ADR (câu hỏi có lựa chọn); mỗi điểm trên có một câu trong ADR; không đặt tên bảng
 hay đường API trước khi ADR chốt.
+
+**Kết quả 2026-11-19** (Claude). `docs/decisions.md` ADR-145, chủ repo chọn *"Duyệt, giao Codex làm"*; U-119 đóng với
+*"Mời đăng nhập"* (ghi ở `docs/product/99-unknowns.md` → *Đã có lời giải*). Một chỗ sửa lúc viết test YT-03: chống trùng
+dòng tim do cửa ghi backend làm, không phải khoá duy nhất ở database (lựa chọn nằm ở bảng con) — ghi ngay trong ADR-145
+điểm 7. Route dự kiến `/khach/yeu-thich` ở `docs/product/4-fe/01-khung-fe.md`. Không thêm bất biến mới: ADR-145 là chỗ
+neo, test của YT-03 · YT-04 · YT-05 mang mã bước.
 
 <a id="yt-03"></a>
 ## YT-03 — Lược đồ món yêu thích và bộ món

@@ -97,7 +97,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 - [ ] T-347 **Trang Vận hành và trang Tổng kết đọc chậm dần theo toàn bộ lịch sử bán (đo được 595 giây và 1,8 giây trên dữ liệu ba năm)** — L2 (câu đọc của I-019 và I-014, kết quả không được đổi), Claude mở 2026-11-18 từ số đo của T-340 · F-083 · [chi tiết](#t-347)
 - [ ] T-343 **Trigger giữ số đếm của ngày đã ký không lấy khoá ngày, nên lệnh SQL thẳng chạy cùng lúc với lần ký vẫn lọt** — L3 (ADR-080, I-021), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database · [chi tiết](#t-343)
 
-- [ ] YT-02 **Chưa chốt món yêu thích của khách lưu gì, ở đâu, và món ngừng bán thì hiện ra sao** — L2, Claude thiết kế ADR, chủ repo duyệt; điểm khách vãng lai chờ U-119 · [mô tả](backlog_YT.md#yt-02)
 - [ ] YT-03 **Database chưa có chỗ cất món yêu thích và bộ món riêng của khách** — L2, sau YT-02; Claude viết test trước, Codex làm · [mô tả](backlog_YT.md#yt-03)
 - [ ] YT-04 **Chưa có API đọc và ghi món yêu thích theo tài khoản khách** — L2, sau YT-03; Claude viết test trước, Codex làm · [mô tả](backlog_YT.md#yt-04)
 - [ ] YT-05 **Khách chưa có trang Yêu thích thật trên web** — L2, sau YT-04, theo `favourite.html`; Claude viết test trước, Codex làm · [mô tả](backlog_YT.md#yt-05)
@@ -108,6 +107,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] YT-02 **Chưa chốt món yêu thích của khách lưu gì, ở đâu, và món ngừng bán thì hiện ra sao** — L2, xong 2026-11-19: Claude soạn ADR-145, chủ repo chọn *"Duyệt, giao Codex làm"*; U-119 đóng (*"Mời đăng nhập"*); route `/khach/yeu-thich` dự kiến ở `01-khung-fe.md` · [mô tả](backlog_YT.md#yt-02)
 - [x] YT-01 **Bản thiết kế trang Yêu thích còn món bịa, chưa theo menu và giá thật của database quán** — L1 (tệp HTML mẫu, không đổi hành vi app), chủ repo yêu cầu 2026-11-18; dữ liệu chụp từ `GET /menu` và `POST /price-quotes` của app đang chạy, thay phiếu `prompt/t-345.md`; Codex làm, Claude duyệt, xong cùng ngày: 7 món lẻ, 7 combo, 33 ô giá khớp database; trình duyệt 20/20 đạt ở 360px và 430px · [mô tả](backlog_YT.md#yt-01)
 - [x] T-348 **Trang Yêu thích chưa có lộ trình dựng thật từ database, backend tới giao diện** — L1 (mở lane, chỉ tài liệu), chủ repo yêu cầu 2026-11-18; sổ `work/backlog_YT.md` bảy bước, dòng §2 ở `CLAUDE.md`, mở U-119 · [chi tiết](#t-348)
 - [x] T-350 **Bản HTML Khoản chi chưa hiện ngày nhập và ước tính hàng còn dùng được bao nhiêu ngày** — L1 (chỉ bản thiết kế minh hoạ), chủ repo yêu cầu 2026-11-19, xong 2026-11-20; ngày nhập tách ngày chi, số còn và mức tiêu thụ tự nhập, ước tính ngày còn; Codex làm · [chi tiết](#t-350)
