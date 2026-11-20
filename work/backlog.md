@@ -108,6 +108,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] YT-01 **Bản thiết kế trang Yêu thích còn món bịa, chưa theo menu và giá thật của database quán** — L1 (tệp HTML mẫu, không đổi hành vi app), chủ repo yêu cầu 2026-11-18; dữ liệu chụp từ `GET /menu` và `POST /price-quotes` của app đang chạy, thay phiếu `prompt/t-345.md`; Codex làm, Claude duyệt, xong cùng ngày: 7 món lẻ, 7 combo, 33 ô giá khớp database; trình duyệt 20/20 đạt ở 360px và 430px · [mô tả](backlog_YT.md#yt-01)
 - [x] T-348 **Trang Yêu thích chưa có lộ trình dựng thật từ database, backend tới giao diện** — L1 (mở lane, chỉ tài liệu), chủ repo yêu cầu 2026-11-18; sổ `work/backlog_YT.md` bảy bước, dòng §2 ở `CLAUDE.md`, mở U-119 · [chi tiết](#t-348)
 - [x] T-350 **Bản HTML Khoản chi chưa hiện ngày nhập và ước tính hàng còn dùng được bao nhiêu ngày** — L1 (chỉ bản thiết kế minh hoạ), chủ repo yêu cầu 2026-11-19, xong 2026-11-20; ngày nhập tách ngày chi, số còn và mức tiêu thụ tự nhập, ước tính ngày còn; Codex làm · [chi tiết](#t-350)
 - [x] T-340 **Bảng vết và bốn đường đọc chính chưa có chỉ mục, mỗi lần tính giá quét cả lịch sử sửa** — L2 (lược đồ; không đổi dữ liệu hay hành vi), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; Codex làm song song với T-339 từ 2026-11-17 (scope không chạm nhau), Claude duyệt · [chi tiết](#t-340)

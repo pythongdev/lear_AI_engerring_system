@@ -75,6 +75,21 @@ Việt hoá và T-337 chưa commit; Claude chép bản ấy vào worktree trư�
 
 **Nhận việc.** Codex trong `../lean_wt/YT-01`, phiếu và báo cáo ở `../lean_wt/_claude_logs/YT-01/`.
 
+**Kết quả 2026-11-18** (thực hiện: Codex, duyệt: Claude; worktree `../lean_wt/YT-01`, nhánh `codex/YT-01` từ `b635395`).
+Tệp có hằng `MENU_SNAPSHOT` nhúng từ bản chụp; dòng yêu thích chỉ giữ id, lựa chọn, số lượng; combo không có ô đổi lựa
+chọn, đổi khác mặc định thì hiện *Giá tính lại ở giỏ*; khoá `customer-favourite-design-v3`. A1 · A2 — `node` đối chiếu:
+*khớp 15/15*, *33/33 ô giá đúng cả khi đảo thứ tự option_ids*, *default_quote_vnd khớp 7/7*; `grep` không còn
+`Bánh Chay` · `Đầy Đặn` · `18000` · `42000` · `21000` · `itemLabel`. A3 — `persist` 8/8 dòng không mang tên, giá,
+icon. A4 — sandbox Codex chặn Chromium; Claude chạy kịch bản Playwright của Codex trên máy: 20/20 PASS (đổi Thịt·Thường
+→ Thịt·Nhiều nhân 4.000đ → 5.000đ, chọn Chay ẩn *Lượng nhân*, tạo/sửa/xoá bộ món riêng, Lưu thành bộ → Bộ đã lưu →
+giỏ, Thêm tất cả, hai hồ sơ, sáng/tối, không tràn ở 360px và 430px, không lỗi JS) và xem ảnh chụp. Claude sửa một
+chỗ sau duyệt: dấu `·` thừa sau giá của món không có lựa chọn trong hộp tạo bộ. A5 — `.footer` không sticky,
+`#add-all` thêm mọi dòng. A6 — `node --check`, `git diff --check` sạch. Kịch bản, ảnh, báo cáo:
+`../lean_wt/_claude_logs/YT-01/`.
+
+Phát hiện khi chụp dữ liệu: database đang chạy có một món tên `canh` (id 7, 0đ, không lựa chọn) bên cạnh *Canh bánh
+cuốn* — trông như món thử; bản thiết kế giữ nguyên vì theo database. Chủ quán ngừng bán nó ở trang Sản phẩm nếu thừa.
+
 <a id="yt-02"></a>
 ## YT-02 — Thiết kế lưu món yêu thích theo tài khoản
 
