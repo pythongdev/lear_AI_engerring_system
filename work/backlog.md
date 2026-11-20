@@ -101,6 +101,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-350 **Bản HTML Khoản chi chưa hiện ngày nhập và ước tính hàng còn dùng được bao nhiêu ngày** — L1 (chỉ bản thiết kế minh hoạ), chủ repo yêu cầu 2026-11-19, xong 2026-11-20; ngày nhập tách ngày chi, số còn và mức tiêu thụ tự nhập, ước tính ngày còn; Codex làm · [chi tiết](#t-350)
 - [x] T-340 **Bảng vết và bốn đường đọc chính chưa có chỉ mục, mỗi lần tính giá quét cả lịch sử sửa** — L2 (lược đồ; không đổi dữ liệu hay hành vi), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; Codex làm song song với T-339 từ 2026-11-17 (scope không chạm nhau), Claude duyệt · [chi tiết](#t-340)
 - [x] T-339 **Bộ đối chiếu vết kêu oan với vết không người của mã xác nhận Gmail và sổ gọi model** — L2 (I-018), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; Codex làm, Claude duyệt · [chi tiết](#t-339)
 - [x] T-338 **Ngăn Cập nhật món trên trang Sản phẩm báo lỗi hai phần tử trùng key** — L1 (chỉ đổi key React, không đổi hành vi), chủ repo báo 2026-11-16; Codex làm, Claude duyệt · [chi tiết](#t-338)
@@ -654,6 +655,21 @@ Acceptance (viết khi mở việc): dự kiến mỗi câu một test so kết 
 Nguồn: bản đánh giá database 2026-11-16, mục 6. `cash_day_reconciled_guard` (thân cuối ở `db/migrations/20261012120000_mo_lai_so_dem.up.sql`) đọc `reconciled_day` mà không lấy khoá; dưới READ COMMITTED một lần sửa số đếm và một lần ký ngày chạy song song đều qua. Backend đã khoá ngày ở `be/internal/ket/service.go` (`ngayban.Khoa`), nên chỉ đường vượt backend mới lọt — nhưng ADR-080 điểm 1 đặt khoá ở tầng database chính vì các tầng trên có đường vòng. Mức L3: đổi một trigger giữ tiền và phải khớp giao thức khoá của backend (thứ tự khoá, khoá chung/riêng) để không sinh deadlock; cần thiết kế và *Sửa đổi* ADR-080 trước khi viết code. Làm sau cùng trong năm việc.
 
 Acceptance (viết khi mở việc, sau thiết kế).
+
+<a id="t-350"></a>
+### T-350 — Ngày nhập và số ngày còn dùng trong bản HTML Khoản chi
+
+Chủ repo yêu cầu 2026-11-19 và nhắc tiếp tục 2026-11-20. Chỉ sửa bản HTML minh hoạ, không đổi trang chạy thật, API hoặc dữ kiện kho. Codex thực hiện trên nhánh `P4A-01`; chưa review độc lập.
+
+Acceptance viết trước: từng nguyên liệu hiện ngày nhập gần nhất riêng với ngày chi; có thể nhập số hàng còn và mức dùng mỗi ngày theo cùng đơn vị; bản xem thử tính số ngày còn = số còn / mức dùng mỗi ngày, nói rõ nguồn số minh hoạ và trường hợp thiếu dữ liệu hoặc mức dùng bằng 0; cập nhật, đổi tên, xoá, lọc và sửa khoản chi vẫn hoạt động. Chủ repo bổ sung 2026-11-20: sắp nội dung danh mục theo hàng/cột có tiêu đề tiếng Việt, đọc được trên màn hình hẹp mà không mất thông tin hay nút thao tác. Kiểm JavaScript và tương tác trên bản HTML; chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-20:** Bản HTML hiện ngày nhập riêng trên dòng khoản chi và ngày nhập gần nhất theo từng nguyên liệu. Có hộp nhập số còn, mức tiêu thụ mỗi ngày và đơn vị; phép chia hiện số ngày ước tính, thiếu số hoặc mức bằng 0 thì nói chưa thể tính. Dữ liệu mẫu và các số dự tính chỉ dùng để thử giao diện, không lấy từ Kho. Kiểm tương tác bằng jsdom: 17 phép đạt, gồm sửa mức dùng, nhập ngày khác ngày chi, lọc tiền, thêm nguyên liệu và đổi tên. Ảnh xem thử Chrome ở 1440px và 500px không thấy tràn hoặc lỗi bố cục ở vùng mới. `git diff --check` đạt. `./scripts/gate.sh` trên bản sao chỉ chứa hai file của T-350 đạt: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Gate trên cây chung đỏ do `docs/private/anh/banh-cuon/1-banh-dep-trung-chin.png` ngoài scope và `db/tests/yt03_customer_favourite.sql` chờ bảng chưa tạo của YT-03; cả hai ngoài scope T-350. Chưa review độc lập; giữ scope tới khi chủ repo commit.
+
+**Bổ sung kiểm bảng 2026-11-20:** Danh mục nay xếp mỗi mục thành bảng có tiêu đề tiếng Việt; riêng nguyên liệu có bảy cột, khoản con có bốn cột. Trên màn hình hẹp, mỗi hàng chuyển thành các ô có nhãn và giữ bốn nút thao tác. jsdom kiểm thêm 16 điều kiện đạt, gồm số cột, nhãn, phép tính, ngày nhập và đổi tên. Chrome DevTools đặt đúng viewport 390px: `innerWidth=390`, `scrollWidth=390`; bảng nguyên liệu rộng 322px trong khung 322px và cả bảy nhãn hiển thị. Ảnh Chrome 1440px và 390px đã xem; không có tràn ngang ở vùng mới. `./scripts/gate.sh` chạy lại trên bản sao chỉ chứa hai file T-350: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi; `PASS gate`.
+
+**Bổ sung bố cục 2026-11-20:** Theo yêu cầu mới của chủ repo, danh sách trong từng mục chi đã thành bảng có tiêu đề tiếng Việt; trên màn hình hẹp mỗi hàng hiện thành thẻ hai cột có nhãn cho ngày, lượng hàng, mức dùng, ước tính, tổng chi và thao tác. Kiểm bằng jsdom: ba bảng được tạo với 7/4 cột, ngày nhập và ước tính đúng; thao tác ẩn/hiện, sửa dự tính, lọc ngày, đổi tên, xoá mục chưa có chi, ghi mua và sửa khoản chi có lý do đều đạt. Đã xem ảnh Chrome 1440px và 500px; `node --check` và `git diff --check` đạt. Gate cây chung đang được chạy lại sau thay đổi này.
 
 <a id="t-338"></a>
 ### T-338 — Ngăn Cập nhật món trên trang Sản phẩm báo lỗi hai phần tử trùng key
