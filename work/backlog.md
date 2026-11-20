@@ -107,6 +107,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-352 **Bản HTML Khoản chi chưa có lịch sử mua nguyên liệu dễ tìm** — L1 (chỉ bản xem thử), chủ repo yêu cầu và xong 2026-11-20; hiện từng lần mua với ngày nhập, ngày chi, mặt hàng và số tiền · [chi tiết](#t-352)
 - [x] YT-02 **Chưa chốt món yêu thích của khách lưu gì, ở đâu, và món ngừng bán thì hiện ra sao** — L2, xong 2026-11-19: Claude soạn ADR-145, chủ repo chọn *"Duyệt, giao Codex làm"*; U-119 đóng (*"Mời đăng nhập"*); route `/khach/yeu-thich` dự kiến ở `01-khung-fe.md` · [mô tả](backlog_YT.md#yt-02)
 - [x] YT-01 **Bản thiết kế trang Yêu thích còn món bịa, chưa theo menu và giá thật của database quán** — L1 (tệp HTML mẫu, không đổi hành vi app), chủ repo yêu cầu 2026-11-18; dữ liệu chụp từ `GET /menu` và `POST /price-quotes` của app đang chạy, thay phiếu `prompt/t-345.md`; Codex làm, Claude duyệt, xong cùng ngày: 7 món lẻ, 7 combo, 33 ô giá khớp database; trình duyệt 20/20 đạt ở 360px và 430px · [mô tả](backlog_YT.md#yt-01)
 - [x] T-348 **Trang Yêu thích chưa có lộ trình dựng thật từ database, backend tới giao diện** — L1 (mở lane, chỉ tài liệu), chủ repo yêu cầu 2026-11-18; sổ `work/backlog_YT.md` bảy bước, dòng §2 ở `CLAUDE.md`, mở U-119 · [chi tiết](#t-348)
@@ -608,6 +609,17 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-352"></a>
+### T-352 — Lịch sử mua nguyên liệu trong bản HTML Khoản chi
+
+Chủ repo nhắc 2026-11-20 rằng sau mục lịch sử sử dụng vẫn chưa thấy lịch sử mua hàng. Chỉ sửa bản HTML minh hoạ trên nhánh `P4A-01`; các lần mua lấy từ khoản chi nguyên liệu đang có, không thêm dữ liệu mua giả hay thay đổi Kho, API, FE chạy thật. Codex thực hiện; chưa review độc lập.
+
+Acceptance viết trước: trong khối *Mua nguyên liệu* có lối xem *Lịch sử mua hàng* dễ thấy và danh sách riêng với lịch sử sử dụng. Mỗi lần mua hiện ngày nhập hàng, ngày chi, nguyên liệu, số tiền và người ghi; mặc định ngày nhập gần nhất trước, lọc được một nguyên liệu hoặc tất cả, trường hợp chưa có lần mua có lời rõ. Ghi, sửa, xoá khoản chi và đổi tên nguyên liệu trong bản xem thử phải cập nhật lịch sử; bộ lọc tiền chung không che lịch sử. Màn hình hẹp vẫn đọc được mọi cột. Kiểm tương tác, bố cục và chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-20:** Trong đầu khối *Nguyên liệu* có lối nhảy *Lịch sử mua hàng*; bảng mới đặt ngay trên lịch sử sử dụng và mặc định hiện hai lần mua mẫu theo ngày nhập mới trước. Mỗi dòng hiện ngày nhập, ngày chi, mặt hàng, số tiền và người ghi; có lọc nguyên liệu và lời khi chưa có lần mua. Lịch sử đọc trực tiếp từ các khoản chi nguyên liệu nên ghi, sửa, xoá, đổi tên cập nhật cùng dữ liệu; không chịu bộ lọc tiền chung. Không dựng số lượng mua vì bản chi chỉ lưu số tiền. Kiểm jsdom: 13 điều kiện PASS về dữ liệu, thứ tự, lọc, thêm/sửa/xoá, đổi tên và giữ lịch sử sử dụng. Chrome DevTools: viewport 390px có `scrollWidth=390`, khối lịch sử rộng 322px và đủ năm nhãn; viewport 1440px có `scrollWidth=1440`; đã xem ảnh hai cỡ. `git diff --check` đạt. `./scripts/gate.sh` trong bản sao chỉ chứa hai file task đạt: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Chưa review độc lập; scope giữ tới khi chủ repo commit.
 
 <a id="t-348"></a>
 ### T-348 — Trang Yêu thích chưa có lộ trình dựng thật từ database, backend tới giao diện
