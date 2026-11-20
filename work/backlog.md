@@ -53,6 +53,7 @@ của file ấy chỉ nhận dữ kiện admin của quán).
 | Vế 2026-09-29 | **chủ repo**: *"tôi muốn làm luôn db cho phần admin"* — nhắc lại 2026-09-30 (*"tiếp tục"*) | **đang hiệu lực** — mở thi công **lược đồ** admin cho phần đã đủ luật; `docs/decisions.md` **ADR-068** |
 | Vế 2026-10-14 | **chủ repo**: *"cập nhật backlog … cho db của admin, tôi sẽ làm be cho admin"* (T-184) | **đang hiệu lực** — lược đồ admin lượt hai `P2A-10`…`P2A-16`; backend admin sẽ làm — kế hoạch mở 2026-10-14 ở `T-191` (**ADR-110**: `P3A-01`…`P3A-10`) |
 | Vế 2026-11-01 | **chủ repo**: *"step by step complete above task request codex to do you check"* (nói về `work/backlog_CHAT.md`) | **đang hiệu lực** — mở lane `CHAT` cho nhánh đã đủ lời; không mở pha 5 (`T-109`) |
+| Vế 2026-11-18 | **chủ repo**: *"hãy đưa ra các step để tạo page trên từ data base, be và fe, hãy tạo backlog riêng … yêu cầu codex làm bạn kiểm tra"*, rồi *"thiết kế giống file html trên. nhưng dữ liệu cần được cập nhật theo database của quán"* (nói về `favourite.html`) | **đang hiệu lực** — mở lane `YT` ở `work/backlog_YT.md` (T-348); bước YT-01 giao Codex ngay |
 
 **Vế mới nói chính xác cái gì.** Chủ quán chọn *"Song song: hỏi chủ quán về admin trong khi pha 2
 chạy"*, và phương án ấy nói rõ hai nửa:
@@ -96,12 +97,18 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 - [ ] T-347 **Trang Vận hành và trang Tổng kết đọc chậm dần theo toàn bộ lịch sử bán (đo được 595 giây và 1,8 giây trên dữ liệu ba năm)** — L2 (câu đọc của I-019 và I-014, kết quả không được đổi), Claude mở 2026-11-18 từ số đo của T-340 · F-083 · [chi tiết](#t-347)
 - [ ] T-343 **Trigger giữ số đếm của ngày đã ký không lấy khoá ngày, nên lệnh SQL thẳng chạy cùng lúc với lần ký vẫn lọt** — L3 (ADR-080, I-021), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database · [chi tiết](#t-343)
 
+- [ ] YT-02 **Chưa chốt món yêu thích của khách lưu gì, ở đâu, và món ngừng bán thì hiện ra sao** — L2, Claude thiết kế ADR, chủ repo duyệt; điểm khách vãng lai chờ U-119 · [mô tả](backlog_YT.md#yt-02)
+- [ ] YT-03 **Database chưa có chỗ cất món yêu thích và bộ món riêng của khách** — L2, sau YT-02; Claude viết test trước, Codex làm · [mô tả](backlog_YT.md#yt-03)
+- [ ] YT-04 **Chưa có API đọc và ghi món yêu thích theo tài khoản khách** — L2, sau YT-03; Claude viết test trước, Codex làm · [mô tả](backlog_YT.md#yt-04)
+- [ ] YT-05 **Khách chưa có trang Yêu thích thật trên web** — L2, sau YT-04, theo `favourite.html`; Claude viết test trước, Codex làm · [mô tả](backlog_YT.md#yt-05)
+- [ ] YT-06 **Thực đơn và trang chi tiết chưa có nút thả tim** — L1, sau YT-05; Codex làm, Claude duyệt · [mô tả](backlog_YT.md#yt-06)
+- [ ] YT-07 **Trang Yêu thích chưa được nghiệm thu trên app chạy so với bản thiết kế** — L1, sau YT-06; Claude chạy · [mô tả](backlog_YT.md#yt-07)
 [↑ đầu file](#top)
 
 <a id="in-progress"></a>
 ## In Progress
 
-- [x] T-351 **Bản HTML Khoản chi chưa có lịch sử nguyên liệu đã dùng theo từng ngày** — L1 (chỉ bản xem thử), chủ repo yêu cầu và xong 2026-11-20; dưới danh mục nguyên liệu có lịch sử theo ngày, lọc từng thứ và trạng thái chưa có lần ghi · [chi tiết](#t-351)
+- [x] T-348 **Trang Yêu thích chưa có lộ trình dựng thật từ database, backend tới giao diện** — L1 (mở lane, chỉ tài liệu), chủ repo yêu cầu 2026-11-18; sổ `work/backlog_YT.md` bảy bước, dòng §2 ở `CLAUDE.md`, mở U-119 · [chi tiết](#t-348)
 - [x] T-350 **Bản HTML Khoản chi chưa hiện ngày nhập và ước tính hàng còn dùng được bao nhiêu ngày** — L1 (chỉ bản thiết kế minh hoạ), chủ repo yêu cầu 2026-11-19, xong 2026-11-20; ngày nhập tách ngày chi, số còn và mức tiêu thụ tự nhập, ước tính ngày còn; Codex làm · [chi tiết](#t-350)
 - [x] T-340 **Bảng vết và bốn đường đọc chính chưa có chỉ mục, mỗi lần tính giá quét cả lịch sử sửa** — L2 (lược đồ; không đổi dữ liệu hay hành vi), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; Codex làm song song với T-339 từ 2026-11-17 (scope không chạm nhau), Claude duyệt · [chi tiết](#t-340)
 - [x] T-339 **Bộ đối chiếu vết kêu oan với vết không người của mã xác nhận Gmail và sổ gọi model** — L2 (I-018), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; Codex làm, Claude duyệt · [chi tiết](#t-339)
@@ -601,6 +608,17 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
 
+<a id="t-348"></a>
+### T-348 — Trang Yêu thích chưa có lộ trình dựng thật từ database, backend tới giao diện
+
+Chủ repo yêu cầu 2026-11-18 (nguyên văn ở bảng lời chốt đầu file, *Vế 2026-11-18*): đưa các bước dựng trang `favourite.html` từ database, backend tới FE, backlog riêng, dữ liệu theo database quán đang chạy, Codex làm và Claude kiểm. Mức L1: chỉ thêm tài liệu kế hoạch và một câu hỏi mở, không đổi code, hợp đồng hay dữ liệu.
+
+Acceptance: A1 — `work/backlog_YT.md` có bảy bước DB → BE → FE kèm mức, ai làm, đứng trên và chặn bởi; cách Claude đọc lời chủ repo ghi riêng, có nhãn *suy ra*. A2 — `CLAUDE.md` §2 có dòng owner cho sổ mới. A3 — `docs/product/99-unknowns.md` có U-119 đúng khuôn một gạch dưới `### Đang mở`, brief đọc ra. A4 — `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-348.txt`): `work/backlog_YT.md`, `CLAUDE.md`, `docs/product/99-unknowns.md`, `work/backlog.md`. Claude làm.
+
+[↑ đầu file](#top)
+
 <a id="t-339"></a>
 ### T-339 — Bộ đối chiếu vết kêu oan với vết không người của mã xác nhận Gmail và sổ gọi model
 
@@ -656,17 +674,6 @@ Acceptance (viết khi mở việc): dự kiến mỗi câu một test so kết 
 Nguồn: bản đánh giá database 2026-11-16, mục 6. `cash_day_reconciled_guard` (thân cuối ở `db/migrations/20261012120000_mo_lai_so_dem.up.sql`) đọc `reconciled_day` mà không lấy khoá; dưới READ COMMITTED một lần sửa số đếm và một lần ký ngày chạy song song đều qua. Backend đã khoá ngày ở `be/internal/ket/service.go` (`ngayban.Khoa`), nên chỉ đường vượt backend mới lọt — nhưng ADR-080 điểm 1 đặt khoá ở tầng database chính vì các tầng trên có đường vòng. Mức L3: đổi một trigger giữ tiền và phải khớp giao thức khoá của backend (thứ tự khoá, khoá chung/riêng) để không sinh deadlock; cần thiết kế và *Sửa đổi* ADR-080 trước khi viết code. Làm sau cùng trong năm việc.
 
 Acceptance (viết khi mở việc, sau thiết kế).
-
-<a id="t-351"></a>
-### T-351 — Lịch sử dùng nguyên liệu trong bản HTML Khoản chi
-
-Chủ repo yêu cầu 2026-11-20: thêm mục *history* dưới khối *Nguyên liệu · 9 loại* để xem những ngày trước mỗi thứ đã dùng thế nào. Chỉ bản HTML minh hoạ; dữ liệu mẫu không phải số thật của quán và không đổi Kho, API hay FE chạy thật. Codex làm trên nhánh `P4A-01`, chưa review độc lập.
-
-Acceptance viết trước: mục *Lịch sử sử dụng* hiện ngày, nguyên liệu và lượng đã dùng theo đơn vị; ngày gần nhất đứng trước; có lọc một nguyên liệu hoặc xem tất cả; nguyên liệu chưa có dòng lịch sử được nói rõ; trên màn hình hẹp các ô vẫn có nhãn và không mất thông tin. Đổi tên hoặc xoá nguyên liệu trong bản xem thử cập nhật lịch sử tương ứng. Số lịch sử không tự đổi mức tiêu thụ mỗi ngày đang nhập cho dự tính. Kiểm tương tác, bố cục và chạy `./scripts/gate.sh`.
-
-Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
-
-**Bàn giao 2026-11-20:** Thêm bảng *Lịch sử sử dụng nguyên liệu* ngay dưới danh mục nguyên liệu, mặc định hiện bốn dòng minh hoạ theo ngày mới trước; chọn xem từng nguyên liệu hoặc tất cả. Nguyên liệu chưa có dòng hiện lời rõ. Lịch sử đứng riêng với bộ lọc khoản chi và mức dùng/ngày dự tính; đổi tên cập nhật lịch sử và lựa chọn đang lọc, xoá nguyên liệu trong bản xem thử dọn các dòng của nó. jsdom: 14 điều kiện PASS về thứ tự ngày, lọc, số và đơn vị, trạng thái rỗng, đổi tên, xoá, và không đổi dự tính. Chrome DevTools: viewport 390px có `scrollWidth=390`, bảng rộng 294px trong khung 322px, ba nhãn hiện; viewport 1440px có `scrollWidth=1440`; đã xem ảnh cả hai cỡ. `git diff --check` đạt. `./scripts/gate.sh` trên bản sao chỉ chứa hai file task đạt: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Chưa review độc lập; scope giữ tới khi chủ repo commit.
 
 <a id="t-350"></a>
 ### T-350 — Ngày nhập và số ngày còn dùng trong bản HTML Khoản chi

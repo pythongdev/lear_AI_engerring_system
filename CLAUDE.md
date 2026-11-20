@@ -74,6 +74,7 @@ is a bug to fix now.
 | Tasks — mô tả dài của **mảng admin**, `ADM-01`…`ADM-53` | `work/backlog_AD.md` |
 | Tasks — mô tả dài của **backend admin**, `P3A-01`…`P3A-11` | `work/backlog_AD_BE.md`; thứ tự, mức và cổng: `master_plan/AD_BE_master_plan_banh_cuon_ba_thanh.md` (ADR-110) |
 | Tasks — mô tả dài của **chat với app**, `CHAT-01`…`CHAT-34` (chờ ADR-136) | `work/backlog_CHAT.md`; thứ tự, mức và cổng: `master_plan/CHAT_master_plan_banh_cuon_ba_thanh.md` (T-283) |
+| Tasks — mô tả dài của **trang Yêu thích**, `YT-01`…`YT-07`, kèm thứ tự, mức và ai làm | `work/backlog_YT.md` (T-348) |
 | Tasks — mô tả dài của **lược đồ admin**, `P2A-01`…`P2A-16` | `work/backlog_AD_DB.md`; thứ tự, mức và cổng: `master_plan/AD_DB_master_plan_banh_cuon_ba_thanh.md` (ADR-068) |
 | Câu hỏi cho chủ quán về mảng admin, và chỗ chủ quán trả lời | `work/admin-questions.md` §3 |
 | Scope of each task in flight | `work/scope/<ID>.txt` — one file per task, ignored by git (ADR-063) |
