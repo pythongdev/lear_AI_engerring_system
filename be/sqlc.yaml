@@ -367,3 +367,18 @@ sql:
         package: sqlcgen
         out: internal/troly/internal/sqlcgen
         sql_package: pgx/v5
+  - engine: postgresql
+    schema: ../db/migrations
+    queries:
+      - internal/yeuthich/sql
+      - internal/yeuthich/sql/tha_tim
+      - internal/yeuthich/sql/sua_tim
+      - internal/yeuthich/sql/bo_tim
+      - internal/yeuthich/sql/tao_bo
+      - internal/yeuthich/sql/sua_bo
+      - internal/yeuthich/sql/xoa_bo
+    gen:
+      go:
+        package: sqlcgen
+        out: internal/yeuthich/internal/sqlcgen
+        sql_package: pgx/v5

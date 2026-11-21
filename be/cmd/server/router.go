@@ -7,6 +7,7 @@ import (
 	"banhcuon/be/internal/tongket"
 	"banhcuon/be/internal/tongquan"
 	"banhcuon/be/internal/troly"
+	"banhcuon/be/internal/yeuthich"
 	"net/http"
 	"os"
 	"strings"
@@ -80,6 +81,7 @@ func routerWithRealtimeBoGioBan(pool *pgxpool.Pool, auth authz.Authenticator, b 
 	taikhoan.Routes(r, taikhoan.NewService(pool, taikhoan.SMTPFromEnv()))
 	googleClientID := strings.TrimSpace(os.Getenv("BANHCUON_GOOGLE_CLIENT_ID"))
 	khach.Routes(r, khach.NewService(pool, taikhoan.SMTPFromEnv()).WithOrigin(os.Getenv("BANHCUON_ORIGIN")).WithGoogle(googleClientID, google.New(googleClientID, google.Options{})))
+	yeuthich.Routes(r, yeuthich.NewService(pool))
 	tratruoc.Routes(r, tratruoc.NewService(pool))
 	hoadon.Routes(r, hoadon.NewService(pool))
 	ket.Routes(r, ket.NewService(pool))

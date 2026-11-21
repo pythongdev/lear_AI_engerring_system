@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.75.0
+  version: 0.76.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -16,6 +16,8 @@ security:
   - PersonIdentity: []
 # Nhóm trong Swagger UI = gói miền dưới be/internal/ đăng ký đường gọi ấy (chỉ để đọc, không phải luật).
 tags:
+  - name: yeuthich
+    description: Dòng tim và bộ món riêng của tài khoản khách (ADR-145; YT-04).
   - name: troly
     description: Hỏi đáp công khai chỉ đọc.
   - name: tongket
@@ -59,6 +61,229 @@ tags:
   - name: ket
     description: Két và ngày bán — tiền đầu ngày, đếm két, khai sổ giấy, ký đối chiếu ngày (06-duong-tien.md).
 paths:
+  /customer-accounts/current/favourites:
+    get:
+      operationId: customerFavourites
+      tags: [yeuthich]
+      security:
+        - CustomerIdentity: []
+      description: >-
+        Chỉ dữ liệu của phiên khách; dòng tim, bộ và dòng trong bộ theo id tăng. Giữ dòng ngừng bán, available=false và unavailable_code bằng mã gia.Tinh lúc đọc.
+        Khách lấy từ phiên, không nhận id khách. Kiểm dòng bằng gia.Tinh trong giao dịch;
+        trả nguyên lỗi và field như POST /price-quotes. Không trả giá, tên món hay ảnh.
+      responses:
+        '200':
+          description: Thành công theo ADR-145.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favourites'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createFavouriteLine
+      tags: [yeuthich]
+      security:
+        - CustomerIdentity: []
+      description: >-
+        Thả tim dưới khoá theo khách. Cùng món và tập lựa chọn, hoặc cùng combo và tập suất theo số combo thì cộng số lượng. Tổng vượt 99 trả invalid_request; dòng thứ 51 trả favourite_limit_reached (422).
+        Khách lấy từ phiên, không nhận id khách. Kiểm dòng bằng gia.Tinh trong giao dịch;
+        trả nguyên lỗi và field như POST /price-quotes. Không trả giá, tên món hay ảnh.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FavouriteLineInput'
+      responses:
+        '200':
+          description: Thành công theo ADR-145.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavouriteLine'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /customer-accounts/current/favourites/{favourite_line_id}:
+    put:
+      operationId: updateFavouriteLine
+      tags: [yeuthich]
+      security:
+        - CustomerIdentity: []
+      description: >-
+        Gỡ dòng tim cũ và các suất con, rồi thả tim hình mới theo luật gộp trong cùng giao dịch. Không có, đã gỡ, thuộc bộ hoặc thuộc khách khác trả favourite_line_not_found (404).
+        Khách lấy từ phiên, không nhận id khách. Kiểm dòng bằng gia.Tinh trong giao dịch;
+        trả nguyên lỗi và field như POST /price-quotes. Không trả giá, tên món hay ảnh.
+      parameters:
+        - in: path
+          name: favourite_line_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FavouriteLineInput'
+      responses:
+        '200':
+          description: Thành công theo ADR-145.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavouriteLine'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /customer-accounts/current/favourites/{favourite_line_id}/removal:
+    post:
+      operationId: removeFavouriteLine
+      tags: [yeuthich]
+      security:
+        - CustomerIdentity: []
+      description: >-
+        Đặt removed_at cho dòng tim và các suất con. Không có, đã gỡ, thuộc bộ hoặc thuộc khách khác trả favourite_line_not_found (404).
+        Khách lấy từ phiên, không nhận id khách. Kiểm dòng bằng gia.Tinh trong giao dịch;
+        trả nguyên lỗi và field như POST /price-quotes. Không trả giá, tên món hay ảnh.
+      parameters:
+        - in: path
+          name: favourite_line_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Thành công theo ADR-145.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerOK'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /customer-accounts/current/favourite-sets:
+    post:
+      operationId: createFavouriteSet
+      tags: [yeuthich]
+      security:
+        - CustomerIdentity: []
+      description: >-
+        Tạo bộ kèm dòng trong cùng giao dịch, không gộp dòng của bộ với dòng tim. Tối đa 20 bộ mỗi khách và 20 dòng mỗi bộ; vượt trả favourite_limit_reached (422).
+        Khách lấy từ phiên, không nhận id khách. Kiểm dòng bằng gia.Tinh trong giao dịch;
+        trả nguyên lỗi và field như POST /price-quotes. Không trả giá, tên món hay ảnh.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FavouriteSetInput'
+      responses:
+        '200':
+          description: Thành công theo ADR-145.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavouriteSet'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /customer-accounts/current/favourite-sets/{favourite_set_id}:
+    put:
+      operationId: updateFavouriteSet
+      tags: [yeuthich]
+      security:
+        - CustomerIdentity: []
+      description: >-
+        Giữ kind; thay tên, gỡ mọi dòng cũ và thêm dòng mới trong cùng giao dịch. Không có, đã gỡ hoặc thuộc khách khác trả favourite_set_not_found (404).
+        Khách lấy từ phiên, không nhận id khách. Kiểm dòng bằng gia.Tinh trong giao dịch;
+        trả nguyên lỗi và field như POST /price-quotes. Không trả giá, tên món hay ảnh.
+      parameters:
+        - in: path
+          name: favourite_set_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, lines]
+              additionalProperties: true
+              properties:
+                name:
+                  $ref: '#/components/schemas/FavouriteSetInput/properties/name'
+                lines:
+                  $ref: '#/components/schemas/FavouriteSetInput/properties/lines'
+      responses:
+        '200':
+          description: Thành công theo ADR-145.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavouriteSet'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /customer-accounts/current/favourite-sets/{favourite_set_id}/removal:
+    post:
+      operationId: removeFavouriteSet
+      tags: [yeuthich]
+      security:
+        - CustomerIdentity: []
+      description: >-
+        Đặt removed_at của bộ; bộ và các dòng không còn trong kết quả đọc. Không có, đã gỡ hoặc thuộc khách khác trả favourite_set_not_found (404).
+        Khách lấy từ phiên, không nhận id khách. Kiểm dòng bằng gia.Tinh trong giao dịch;
+        trả nguyên lỗi và field như POST /price-quotes. Không trả giá, tên món hay ảnh.
+      parameters:
+        - in: path
+          name: favourite_set_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Thành công theo ADR-145.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerOK'
+        default:
+          description: Lỗi theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /leave-notices:
     post:
       operationId: createLeaveNotice
@@ -8311,6 +8536,9 @@ components:
         Mã lỗi công khai. FE quyết hiện gì theo mã, không theo status, không theo chữ.
         Mã của một luật do lát dựng cửa của luật ấy thêm (01-hop-dong-api.md §3).
       enum:
+        - favourite_line_not_found
+        - favourite_set_not_found
+        - favourite_limit_reached
         - leave_date_in_past
         - leave_notice_day_taken
         - leave_day_attendance_ticked
@@ -8451,6 +8679,9 @@ components:
         - wrong_make_note_already_cancelled
         - served_quantity_exceeds_made
       x-http-status:
+        favourite_line_not_found: 404
+        favourite_set_not_found: 404
+        favourite_limit_reached: 422
         leave_date_in_past: 422
         leave_notice_day_taken: 409
         leave_day_attendance_ticked: 409
@@ -8641,6 +8872,113 @@ components:
           format: int64
         issued_at:
           $ref: '#/components/schemas/Instant'
+    FavouriteLineInput:
+      description: >-
+        Hình PriceLineRequest, số lượng 1–99. Lỗi dòng giữ nguyên mã và field của gia.Tinh;
+        số lượng vượt 99 trả invalid_request. Trường lạ bị bỏ qua.
+      allOf:
+        - $ref: '#/components/schemas/PriceLineRequest'
+        - type: object
+          properties:
+            quantity:
+              type: integer
+              format: int32
+              minimum: 1
+              maximum: 99
+    FavouriteLine:
+      type: object
+      description: >-
+        Dòng gốc đã chuẩn hoá, không có giá, tên món hay ảnh. Đúng một mã món hoặc combo khác null.
+        option_ids xếp tăng; dòng combo trả []. portions của dòng món là []; của combo theo id suất tăng,
+        tổng suất giữ nguyên như gia.Tinh nhận, một nhóm lớn có thể tách thành nhiều nhóm cùng hình.
+        available theo gia.Tinh lúc đọc, unavailable_code null khi còn bán.
+      required: [favourite_line_id, menu_item_id, menu_combo_id, option_ids, portions, quantity, available, unavailable_code]
+      additionalProperties: false
+      properties:
+        favourite_line_id:
+          type: integer
+          format: int64
+        menu_item_id:
+          type: [integer, 'null']
+          format: int64
+        menu_combo_id:
+          type: [integer, 'null']
+          format: int64
+        option_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        portions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceLinePortion'
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 99
+        available:
+          type: boolean
+        unavailable_code:
+          oneOf:
+            - $ref: '#/components/schemas/ErrorCode'
+            - type: 'null'
+    FavouriteSetInput:
+      type: object
+      description: >-
+        Tạo bộ yêu cầu kind, name và lines. Tên rỗng sau btrim, dài quá 60 ký tự, kind lạ
+        hoặc không dòng nào trả invalid_request. Quá 20 dòng trả favourite_limit_reached (422).
+        Các dòng được kiểm cùng gia.Tinh; không gộp dòng trùng trong bộ.
+      required: [kind, name, lines]
+      additionalProperties: true
+      properties:
+        kind:
+          type: string
+          enum: [rieng, da_luu]
+        name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        lines:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items:
+            $ref: '#/components/schemas/FavouriteLineInput'
+    FavouriteSet:
+      type: object
+      required: [favourite_set_id, kind, name, lines]
+      additionalProperties: false
+      properties:
+        favourite_set_id:
+          type: integer
+          format: int64
+        kind:
+          type: string
+          enum: [rieng, da_luu]
+        name:
+          type: string
+        lines:
+          type: array
+          description: Các dòng gốc chưa gỡ trong bộ, theo id tăng; suất con lồng trong portions.
+          items:
+            $ref: '#/components/schemas/FavouriteLine'
+    Favourites:
+      type: object
+      required: [lines, sets]
+      additionalProperties: false
+      properties:
+        lines:
+          type: array
+          description: Các dòng tim gốc chưa gỡ, không thuộc bộ, theo id tăng.
+          items:
+            $ref: '#/components/schemas/FavouriteLine'
+        sets:
+          type: array
+          description: Các bộ chưa gỡ, theo id tăng.
+          items:
+            $ref: '#/components/schemas/FavouriteSet'
     PriceLineRequest:
       type: object
       description: >-
@@ -9117,30 +9455,32 @@ x-constraint-errors:
   model_call_month_budget_check: internal
   model_call_day_budget_check: internal
   attendance_day_on_leave_check: unreviewed
-  customer_favourite_line_account_fkey: unreviewed
-  customer_favourite_line_item_xor_combo_check: unreviewed
-  customer_favourite_line_limit_check: unreviewed
-  customer_favourite_line_menu_combo_fkey: unreviewed
-  customer_favourite_line_menu_item_fkey: unreviewed
-  customer_favourite_line_option_item_line_check: unreviewed
-  customer_favourite_line_option_key: unreviewed
-  customer_favourite_line_option_line_fkey: unreviewed
-  customer_favourite_line_option_option_fkey: unreviewed
-  customer_favourite_line_option_pkey: unreviewed
-  customer_favourite_line_owner_key: unreviewed
-  customer_favourite_line_parent_fkey: unreviewed
-  customer_favourite_line_pkey: unreviewed
-  customer_favourite_line_quantity_check: unreviewed
-  customer_favourite_line_removed_once_check: unreviewed
-  customer_favourite_line_set_fkey: unreviewed
-  customer_favourite_line_shape_check: unreviewed
-  customer_favourite_set_account_fkey: unreviewed
-  customer_favourite_set_kind_check: unreviewed
-  customer_favourite_set_limit_check: unreviewed
-  customer_favourite_set_name_check: unreviewed
-  customer_favourite_set_owner_key: unreviewed
-  customer_favourite_set_pkey: unreviewed
-  customer_favourite_set_removed_once_check: unreviewed
+  # YT-04: id/chủ/cha/bộ do cửa cấp; hình và lựa chọn qua gia.Tinh; lượng 1–99.
+  # Tên/kind kiểm ở cửa, mốc gỡ chỉ ghi một lần dưới khoá khách; các tên này là internal.
+  customer_favourite_line_account_fkey: internal
+  customer_favourite_line_item_xor_combo_check: internal
+  customer_favourite_line_limit_check: favourite_limit_reached
+  customer_favourite_line_menu_combo_fkey: internal
+  customer_favourite_line_menu_item_fkey: internal
+  customer_favourite_line_option_item_line_check: internal
+  customer_favourite_line_option_key: internal
+  customer_favourite_line_option_line_fkey: internal
+  customer_favourite_line_option_option_fkey: internal
+  customer_favourite_line_option_pkey: internal
+  customer_favourite_line_owner_key: internal
+  customer_favourite_line_parent_fkey: internal
+  customer_favourite_line_pkey: internal
+  customer_favourite_line_quantity_check: internal
+  customer_favourite_line_removed_once_check: internal
+  customer_favourite_line_set_fkey: internal
+  customer_favourite_line_shape_check: internal
+  customer_favourite_set_account_fkey: internal
+  customer_favourite_set_kind_check: internal
+  customer_favourite_set_limit_check: favourite_limit_reached
+  customer_favourite_set_name_check: internal
+  customer_favourite_set_owner_key: internal
+  customer_favourite_set_pkey: internal
+  customer_favourite_set_removed_once_check: internal
   daily_minimum_pkey: internal
   daily_minimum_sale_date_key: internal
   daily_minimum_person_fkey: internal

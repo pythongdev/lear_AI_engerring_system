@@ -38,6 +38,7 @@ import (
 	"banhcuon/be/internal/taikhoan"
 	"banhcuon/be/internal/testhelper"
 	"banhcuon/be/internal/troly"
+	"banhcuon/be/internal/yeuthich"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 )
@@ -620,6 +621,38 @@ var cacCaVet = []caVet{
 			}, 200)
 		}}
 	}},
+	// Bốn cửa UPDATE của món yêu thích (YT-04, ADR-145, I-045): khách tự sửa, actor phải NULL như cửa khách.
+	{"yeuthich/sua_tim", func(t *testing.T, c canh) dichVet {
+		c, token, id := yeuthichVetSetup(t, c)
+		return dichVet{"customer_favourite_line", id, 0, "removed_at", nil, "mốc", func() {
+			khachVetGoi(t, c, "PUT", fmt.Sprintf("/customer-accounts/current/favourites/%d", id), token, yeuthichVetDong(c, 2), 200)
+		}}
+	}},
+	{"yeuthich/bo_tim", func(t *testing.T, c canh) dichVet {
+		c, token, id := yeuthichVetSetup(t, c)
+		return dichVet{"customer_favourite_line", id, 0, "removed_at", nil, "mốc", func() {
+			khachVetGoi(t, c, "POST", fmt.Sprintf("/customer-accounts/current/favourites/%d/removal", id), token, nil, 200)
+		}}
+	}},
+	{"yeuthich/sua_bo", func(t *testing.T, c canh) dichVet {
+		c, token, _ := yeuthichVetSetup(t, c)
+		out, _ := khachVetGoi(t, c, "POST", "/customer-accounts/current/favourite-sets", token, map[string]any{
+			"kind": "rieng", "name": "Bộ kiểm vết", "lines": []any{yeuthichVetDong(c, 1)}}, 200)
+		id := int64(out["favourite_set_id"].(float64))
+		return dichVet{"customer_favourite_set", id, 0, "name", "Bộ kiểm vết", "Bộ kiểm vết mới", func() {
+			khachVetGoi(t, c, "PUT", fmt.Sprintf("/customer-accounts/current/favourite-sets/%d", id), token, map[string]any{
+				"name": "Bộ kiểm vết mới", "lines": []any{yeuthichVetDong(c, 1)}}, 200)
+		}}
+	}},
+	{"yeuthich/xoa_bo", func(t *testing.T, c canh) dichVet {
+		c, token, _ := yeuthichVetSetup(t, c)
+		out, _ := khachVetGoi(t, c, "POST", "/customer-accounts/current/favourite-sets", token, map[string]any{
+			"kind": "da_luu", "name": "Bộ kiểm vết xoá", "lines": []any{yeuthichVetDong(c, 1)}}, 200)
+		id := int64(out["favourite_set_id"].(float64))
+		return dichVet{"customer_favourite_set", id, 0, "removed_at", nil, "mốc", func() {
+			khachVetGoi(t, c, "POST", fmt.Sprintf("/customer-accounts/current/favourite-sets/%d/removal", id), token, nil, 200)
+		}}
+	}},
 	{"khach/ket_thuc_phien", func(t *testing.T, c canh) dichVet {
 		c, token, _, _ := khachVetSetup(t, c, nil)
 		h := sha256.Sum256([]byte(token))
@@ -951,6 +984,33 @@ func khachVetSetup(t *testing.T, c canh, mail taikhoan.Mailer) (canh, string, in
 	}
 	return c, token, int64(out["customer_account_id"].(float64)), email
 }
+
+// yeuthichVetSetup đăng ký một khách qua cửa thật, gắn thêm cửa yêu thích vào cùng server, rồi thả tim một dòng §4.8.
+func yeuthichVetSetup(t *testing.T, c canh) (canh, string, int64) {
+	t.Helper()
+	r := gin.New()
+	khach.Routes(r, khach.NewService(c.pool, nil))
+	yeuthich.Routes(r, yeuthich.NewService(c.pool))
+	c.srv = httptest.NewServer(r)
+	t.Cleanup(c.srv.Close)
+	_, token := khachVetGoi(t, c, "POST", "/customer-accounts", "", map[string]any{
+		"display_name": "Khách kiểm vết yêu thích", "email": fmt.Sprintf("vet.yt.%d@khach.test", c.chu), "password": "mat-khau-vet-1",
+	}, 201)
+	if token == "" {
+		t.Fatal("đăng ký khách thiếu cookie")
+	}
+	out, _ := khachVetGoi(t, c, "POST", "/customer-accounts/current/favourites", token, yeuthichVetDong(c, 1), 200)
+	return c, token, int64(out["favourite_line_id"].(float64))
+}
+
+func yeuthichVetDong(c canh, so int) map[string]any {
+	ids := c.mon.chonIDs
+	if ids == nil {
+		ids = []int64{}
+	}
+	return map[string]any{"menu_item_id": c.mon.monID, "quantity": so, "option_ids": ids}
+}
+
 func khachVetGoi(t *testing.T, c canh, method, path, token string, body any, want int) (map[string]any, string) {
 	t.Helper()
 	raw, err := json.Marshal(body)

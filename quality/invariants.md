@@ -1863,3 +1863,21 @@ dựng lỗi; con số thiếu đơn vị, khác đơn vị đã đặt, sai khu
 nhằng ⇒ không đề xuất (`I-025` · `I-026`, `ghi_nguyen_lieu_test.go`).
 
 *Viết ở CHAT-02 lượt ba, 2026-11-08, Claude Code.*
+
+### I-045 — Món yêu thích và bộ món của một khách chỉ chính khách ấy đọc và sửa, và KHÔNG mang giá: giá hiện ra là giá hàm giá tính lúc đọc
+
+**Invariant:**
+Thiết kế **ADR-145** (YT-02, Claude Code; chủ repo duyệt 2026-11-19). Mọi dòng yêu thích và mọi bộ món thuộc đúng một tài khoản khách; chỉ phiên của
+chính khách ấy đọc, thêm, sửa, gỡ được chúng — khách khác, người làm và cửa công khai đều không. Dữ liệu yêu thích chỉ giữ tham chiếu món, combo, lựa
+chọn và số lượng: không giá, không tên, không ảnh; một dòng chỉ được nhận khi hàm giá duy nhất (`docs/product/3-be/03-ham-gia.md`) nhận đúng dòng ấy, và
+từ chối bằng đúng mã của hàm giá. Dòng có món ngừng bán, combo hay lựa chọn đã ẩn vẫn còn, đọc ra *không còn bán* với mã hàm giá trả lúc đọc. Không
+xoá cứng: bỏ tim, xoá bộ là mốc gỡ ghi một lần.
+
+**Verification:**
+Tầng 1 — `db/tests/yt03_customer_favourite.sql`: ba bảng không có cột giá, tên hay ảnh; dòng không trỏ được vào bộ hay dòng cha của khách khác; gỡ một
+lần; vai ứng dụng không xoá, không đổi món của dòng. Tầng 3 — `be/internal/yeuthich/http_test.go` (`TestI045_*`), viết trước code: không phiên ⇒ 401
+ở cả bảy đường; khách hai đọc không thấy và sửa, gỡ dòng hay bộ của khách một ⇒ 404 `favourite_line_not_found` · `favourite_set_not_found`, dữ liệu
+khách một không đổi; thân đọc không chứa `_vnd`, `price`, `item_name`, `image`; dòng sai bị từ chối bằng đúng mã `POST /price-quotes` trả; món ngừng
+bán vẫn đọc ra `available=false` với mã ấy.
+
+*Viết ở YT-04, 2026-11-20, Claude Code — QC-17 đòi test backend mang mã mệnh đề; ADR-145 cũ ghi "không thêm bất biến", nay đổi.*

@@ -8952,6 +8952,9 @@ Database cấm `jsonb` ngoài cột `_image` (`QC` kiểu cột) và cấm xoá 
    1–99. Vượt ⇒ 422 với mã riêng.
 9. **Không dựng** đặt lại đơn cũ (U-106), đồng bộ giỏ, chia sẻ bộ cho người khác.
 
+*Sửa 2026-11-20 (YT-04, Claude Code):* thêm bất biến **I-045** (dữ liệu yêu thích chỉ chủ đọc/sửa, không mang giá) — QC-17 đòi test backend mang
+mã mệnh đề; trước đó phiên ghi ở `work/backlog_YT.md` là không thêm bất biến.
+
 **Consequences:** trang Yêu thích luôn hiện giá và tên hiện hành, không bao giờ giá cũ; thêm vào giỏ chỉ là chép dòng, giá tính lại ở
 giỏ như mọi đường khác. Ba bảng mới trong lát khách, không chạm bảng tiền, đơn hay menu. Rủi ro: một đường đọc quên cờ *không còn bán*
 sẽ cho món ngừng bán vào giỏ — nhưng `price-quotes` và cửa tạo đơn vẫn từ chối, nên không sai tiền. Lùi: down migration bỏ ba bảng

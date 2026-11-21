@@ -263,3 +263,15 @@ CHAT-31 (2026-11-04, phiếu Claude): `GET /leave-notices/mine` thuộc lớp `n
 chỉ người của phiên, kể cả đã huỷ; không nhận định danh người từ tham số.
 `GET /leave-notices` thuộc lớp `chu_quan`, đọc mọi báo nghỉ trong khoảng ngày, kể cả đã huỷ.
 Theo ADR-138 điểm 3 · 6; kiểm hình trước quyền, cả hai trả unauthenticated khi không phiên hoặc chỉ cookie khách.
+
+YT-04 (2026-11-20, phiếu Claude): cửa đọc `GET /customer-accounts/current/favourites` dùng lớp `khach`;
+chỉ tài khoản của phiên khách được đọc và ghi dữ liệu của mình (ADR-145).
+
+| Cửa | Lớp | Nguồn |
+|---|---|---|
+| `yeuthich/tha_tim` | `khach` | ADR-145; YT-04 |
+| `yeuthich/sua_tim` | `khach` | ADR-145; YT-04 |
+| `yeuthich/bo_tim` | `khach` | ADR-145; YT-04 |
+| `yeuthich/tao_bo` | `khach` | ADR-145; YT-04 |
+| `yeuthich/sua_bo` | `khach` | ADR-145; YT-04 |
+| `yeuthich/xoa_bo` | `khach` | ADR-145; YT-04 |

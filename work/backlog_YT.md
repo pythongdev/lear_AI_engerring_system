@@ -160,6 +160,24 @@ bước kiểm thứ hai.
 không thuộc món ⇒ lỗi cùng mã với `price-quotes`; thả tim trùng gộp số lượng; món ngừng bán vẫn đọc được với cờ
 hết bán; bỏ tim rồi đọc không thấy. Codex làm cho xanh; Claude chạy `./scripts/be-check.sh` và gate; Gate 1g xanh.
 
+**Kết quả 2026-11-20** (thực hiện: Codex, duyệt: Claude; worktree `../lean_wt/YT-04`, nhánh `codex/YT-04` từ `e69d481` + bản vá YT-03;
+log ở `../lean_wt/_claude_logs/YT-04/`). Codex dựng gói `be/internal/yeuthich` (một cửa đọc, sáu cửa ghi `yeuthich/tha_tim` ·
+`sua_tim` · `bo_tim` · `tao_bo` · `sua_bo` · `xoa_bo`; kiểm dòng bằng `gia.Tinh`, cờ *không còn bán* cũng từ `gia.Tinh` lúc đọc; gộp dòng
+trùng dưới khoá khách), bảy đường và năm schema trong hợp đồng **0.74.0**, ba mã lỗi mới `favourite_line_not_found` ·
+`favourite_set_not_found` · `favourite_limit_reached`, gán mã cho 24 tên `unreviewed` của YT-03, sáu dòng ma trận, khối `sqlc.yaml`,
+đăng ký router. Claude sửa ba chỗ lúc duyệt, đều ở test của mình: (1) QC-17 đòi tên test mang mã mệnh đề ⇒ thêm **I-045** vào
+`quality/invariants.md` và dòng *chưa có lát* ở `09-doi-chieu-bat-bien.md`, đổi tên chín test thành `TestI045_*`; (2) phiên khách
+trong test phải là 32 byte base64url (43 ký tự); (3) `be/internal/don/vet_cua_test.go` thêm bốn ca vết cho bốn cửa UPDATE mới (I-018,
+`TestI018_TapCuaSuaKhopTapCa`). Bằng chứng: `be-check: PASS — … (33/33 gói, 33 database)`, chín `TestI045_*` PASS; Gate 3 · 1b · 1c ·
+1d · 1e · 1f · 1g (`hợp đồng 0.74.0 … 560 dòng ánh xạ (407 internal, 62 unreviewed, 91 …)`) · 1h · `check-sqlcgen` đều PASS;
+`git diff --check` sạch; test không bị Codex sửa.
+
+**Đưa về cây chính 2026-11-21** (Claude). Hợp đồng **0.76.0**; `vet_cua_test.go` gộp với ca `image_code` của T-307; `schema.ts` sinh lại đi
+cùng khối này (thêm vào scope YT-04) để không commit nào có kiểu FE lệch hợp đồng; I-045 vào `quality/invariants.md`, dòng ở
+`09-doi-chieu-bat-bien.md`, ghi chú *Sửa 2026-11-20* ở ADR-145. Gate đầy đủ trên bản gộp lộ một lỗi của chính YT-04: `service.go` import
+`sqlcgen` (QC-13 dòng năm, chỉ `db-check` chấm) — Codex dời bảy chỗ gọi vào `repository.go`, không đổi SQL hay hợp đồng. Lớp YT-03 + YT-04
+(`../lean_wt/YT-lop-04`) đứng riêng được: Codex chạy cùng bộ kiểm như YT-03, đều PASS.
+
 <a id="yt-05"></a>
 ## YT-05 — Trang Yêu thích trên FE
 

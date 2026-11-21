@@ -15,6 +15,9 @@ import (
 type Code string
 
 const (
+	CodeFavouriteLineNotFound          Code = "favourite_line_not_found"
+	CodeFavouriteSetNotFound           Code = "favourite_set_not_found"
+	CodeFavouriteLimitReached          Code = "favourite_limit_reached"
 	CodeLeaveDateInPast                Code = "leave_date_in_past"
 	CodeLeaveNoticeDayTaken            Code = "leave_notice_day_taken"
 	CodeLeaveDayAttendanceTicked       Code = "leave_day_attendance_ticked"
@@ -173,6 +176,9 @@ const (
 
 // statusOf là x-http-status của ErrorCode.
 var statusOf = map[Code]int{
+	CodeFavouriteLineNotFound:          404,
+	CodeFavouriteSetNotFound:           404,
+	CodeFavouriteLimitReached:          422,
 	CodeLeaveDateInPast:                422,
 	CodeLeaveNoticeDayTaken:            409,
 	CodeLeaveDayAttendanceTicked:       409,
@@ -326,6 +332,8 @@ var statusOf = map[Code]int{
 // internal, unreviewed hay chưa từng thấy — là lỗi hệ thống chung, không bao giờ là ghi thành công
 // (ADR-082 điểm 5.3).
 var constraintCodes = map[string]Code{
+	"customer_favourite_line_limit_check":      CodeFavouriteLimitReached,
+	"customer_favourite_set_limit_check":       CodeFavouriteLimitReached,
 	"leave_notice_not_past_check":              CodeLeaveDateInPast,
 	"leave_notice_one_live_per_person_day_key": CodeLeaveNoticeDayTaken,
 	"leave_notice_attendance_ticked_check":     CodeLeaveDayAttendanceTicked,
