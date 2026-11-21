@@ -123,9 +123,28 @@ neo, test của YT-03 · YT-04 · YT-05 mang mã bước.
 `CLAUDE.md` (bảng Schema); bước mới ở `07-thu-tu-migration.md`. Khoá ngoại tới `customer_account`, `menu_item`,
 `menu_combo`, `menu_option`; không cột giá; ràng buộc *món hoặc combo, không cả hai*; số lượng ≥ 1.
 
+**Tên Claude chốt** (2026-11-19): bảng `customer_favourite_set` · `customer_favourite_line` ·
+`customer_favourite_line_option`, migration `20261119120000_yeu_thich`, tên ràng buộc ở đầu
+`db/tests/yt03_customer_favourite.sql`.
+
 **Acceptance.** Claude viết test DB trước (đỏ): dòng có giá bị từ chối vì không có cột, dòng vừa món vừa combo bị
 từ chối, số lượng 0 bị từ chối, khách A không có khoá tới dữ liệu khách B ngoài cột chủ. Codex làm cho xanh; Claude
 chạy `./scripts/db-check.sh` và gate. Dựng lại từ số không và chạy down rồi up sạch.
+
+**Kết quả 2026-11-20** (thực hiện: Codex, duyệt: Claude; worktree `../lean_wt/YT-03`, nhánh `codex/YT-03` từ `e69d481`;
+log ở `../lean_wt/_claude_logs/YT-03/`). Codex dựng migration `20261119120000_yeu_thich` (ba bảng, năm trigger chặn, khoá theo
+khách trước khi đếm giới hạn, quyền theo cột, vết người sửa rỗng, down có khoá chặn), `docs/product/2-db/29-luoc-do-yeu-thich.md`,
+dòng ở `07-thu-tu-migration.md`, sinh lại 27 `models.go`, và 24 tên mới `unreviewed` ở `x-constraint-errors` (hợp đồng 0.73.0).
+Codex hết hạn mức sau khi ghi ánh xạ; Claude chạy phần còn lại. Claude sửa một chỗ: `db/tests/i032_category_and_combo_own_price.sql`
+cho `customer_favourite_line` trỏ tới combo (đọc lại, không bán), cùng khuôn `order_line` của T-193. Bằng chứng:
+`check-api-contract` PASS 560/560; `db-check: PASS — 46 bước xuôi · lùi · xuôi lại … 61 file test`, trong đó
+`PASS db/tests/yt03_customer_favourite.sql`, `PASS lùi 20261119120000_yeu_thich — lược đồ giống hệt`, `PASS db/tests/i032…`. `be-check: PASS — … (32/32 gói, 32 database)` (gồm `apierr` so tên ràng buộc với database sống).
+
+**Đưa về cây chính 2026-11-21** (Claude, sau T-307 · T-341 · T-342; Codex gộp trong `../lean_wt/YT-tich-hop-3`). Migration đổi tên thành
+`20261121090000_yeu_thich` (mốc sau `20261120110000` của T-342), bước **49** ở `07-thu-tu-migration.md`, hợp đồng **0.75.0** (24 tên
+`unreviewed`); `i032` giữ phần T-307; 27 `models.go` sinh lại bằng `sqlc generate`. Lớp YT-03 đứng riêng được: worktree `../lean_wt/YT-lop-03`,
+Codex chạy Gate 3 · 1b–1h, `check-sqlcgen`, `go build` · `go vet`, FE lint · typecheck · test đều PASS (không Docker). Dòng `29-luoc-do-yeu-thich.md`
+thêm vào bảng Schema §2 của `CLAUDE.md`.
 
 <a id="yt-04"></a>
 ## YT-04 — Hợp đồng API và backend

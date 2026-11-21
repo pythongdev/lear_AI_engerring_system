@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.74.0
+  version: 0.75.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -9117,6 +9117,30 @@ x-constraint-errors:
   model_call_month_budget_check: internal
   model_call_day_budget_check: internal
   attendance_day_on_leave_check: unreviewed
+  customer_favourite_line_account_fkey: unreviewed
+  customer_favourite_line_item_xor_combo_check: unreviewed
+  customer_favourite_line_limit_check: unreviewed
+  customer_favourite_line_menu_combo_fkey: unreviewed
+  customer_favourite_line_menu_item_fkey: unreviewed
+  customer_favourite_line_option_item_line_check: unreviewed
+  customer_favourite_line_option_key: unreviewed
+  customer_favourite_line_option_line_fkey: unreviewed
+  customer_favourite_line_option_option_fkey: unreviewed
+  customer_favourite_line_option_pkey: unreviewed
+  customer_favourite_line_owner_key: unreviewed
+  customer_favourite_line_parent_fkey: unreviewed
+  customer_favourite_line_pkey: unreviewed
+  customer_favourite_line_quantity_check: unreviewed
+  customer_favourite_line_removed_once_check: unreviewed
+  customer_favourite_line_set_fkey: unreviewed
+  customer_favourite_line_shape_check: unreviewed
+  customer_favourite_set_account_fkey: unreviewed
+  customer_favourite_set_kind_check: unreviewed
+  customer_favourite_set_limit_check: unreviewed
+  customer_favourite_set_name_check: unreviewed
+  customer_favourite_set_owner_key: unreviewed
+  customer_favourite_set_pkey: unreviewed
+  customer_favourite_set_removed_once_check: unreviewed
   daily_minimum_pkey: internal
   daily_minimum_sale_date_key: internal
   daily_minimum_person_fkey: internal

@@ -65,8 +65,9 @@ BEGIN
      OR EXISTS (SELECT 1 FROM pg_constraint k WHERE k.contype = 'f'
                 AND k.confrelid IN ('shop.menu_category'::regclass, 'shop.menu_combo'::regclass)
                 -- T-193 (ADR-117): dòng combo trên đơn trỏ tới combo — bán combo, không chặn món chưa xếp.
+                -- YT-03 (ADR-145): dòng yêu thích của khách trỏ tới combo để đọc lại — không bán, không chặn món chưa xếp.
                 AND k.conrelid NOT IN ('shop.menu_item_category'::regclass, 'shop.menu_combo_item'::regclass,
-                                       'shop.order_line'::regclass)) THEN
+                                       'shop.order_line'::regclass, 'shop.customer_favourite_line'::regclass)) THEN
     RAISE EXCEPTION 'I-032: bảng món bị thêm cột, hoặc một bảng ngoài lát trỏ tới danh mục hay combo — món chưa xếp có thể bị chặn bán';
   END IF;
   RAISE NOTICE 'I-032 món chưa xếp vẫn bán được — bảng món giữ nguyên cột, chỉ bảng của lát trỏ tới danh mục và combo';

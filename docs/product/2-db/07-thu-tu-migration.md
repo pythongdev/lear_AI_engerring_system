@@ -74,6 +74,7 @@ ngược từ dưới lên, **từng bước một**.
 | 46 | `20261119100000_anh_san_pham` | `T-307` | thêm `menu_item.image_code` trỏ tệp ảnh món trong kho bền vững; lùi từ chối khi còn món đã gắn ảnh, chỉ gỡ cột khi rỗng | 3 · 45 |
 | 47 | `20261120100000_khoa_sua_dong_don` | `T-341` | thu quyền UPDATE của `shop_app` trên `order_line` · `order_line_option` vì hai luật I-034 chỉ xét lúc INSERT; lùi cấp lại đúng quyền UPDATE trên hai bảng, không gỡ dữ liệu | 1 · 2 · 29 |
 | 48 | `20261120110000_ngay_ban_khop_moc` | `T-342` | bốn ràng buộc kiểm buộc ngày bán khớp mốc tính tiền theo múi giờ quán trên `bill` · `debt_collection` · `prepayment` · `refund` (QD-31, ADR-146); lùi gỡ bốn ràng buộc theo thứ tự ngược | 6 |
+| 49 | `20261121090000_yeu_thich` | `YT-03` | `customer_favourite_set` · `customer_favourite_line` · `customer_favourite_line_option`: bộ, dòng món/combo hai tầng và lựa chọn của khách; giới hạn đếm dưới khoá khách, gỡ một lần, quyền sửa theo cột và vết người sửa rỗng (ADR-145). Lùi khoá cả ba bảng, từ chối khi có dòng kể cả đã gỡ; rỗng thì trả miền người sửa vết, gỡ trigger/hàm và bảng con trước cha | 2 · 8 · 26 · 38 · 44 · 45 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`

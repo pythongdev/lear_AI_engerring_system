@@ -143,6 +143,34 @@ type CustomerEmailVerification struct {
 	UsedAt            pgtype.Timestamptz
 }
 
+type CustomerFavouriteLine struct {
+	ID                int64
+	CustomerAccountID int64
+	FavouriteSetID    pgtype.Int8
+	ParentLineID      pgtype.Int8
+	MenuItemID        pgtype.Int8
+	MenuComboID       pgtype.Int8
+	Quantity          int32
+	CreatedAt         pgtype.Timestamptz
+	RemovedAt         pgtype.Timestamptz
+}
+
+type CustomerFavouriteLineOption struct {
+	ID              int64
+	FavouriteLineID int64
+	MenuOptionID    int64
+	CreatedAt       pgtype.Timestamptz
+}
+
+type CustomerFavouriteSet struct {
+	ID                int64
+	CustomerAccountID int64
+	Kind              string
+	Name              string
+	CreatedAt         pgtype.Timestamptz
+	RemovedAt         pgtype.Timestamptz
+}
+
 type CustomerGoogleIdentity struct {
 	ID                int64
 	CustomerAccountID int64
