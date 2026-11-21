@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.73.0
+  version: 0.74.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -9219,6 +9219,8 @@ x-constraint-errors:
   bill_pkey: internal
   bill_prepaid_only_standalone_check: internal
   bill_prepayment_use_fkey: internal
+  # T-342, ADR-146: ngày bán do hệ thống quy từ mốc tính tiền; lệch ngày là lỗi hệ thống.
+  bill_sale_date_of_booked_at_check: internal
   bill_sales_order_fkey: internal
   bill_table_session_fkey: internal
   cash_count_line_amount_check: internal
@@ -9244,6 +9246,7 @@ x-constraint-errors:
   debt_collection_follows_fkey: internal
   debt_collection_person_fkey: internal
   debt_collection_pkey: internal
+  debt_collection_sale_date_of_booked_at_check: internal
   dining_table_label_key: internal
   dining_table_label_not_blank_check: internal
   dining_table_pkey: internal
@@ -9346,6 +9349,7 @@ x-constraint-errors:
   prepayment_one_per_order_key: prepayment_already_received
   prepayment_person_fkey: internal
   prepayment_pkey: internal
+  prepayment_sale_date_of_booked_at_check: internal
   prepayment_sales_order_fkey: internal
   prepayment_use_balance_check: prepayment_balance_exceeded
   prepayment_use_bill_fkey: internal
@@ -9418,6 +9422,7 @@ x-constraint-errors:
   refund_prepayment_fkey: internal
   refund_prepayment_use_fkey: internal
   refund_reason_not_blank_check: internal
+  refund_sale_date_of_booked_at_check: internal
   refund_source_iff_bill_check: internal
   refund_source_method_code_check: internal
   sales_order_bill_fkey: internal

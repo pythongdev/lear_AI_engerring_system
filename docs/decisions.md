@@ -8959,3 +8959,32 @@ sẽ cho món ngừng bán vào giỏ — nhưng `price-quotes` và cửa tạo 
 
 **Applies to:** `YT-02`…`YT-07` · ADR-131 · ADR-117 · ADR-086 · `QD-50` · `QD-52` · U-108 · `be/internal/khach` ·
 `work/backlog_YT.md`.
+## ADR-146 — Ngày bán của bốn bảng tiền được database buộc khớp mốc tính tiền bằng ràng buộc kiểm, quy bằng múi giờ quán
+
+**Status:** **Đã chốt** 2026-11-20 — chủ repo mở T-342 (*"làm song song"*), Claude Code thiết kế (mức **L2**). Phần cơ chế dưới
+đây là thiết kế của phiên, không phải lời quán.
+
+**Context:** QD-31 định nghĩa `sale_date` là ngày lịch của `booked_at` quy bằng múi giờ quán (`master_plan/shop-facts.md` §1),
+tính một lần lúc ghi. `bill` · `debt_collection` · `prepayment` · `refund` mang `booked_at DEFAULT now()` và
+`sale_date DEFAULT CURRENT_DATE` độc lập; backend tính `sale_date = $n::timestamptz::date` theo múi giờ **của kết nối**. Chỉ câu
+`QD-31/b` của bộ đối chiếu bắt lệch, sau khi tiền đã ghi. Database dev để `TimeZone = Etc/UTC`: một kết nối quên đặt múi giờ quán,
+hay một lệnh nhập tay truyền một cột mà quên cột kia, cộng tiền của 0h–7h sáng sang ngày khác (T-342, bản đánh giá 2026-11-16 mục 5).
+
+**Decision:**
+
+1. Mỗi bảng trong bốn bảng có ràng buộc kiểm `<bảng>_sale_date_of_booked_at_check`:
+   `CHECK (sale_date = (booked_at AT TIME ZONE 'Asia/Ho_Chi_Minh')::date)`. Kiểm, không suy: các đường ghi hiện có vẫn truyền
+   `sale_date`, và một dòng sai bị từ chối lúc ghi thay vì được sửa thầm.
+2. Không chọn cột sinh (`GENERATED … STORED`): đổi hợp đồng ghi của bốn cửa và mọi file lỗi cài, và đổi một cột đã cất thành
+   cột sinh phải dựng lại cột. Không chọn trigger tự tính: che lỗi của kết nối sai múi giờ thay vì làm nó lộ ra.
+3. Múi giờ gõ cứng trong ràng buộc như hai migration trước (`bao_nghi`, `so_goi_model`); owner vẫn là `shop-facts.md` §1. Đổi múi
+   giờ quán là một migration mới, gỡ và dựng lại bốn ràng buộc.
+4. `QD-31/b` của bộ đối chiếu giữ nguyên làm lớp thứ hai; file lỗi cài `qd31_b.sql` gỡ ràng buộc của `bill` trước khi cài lỗi
+   (khuôn `i002_1.sql`).
+5. Nhập bù sổ giấy không bị chặn: lượt nhập bù mang mốc buổi bán trên giấy (U-032), nên hai cột vẫn cùng một ngày.
+
+**Consequences:** lệch ngày bán bị chặn ở nơi ghi trên mọi đường, kể cả SQL thẳng; một kết nối sai múi giờ nay ghi **thất bại**
+ở các giờ lệch ngày thay vì ghi sai — lỗi hiện ra ngay ở lượt ghi tiền. Lùi: down gỡ bốn ràng buộc.
+
+**Applies to:** `QD-31` · `I-014` · `I-021` · `T-342` · `bill` · `debt_collection` · `prepayment` · `refund`.
+

@@ -362,6 +362,10 @@ nào, kiểu gì* (§5). Năm mục dưới đây là câu trả lời.
   `booked_at` quy bằng múi giờ của quán ⇒ **0 dòng**. Cú pháp PostgreSQL (`P2-12`, 2026-09-27):
   `sale_date <> (booked_at AT TIME ZONE '<múi giờ ở shop-facts §1>')::date`; câu `QD-31/b` của
   `db/reconcile/qd.sql` (`P2-11`, 2026-09-30), đọc múi giờ thẳng từ `shop-facts.md` §1.
+  Từ `T-342` (2026-11-20, thiết kế Claude Code, **ADR-146**), database buộc điều này **ngay lúc ghi**
+  bằng `bill_sale_date_of_booked_at_check` · `debt_collection_sale_date_of_booked_at_check` ·
+  `prepayment_sale_date_of_booked_at_check` · `refund_sale_date_of_booked_at_check`.
+  Test ràng buộc: `db/tests/qd31_sale_date_matches_booked_at.sql`; câu `QD-31/b` giữ làm **lớp thứ hai**.
 - **Nguồn:** owner cho nghĩa — `02-thoi-gian-ngay-ban.md` §1 · §2; cất thành cột riêng là phiên chọn
   2026-09-26.
 

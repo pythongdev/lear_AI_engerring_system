@@ -292,3 +292,18 @@ xấp; ngày chưa từng ký giữ hành vi đếm ban đầu. Test tầng data
 ## Giảm giá cả đơn — bước 23 (T-175, ADR-098)
 
 `bill_discount_not_negative_check` giữ giảm không âm; `bill_discount_customer_name_check` bắt tên khách không trắng khi giảm dương và chỉ nhận NULL khi không giảm. `bill_parts_equal_due_check` cộng phần giảm vào tổng các phần thanh toán. Giảm bằng tổng dòng cho phép trả 0đ; hoá đơn cũ nhận giảm 0. Không có cửa sửa giảm sau khi ghi; sai đi cửa hoàn. Test ràng buộc: `db/tests/i015_bill_discount.sql`.
+
+## Ngày bán khớp mốc tính tiền — bước 48 (T-342, ADR-146)
+
+Bổ sung 2026-11-20, Codex thi công theo thiết kế Claude Code (**ADR-146**): bốn ràng buộc
+`bill_sale_date_of_booked_at_check` · `debt_collection_sale_date_of_booked_at_check` ·
+`prepayment_sale_date_of_booked_at_check` · `refund_sale_date_of_booked_at_check` giữ **QD-31**
+ngay lúc ghi. Một kết nối sai múi giờ hoặc lệnh nhập tay truyền ngày bán lệch mốc tính tiền
+bị từ chối trước khi khoản tiền được cất sang ngày khác. Múi giờ lấy từ `master_plan/shop-facts.md` §1;
+đổi múi giờ quán cần migration mới gỡ và dựng lại bốn ràng buộc. Bản thắng về điều kiện:
+[`db/migrations/20261120110000_ngay_ban_khop_moc.up.sql`](../../../db/migrations/20261120110000_ngay_ban_khop_moc.up.sql).
+
+Các đường ghi vẫn truyền ngày bán; ràng buộc không tự sửa dữ liệu. Nhập bù sổ giấy giữ mốc buổi bán
+trên giấy nên vẫn ghi được khi hai cột khớp ngày. Câu `QD-31/b` của bộ đối chiếu giữ làm lớp thứ hai;
+`db/reconcile/proof/qd31_b.sql` gỡ ràng buộc của `bill` trước khi cài lỗi. Test ràng buộc:
+`db/tests/qd31_sale_date_matches_booked_at.sql`.

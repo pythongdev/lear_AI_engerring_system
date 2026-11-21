@@ -73,6 +73,7 @@ ngược từ dưới lên, **từng bước một**.
 | 45 | `20261117120000_chi_muc_duong_doc` | `T-340` | Bảy chỉ mục không duy nhất phục vụ đường đọc trên `record_revision` · `sales_order` · `order_line` · `station_job` · `bill`; lý do và lưu ý vận hành ở file migration; lùi gỡ bảy chỉ mục theo thứ tự ngược, không cần khoá chặn vì không cất dữ liệu đã ghi | 1 · 6 · 7 · 8 |
 | 46 | `20261119100000_anh_san_pham` | `T-307` | thêm `menu_item.image_code` trỏ tệp ảnh món trong kho bền vững; lùi từ chối khi còn món đã gắn ảnh, chỉ gỡ cột khi rỗng | 3 · 45 |
 | 47 | `20261120100000_khoa_sua_dong_don` | `T-341` | thu quyền UPDATE của `shop_app` trên `order_line` · `order_line_option` vì hai luật I-034 chỉ xét lúc INSERT; lùi cấp lại đúng quyền UPDATE trên hai bảng, không gỡ dữ liệu | 1 · 2 · 29 |
+| 48 | `20261120110000_ngay_ban_khop_moc` | `T-342` | bốn ràng buộc kiểm buộc ngày bán khớp mốc tính tiền theo múi giờ quán trên `bill` · `debt_collection` · `prepayment` · `refund` (QD-31, ADR-146); lùi gỡ bốn ràng buộc theo thứ tự ngược | 6 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
@@ -174,6 +175,11 @@ của `shop_app` trên `order_line` · `order_line_option`, không dựng hay g�
 cấp lại đúng quyền UPDATE trên hai bảng, trả quyền về trước bước. Hệ quả của việc lùi: vai ứng dụng
 lại sửa được dòng đơn và lựa chọn mà hai trigger chỉ xét lúc INSERT không kiểm lại hai luật I-034.
 
+**Bước 48 không có khoá chặn** (2026-11-20, `T-342`, thiết kế Claude Code, **ADR-146**):
+chỉ thêm bốn ràng buộc kiểm trên `bill` · `debt_collection` · `prepayment` · `refund`, không thêm
+chỗ cất dữ liệu nên luật 2 không có gì để chặn. File lùi gỡ theo thứ tự `refund` · `prepayment` ·
+`debt_collection` · `bill`, giữ nguyên dữ liệu đã ghi. Sau khi lùi, ngày bán lệch mốc tính tiền
+không còn bị bốn ràng buộc này từ chối lúc ghi; câu `QD-31/b` của bộ đối chiếu vẫn giữ lớp kiểm sau.
 
 ## 3. Khi một lệnh migration hỏng giữa chừng
 
