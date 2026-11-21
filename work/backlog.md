@@ -101,6 +101,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-354 **Ba thông tin của mỗi nguyên liệu bị xếp thành nhiều dòng trên điện thoại** — L1 (chỉ bản HTML xem thử), chủ repo yêu cầu và xong 2026-11-21; tên, ước tính còn dùng và lượng còn lại nằm cùng một hàng, chi tiết vẫn mở ngay dưới hàng được chọn · [chi tiết](#t-354)
 - [x] T-353 **Bảng Mua nguyên liệu cần xem nhanh số còn và mở chi tiết từng thứ** — L1 (bản HTML xem thử), chủ repo yêu cầu 2026-11-20 và bổ sung vị trí mở chi tiết; xong 2026-11-20: bảng ba cột, nút tên mở trượt chi tiết ngay dưới dòng được chọn, lịch sử sử dụng theo thứ đang chọn · [chi tiết](#t-353)
 - [x] T-307 **Chủ quán chưa đổi được ảnh món lẻ ở `/chu-quan/san-pham`: ảnh vẫn chọn theo tên món viết cứng trong code** — L2 (cột `menu_item.image_code`, hai cửa API, ghi tệp), chủ repo yêu cầu lại 2026-11-19; hồi sinh bản Codex làm 2026-11-07 ở `../lean_wt/T-307` (chưa ghép, chưa duyệt) lên nền `e69d481` theo ADR-142 điểm 4; Codex làm, Claude duyệt · [chi tiết](#t-307)
 - [x] T-350 **Bản HTML Khoản chi chưa hiện ngày nhập và ước tính hàng còn dùng được bao nhiêu ngày** — L1 (chỉ bản thiết kế minh hoạ), chủ repo yêu cầu 2026-11-19, xong 2026-11-20; ngày nhập tách ngày chi, số còn và mức tiêu thụ tự nhập, ước tính ngày còn; Codex làm · [chi tiết](#t-350)
@@ -601,6 +602,17 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-354"></a>
+### T-354 — Ba cột nguyên liệu cùng một hàng ở màn hình hẹp
+
+Chủ repo yêu cầu 2026-11-21: tên nguyên liệu, ước tính còn dùng và lượng còn lại nằm trên cùng một hàng. Chỉ sửa bản HTML Khoản chi để thử giao diện, không đổi dữ liệu hay giao diện chạy thật. Codex thực hiện trực tiếp trên nhánh `P4A-01`.
+
+Acceptance viết trước: ở màn hình 390 px, ba cột của mỗi nguyên liệu nằm trên cùng một hàng, đọc được số và đơn vị, trang không tràn ngang. Bấm Thịt heo vẫn mở chi tiết giữa Thịt heo và Bột gạo; các thao tác và lịch sử còn hoạt động. Bố cục rộng giữ ba cột. Kiểm bằng Chrome và `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-21:** Codex sửa trên nhánh `P4A-01`, chưa review độc lập. Tệp đổi của việc này là bản HTML và mục T-354 trong backlog. Ở màn hẹp, bảng nguyên liệu vẫn là bảng ba cột với tiêu đề và một hàng cho mỗi thứ; câu thiếu số được rút gọn thành *Chưa tính* ở ô nhưng tên truy cập vẫn giải thích đầy đủ. Số ngày ước tính ở ô điện thoại hiện ngắn, số đầy đủ giữ trên màn rộng. Chrome ở 320 px và 390 px: ba ô của mỗi hàng có cùng tọa độ y, chín hàng mẫu đều cao 55 px, `scrollWidth` bằng `innerWidth`; bấm Thịt heo thì chi tiết nằm trước Bột gạo và lịch sử lọc theo Thịt heo. Ở 1440 px, ba ô vẫn cùng hàng và lời ước tính đầy đủ hiện ra. jsdom kiểm cú pháp, ba cột, số rút gọn, mở chi tiết và đổi lựa chọn đều đạt; `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm tách riêng chỉ chứa hai tệp T-354 đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Scope giữ tới khi chủ repo commit.
 
 <a id="t-353"></a>
 ### T-353 — Bảng nguyên liệu gọn và chi tiết mở trượt
