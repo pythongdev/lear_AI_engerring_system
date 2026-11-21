@@ -12,6 +12,7 @@ export function KhungKhach({ title, children }: { title: string; children: React
   return <main className="mx-auto min-h-dvh max-w-lg space-y-6 px-4 py-8">
     <nav aria-label="Điều hướng khách" className="flex flex-wrap gap-4 text-sm">
       <Link href="/dat-mon">Đặt món</Link><Link href="/khach/don">Đơn đã đặt</Link><Link href="/khach/tai-khoan">Tài khoản</Link>
+      <Link href="/khach/yeu-thich">Yêu thích</Link>
     </nav>
     <Card><CardHeader><CardTitle><h1 className="text-2xl">{title}</h1></CardTitle></CardHeader>
       <CardContent className="space-y-6">{children}</CardContent></Card>

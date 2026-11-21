@@ -222,6 +222,35 @@ Codex không tới được), và nghiệm thu trên trình duyệt (YT-07).
 hướng khách có mục *Yêu thích*. **Acceptance.** Test: bấm tim lưu đúng hình dòng; bấm lại bỏ tim; khách chưa đăng
 nhập theo lời U-119. `fe-check` và gate xanh.
 
+**Acceptance** (Claude, 2026-11-21, viết trước khi giao):
+
+- A1 — Một component nút tim dùng chung `fe/src/components/khach/nut-tim.tsx`; thẻ món và thẻ combo của `ThucDonKhach` và trang
+  `/thuc-don/[loai]/[id]` chỉ chèn nó, **chỉ ở chế độ web** (không có mã bàn) — thực đơn QR tại bàn không có tim.
+- A2 — Bấm tim khi dòng chưa có: `POST /customer-accounts/current/favourites` đúng hình `PriceLineRequest` + `quantity: 1`, không giá:
+  thẻ món gửi lựa chọn mặc định (`chonNhom`), trang chi tiết món gửi lựa chọn đang chọn, combo gửi suất mặc định (`soSuat` + `dongGui`).
+  Nút có `aria-pressed` và tên *"Thêm {tên} vào yêu thích"* / *"Bỏ {tên} khỏi yêu thích"*; đã có dòng tim cùng hình (món + tập lựa chọn,
+  hoặc combo + tập suất) thì hiện đã thả.
+- A3 — Bấm lại: `POST …/{favourite_line_id}/removal` đúng dòng ấy; ghi xong đọc lại bằng invalidate khoá chung với trang Yêu thích, không
+  `setQueryData`.
+- A4 — Chưa đăng nhập (401 khi đọc hoặc ghi): hiện lời mời có link tới `/khach/dang-nhap`, không gửi lệnh ghi, không ghi localStorage hay
+  sessionStorage (ADR-145 điểm 1). Mất phản hồi khi ghi: báo *chưa rõ*, không gửi lại ngầm; một lệnh đang bay mỗi nút.
+- A5 — Điều hướng khách có mục *Yêu thích* tới `/khach/yeu-thich`: trong `KhungKhach` và lối vào tài khoản của `/dat-mon`.
+- A6 — Test mới cho A1–A5 xanh; `check-fe-rules`, `fe-check` và `./scripts/gate.sh` xanh; dòng component ở `01-khung-fe.md`.
+
+**Nhận việc 2026-11-21** (Claude). Worktree `../lean_wt/YT-06`, nhánh `codex/YT-06` từ `ad98ef3`. `thuc-don-khach.tsx` ở cây chính
+đang có thay đổi chưa commit của các việc số bát canh theo rau, nên phiếu đòi chèn tối thiểu vào file ấy; phần gộp lúc đưa về do Claude.
+Phiếu và log: `../lean_wt/_claude_logs/YT-06/`.
+
+**Kết quả 2026-11-21** (thực hiện: Codex ba vòng, duyệt: Claude; worktree `../lean_wt/YT-06` từ `ad98ef3`). Codex dựng
+`fe/src/components/khach/nut-tim.tsx` (đọc bằng khoá `KHOA` chung với trang Yêu thích; nhận dòng đã thả theo tập lựa chọn, combo theo số suất
+mỗi combo), chèn vào `thuc-don-khach.tsx` (4 dòng thêm, 1 bỏ) và `chon-mon-chi-tiet.tsx` chỉ khi không có mã bàn, thêm link *Yêu thích* ở
+`KhungKhach` và `dat-mon-khach.tsx`, dòng component ở `01-khung-fe.md`. Vòng 1: `NutTim` vỡ trang khi đọc về sai hình (lộ ra ở
+`t265.test.tsx`) ⇒ kiểm mảng `lines`; `chi-tiet.test.tsx` chỉ thêm `ApiProvider` vào khung dựng, không đổi `expect`. Vòng 2: đọc lỗi không
+phải 401 không còn hiện một hộp lỗi mỗi thẻ; bấm tim thì đọc lại và báo tại nút ấy. Claude gộp ba chiều `thuc-don-khach.tsx` với thay đổi
+chưa commit của việc số bát canh theo rau (giữ phần ấy, chèn `NutTim` trước). Bằng chứng: `fe-check: PASS` trong worktree (`Tests 845
+passed`), `check-fe-rules: PASS`; ở cây chính sau gộp, 12 file test của `ban` · `thuc-don` · `dat-mon` · `khach` 131/131, `tsc` · `eslint`
+sạch. Chưa chạy: trình duyệt thật (YT-07).
+
 <a id="yt-07"></a>
 ## YT-07 — Nghiệm thu trên app chạy
 

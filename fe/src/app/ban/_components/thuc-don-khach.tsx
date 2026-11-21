@@ -5,7 +5,8 @@ import { LuaChonThe } from "./lua-chon-the";
 import { AnhSanPham } from "@/app/chu-quan/_components/anh-san-pham";
 import { useId, useRef, useState, type ReactNode } from "react";
 import { Input } from "@/components/ui/input";
-import { chonNhom, soSuat, type DongSoan, useGiaCombo } from "@/components/shared/bo-soan-mon";
+import { NutTim } from "@/components/khach/nut-tim";
+import { chonNhom, dongGui, soSuat, type DongSoan, useGiaCombo } from "@/components/shared/bo-soan-mon";
 import { tien } from "@/components/shared/dong-mon-da-ghi";
 import type { components } from "@/lib/api/schema";
 import { ChevronDown, Trash2 } from "lucide-react";
@@ -177,6 +178,7 @@ export function ThucDonKhach({ items, combos = [], categories = [], lines, onCha
         </Link>
         <div className="menu-card-body">
           <div className="menu-card-heading"><h3>{combo.name}</h3><span className="menu-price">{tien(combo.price_vnd)}</span></div>
+          {maBan === undefined && <NutTim ten={combo.name} dong={{ menu_combo_id: combo.menu_combo_id, portions: dongGui({ combo, quantity: 1, is_takeaway: false, portions: soSuat(combo, 1) }).portions }} />}
           <button type="button" className="menu-chip menu-details" aria-expanded={!!chiTietMo[combo.menu_combo_id]} aria-controls={`${id}-ct-${combo.menu_combo_id}`} onClick={() => setChiTietMo((cu) => ({ ...cu, [combo.menu_combo_id]: !cu[combo.menu_combo_id] }))}>Thành phần <ChevronDown aria-hidden="true" size={12} /></button>
           {nhomCombo(combo).length > 0 && boChon(`combo-${combo.menu_combo_id}`, nhomCombo(combo), combo)}
           <div id={`${id}-ct-${combo.menu_combo_id}`} className="menu-panel" data-open={!!chiTietMo[combo.menu_combo_id]} aria-hidden={!chiTietMo[combo.menu_combo_id]} inert={!chiTietMo[combo.menu_combo_id]}><div>
@@ -195,6 +197,7 @@ export function ThucDonKhach({ items, combos = [], categories = [], lines, onCha
         </Link>
         <div className="menu-card-body">
           <div className="menu-card-heading"><h3>{mon.item_name}</h3><div className="menu-price">{giaMon(mon)}</div></div>
+          {maBan === undefined && <NutTim ten={mon.item_name} dong={{ menu_item_id: mon.menu_item_id, option_ids: chonNhom(mon.option_groups, []) }} />}
           {mon.option_groups.length > 0 && boChon(`mon-${mon.menu_item_id}`, mon.option_groups)}
           {stepper(mon.item_name, (d) => d.mon?.menu_item_id === mon.menu_item_id, () => onChange([...lines, { mon, quantity: 1, is_takeaway: false, option_ids: daChon(`mon-${mon.menu_item_id}`, mon.option_groups) }]))}
         </div>

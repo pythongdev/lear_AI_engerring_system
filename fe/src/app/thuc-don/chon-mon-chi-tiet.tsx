@@ -1,7 +1,8 @@
 "use client";
 
 import { useId, useState } from "react";
-import { chonNhom, giaDong, LuaChon, soSuat, type DongSoan } from "@/components/shared/bo-soan-mon";
+import { chonNhom, dongGui, giaDong, LuaChon, soSuat, type DongSoan } from "@/components/shared/bo-soan-mon";
+import { NutTim } from "@/components/khach/nut-tim";
 import { tien } from "@/components/shared/dong-mon-da-ghi";
 import { Input } from "@/components/ui/input";
 import { dungLai, useNhapKhach } from "@/lib/nhap-khach";
@@ -39,6 +40,9 @@ export function ChonMonChiTiet({ menu, mon, combo, groups, maBan }: {
       state.sua(khoa, [...dungLai(state.gio[khoa], menu), them]);
       setBao(`Đã thêm ${quantity} ${combo ? combo.name : mon!.item_name} vào giỏ hàng.`);
     }}>Thêm vào giỏ</button>
+    {maBan === undefined && (combo ? <NutTim ten={combo.name} dong={{ menu_combo_id: combo.menu_combo_id,
+      portions: dongGui({ combo, quantity: 1, is_takeaway: false, portions: soSuat(combo, 1) }).portions }} />
+      : mon && <NutTim ten={mon.item_name} dong={{ menu_item_id: mon.menu_item_id, option_ids: ids }} />)}
     {bao && <p role="status" className="mt-3">{bao}</p>}
   </section>;
 }

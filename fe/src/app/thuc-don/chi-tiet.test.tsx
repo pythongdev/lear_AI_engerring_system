@@ -1,8 +1,15 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render as renderGoc, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import ChiTietMonPage from "./[loai]/[id]/page";
+import { ApiProvider } from "@/lib/api/provider";
 import { dungLai, useNhapKhach } from "@/lib/nhap-khach";
 import { menuMau } from "../ban/mau-khach";
+
+const fetchKhach = async (req: Request) => new URL(req.url).pathname === "/api/customer-accounts/current/favourites"
+  ? Response.json({ lines: [], sets: [] }) : new Response(null, { status: 599 });
+function render(ui: Parameters<typeof renderGoc>[0]) {
+  return renderGoc(ui, { wrapper: ({ children }) => <ApiProvider fetch={fetchKhach}>{children}</ApiProvider> });
+}
 
 vi.mock("next/navigation", () => ({ notFound: () => { throw new Error("NEXT_NOT_FOUND"); } }));
 afterEach(() => { cleanup(); useNhapKhach.getState().xoaHet(); vi.unstubAllGlobals(); });

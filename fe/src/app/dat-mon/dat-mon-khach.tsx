@@ -9,8 +9,9 @@ export function DatMonKhach({ initialMenu }: { initialMenu: components["schemas"
   const phien = usePhienKhach();
   // Chờ lần đọc đầu để initialDelivery thực sự là giá trị khởi tạo. Refetch không ghi đè nháp.
   return <>
-    <nav aria-label="Tài khoản khách" className="mx-auto flex max-w-lg justify-end px-4 py-2 text-sm">
+    <nav aria-label="Tài khoản khách" className="mx-auto flex max-w-lg justify-end gap-4 px-4 py-2 text-sm">
       <Link href={phien.data ? "/khach/tai-khoan" : "/khach/dang-nhap"}>{phien.data ? "Tài khoản" : "Đăng nhập"}</Link>
+      <Link href="/khach/yeu-thich">Yêu thích</Link>
     </nav>
     {phien.isPending ? <section className="mx-auto max-w-lg space-y-3 px-4" aria-label="Thực đơn">
       <h1 className="text-xl font-semibold">Đặt món</h1>
