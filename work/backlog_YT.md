@@ -192,6 +192,29 @@ tính lại ở giỏ. Lỗi đọc giữ bản cũ kèm mốc và nút Đọc l
 liệu yêu thích; món hết bán không vào giỏ và có nhãn; thêm cả bộ đổ đúng các dòng vào giỏ; mất phản hồi khi ghi báo
 chưa rõ kết quả, không gửi lại ngầm. Codex làm; Claude chạy `./scripts/fe-check.sh` và gate.
 
+**Nhận việc 2026-11-20** (Claude). Worktree `../lean_wt/YT-05`, nhánh `codex/YT-05` từ `32ff56c` cộng bản vá YT-03 · YT-04 chưa
+commit (`../lean_wt/_claude_logs/YT-05/base-yt03-yt04.patch`, scope nền `work/scope/YT-NEN-03-04.txt` chỉ trong worktree);
+`schema.ts` sinh lại từ hợp đồng 0.74.0. Test Claude viết trước, đỏ: `fe/src/app/khach/yeu-thich/yeu-thich.test.tsx` (11 ca) —
+chốt component `YeuThichKhach`, giá chỉ từ `price-quotes` một lần mỗi nhóm (giá dòng `line_total_vnd`, tổng `total_vnd`, FE không
+cộng), thẻ `<article>` theo tên, *Hết bán*, giỏ nháp khoá `web`, 401 mời đăng nhập không chuyển trang, mất phản hồi báo *chưa rõ*.
+Phiếu và log: `../lean_wt/_claude_logs/YT-05/`.
+
+**Kết quả 2026-11-21** (thực hiện: Codex, duyệt: Claude). Codex dựng `fe/src/app/khach/yeu-thich/page.tsx`,
+`fe/src/components/khach/yeu-thich.tsx` và `yeu-thich/` (`du-lieu.ts` · `the.tsx` · `hop-bo.tsx`), thêm 11 ca ở `bo-mon.test.tsx`, sửa
+dòng route ở `01-khung-fe.md`; hai lần hết hạn mức nên không có báo cáo YT-05, Claude duyệt thẳng trên diff và thêm một ca tên bộ
+1–60 ký tự. Rồi Codex dời ba bước lên `634e71b` (sau T-307) trong `../lean_wt/YT-tich-hop`: migration thành bước 47, hợp đồng 0.75.0,
+sinh lại `schema.ts` và sqlc; vòng sửa 1 gỡ `sqlcgen` khỏi `be/internal/yeuthich/service.go` (QC-13 dòng năm — lỗi của YT-04 mà lượt
+duyệt YT-04 bỏ sót vì `db-check` chưa chạy trên code ấy). Bằng chứng: gate trong worktree xanh — `be-check … (33/33 gói, 33 database)`,
+`db-check — 47 bước xuôi · lùi · xuôi lại … 61 file test`, `PASS QC-13 (sh) — rỗng`, `check-api-contract … hợp đồng 0.75.0`,
+`fe-check: PASS` (823 test FE, 28 ở trang Yêu thích); ba file test Claude không đổi (`shasum`).
+
+**Đưa về cây chính 2026-11-21** (Claude; chủ repo chọn *"T-341/T-342 trước"*, nên Yêu thích dời lên `657bfcb`). Dòng route `/khach/yeu-thich`
+ở `01-khung-fe.md` thay dòng *dự kiến* mà lượt sửa F-084 khôi phục. Bằng chứng trên bản gộp đủ ba bước (`../lean_wt/YT-tich-hop-3`, log
+`../lean_wt/_claude_logs/YT-05/gate-tich-hop-3c.log`): `be-check … (33/33 gói, 33 database)`, `db-check — 49 bước xuôi · lùi · xuôi lại …
+63 file test`, `PASS lùi 20261121090000_yeu_thich — lược đồ giống hệt`, `PASS QC-13 (sh) — rỗng`, `check-api-contract … hợp đồng 0.76.0`,
+`gate … không cổng nào đỏ`; ba file test Claude không đổi (`shasum`). Chưa chạy: `db-check` · `be-check` riêng trên hai lớp giữa (cần Docker,
+Codex không tới được), và nghiệm thu trên trình duyệt (YT-07).
+
 <a id="yt-06"></a>
 ## YT-06 — Nút tim trên thực đơn và trang chi tiết
 
