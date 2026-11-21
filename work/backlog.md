@@ -91,7 +91,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## Ready
 
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
-- [ ] T-341 **Vai ứng dụng còn quyền sửa dòng đơn, nên dòng combo sửa được thành hình sai** — L2 (I-034), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database · [chi tiết](#t-341)
 - [ ] T-342 **Ngày bán và mốc ghi tiền không bị buộc khớp nhau ở database, chỉ phát hiện sau bằng bộ đối chiếu** — L2 (QD-31, tiền theo ngày), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database · [chi tiết](#t-342)
 - [ ] T-343 **Trigger giữ số đếm của ngày đã ký không lấy khoá ngày, nên lệnh SQL thẳng chạy cùng lúc với lần ký vẫn lọt** — L3 (ADR-080, I-021), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database · [chi tiết](#t-343)
 
@@ -100,6 +99,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-341 **Vai ứng dụng còn quyền sửa dòng đơn, nên dòng combo sửa được thành hình sai** — L2 (I-034), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; mở 2026-11-20 (*"tiếp tục yêu cầu codex làm task khác"*), Claude viết test trước `db/tests/i034_order_line_no_app_update.sql`, Codex làm trong `../lean_wt/T-341` · [chi tiết](#t-341)
 - [x] T-347 **Trang Vận hành và trang Tổng kết đọc chậm dần theo toàn bộ lịch sử bán (đo được 595 giây và 1,8 giây trên dữ liệu ba năm)** — L2 (câu đọc của I-019 và I-014, kết quả không được đổi), Claude mở 2026-11-18 từ số đo của T-340, làm 2026-11-20 (*"tiếp tục yêu cầu codex làm bạn kiểm tra"*): Claude viết test "kết quả không đổi" trước, Codex làm trong `../lean_wt/T-347` · F-083 · [chi tiết](#t-347)
 - [x] T-354 **Ba thông tin của mỗi nguyên liệu bị xếp thành nhiều dòng trên điện thoại** — L1 (chỉ bản HTML xem thử), chủ repo yêu cầu và xong 2026-11-21; tên, ước tính còn dùng và lượng còn lại nằm cùng một hàng, chi tiết vẫn mở ngay dưới hàng được chọn · [chi tiết](#t-354)
 - [x] T-353 **Bảng Mua nguyên liệu cần xem nhanh số còn và mở chi tiết từng thứ** — L1 (bản HTML xem thử), chủ repo yêu cầu 2026-11-20 và bổ sung vị trí mở chi tiết; xong 2026-11-20: bảng ba cột, nút tên mở trượt chi tiết ngay dưới dòng được chọn, lịch sử sử dụng theo thứ đang chọn · [chi tiết](#t-353)
@@ -680,6 +680,18 @@ Bằng chứng (log ở `../lean_wt/_claude_logs/T-340/`, ngoài repo). A1: `gre
 Nguồn: bản đánh giá database 2026-11-16, mục 4. Hai luật của I-034 — dòng combo có ít nhất một suất con, dòng combo không mang lựa chọn — chỉ kiểm lúc `INSERT` (`db/migrations/20261015120000_ban_combo.up.sql`, hai trigger ở cuối file). Quyền `UPDATE` mặc định của `shop_app` (`db/init/001-vai-va-schema.sql`) chưa bị thu trên `order_line` và `order_line_option`; đặt `parent_order_line_id` về NULL làm khoá ngoại về cha thôi xét (cột sinh `parent_is_combo_line` thành NULL) và không trigger nào chạy lại. Backend hiện **không có** câu `UPDATE` nào trên hai bảng này (`grep` 2026-11-16), và ADR-117 nói chưa có cửa sửa dòng riêng lẻ. Hướng: thu quyền sửa cho tới khi một cửa sửa dòng được thiết kế.
 
 Acceptance (viết khi mở việc): dự kiến một migration `REVOKE UPDATE` + đường lùi, test từ chối trong `db/tests/` chạy bằng vai `shop_app`, `be-check` xanh chứng minh không cửa nào đang cần quyền ấy, cập nhật `20-luoc-do-ban-combo.md`.
+
+Mở 2026-11-20 (Claude Code). Kiểm lại trước khi viết test: `grep` không thấy `UPDATE order_line`/`order_line_option` nào trong `be/` hay thân hàm/trigger của `db/migrations/`; không câu backend nào `FOR UPDATE`/`FOR SHARE` chạm `order_line` (khoá dòng cũng cần quyền `UPDATE`); ba file test DB có `UPDATE order_line` (`yc05_takeaway_mark_per_line`, `i018_added_line_leaves_trail`, `i020_served_never_exceeds_ordered`) và các file lỗi cài ở `db/reconcile/proof/` chạy bằng `shop_owner`, không bị ảnh hưởng. Suy ra của phiên: thu cả quyền theo cột (`has_any_column_privilege`), giữ `SELECT` · `INSERT`.
+
+Acceptance viết trước sửa:
+- A1 — Migration mới (mốc sau `20261119100000`) `REVOKE UPDATE ON order_line, order_line_option FROM shop_app`; down cấp lại đúng quyền ấy; `07-thu-tu-migration.md` có bước mới và đường lùi.
+- A2 — `db/tests/i034_order_line_no_app_update.sql` (Claude viết trước, đỏ trên `HEAD` 2026-11-20) xanh: `shop_app` không còn quyền `UPDATE` trên hai bảng ở mức bảng lẫn cột, `UPDATE` thử — kể cả đặt `parent_order_line_id` về NULL — bị từ chối `insufficient_privilege`; `SELECT` · `INSERT` còn nguyên.
+- A3 — `be-check` xanh (Claude chạy): không cửa ghi nào đang cần quyền đã thu.
+- A4 — `docs/product/2-db/20-luoc-do-ban-combo.md` ghi rằng hai luật I-034 chỉ kiểm lúc `INSERT` nên quyền sửa dòng bị thu (T-341), và cửa sửa dòng sau này phải thiết kế lại cùng trigger; `db-check` · `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-341.txt`): `db/migrations/*_khoa_sua_dong_don.*`, `db/tests/i034_order_line_no_app_update.sql`, `docs/product/2-db/20-luoc-do-ban-combo.md`, `docs/product/2-db/07-thu-tu-migration.md`, `work/backlog.md`. Thi công: Codex trong `../lean_wt/T-341`, nhánh `codex/T-341`. Duyệt: Claude.
+
+Bàn giao 2026-11-20 (thực hiện: Codex, duyệt và tích hợp: Claude). Codex dựng `20261120100000_khoa_sua_dong_don` (xuôi `REVOKE UPDATE ON order_line, order_line_option FROM shop_app`, lùi `GRANT` lại đúng quyền ấy), bước 47 ở `07-thu-tu-migration.md`, đoạn mới ở `20-luoc-do-ban-combo.md` §2. Vòng duyệt 1: gate worktree đỏ ở QC-05 (file lùi thiếu câu *"đường lùi từ chối"* nói vì sao không cần khoá chặn), Codex thêm theo khuôn `chi_muc_duong_doc.down.sql`. Bằng chứng: test `i034_order_line_no_app_update.sql` đỏ trên `2e0b751` (`I-034: vai shop_app còn quyền UPDATE trên order_line`), xanh sau migration; `./scripts/gate.sh` worktree exit 0 — `db-check` 47 bước xuôi · lùi · xuôi lại, 61 file test, `be-check` 32/32 gói (không cửa nào cần quyền đã thu); log `../lean_wt/_claude_logs/T-341/gate-wt2.log`. Ghép cùng T-342: xem bàn giao T-342. Worktree `../lean_wt/T-341`, nhánh `codex/T-341` để chủ repo xoá.
 
 <a id="t-342"></a>
 ### T-342 — Ngày bán và mốc ghi tiền không bị buộc khớp nhau ở database, chỉ phát hiện sau bằng bộ đối chiếu

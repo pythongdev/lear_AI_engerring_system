@@ -72,6 +72,7 @@ ngược từ dưới lên, **từng bước một**.
 | 44 | `20261104180000_so_goi_model` | `CHAT-35` | `model_call`, trigger giữ trần tháng/ngày, chốt một lần và vết; quyền ghi theo cột; lùi khoá bảng, từ chối khi còn lần gọi, rỗng mới gỡ trigger, hàm riêng và bảng cùng sequence/quyền (ADR-139, I-040) | 20 · 43 |
 | 45 | `20261117120000_chi_muc_duong_doc` | `T-340` | Bảy chỉ mục không duy nhất phục vụ đường đọc trên `record_revision` · `sales_order` · `order_line` · `station_job` · `bill`; lý do và lưu ý vận hành ở file migration; lùi gỡ bảy chỉ mục theo thứ tự ngược, không cần khoá chặn vì không cất dữ liệu đã ghi | 1 · 6 · 7 · 8 |
 | 46 | `20261119100000_anh_san_pham` | `T-307` | thêm `menu_item.image_code` trỏ tệp ảnh món trong kho bền vững; lùi từ chối khi còn món đã gắn ảnh, chỉ gỡ cột khi rỗng | 3 · 45 |
+| 47 | `20261120100000_khoa_sua_dong_don` | `T-341` | thu quyền UPDATE của `shop_app` trên `order_line` · `order_line_option` vì hai luật I-034 chỉ xét lúc INSERT; lùi cấp lại đúng quyền UPDATE trên hai bảng, không gỡ dữ liệu | 1 · 2 · 29 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
@@ -167,6 +168,12 @@ là dữ liệu đã cất theo luật 2; không tự coi mặc định là dữ
 `supply_item` thì từ chối trước khi gỡ gì. Bảng rỗng thì gỡ `reminder_ratio` cùng ràng buộc miền.
 Bước xuôi dùng `ADD COLUMN ... DEFAULT` cấp 20% cho dòng cũ, không giả một người nhập hay sửa con số ngày.
 Test cột và miền: `db/tests/i025_reminder_ratio.sql`; xuôi · lùi · xuôi lại do `scripts/db-check.sh` chấm.
+
+**Bước 47 không có khoá chặn** (2026-11-20, phiếu Claude `T-341`): bước này chỉ thu quyền UPDATE
+của `shop_app` trên `order_line` · `order_line_option`, không dựng hay gỡ chỗ cất dữ liệu. File lùi
+cấp lại đúng quyền UPDATE trên hai bảng, trả quyền về trước bước. Hệ quả của việc lùi: vai ứng dụng
+lại sửa được dòng đơn và lựa chọn mà hai trigger chỉ xét lúc INSERT không kiểm lại hai luật I-034.
+
 
 ## 3. Khi một lệnh migration hỏng giữa chừng
 

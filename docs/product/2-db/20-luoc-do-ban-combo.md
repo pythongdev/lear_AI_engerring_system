@@ -47,6 +47,12 @@ cùng đơn, cùng dấu đem về; dòng không cha thì khoá ngoại không x
 đòi mỗi dòng combo có ít nhất một dòng con lúc giao dịch kết thúc (chép khuôn `menu_combo_has_item_check`). Trigger
 `order_line_option_item_line_check` chặn lựa chọn trên dòng combo.
 
+Hai luật I-034 — dòng combo có ít nhất một suất con và dòng combo không mang lựa chọn — chỉ được
+hai trigger trên xét lúc INSERT. Vì vậy, quyền UPDATE của `shop_app` trên `order_line` ·
+`order_line_option` bị thu (T-341, 2026-11-20, theo phiếu Claude), bằng
+[`20261120100000_khoa_sua_dong_don.up.sql`](../../../db/migrations/20261120100000_khoa_sua_dong_don.up.sql).
+Một cửa sửa dòng sau này phải được thiết kế cùng trigger kiểm lại hai luật trước khi cấp lại quyền.
+
 ## 3. Database không xét — tầng 3
 
 **Đủ suất** (số suất mỗi món = số phần × số combo), **mức đã chụp khớp bảng mức tại mốc**, **giá combo tại mốc**,
