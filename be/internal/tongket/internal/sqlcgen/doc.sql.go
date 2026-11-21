@@ -19,8 +19,11 @@ WITH bills AS (
          WHERE bill_id IS NOT NULL AND sale_date = $1::text::date) AS refunds_vnd
  FROM bills
 ), orders AS (
- SELECT o.id FROM sales_order o WHERE o.status <> 'cancelled'
- AND EXISTS (SELECT 1 FROM bills b WHERE b.sales_order_id = o.id OR b.table_session_id = o.table_session_id)
+ SELECT o.id FROM bills b JOIN sales_order o ON o.id = b.sales_order_id
+ WHERE o.status <> 'cancelled'
+ UNION
+ SELECT o.id FROM bills b JOIN sales_order o ON o.table_session_id = b.table_session_id
+ WHERE o.status <> 'cancelled'
 ), items AS (
  SELECT l.menu_item_id, m.name, sum(l.quantity)::bigint AS quantity
  FROM order_line l JOIN orders o ON o.id = l.sales_order_id JOIN menu_item m ON m.id = l.menu_item_id
@@ -35,7 +38,7 @@ WITH bills AS (
 ), counter_orders AS (
  SELECT d.person_id, count(*) AS quantity FROM sales_order o
  JOIN counter_duty d ON o.created_at >= d.started_at AND (d.ended_at IS NULL OR o.created_at < d.ended_at)
- WHERE o.created_at::date = $1::text::date GROUP BY d.person_id
+ WHERE o.created_at >= $1::text::date AND o.created_at < ($1::text::date + 1) GROUP BY d.person_id
 ), deliveries AS (
  SELECT b.person_id, count(*) AS quantity FROM bills b JOIN sales_order o ON o.id = b.sales_order_id
  WHERE o.is_door_delivery IS TRUE GROUP BY b.person_id

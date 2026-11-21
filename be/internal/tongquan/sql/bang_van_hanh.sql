@@ -1,6 +1,16 @@
 -- ADR-124: ảnh phiên hiện tại và lịch sử đem ra trong ngày bán.
 -- name: BangVanHanh :one
-WITH viec AS MATERIALIZED (
+WITH viec_can AS MATERIALIZED (
+ SELECT j.id FROM table_session s
+ JOIN sales_order o ON o.table_session_id = s.id
+ JOIN station_job j ON j.sales_order_id = o.id
+ WHERE s.status <> 'closed' AND o.status <> 'cancelled'
+ UNION
+ SELECT r.target_row FROM record_revision r
+ WHERE r.target_table_code = 'station_job'
+   AND r.before_image->>'status' = 'made' AND r.after_image->>'status' = 'served'
+   AND r.created_at >= $1::text::date AND r.created_at < ($1::text::date + 1)
+), viec AS MATERIALIZED (
  -- khoá gom: đầu
  -- Định nghĩa DUY NHẤT của khoá gom (I-019 tầng 3, ADR-090 điểm 8): trạm + thành phần gốc đã chụp (null
  -- với nước chấm) + tập tuỳ chọn nhân đã chụp, sắp tăng, chỉ khi thành phần nhận nhân. Đoạn này nằm ở
@@ -16,6 +26,7 @@ WITH viec AS MATERIALIZED (
  LEFT JOIN table_session s ON s.id = o.table_session_id
  LEFT JOIN order_line_component c ON c.id = j.order_line_component_id
  -- khoá gom: cuối
+ WHERE j.id IN (SELECT id FROM viec_can)
 ), phien_mo AS (
  SELECT id, status FROM table_session WHERE status <> 'closed'
 ), don_nguon AS (

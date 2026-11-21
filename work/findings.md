@@ -5278,11 +5278,17 @@ Cả hai tăng theo số đơn đã từng bán, nên ngày đầu nhanh, vài t
 phải số của quán — con số giây sẽ khác, hình tăng thì không.
 
 **Decision / Fix:**
-Chưa sửa. Việc riêng `T-347` (Ready). Hướng (suy luận của Claude, chưa thử): lọc `viec` theo tập việc cần cho phiên đang mở và cho các vết
-của ngày trước khi gom; tách phép nối `OR` thành hai nhánh `UNION ALL`. Mỗi hướng phải chứng minh kết quả đọc ra không đổi.
+T-347 (2026-11-20, Codex làm, Claude duyệt): `bang_van_hanh.sql` thêm CTE `viec_can` (việc của đơn chưa huỷ thuộc phiên chưa đóng ∪ việc
+được vết `made → served` của ngày nhắc tới) và lọc `viec` sau dấu `-- khoá gom: cuối`; `doc.sql` tách phép nối `OR` thành hai nhánh
+`UNION`, `counter_orders` lọc khoảng nửa mở. Kết quả không đổi: `TestI019_BangVanHanhKetQuaKhongDoiT347` ·
+`TestI014_TongKetKetQuaKhongDoiT347` so bản câu đóng băng với bản mới trên cùng fixture (Claude thử: hai cách viết lại sai đều bị bắt).
+Đo lại trên cùng dữ liệu ba năm (container `lean-t340-do`, ngày 2026-05-02): tổng kết **1 979 ms → 26 ms**; bảng vận hành **> 60 s
+(595 s) → 530 ms**. Phần còn lại của bảng vận hành là `lich_su` nối 1 800 vết của ngày với `viec` bằng vòng lồng (≈ 3,2 triệu phép so):
+tăng theo bình phương số lần đem ra **trong ngày**, không theo lịch sử. Nếu số lần đem ra mỗi ngày của quán thật lớn hơn nhiều số giả,
+hướng tiếp là cho `lich_su` nối bằng băm — đụng cách `lich_su` dùng `viec`, nên là việc riêng.
 
 **Related task:**
 `T-340` (nơi thấy) · `T-347`
 
 **Status:**
-Open
+Closed 2026-11-20 (T-347)
