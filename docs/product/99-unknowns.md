@@ -176,6 +176,32 @@ trong sáu câu đụng luật quán đã chốt nên không được suy ra.
   ngoài không? (Mở 2026-11-04, Claude, CHAT-02 lượt hai.) Lời §8.11 điểm 5 cấm gửi dữ liệu cá nhân ra ngoài; bộ lọc của ADR-139 điểm 7 ẩn được
   số điện thoại và địa chỉ thư, **không** nhận ra tên hay địa chỉ gõ tự do. Ai trả lời: chủ repo (chấp nhận chỗ hở, hay chỉ cho dùng model
   chạy trong máy quán, hay chặn câu nghi có tên). Chặn gì: cắm hãng thật vào lane `CHAT`; không chặn thi công với nhà cung cấp giả.
+<a id="u-120"></a>
+- **U-120** — Trên trang Khoản chi, mỗi **nguyên liệu** (khoản con của mục mua nguyên liệu) có phải **cùng một thứ** với
+  nguyên liệu trong sổ Kho/Nguyên liệu không, và một thứ trong sổ có được dùng ở nhiều mục chi không? (Mở 2026-11-22,
+  Claude, T-363; bản HTML gộp hai thứ, còn §8.10 quy tắc T-248 tách tiền ở Khoản chi khỏi lượng ở sổ nguyên liệu.) Ai
+  trả lời: chủ quán, chủ repo chuyển lời. Chặn gì: mọi bước nối Khoản chi với sổ lượng của lane `KC` (`work/backlog_KC.md` Q-KC-01).
+<a id="u-121"></a>
+- **U-121** — **Ngày nhập hàng** của một lần mua có cần ghi riêng với **ngày chi** tiền không; mua nợ, trả nhiều lần
+  hay nhập nhiều lần trong ngày thì một khoản chi có mấy ngày nhập? (Mở 2026-11-22, Claude, T-363.) Ai trả lời: chủ
+  quán. Chặn gì: chỗ lưu ngày nhập và *Lịch sử mua hàng* nhóm theo ngày nhập của lane `KC` (`work/backlog_KC.md` Q-KC-02).
+<a id="u-122"></a>
+- **U-122** — "**Số hàng còn**" trên trang Khoản chi là hiệu số *mua vào trừ đã dùng* máy đang tính, hay một số chủ quán
+  tự đếm rồi nhập riêng? (Mở 2026-11-22, Claude, T-363; hiệu số hiện có thể âm.) Ai trả lời: chủ quán. Chặn gì: cột số
+  còn và phần dự tính của lane `KC` (`work/backlog_KC.md` Q-KC-03).
+<a id="u-123"></a>
+- **U-123** — Chủ quán có muốn máy hiện "**ước tính còn dùng N ngày**" không, khi `U-045` đã chốt *máy không kết luận
+  thiếu* và trang Kho không có *dự kiến hết* (ADR-103 điểm 4)? Nếu có: mức dùng mỗi ngày do người gõ hay máy tính từ
+  sổ, và ai được sửa? (Mở 2026-11-22, Claude, T-363.) Ai trả lời: chủ quán. Chặn gì: bước dữ liệu, backend và FE của
+  dự tính trong lane `KC` (`work/backlog_KC.md` Q-KC-04).
+<a id="u-124"></a>
+- **U-124** — Khi một nguyên liệu trên Khoản chi đã nối với sổ lượng, **đổi tên hay xoá** nó ở Khoản chi thì sổ lượng
+  có đổi theo không? (Mở 2026-11-22, Claude, T-363; bản HTML xoá cả lịch sử dùng, sổ lượng hiện không có chức năng xoá.)
+  Ai trả lời: chủ quán. Chặn gì: vòng đời của liên kết trong lane `KC` (`work/backlog_KC.md` Q-KC-05); chỉ có nghĩa khi `U-120` trả lời *có*.
+<a id="u-125"></a>
+- **U-125** — Thêm nguyên liệu mới **kèm tiền mua** cần một lần bấm thành công cả hai, hay chấp nhận hai bước (thêm tên
+  rồi *Ghi chi*) như trang thật đang làm? (Mở 2026-11-22, Claude, T-363.) Ai trả lời: chủ repo. Chặn gì: lệnh thêm gộp
+  của lane `KC` (`work/backlog_KC.md` Q-KC-06); không chặn phần còn lại.
 
 **Ngày 2026-10-31, T-278 mở U-111 — đóng 2026-11-01** sau khi chủ repo trả lời hai lượt liên tiếp. Nguyên văn: *"cho
 đang kí bằng gmail không cần duyệt"* (lượt một, trả lời câu *"Gmail chưa có tài khoản người làm sẽ được xử lý thế

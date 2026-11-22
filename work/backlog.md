@@ -53,6 +53,7 @@ của file ấy chỉ nhận dữ kiện admin của quán).
 | Vế 2026-09-29 | **chủ repo**: *"tôi muốn làm luôn db cho phần admin"* — nhắc lại 2026-09-30 (*"tiếp tục"*) | **đang hiệu lực** — mở thi công **lược đồ** admin cho phần đã đủ luật; `docs/decisions.md` **ADR-068** |
 | Vế 2026-10-14 | **chủ repo**: *"cập nhật backlog … cho db của admin, tôi sẽ làm be cho admin"* (T-184) | **đang hiệu lực** — lược đồ admin lượt hai `P2A-10`…`P2A-16`; backend admin sẽ làm — kế hoạch mở 2026-10-14 ở `T-191` (**ADR-110**: `P3A-01`…`P3A-10`) |
 | Vế 2026-11-01 | **chủ repo**: *"step by step complete above task request codex to do you check"* (nói về `work/backlog_CHAT.md`) | **đang hiệu lực** — mở lane `CHAT` cho nhánh đã đủ lời; không mở pha 5 (`T-109`) |
+| Vế 2026-11-22 | **chủ repo**: *"hãy yêu cầu codex làm backlog cho task trên và bạn kiểm tra từ db, be và fe"* (nói về `khoan-chi.html`) | **đang hiệu lực** — mở lane `KC` ở `work/backlog_KC.md` (T-363); chưa bước nào *Ready*: KC-01 cần lời U-120…U-125 trước |
 
 **Vế mới nói chính xác cái gì.** Chủ quán chọn *"Song song: hỏi chủ quán về admin trong khi pha 2
 chạy"*, và phương án ấy nói rõ hai nửa:
@@ -98,6 +99,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-363 **Trang Khoản chi theo bản thiết kế chưa có lộ trình dựng thật từ database, backend tới giao diện** — L1 (mở lane, chỉ tài liệu), chủ repo yêu cầu 2026-11-22; Codex viết sổ `work/backlog_KC.md`, Claude kiểm từng bước với database, backend và FE đang có · [chi tiết](#t-363)
 - [x] YT-06 **Thực đơn và trang chi tiết chưa có nút thả tim** — L1, sau YT-05; Codex làm trong `../lean_wt/YT-06`, Claude duyệt (nhận 2026-11-21) · [mô tả](backlog_YT.md#yt-06); **xong 2026-11-21**: `NutTim` trên thực đơn web và trang chi tiết, 22 test, `fe-check` 845/845
 - [x] YT-05 **Khách chưa có trang Yêu thích thật trên web** — L2, sau YT-04, theo `favourite.html`; Claude viết test trước `fe/src/app/khach/yeu-thich/yeu-thich.test.tsx`, Codex làm trong `../lean_wt/YT-05` trên nền YT-03 · YT-04 chưa commit (nhận 2026-11-20) · [mô tả](backlog_YT.md#yt-05); **xong 2026-11-21**: trang `/khach/yeu-thich`, 28 test FE, gate đủ ba bước xanh trên `657bfcb` (bước 49, hợp đồng 0.76.0)
 - [x] YT-04 **Chưa có API đọc và ghi món yêu thích theo tài khoản khách** — L2; Claude viết test trước `be/internal/yeuthich/http_test.go` (9 ca, đỏ 2026-11-20), Codex làm trong `../lean_wt/YT-04` trên nền YT-03 chưa commit · [mô tả](backlog_YT.md#yt-04); **xong trong worktree 2026-11-20**: chín `TestI045_*` và be-check 33/33 đạt, hợp đồng 0.74.0; thêm I-045; đưa về cây chính 2026-11-21 trên `657bfcb` (hợp đồng 0.76.0)
@@ -606,6 +608,17 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-363"></a>
+### T-363 — Lộ trình dựng trang Khoản chi từ database, backend tới FE
+
+Chủ repo yêu cầu 2026-11-22, khi đang mở `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`: *"hãy yêu cầu codex làm backlog cho task trên và bạn kiểm tra từ db, be và fe"*. Claude đọc (suy ra, theo tiền lệ *Vế 2026-11-18* và T-348): "task trên" là trang Khoản chi theo bản HTML đã sửa qua T-350…T-362; việc cần là một sổ backlog riêng đi từ database → backend → FE, Codex viết, Claude đối chiếu với thứ đang có. Mức L1: chỉ tài liệu kế hoạch, không đổi code, hợp đồng hay dữ liệu.
+
+Acceptance viết trước: A1 — `work/backlog_KC.md` liệt kê từng tính năng của bản HTML với trạng thái hiện có ở database (`db/migrations/`), backend (`docs/product/3-be/openapi.yaml`, `be/internal/khoanchi`, `be/internal/nguyenlieu`) và FE (`fe/src/app/chu-quan/`), mỗi dòng có đường dẫn làm bằng chứng. A2 — các bước `KC-XX` theo thứ tự DB → BE → FE, mỗi bước một mức, ai làm, đứng trên, chặn bởi, Acceptance và phạm vi; không gộp DB · BE · FE trong một bước. A3 — chỗ bản HTML cần dữ liệu mà luật quán chưa nói được ghi là câu hỏi mở cho Claude chuyển vào `docs/product/99-unknowns.md`, không tự quyết. A4 — `CLAUDE.md` §2 có dòng owner cho sổ mới. A5 — `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-363.txt`): `work/backlog_KC.md`, `CLAUDE.md`, `docs/product/99-unknowns.md`, `work/backlog.md`. Codex viết `work/backlog_KC.md` trong `../lean_wt/T-363` (nhánh `codex/T-363`), phiếu và báo cáo ở `../lean_wt/_claude_logs/T-363/`; Claude duyệt và làm phần còn lại.
+
+**Bàn giao 2026-11-22** (thực hiện: Codex, duyệt: Claude; worktree `../lean_wt/T-363`, nhánh `codex/T-363` từ `1693c48`). Codex viết `work/backlog_KC.md`: bảng đối chiếu 22 tính năng × DB · API · FE kèm bằng chứng, mười ba bước KC-01…KC-13, sáu câu Q-KC. Codex hết hạn mức trước khi gửi báo cáo, nên Claude duyệt thẳng trên tệp và đối chiếu với bản kiểm riêng (`../lean_wt/_claude_logs/T-363/claude-doi-chieu.md`): khớp ở mọi điểm chính. Claude sửa bốn chỗ: hai link tuyệt đối ra ngoài repo; Q-KC-04 thiếu chỗ va với `U-045` đã đóng và ADR-103 điểm 4 (trang kho *không có dự kiến hết*); KC-13 ghi đúng người chạy; nối Q-KC-01…06 với U-120…U-125 mới mở ở `docs/product/99-unknowns.md`. Thêm dòng §2 ở `CLAUDE.md` và vế 2026-11-22 ở bảng lời chốt. Chưa bước KC nào *Ready*.
 
 <a id="t-354"></a>
 ### T-354 — Ba cột nguyên liệu cùng một hàng ở màn hình hẹp
