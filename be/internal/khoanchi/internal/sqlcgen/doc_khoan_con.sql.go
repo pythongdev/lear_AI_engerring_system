@@ -10,13 +10,16 @@ import (
 )
 
 const docKhoanCon = `-- name: DocKhoanCon :many
-SELECT id, expense_category_id, name FROM expense_item WHERE deleted_at IS NULL ORDER BY name, id
+SELECT i.id, i.expense_category_id, i.name,
+  COALESCE((SELECT max(e.paid_date)::text FROM expense e WHERE e.expense_item_id = i.id AND e.deleted_at IS NULL), '')::text AS last_paid_date
+FROM expense_item i WHERE i.deleted_at IS NULL ORDER BY i.name, i.id
 `
 
 type DocKhoanConRow struct {
 	ID                int64
 	ExpenseCategoryID int64
 	Name              string
+	LastPaidDate      string
 }
 
 func (q *Queries) DocKhoanCon(ctx context.Context) ([]DocKhoanConRow, error) {
@@ -28,7 +31,12 @@ func (q *Queries) DocKhoanCon(ctx context.Context) ([]DocKhoanConRow, error) {
 	var items []DocKhoanConRow
 	for rows.Next() {
 		var i DocKhoanConRow
-		if err := rows.Scan(&i.ID, &i.ExpenseCategoryID, &i.Name); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.ExpenseCategoryID,
+			&i.Name,
+			&i.LastPaidDate,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

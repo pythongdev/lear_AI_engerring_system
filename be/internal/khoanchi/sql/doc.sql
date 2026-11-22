@@ -4,4 +4,5 @@ FROM expense e JOIN expense_category c ON c.id = e.expense_category_id JOIN pers
 WHERE e.deleted_at IS NULL AND e.paid_date >= $1::text::date AND e.paid_date <= $2::text::date
   AND ($3::bigint = 0 OR e.expense_category_id = $3::bigint)
   AND (NOT $4::boolean OR c.paid_from_till = $5::boolean)
+  AND ($6::bigint = 0 OR e.expense_item_id = $6::bigint)
 ORDER BY e.paid_date, e.id;

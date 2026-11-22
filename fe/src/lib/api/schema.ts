@@ -1019,7 +1019,7 @@ export interface paths {
         };
         /**
          * Chủ quán đọc khoản chi theo khoảng ngày, loại và nguồn.
-         * @description from và to bắt buộc, đúng YYYY-MM-DD và from ≤ to; sai trả invalid_request ở tham số sai. Sắp theo paid_date rồi expense_id; backend cộng total_vnd, category_totals và item_totals từ các khoản chưa xoá trả về; last_paid_date là ngày gần nhất trong bộ lọc.
+         * @description from và to bắt buộc, đúng YYYY-MM-DD và from ≤ to; sai trả invalid_request ở tham số sai. expense_item_id tuỳ chọn lọc lịch sử một khoản con (KC-05). Sắp theo paid_date rồi expense_id; backend cộng total_vnd, day_totals, category_totals và item_totals từ các khoản chưa xoá trả về; last_paid_date của item_totals là ngày gần nhất trong bộ lọc.
          */
         get: operations["listExpenses"];
         put?: never;
@@ -3539,6 +3539,11 @@ export interface components {
             name: string;
         };
         ExpenseItem: {
+            /**
+             * Format: date
+             * @description Ngày chi gần nhất của các khoản chưa xoá, trên mọi ngày — không theo bộ lọc nào; chưa có khoản thì null (KC-05).
+             */
+            last_paid_date?: string | null;
             /** Format: int64 */
             expense_item_id: number;
             /** Format: int64 */
@@ -3565,6 +3570,11 @@ export interface components {
             paid_from_till: boolean;
         };
         ExpenseCategory: {
+            /**
+             * Format: date
+             * @description Ngày chi gần nhất của các khoản chưa xoá, trên mọi ngày — không theo bộ lọc nào; chưa có khoản thì null (KC-05).
+             */
+            last_paid_date?: string | null;
             items?: components["schemas"]["ExpenseItem"][];
             /** Format: int64 */
             expense_category_id: number;
@@ -3614,7 +3624,15 @@ export interface components {
             person_name: string;
             created_at: components["schemas"]["Instant"];
         };
+        ExpenseDayTotal: {
+            paid_date: components["schemas"]["SaleDate"];
+            /** Format: int64 */
+            expense_count: number;
+            total_vnd: components["schemas"]["MoneyVnd"];
+        };
         Expenses: {
+            /** @description Một dòng mỗi ngày chi có khoản trong tập lọc, ngày mới trước; backend cộng, tổng các dòng bằng total_vnd (KC-05, ADR-147 điểm 10). */
+            day_totals: components["schemas"]["ExpenseDayTotal"][];
             category_totals?: components["schemas"]["ExpenseCategoryTotal"][];
             item_totals?: components["schemas"]["ExpenseItemTotal"][];
             from: components["schemas"]["SaleDate"];
@@ -6703,6 +6721,8 @@ export interface operations {
                 from: components["schemas"]["SaleDate"];
                 to: components["schemas"]["SaleDate"];
                 expense_category_id?: number;
+                /** @description Chỉ khoản chi của khoản con này (KC-05); số nguyên dương, sai trả invalid_request ở expense_item_id. */
+                expense_item_id?: number;
                 /** @description Chỉ nhận true hoặc false. */
                 paid_from_till?: boolean;
             };

@@ -10,13 +10,16 @@ import (
 )
 
 const docLoai = `-- name: DocLoai :many
-SELECT id, name, paid_from_till FROM expense_category WHERE deleted_at IS NULL ORDER BY name
+SELECT c.id, c.name, c.paid_from_till,
+  COALESCE((SELECT max(e.paid_date)::text FROM expense e WHERE e.expense_category_id = c.id AND e.deleted_at IS NULL), '')::text AS last_paid_date
+FROM expense_category c WHERE c.deleted_at IS NULL ORDER BY c.name
 `
 
 type DocLoaiRow struct {
 	ID           int64
 	Name         string
 	PaidFromTill bool
+	LastPaidDate string
 }
 
 func (q *Queries) DocLoai(ctx context.Context) ([]DocLoaiRow, error) {
@@ -28,7 +31,12 @@ func (q *Queries) DocLoai(ctx context.Context) ([]DocLoaiRow, error) {
 	var items []DocLoaiRow
 	for rows.Next() {
 		var i DocLoaiRow
-		if err := rows.Scan(&i.ID, &i.Name, &i.PaidFromTill); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.PaidFromTill,
+			&i.LastPaidDate,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

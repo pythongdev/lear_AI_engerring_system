@@ -17,6 +17,7 @@ FROM expense e JOIN expense_category c ON c.id = e.expense_category_id JOIN pers
 WHERE e.deleted_at IS NULL AND e.paid_date >= $1::text::date AND e.paid_date <= $2::text::date
   AND ($3::bigint = 0 OR e.expense_category_id = $3::bigint)
   AND (NOT $4::boolean OR c.paid_from_till = $5::boolean)
+  AND ($6::bigint = 0 OR e.expense_item_id = $6::bigint)
 ORDER BY e.paid_date, e.id
 `
 
@@ -26,6 +27,7 @@ type DocParams struct {
 	Column3 int64
 	Column4 bool
 	Column5 bool
+	Column6 int64
 }
 
 type DocRow struct {
@@ -49,6 +51,7 @@ func (q *Queries) Doc(ctx context.Context, arg DocParams) ([]DocRow, error) {
 		arg.Column3,
 		arg.Column4,
 		arg.Column5,
+		arg.Column6,
 	)
 	if err != nil {
 		return nil, err

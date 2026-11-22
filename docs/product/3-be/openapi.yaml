@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.76.0
+  version: 0.78.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -1963,7 +1963,7 @@ paths:
       operationId: listExpenses
       tags: [khoanchi]
       summary: Chủ quán đọc khoản chi theo khoảng ngày, loại và nguồn.
-      description: from và to bắt buộc, đúng YYYY-MM-DD và from ≤ to; sai trả invalid_request ở tham số sai. Sắp theo paid_date rồi expense_id; backend cộng total_vnd, category_totals và item_totals từ các khoản chưa xoá trả về; last_paid_date là ngày gần nhất trong bộ lọc.
+      description: from và to bắt buộc, đúng YYYY-MM-DD và from ≤ to; sai trả invalid_request ở tham số sai. expense_item_id tuỳ chọn lọc lịch sử một khoản con (KC-05). Sắp theo paid_date rồi expense_id; backend cộng total_vnd, day_totals, category_totals và item_totals từ các khoản chưa xoá trả về; last_paid_date của item_totals là ngày gần nhất trong bộ lọc.
       parameters:
         - name: from
           in: query
@@ -1977,6 +1977,13 @@ paths:
             $ref: '#/components/schemas/SaleDate'
         - name: expense_category_id
           in: query
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: expense_item_id
+          in: query
+          description: Chỉ khoản chi của khoản con này (KC-05); số nguyên dương, sai trả invalid_request ở expense_item_id.
           schema:
             type: integer
             format: int64
@@ -6876,6 +6883,10 @@ components:
       type: object
       required: [expense_item_id, expense_category_id, name]
       properties:
+        last_paid_date:
+          type: [string, 'null']
+          format: date
+          description: Ngày chi gần nhất của các khoản chưa xoá, trên mọi ngày — không theo bộ lọc nào; chưa có khoản thì null (KC-05).
         expense_item_id:
           type: integer
           format: int64
@@ -6923,6 +6934,10 @@ components:
       type: object
       required: [expense_category_id, name, paid_from_till]
       properties:
+        last_paid_date:
+          type: [string, 'null']
+          format: date
+          description: Ngày chi gần nhất của các khoản chưa xoá, trên mọi ngày — không theo bộ lọc nào; chưa có khoản thì null (KC-05).
         items:
           type: array
           items:
@@ -7012,10 +7027,27 @@ components:
           description: person.display_name của người ghi lần đầu.
         created_at:
           $ref: '#/components/schemas/Instant'
+    ExpenseDayTotal:
+      type: object
+      required: [paid_date, expense_count, total_vnd]
+      properties:
+        paid_date:
+          $ref: '#/components/schemas/SaleDate'
+        expense_count:
+          type: integer
+          format: int64
+          minimum: 1
+        total_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
     Expenses:
       type: object
-      required: [from, to, expenses, total_vnd]
+      required: [from, to, expenses, total_vnd, day_totals]
       properties:
+        day_totals:
+          type: array
+          description: Một dòng mỗi ngày chi có khoản trong tập lọc, ngày mới trước; backend cộng, tổng các dòng bằng total_vnd (KC-05, ADR-147 điểm 10).
+          items:
+            $ref: '#/components/schemas/ExpenseDayTotal'
         category_totals:
           type: array
           items:
@@ -9442,6 +9474,17 @@ components:
 # internal (không bao giờ là luật người dùng chạm tới) hoặc unreviewed (chưa lát nào xét — chạy như
 # internal_error). Lát dựng cửa chạm một bảng thì xét lại dòng của bảng ấy (01-hop-dong-api.md §4).
 x-constraint-errors:
+  # KC-02: lát database; KC-06 xét mã công khai tại cửa backend.
+  expense_category_id_tracks_supply_key: unreviewed
+  expense_item_category_tracks_supply_fkey: unreviewed
+  expense_item_supply_item_fkey: unreviewed
+  expense_item_supply_item_key: unreviewed
+  expense_item_supply_link_check: unreviewed
+  expense_item_supply_name_match_check: unreviewed
+  expense_item_supply_stopped_match_check: unreviewed
+  supply_item_deleted_by_person_fkey: unreviewed
+  supply_item_deleted_pair_check: unreviewed
+  supply_day_entry_supply_item_stopped_check: unreviewed
   model_call_pkey: internal
   model_call_provider_code_check: internal
   model_call_model_code_check: internal

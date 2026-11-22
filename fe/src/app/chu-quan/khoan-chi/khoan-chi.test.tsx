@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { readFileSync } from "node:fs";
 import { useSyncExternalStore } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiProvider } from "@/lib/api/provider";
@@ -16,7 +17,7 @@ afterEach(() => { cleanup(); nav.search = ""; nav.replace.mockReset(); });
 type K = components["schemas"];
 const loai: K["ExpenseCategory"][] = [{ expense_category_id: 2, name: "Điện", paid_from_till: true }, { expense_category_id: 1, name: "Marketing", paid_from_till: false }];
 const khoan: K["Expense"] = { expense_id: 9, expense_category_id: 2, category_name: "Điện", paid_from_till: false, amount_vnd: 125000, paid_date: "2026-10-18", person_id: 1, person_name: "Hoa", created_at: "2026-10-18T01:00:00Z" };
-const ds: K["Expenses"] = { from: "2026-10-19", to: "2026-10-19", expenses: [khoan], total_vnd: 987654 };
+const ds: K["Expenses"] = { from: "2026-10-19", to: "2026-10-19", expenses: [khoan], total_vnd: 987654, day_totals: [] };
 type Tra = { status: number; body?: unknown };
 type GoiDen = { method: string; path: string; body: unknown };
 // Như test-utils nhưng giữ cả chuỗi tham số trong path, vì trang lọc khoản chi bằng tham số (giống giao-viec.test.tsx).
@@ -156,10 +157,10 @@ const muc = () => screen.getByRole("heading", { name: "Điện", level: 3 }).clo
 describe("Khoản chi theo thiết kế", () => {
   it("chọn 7 ngày tính cả ngày cuối và giữ loại/nguồn trên URL", async () => {
     nav.search = "tu=2026-10-01&den=2026-10-24&loai=2&nguon=rieng";
-    const g = mo(); await screen.findByText("987.654 đ"); fireEvent.click(screen.getByRole("button", { name: "1 tuần · 7 ngày" }));
+    const g = mo(); await screen.findByText("987.654 đ"); fireEvent.click(screen.getByRole("button", { name: "7 ngày" }));
     await waitFor(() => expect(doc(g).at(-1)?.path).toContain("from=2026-10-18&to=2026-10-24"));
     expect(nav.replace).toHaveBeenLastCalledWith("/chu-quan/khoan-chi?tu=2026-10-18&den=2026-10-24&loai=2&nguon=rieng");
-    expect(screen.getByRole("button", { name: "1 tuần · 7 ngày" }).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByRole("button", { name: "7 ngày" }).getAttribute("aria-pressed")).toBe("true");
   });
   it("ẩn bảng giữ tiêu đề và trạng thái sau đổi bộ lọc", async () => {
     mo(); await screen.findByText("987.654 đ"); const ledger = screen.getByRole("region", { name: "Các khoản chi" }); fireEvent.click(within(ledger).getByRole("button", { name: "Ẩn" })); expect(within(ledger).queryByRole("table")).toBeNull();
@@ -171,7 +172,7 @@ describe("Khoản chi theo thiết kế", () => {
     fireEvent.click(within(muc()).getByRole("button", { name: "Ẩn mục" })); expect(within(muc()).queryByRole("button", { name: "Ghi chi" })).toBeNull(); fireEvent.click(within(muc()).getByRole("button", { name: "Hiện mục" })); expect(within(muc()).getByRole("button", { name: "Ghi chi" })).toBeTruthy();
   });
   it("lọc ngày riêng mục được giới hạn bởi khoảng ngày chung", async () => {
-    nav.search = "tu=2026-10-10&den=2026-10-24"; const g = mo({ loai: categoriesWithItems, doc: docWithItems }); await screen.findByText("333.333 đ"); go(muc(), "Từ ngày · Điện", "2026-10-01");
+    nav.search = "tu=2026-10-10&den=2026-10-24"; const g = mo({ loai: categoriesWithItems, doc: docWithItems }); await screen.findByText("333.333 đ"); fireEvent.click(within(muc()).getByRole("button", { name: "Lọc ngày" })); go(muc(), "Từ ngày · Điện", "2026-10-01");
     await waitFor(() => expect(doc(g).at(-1)?.path).toContain("from=2026-10-10&to=2026-10-24&expense_category_id=2")); go(muc(), "Đến ngày · Điện", "2026-10-19");
     await waitFor(() => expect(doc(g).at(-1)?.path).toContain("from=2026-10-10&to=2026-10-19&expense_category_id=2")); expect(within(muc()).getByText("555.555 đ")).toBeTruthy();
   });
@@ -207,5 +208,177 @@ describe("Khoản chi theo thiết kế", () => {
   });
   it("backend chặn xoá mục còn khoản ngoài bộ lọc, giữ lý do", async () => {
     mo({ ghi: () => ({ status: 409, body: { code: "expense_category_in_use" } }) }); await screen.findByRole("list", { name: "Danh sách loại chi" }); fireEvent.click(within(muc()).getByRole("button", { name: "Xoá mục" })); const f = screen.getByRole("form", { name: "Xác nhận xoá" }); go(f, "Lý do xoá", "Không dùng nữa"); gui(f); await screen.findByText(/Mục còn khoản chi/); expect(screen.getByRole("dialog")).toBeTruthy(); expect((within(f).getByLabelText("Lý do xoá") as HTMLInputElement).value).toBe("Không dùng nữa");
+  });
+});
+
+describe("KC-08 — bố cục và thu gọn khoản chi", () => {
+  it("khối ngày gọn, chọn 10 ngày tính cả 20/11 và cập nhật khoảng khi sửa tay", async () => {
+    nav.search = "tu=2026-11-01&den=2026-11-20&loai=2&nguon=rieng";
+    const g = mo(); await screen.findByText("987.654 đ");
+    const period = screen.getByRole("region", { name: "Tổng tiền theo khoảng ngày" });
+    expect(within(period).queryByText(/Chọn nhanh số ngày, tính cả ngày kết thúc trong bộ lọc/)).toBeNull();
+    expect(within(period).queryByText(/Có thể sửa Từ ngày \/ Đến ngày bên dưới/)).toBeNull();
+    expect(within(period).queryByText(/Tổng tiền áp dụng bộ lọc loại chi và nguồn tiền/)).toBeNull();
+    expect(within(period).getAllByRole("button").map((b) => b.textContent)).toEqual(["7 ngày", "10 ngày", "14 ngày", "30 ngày"]);
+    fireEvent.click(within(period).getByRole("button", { name: "10 ngày" }));
+    await waitFor(() => expect(doc(g).at(-1)?.path).toContain("from=2026-11-11&to=2026-11-20"));
+    expect(nav.replace).toHaveBeenLastCalledWith("/chu-quan/khoan-chi?tu=2026-11-11&den=2026-11-20&loai=2&nguon=rieng");
+    expect(within(period).getByRole("button", { pressed: true }).textContent).toBe("10 ngày");
+    expect(within(period).getByText("11/11/2026 – 20/11/2026 · 10 ngày")).toBeTruthy();
+    go(document.body, "Từ ngày", "2026-11-12");
+    expect(within(period).getByText("12/11/2026 – 20/11/2026 · 9 ngày")).toBeTruthy();
+    expect(within(period).queryByRole("button", { pressed: true })).toBeNull();
+    go(document.body, "Đến ngày", "2026-11-21");
+    expect(within(period).getByText("12/11/2026 – 21/11/2026 · 10 ngày").getAttribute("aria-live")).toBe("polite");
+    expect(within(period).getByRole("button", { pressed: true }).textContent).toBe("10 ngày");
+  });
+
+  it.each([
+    [7, "2026-12-28"], [10, "2026-12-25"], [14, "2026-12-21"], [30, "2026-12-05"],
+  ])("chọn %s ngày qua tháng và năm vẫn tính cả ngày cuối", async (days, start) => {
+    nav.search = "den=2027-01-03";
+    const g = mo(); await screen.findByText("987.654 đ");
+    fireEvent.click(screen.getByRole("button", { name: `${days} ngày` }));
+    await waitFor(() => expect(doc(g).at(-1)?.path).toBe(`/expenses?from=${start}&to=2027-01-03`));
+    expect(screen.getByRole("button", { name: `${days} ngày` }).getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it.each(["2026-11-01", "khong-phai-ngay"])("khoảng ngày sai không chọn nút nhanh: Đến ngày %s", async (end) => {
+    nav.search = `tu=2026-11-20&den=${end}`;
+    mo({ doc: () => ({ status: 400, body: { code: "invalid_request", field: "to" } }) });
+    await waitFor(() => expect(sai(document.body, "Đến ngày")).toBe("true"));
+    const period = screen.getByRole("region", { name: "Tổng tiền theo khoảng ngày" });
+    expect(within(period).getByText("Chọn khoảng ngày hợp lệ để xem tổng tiền.")).toBeTruthy();
+    expect(within(period).queryByRole("button", { pressed: true })).toBeNull();
+    if (end === "khong-phai-ngay") {
+      for (const button of within(period).getAllByRole("button")) expect(button.hasAttribute("disabled")).toBe(true);
+    }
+  });
+
+  it.each([2, 5])("bày đủ %s mục theo đúng thứ tự backend, không gài tên mẫu", async (count) => {
+    // JSDOM kiểm CSS xếp dọc; kích thước và media query vẫn cần trình duyệt thật.
+    render(<style>{readFileSync("src/app/chu-quan/_components/khoan-chi.css", "utf8")}</style>);
+    const categories = [
+      { expense_category_id: 41, name: "Bao bì", paid_from_till: false },
+      { expense_category_id: 9, name: "Thuê mặt bằng", paid_from_till: true },
+      { expense_category_id: 27, name: "Vận chuyển", paid_from_till: false },
+      { expense_category_id: 3, name: "Sửa chữa", paid_from_till: true },
+      { expense_category_id: 18, name: "Internet", paid_from_till: false },
+    ].slice(0, count);
+    mo({ loai: () => ({ status: 200, body: { expense_categories: categories } }) });
+    const list = await screen.findByRole("list", { name: "Danh sách loại chi" });
+    expect(getComputedStyle(list).display).toBe("flex");
+    expect(getComputedStyle(list).flexDirection).toBe("column");
+    expect(within(list).getAllByRole("heading", { level: 3 }).map((h) => h.textContent)).toEqual(categories.map((c) => c.name));
+    expect(list.children).toHaveLength(count);
+    for (const [index, item] of Array.from(list.children).entries()) {
+      expect(item.getAttribute("role")).toBe("listitem");
+      expect(within(item as HTMLElement).getByRole("heading", { name: categories[index].name })).toBeTruthy();
+    }
+  });
+
+  it("Hiện/Ẩn từng mục, khoản con, sổ và bảng độc lập, giữ focus và vùng aria-controls", async () => {
+    mo({ loai: categoriesWithItems, doc: docWithItems }); await screen.findByText("333.333 đ");
+    const marketing = screen.getByRole("heading", { name: "Marketing", level: 3 }).closest("article")!;
+    const filters = screen.getByRole("region", { name: "Bộ lọc sổ khoản chi" });
+    const ledger = screen.getByRole("region", { name: "Các khoản chi" });
+    const buttons = [
+      within(muc()).getByRole("button", { name: "Ẩn mục" }),
+      within(muc()).getByRole("button", { name: "Ẩn khoản con" }),
+      within(marketing).getByRole("button", { name: "Ẩn mục" }),
+      within(marketing).getByRole("button", { name: "Ẩn khoản con" }),
+      within(filters).getByRole("button", { name: "Ẩn" }),
+      within(ledger).getByRole("button", { name: "Ẩn" }),
+    ];
+    expect(new Set(buttons.map((b) => b.getAttribute("aria-controls"))).size).toBe(buttons.length);
+    for (const button of buttons) {
+      const regionId = button.getAttribute("aria-controls")!;
+      const region = document.getElementById(regionId)!;
+      expect(region).not.toBeNull(); expect(region.hidden).toBe(false);
+      button.focus(); fireEvent.click(button);
+      expect(document.activeElement).toBe(button);
+      expect(button.getAttribute("aria-expanded")).toBe("false");
+      expect(document.getElementById(regionId)).toBe(region); expect(region.hidden).toBe(true);
+      for (const other of buttons.filter((b) => b !== button)) expect(other.getAttribute("aria-expanded")).toBe("true");
+      fireEvent.click(button);
+      expect(document.activeElement).toBe(button); expect(region.hidden).toBe(false);
+      expect(button.getAttribute("aria-expanded")).toBe("true");
+    }
+    fireEvent.click(buttons[1]); fireEvent.click(buttons[0]); fireEvent.click(buttons[0]);
+    expect(buttons[1].getAttribute("aria-expanded")).toBe("false");
+    expect(document.getElementById(buttons[1].getAttribute("aria-controls")!)?.hidden).toBe(true);
+  });
+
+  it("ẩn rồi hiện và đọc lại danh mục giữ mọi lọc cùng trạng thái thu gọn", async () => {
+    nav.search = "tu=2026-10-10&den=2026-10-24&loai=2&nguon=rieng";
+    let reads = 0;
+    const g = mo({ loai: () => ({ status: 200, body: { expense_categories: ++reads === 1 ? [{ ...loai[0], items: [con] }, loai[1]] : [loai[1], { ...loai[0], items: [con] }] } }), doc: docWithItems });
+    await screen.findByText("333.333 đ");
+    const filters = screen.getByRole("region", { name: "Bộ lọc sổ khoản chi" });
+    const ledger = screen.getByRole("region", { name: "Các khoản chi" });
+    const dateButton = within(muc()).getByRole("button", { name: "Lọc ngày" });
+    fireEvent.click(dateButton);
+    go(muc(), "Từ ngày · Điện", "2026-10-12"); go(muc(), "Đến ngày · Điện", "2026-10-20");
+    await waitFor(() => expect(doc(g).at(-1)?.path).toBe("/expenses?from=2026-10-12&to=2026-10-20&expense_category_id=2&paid_from_till=false"));
+    const calls = doc(g).length;
+    fireEvent.click(dateButton);
+    fireEvent.click(within(muc()).getByRole("button", { name: "Ẩn khoản con" }));
+    fireEvent.click(within(muc()).getByRole("button", { name: "Ẩn mục" }));
+    fireEvent.click(within(filters).getByRole("button", { name: "Ẩn" }));
+    fireEvent.click(within(ledger).getByRole("button", { name: "Ẩn" }));
+    fireEvent.click(screen.getByRole("button", { name: "Đọc lại loại chi" }));
+    await waitFor(() => expect(screen.getAllByRole("heading", { level: 3 }).map((h) => h.textContent)).toEqual(["Marketing", "Điện"]));
+    expect(within(filters).getByRole("button", { name: "Hiện" }).getAttribute("aria-expanded")).toBe("false");
+    expect(within(ledger).getByRole("button", { name: "Hiện" }).getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(within(muc()).getByRole("button", { name: "Hiện mục" }));
+    expect(within(muc()).getByRole("button", { name: "Hiện khoản con" }).getAttribute("aria-expanded")).toBe("false");
+    expect(within(muc()).getByRole("button", { name: "Lọc ngày · Đang lọc" })).toBe(dateButton);
+    expect(dateButton.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(dateButton); fireEvent.click(within(muc()).getByRole("button", { name: "Hiện khoản con" }));
+    fireEvent.click(within(filters).getByRole("button", { name: "Hiện" }));
+    fireEvent.click(within(ledger).getByRole("button", { name: "Hiện" }));
+    for (const [label, value] of [["Từ ngày", "2026-10-10"], ["Đến ngày", "2026-10-24"], ["Lọc loại chi", "2"], ["Lọc nguồn", "rieng"]]) {
+      expect((within(filters).getByLabelText(label) as HTMLInputElement).value).toBe(value);
+    }
+    expect((within(muc()).getByLabelText("Từ ngày · Điện") as HTMLInputElement).value).toBe("2026-10-12");
+    expect((within(muc()).getByLabelText("Đến ngày · Điện") as HTMLInputElement).value).toBe("2026-10-20");
+    expect(within(muc()).getByText("333.333 đ")).toBeTruthy();
+    expect(within(ledger).getByRole("table")).toBeTruthy();
+    expect(nav.search).toBe("tu=2026-10-10&den=2026-10-24&loai=2&nguon=rieng");
+    expect(nav.replace).not.toHaveBeenCalled(); expect(doc(g)).toHaveLength(calls);
+  });
+
+  it.each(["Từ ngày", "Đến ngày"])("Lọc ngày mở hai ô, báo Đang lọc với %s, đóng giữ lọc và focus", async (label) => {
+    nav.search = "tu=2026-10-10&den=2026-10-24";
+    const g = mo({ loai: categoriesWithItems, doc: docWithItems }); await screen.findByText("333.333 đ");
+    const button = within(muc()).getByRole("button", { name: "Lọc ngày" });
+    const region = document.getElementById(button.getAttribute("aria-controls")!)!;
+    expect(region).not.toBeNull(); expect(region.hidden).toBe(true);
+    expect(button.getAttribute("aria-expanded")).toBe("false");
+    expect(within(muc()).queryByRole("group", { name: "Lọc ngày Điện" })).toBeNull();
+    button.focus(); fireEvent.click(button);
+    expect(document.activeElement).toBe(button); expect(button.getAttribute("aria-expanded")).toBe("true");
+    expect(within(muc()).getByRole("group", { name: "Lọc ngày Điện" })).toBe(region);
+    for (const field of ["Từ ngày · Điện", "Đến ngày · Điện"]) {
+      const input = within(region).getByLabelText(field) as HTMLInputElement;
+      expect(input.type).toBe("date"); expect(input.value).toBe("");
+    }
+    go(region, `${label} · Điện`, "2026-10-18");
+    await waitFor(() => expect(doc(g).at(-1)?.path).toBe(label === "Từ ngày"
+      ? "/expenses?from=2026-10-18&to=2026-10-24&expense_category_id=2"
+      : "/expenses?from=2026-10-10&to=2026-10-18&expense_category_id=2"));
+    expect(within(muc()).getByRole("button", { name: "Lọc ngày · Đang lọc" })).toBe(button);
+    const calls = doc(g).length;
+    button.focus(); fireEvent.click(button);
+    expect(document.activeElement).toBe(button); expect(button.getAttribute("aria-expanded")).toBe("false");
+    expect(region.hidden).toBe(true);
+    expect(within(muc()).queryByRole("group", { name: "Lọc ngày Điện" })).toBeNull();
+    expect(within(muc()).getByRole("button", { name: "Lọc ngày · Đang lọc" })).toBe(button);
+    fireEvent.click(button);
+    expect((within(region).getByLabelText(`${label} · Điện`) as HTMLInputElement).value).toBe("2026-10-18");
+    expect(doc(g)).toHaveLength(calls);
+    fireEvent.click(within(region).getByRole("button", { name: "Xoá lọc ngày" }));
+    expect(within(muc()).getByRole("button", { name: "Lọc ngày" })).toBe(button);
+    for (const field of ["Từ ngày · Điện", "Đến ngày · Điện"]) expect((within(region).getByLabelText(field) as HTMLInputElement).value).toBe("");
   });
 });

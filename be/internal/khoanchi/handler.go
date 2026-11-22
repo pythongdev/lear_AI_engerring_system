@@ -147,6 +147,14 @@ func (h handler) doc(c *gin.Context) {
 		sai(c, "expense_category_id")
 		return
 	}
+	if v, ok := c.GetQuery("expense_item_id"); ok {
+		id, err := strconv.ParseInt(v, 10, 64)
+		if err != nil || id <= 0 {
+			sai(c, "expense_item_id")
+			return
+		}
+		loc.ItemID = &id
+	}
 	if vs, ok := c.Request.URL.Query()["paid_from_till"]; ok {
 		if vs[0] != "true" && vs[0] != "false" {
 			sai(c, "paid_from_till")

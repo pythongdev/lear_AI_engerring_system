@@ -99,6 +99,10 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] KC-05 **Backend chưa trả tổng tiền theo ngày, chưa đọc được lịch sử một khoản con và ngày chi gần nhất ngoài bộ lọc** — L2 (hợp đồng đọc tiền), chủ repo yêu cầu 2026-11-22; Claude viết test trước rồi tự làm vì Codex hết hạn mức, chưa ai duyệt độc lập · [chi tiết](backlog_KC.md#kc-05)
+- [x] KC-02 **Database chưa nối mục chi với sổ nguyên liệu: chưa có cờ theo dõi lượng, nối một thứ một khoản con, ngừng dùng, ngày nhập** — L2, chủ repo yêu cầu 2026-11-22; Claude viết test trước, Codex làm migration, Claude làm nốt khi Codex hết hạn mức · [chi tiết](backlog_KC.md#kc-02)
+- [x] KC-08 **Trang Khoản chi thật chưa có bố cục gọn của bản HTML: khối chọn ngày, mục xếp dọc, đầu khối có Hiện/Ẩn** — L1 (chỉ FE, dùng API đang có), chủ repo yêu cầu 2026-11-22; Codex làm trong `../lean_wt/KC-08`, Claude duyệt · [chi tiết](backlog_KC.md#kc-08)
+- [x] KC-01 **Gộp Kho và Nguyên liệu vào Khoản chi chưa có thiết kế chốt: nối danh mục, ngày nhập, ngừng dùng, cửa gộp, ước tính** — L3, chủ repo yêu cầu 2026-11-22 (*"tiếp tục yêu cầu codex làm bạn kiểm tra"*); Claude viết ADR, chủ repo duyệt · [chi tiết](backlog_KC.md#kc-01)
 - [x] T-364 **Lời chủ repo cho sáu câu của lane Khoản chi chưa vào owner, sổ KC còn các nhánh có điều kiện** — L1 (ghi lời đã nói, chỉ tài liệu), chủ repo yêu cầu và trả lời 2026-11-22: gộp Kho và Nguyên liệu vào Khoản chi; đóng U-120…U-125 · [chi tiết](#t-364)
 - [x] T-363 **Trang Khoản chi theo bản thiết kế chưa có lộ trình dựng thật từ database, backend tới giao diện** — L1 (mở lane, chỉ tài liệu), chủ repo yêu cầu 2026-11-22; Codex viết sổ `work/backlog_KC.md`, Claude kiểm từng bước với database, backend và FE đang có · [chi tiết](#t-363)
 - [x] YT-06 **Thực đơn và trang chi tiết chưa có nút thả tim** — L1, sau YT-05; Codex làm trong `../lean_wt/YT-06`, Claude duyệt (nhận 2026-11-21) · [mô tả](backlog_YT.md#yt-06); **xong 2026-11-21**: `NutTim` trên thực đơn web và trang chi tiết, 22 test, `fe-check` 845/845

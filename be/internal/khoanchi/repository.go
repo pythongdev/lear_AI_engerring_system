@@ -24,7 +24,7 @@ func (r repository) docLoai(ctx context.Context) ([]Loai, error) {
 	}
 	out := make([]Loai, 0, len(rows))
 	for _, row := range rows {
-		out = append(out, Loai{ID: row.ID, Name: row.Name, PaidFromTill: row.PaidFromTill, Items: []KhoanCon{}})
+		out = append(out, Loai{ID: row.ID, Name: row.Name, PaidFromTill: row.PaidFromTill, Items: []KhoanCon{}, LastPaidDate: ngayHoacNil(row.LastPaidDate)})
 	}
 	items, err := r.q.DocKhoanCon(ctx)
 	if err != nil {
@@ -33,7 +33,7 @@ func (r repository) docLoai(ctx context.Context) ([]Loai, error) {
 	for _, item := range items {
 		for i := range out {
 			if out[i].ID == item.ExpenseCategoryID {
-				out[i].Items = append(out[i].Items, KhoanCon{ID: item.ID, CategoryID: item.ExpenseCategoryID, Name: item.Name})
+				out[i].Items = append(out[i].Items, KhoanCon{ID: item.ID, CategoryID: item.ExpenseCategoryID, Name: item.Name, LastPaidDate: ngayHoacNil(item.LastPaidDate)})
 				break
 			}
 		}
@@ -65,6 +65,9 @@ func (r repository) doc(ctx context.Context, loc BoLoc) ([]Khoan, error) {
 	p := sqlcgen.DocParams{Column1: loc.From, Column2: loc.To}
 	if loc.CategoryID != nil {
 		p.Column3 = *loc.CategoryID
+	}
+	if loc.ItemID != nil {
+		p.Column6 = *loc.ItemID
 	}
 	if loc.PaidFromTill != nil {
 		p.Column4 = true
@@ -138,3 +141,11 @@ func (r repository) xoaLoai(ctx context.Context, id int64) error {
 }
 func (r repository) xoaCon(ctx context.Context, id int64) error { return r.q.XoaKhoanCon(ctx, id) }
 func (r repository) xoa(ctx context.Context, id int64) error    { return r.q.Xoa(ctx, id) }
+
+// ngayHoacNil đổi chuỗi rỗng (mục/khoản con chưa có khoản chi nào) thành null trên JSON (KC-05).
+func ngayHoacNil(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
+}

@@ -21,11 +21,13 @@ var Ghi = authz.Door{Code: "khoanchi/ghi", Need: authz.NeedOwner}
 var Sua = authz.Door{Code: "khoanchi/sua", Need: authz.NeedOwner}
 
 type KhoanCon struct {
-	ID         int64  `json:"expense_item_id"`
-	CategoryID int64  `json:"expense_category_id"`
-	Name       string `json:"name"`
+	LastPaidDate *string `json:"last_paid_date"` // ngày chi gần nhất trên mọi ngày, chưa chi thì null (KC-05)
+	ID           int64   `json:"expense_item_id"`
+	CategoryID   int64   `json:"expense_category_id"`
+	Name         string  `json:"name"`
 }
 type Loai struct {
+	LastPaidDate *string    `json:"last_paid_date"` // ngày chi gần nhất trên mọi ngày, chưa chi thì null (KC-05)
 	Items        []KhoanCon `json:"items"`
 	ID           int64      `json:"expense_category_id"`
 	Name         string     `json:"name"`
@@ -54,6 +56,7 @@ type YeuCau struct {
 type BoLoc struct {
 	From, To     string
 	CategoryID   *int64
+	ItemID       *int64
 	PaidFromTill *bool
 }
 type TongLoai struct {
@@ -65,7 +68,15 @@ type TongCon struct {
 	Total    int64  `json:"total_vnd"`
 	LastDate string `json:"last_paid_date"`
 }
+
+// TongNgay là số khoản và tổng tiền của một ngày chi trong tập lọc; backend cộng, FE chỉ bày (KC-05).
+type TongNgay struct {
+	PaidDate string `json:"paid_date"`
+	Count    int64  `json:"expense_count"`
+	Total    int64  `json:"total_vnd"`
+}
 type DanhSach struct {
+	DayTotals      []TongNgay `json:"day_totals"`
 	CategoryTotals []TongLoai `json:"category_totals"`
 	ItemTotals     []TongCon  `json:"item_totals"`
 	From           string     `json:"from"`
@@ -199,7 +210,7 @@ func khoaNgay(ctx context.Context, tx pgx.Tx, ngay []string) error {
 	return nil
 }
 func (s *Service) Doc(ctx context.Context, nguoi int64, loc BoLoc) (out DanhSach, err error) {
-	out = DanhSach{From: loc.From, To: loc.To, CategoryTotals: []TongLoai{}, ItemTotals: []TongCon{}}
+	out = DanhSach{From: loc.From, To: loc.To, DayTotals: []TongNgay{}, CategoryTotals: []TongLoai{}, ItemTotals: []TongCon{}}
 	err = authz.Read(ctx, s.pool, nguoi, authz.NeedOwner, func(tx pgx.Tx) error {
 		var err error
 		out.Expenses, err = newRepository(tx).doc(ctx, loc)
@@ -208,6 +219,7 @@ func (s *Service) Doc(ctx context.Context, nguoi int64, loc BoLoc) (out DanhSach
 		}
 		ci := map[int64]int{}
 		ii := map[int64]int{}
+		di := map[string]int{}
 		for _, k := range out.Expenses {
 			if k.Amount > math.MaxInt64-out.Total {
 				return apierr.Error{Code: apierr.CodeInternalError}
@@ -220,6 +232,14 @@ func (s *Service) Doc(ctx context.Context, nguoi int64, loc BoLoc) (out DanhSach
 				out.CategoryTotals = append(out.CategoryTotals, TongLoai{CategoryID: k.CategoryID})
 			}
 			out.CategoryTotals[index].Total += k.Amount
+			dIndex, ok := di[k.PaidDate]
+			if !ok {
+				dIndex = len(out.DayTotals)
+				di[k.PaidDate] = dIndex
+				out.DayTotals = append(out.DayTotals, TongNgay{PaidDate: k.PaidDate})
+			}
+			out.DayTotals[dIndex].Count++
+			out.DayTotals[dIndex].Total += k.Amount
 			if k.ItemID != nil {
 				index, ok := ii[*k.ItemID]
 				if !ok {
@@ -233,6 +253,8 @@ func (s *Service) Doc(ctx context.Context, nguoi int64, loc BoLoc) (out DanhSach
 				}
 			}
 		}
+		// Ngày mới trước; mỗi ngày là phép cộng của đúng các khoản đã cộng vào tổng kỳ ở trên.
+		sort.Slice(out.DayTotals, func(a, b int) bool { return out.DayTotals[a].PaidDate > out.DayTotals[b].PaidDate })
 		return nil
 	})
 	return

@@ -153,6 +153,14 @@ lát nhỏ hơn. Mã KC-14 đứng trước KC-13 trong thứ tự làm; số ch
 
 **Nhận việc.**
 
+Claude Code, 2026-11-22. Hỏi chủ repo lượt hai (bốn câu + một câu về ô lượng); lời vào `master_plan/shop-facts.md` §8.10
+*Lượt hai* vế 8–11. Thiết kế: **ADR-147** (*Đề xuất*, chờ chủ repo duyệt năm điểm *Chờ duyệt*). I-025 vế 3 có *Sửa
+2026-11-22*. **Phần trình bày** (A4: công cụ xem mẫu không vào trang thật, danh mục theo dữ liệu, không ô hay số giả) coi là
+đã đủ để giao `KC-08` ngay, vì nó không đổi dữ liệu hay hợp đồng.
+Lượt ba cùng ngày: chủ repo chọn *"Duyệt, giao Codex làm"* rồi trả lời năm điểm (a)–(e) — **ADR-147 Đã chốt**, thêm điểm 12
+*chuyển mục* (chỉ giữa hai mục cùng theo dõi lượng và cùng nguồn tiền — phiên chọn hướng chặt), ngừng dùng khoá hẳn phần
+lượng nhưng mở lại được, hiệu số ≤ 0 hiện *Hết theo sổ*; lời ở §8.10 vế 12–15. Bước kế: `KC-02` (Claude viết test trước).
+
 <a id="kc-02"></a>
 ## KC-02 — DB: danh mục chi và danh mục lượng liên hệ thế nào
 
@@ -175,6 +183,19 @@ thứ. Cờ `ingredient` chỉ có trong mẫu. Không thể ghép tên để đ
 
 **Nhận việc.**
 
+**Kết quả 2026-11-22** (thực hiện: Codex rồi Claude, duyệt: Claude; worktree `../lean_wt/KC-02`, nhánh `codex/KC-02` từ
+`8d71696`). Claude viết `db/tests/kc02_supply_expense_link.sql` trước. Lượt Codex một **dừng đúng**: phiếu đòi `ON UPDATE
+CASCADE` cho chuyển mục, QD-51 cấm dây chuyền — Claude đổi sang khoá ngoại `expense_item_fkey` giữ mặc định từ chối nhưng
+`DEFERRABLE INITIALLY DEFERRED`, cửa chuyển đổi khoản con và khoản chi trong một giao dịch (ADR-147 điểm 12 không đổi chữ).
+Lượt hai Codex viết migration `20261122120000_gop_kho_khoan_chi`, sửa danh sách cột của `I-025` và mười tên `unreviewed`
+ở hợp đồng 0.77.0, rồi hết hạn mức trước báo cáo. Claude đọc diff, sửa đường lùi (đếm cả cờ mặc định false nên luôn từ
+chối), sinh lại sqlc, viết `docs/product/2-db/30-luoc-do-gop-kho-khoan-chi.md`, dòng 50 ở `07-thu-tu-migration.md`, mệnh
+đề **I-046** và dòng *chưa có lát* của nó (câu đối chiếu dữ liệu nợ trước KC-13). `go build`/`vet`, `check-sqlcgen`,
+`check-api-contract`, `check-schema-names`, `check-write-paths` PASS trong worktree. Gate lượt một ở cây chính đỏ hai chỗ do
+khoá ngoại kiểm hoãn và cột dấu ngừng: `db/tests/t248_expense_items_soft_delete.sql` (thêm `SET CONSTRAINTS ALL IMMEDIATE`
+sau lần ghi sai) và YC-26 của `db/scenario/yc.sql` (danh sách cột thêm hai cột dấu ngừng). Lượt hai: `./scripts/gate.sh`
+PASS — `db-check` 50 bước xuôi · lùi · xuôi lại, 64 tệp test gồm `kc02_supply_expense_link.sql`; `be-check` 33/33 gói.
+
 <a id="kc-03"></a>
 ## KC-03 — DB: ngày hàng về và lần chi, nếu cần chỗ lưu mới
 
@@ -195,6 +216,9 @@ nhất là mua nợ, trả nhiều lần hoặc nhập nhiều lần trong cùng
 `docs/product/2-db/09-doi-chieu-bat-bien.md`.
 
 **Nhận việc.**
+
+**Gộp vào KC-02, 2026-11-22:** cột `expense.received_date` đã có trong migration `20261122120000_gop_kho_khoan_chi`
+(ADR-147 điểm 5, test `db/tests/kc02_supply_expense_link.sql`). Bước này không còn việc riêng; cửa ghi ngày nhập ở KC-06.
 
 <a id="kc-04"></a>
 ## KC-04 — DB: đầu vào dự tính được duyệt — **BỎ 2026-11-22**
@@ -241,6 +265,16 @@ chưa cho FE biết mốc toàn lịch sử hay lần chi mới nhất ngoài k�
 Không migration, không component FE; artefact sinh từ hợp đồng theo phiếu cụ thể do Claude khai riêng khi cần.
 
 **Nhận việc.**
+
+**Kết quả 2026-11-22** (thực hiện: Claude Code — Codex hết hạn mức tới 15:08; **chưa ai duyệt độc lập**; worktree
+`../lean_wt/KC-05`, nhánh `claude/KC-05`, nền `8d71696` + patch KC-02 chỉ stage). Hình đọc Claude chốt: `listExpenses` trả
+thêm `day_totals` (một dòng mỗi ngày chi trong tập lọc, ngày mới trước, `expense_count` · `total_vnd`, tổng các dòng bằng
+`total_vnd`) và nhận `expense_item_id` tuỳ chọn; `listExpenseCategories` trả `last_paid_date` của mục và từng khoản con, tính
+trên mọi ngày, chưa chi thì null — FE lấy mốc 7 ngày mặc định từ đây, không cần cửa thứ hai. Hợp đồng 0.78.0; `schema.ts`
+sinh lại; dữ liệu mẫu `khoan-chi.test.tsx` thêm `day_totals: []`. Test viết trước: `TestI029_KC05_TongTheoNgayLaPhepCongCuaBackend`,
+`TestI029_KC05_LichSuKhoanConVaNgayChiGanNhatNgoaiBoLoc` (`be/internal/khoanchi/kc05_test.go`). `be-check` trong worktree:
+33/33 gói PASS; `check-api-contract` PASS 0.78.0; FE typecheck sạch, `vitest src/app/chu-quan` 17 tệp · 363 ca PASS.
+Chưa chứng minh test đỏ trước khi có code (viết và làm cùng lượt).
 
 <a id="kc-06"></a>
 ## KC-06 — BE: quan hệ nguyên liệu, ngày nhập và các cửa ghi liên quan
@@ -312,6 +346,16 @@ thập phân chính xác và không lẫn với cờ nhắc POS hiện có.
 Nếu phát sinh đổi phép tính tiền, dữ liệu ghi hoặc hợp đồng thì chuyển phần đó sang bước L2, không giữ nhãn L1.
 
 **Nhận việc.**
+
+**Kết quả 2026-11-22** (thực hiện: Codex, duyệt: Claude; worktree `../lean_wt/KC-08`, nhánh `codex/KC-08` từ `8d71696`).
+Đổi `khoan-chi.tsx`, `khoan-chi.css`, `khoan-chi.test.tsx`; `page.tsx` không cần đổi. Khối chọn ngày còn tiêu đề, dòng khoảng
+ngày và bốn nút *7/10/14/30 ngày*; mục chi xếp một cột theo thứ tự backend; Sổ khoản chi và Các khoản chi có nút Ẩn/Hiện cùng
+hàng tiêu đề; mỗi mục có nút *Lọc ngày* mở hai ô ngày, hiện *Đang lọc*, thu gọn giữ lọc. Codex: lint, typecheck, `npm test`
+56/56 tệp · 858/858 ca, `check-fe-rules` PASS; gate trong sandbox đỏ ở bước build vì Turbopack không được mở cổng. Hai ca cũ
+chỉ đổi thao tác (tên nút *7 ngày*, thêm bấm *Lọc ngày*), không nới assertion. Claude đọc diff, chạy app thật trong worktree
+(`make dev`, database dev) bằng Playwright: 320/390/1024/1440 px `scrollWidth = innerWidth`, năm mục cùng lề trái, *10 ngày* →
+`?tu=2026-11-13&den=2026-11-22` và `aria-pressed=true`, ẩn Sổ khoản chi và Các khoản chi đúng vùng, *Lọc ngày* mở
+`aria-expanded=true`, 0 lỗi JS; xem ảnh 390 px. Kịch bản, ảnh, báo cáo: `../lean_wt/_claude_logs/KC-08/`.
 
 <a id="kc-09"></a>
 ## KC-09 — FE: các bảng khoản chi theo ngày và lịch sử khoản con
