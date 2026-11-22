@@ -1600,6 +1600,7 @@ nào**, để phiên sau muốn lật lại một quyết định thì biết đ
 | 2026-11-04 | Chủ repo chọn trong câu hỏi có sẵn (T-223): đơn **giao tận nơi** còn món bếp **chưa làm xong** thì **từ chối rời quán**, báo rõ món nào chưa xong (*lời chọn*, phương án do Claude viết sẵn). *Suy ra của Claude, nằm trong câu hỏi, chưa được nói riêng:* món đã làm xong được ghi *"đã ra bàn"* đúng lúc rời quán; món đã huỷ hoặc bỏ không chặn đơn rời quán | §5.4 · §6.7 |
 | 2026-11-08 | Chủ repo chọn trong câu hỏi có sẵn phương án (T-308): *"Duyệt và tích hợp T-308"* — xác nhận cách triển khai Codex viết cho lời 2026-11-06 *"chủ quán cũng cần nhận được đơn và có quyền điều hành"*: trên trang Vận hành chủ quán **duyệt hoặc từ chối** đơn *Chờ xác nhận*, ghi *đã ra bàn*, bấm **mở lại** nhận đơn; **trang Vận hành của chủ quán đang mở được tính là quán nhìn thấy đơn** (I-008). Huỷ đơn đã xác nhận, hoàn tiền, thu tiền vẫn chỉ ở quầy. Xem **ADR-097** *Sửa đổi* | §5.4 · §6 quy tắc 2 · 13 |
 | 2026-11-08 | Chủ repo chọn trong câu hỏi có sẵn phương án (T-311): *"Sửa chỗ hiện lỗi"* và *"Nói rõ đơn chưa gửi"* — khách bấm gửi bị từ chối vì ngoài giờ thì thấy *"Đơn chưa được gửi. Quán mở cửa 6h–11h sáng"* ngay sát nút đặt. Giờ bán 06:00–11:00 không đổi. *Suy ra của Claude:* giữ nguyên câu *"Quán mở cửa 6h–11h sáng"* làm vế sau | §6 quy tắc 8 |
+| 2026-11-22 | Chủ repo trả lời trong hội thoại (T-363), phần lớn chọn trong câu hỏi có sẵn phương án: nguyên liệu ở Khoản chi và ở sổ nguyên liệu là **cùng một thứ**; trang Khoản chi **thay cả trang Kho lẫn trang Nguyên liệu**; ngày nhập **ghi riêng** trên khoản chi; số còn = **hiệu số máy tính**; máy **hiện ước tính còn dùng N ngày** (chỉ để xem); xoá nguyên liệu đã dùng = **ngừng dùng, giữ lịch sử**; thêm nguyên liệu kèm tiền **một lần bấm** (đóng U-120…U-125) | §8.10 · §8.4 |
 
 ### 7.2 Chỗ suy ra chưa xác nhận — **hai mục, tính tới 2026-10-23**
 
@@ -1826,6 +1827,8 @@ Kỳ trả nợ còn hỏi tại `work/admin-questions.md` B16.
   ra theo, không có danh sách thứ hai ở §8.6 (**F-001**). Chỗ hở *đơn vị tính · ngưỡng nhắc sắp
   hết* từng mang mã `docs/product/99-unknowns.md` **U-045** vì nó chặn §8.6 bày được chữ *thiếu*;
   câu ấy đóng 2026-09-15 — ngay dưới.
+
+**Sửa đổi 2026-11-22 (T-363, chủ repo):** máy nay **hiện thêm** *ước tính còn dùng N ngày* cho từng thứ, chỉ để xem — chủ quán vẫn tự kết luận thiếu hay đủ, máy không nhắc và không chặn bán vì con số ấy. Lời đầy đủ: §8.10, *Lượt 2026-11-22*.
 
 **Không có ngưỡng: CHỦ QUÁN tự đọc hai con số rồi tự kết luận thiếu hay đủ — chủ quán chốt
 2026-09-15, trả lời `U-045`.** Nguyên văn: *"chủ quán tự đọc rôi đưa ra kết luận"* — trả lời câu
@@ -2394,6 +2397,30 @@ của §4.6 áp **từng món** — *Chay + Nhiều nhân* vẫn bị từ chố
 ### 8.10 Tài chính — câu trả lời E44–E51
 
 **Quy tắc hiện hành bổ sung 2026-10-24 — T-248, chủ repo chọn trong hội thoại:** cho phép tiền mua nguyên liệu trong trang Khoản chi, theo mục và khoản con của bản thiết kế. Quy tắc này thay vế cũ loại tiền hàng khỏi Khoản chi bên dưới; lương vẫn ở luồng người làm. Khoản chi được xoá mềm có lý do, giữ lịch sử; chặn xoá khi ngày chi đã đối soát, kể cả tiền riêng. Mục chi/khoản con còn khoản chi chưa xoá ở bất kỳ ngày nào thì không xoá được (lựa chọn chủ repo trong T-247 được giữ khi triển khai thật). Không tự gán nguồn két cho mục nguyên liệu: tạo mục vẫn phải khai rõ nguồn. Không ghi tiền mua nguyên liệu lần thứ hai trong một luồng khác để cộng trùng; sổ lượng nguyên liệu vẫn chỉ theo dõi lượng.
+
+**Lượt 2026-11-22 — gộp Kho và Nguyên liệu vào Khoản chi** (T-363; chủ repo trả lời trong hội thoại, phần lớn chọn
+trong câu hỏi có sẵn phương án; chưa có xác nhận lời đến từ chủ quán). Bảy vế:
+
+1. **Nguyên liệu ở trang Khoản chi và nguyên liệu ở sổ §8.4 là cùng một thứ.** Nguyên văn: *"cùng 1 thứ tôi muốn gộp kho
+   và khoản chi luôn"*.
+2. **Trang Khoản chi thay cả trang Kho lẫn trang Nguyên liệu.** Chủ quán ghi tiền mua, ghi lượng mua vào và lượng đã dùng
+   mỗi ngày, đặt tỉ lệ nhắc, xem số còn và ước tính — tất cả ở một trang; hai trang kia bỏ khỏi menu. Nguyên văn:
+   *"không dùng trang nguyên liệu chỉ dùng trang khoản chi"*, rồi chọn *"Đúng, gộp cả ba"*. Quy tắc T-248 bên dưới vẫn
+   đứng: tiền chỉ ghi một lần ở khoản chi, lượng vẫn là con số người gõ của §8.4 — gộp **trang**, không gộp hai con số.
+3. **Ngày nhập hàng ghi riêng trên khoản chi mua nguyên liệu**, khác ngày chi tiền; mặc định bằng ngày chi, sửa được;
+   lịch sử mua nhóm theo ngày nhập.
+4. **Số hàng còn là hiệu số máy tính** — tổng mua vào trừ tổng đã dùng, như trang Kho đang hiện; có thể âm khi sổ ghi thiếu.
+5. **Máy hiện *ước tính còn dùng N ngày***: số còn chia mức dùng mỗi ngày; mức dùng là **trung bình của 7 ngày gần nhất có
+   ghi lượng dùng**, ngày không ghi thì bỏ qua. Chỉ để xem: không nhắc, không chặn bán. Lời này sửa vế *không có dự kiến
+   hết* của trang kho (ADR-103 điểm 4), không lật `U-045`: chủ quán vẫn tự kết luận thiếu hay đủ.
+6. **Xoá một nguyên liệu đã có tiền chi hoặc lượng ghi = ngừng dùng, giữ lịch sử**: nó biến khỏi danh sách và sổ ghi;
+   tiền đã chi và lượng đã ghi giữ nguyên, vẫn vào tổng cũ.
+7. **Thêm nguyên liệu mới kèm tiền mua bằng một lần bấm**: thành công cả hai hoặc không có gì.
+
+*Cách đọc của phiên, chưa ai xác nhận:* đổi tên ở một nơi là đổi tên của cùng một thứ (câu hỏi nêu thế, chủ repo không
+phản đối); vế 6 chỉ áp cho nguyên liệu — khoản con khác (điện, nước, đồ dùng) giữ luật chặn xoá của T-247; ít hơn 7 ngày
+có ghi dùng thì trung bình trên số ngày có, không có ngày nào hoặc mức dùng bằng 0 thì hiện *chưa tính được*; ai được
+ghi lượng vẫn như trang Nguyên liệu hiện nay (chủ quán).
 
 **Chủ quán trả lời 2026-09-25 (T-093).** Chuẩn hoá chính tả, giữ nguyên ý;
 đây là dữ kiện và nhu cầu, chưa phải thiết kế nghiệp vụ tài chính.

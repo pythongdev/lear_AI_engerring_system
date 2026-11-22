@@ -1,5 +1,5 @@
 <a id="top"></a>
-# Sổ mô tả — trang Khoản chi (`KC-01`…`KC-13`)
+# Sổ mô tả — trang Khoản chi (`KC-01`…`KC-14`)
 
 Trạng thái chỉ ở `work/backlog.md`, do Claude giữ; sổ này không giữ trạng thái. Mở **2026-11-22 bởi T-363**.
 Lane **KC**. Mỗi entry là mô tả để giao bước, không phải lời cho phép làm ngay; **Nhận việc** để trống tới lúc nhận.
@@ -25,6 +25,24 @@ Lane **KC**. Mỗi entry là mô tả để giao bước, không phải lời ch
 6. “Giống HTML” bao gồm bảng một hàng/ngày, các khoản cùng ngày nằm ngang, chi tiết mở ngay dưới dòng, hai lịch sử
    cạnh nhau trên màn rộng, lọc riêng và Hiện/Ẩn. Công cụ *Hiện tên component*, *Mục lục thiết kế* và chú thích số
    minh hoạ là công cụ xem mẫu; đề xuất không đưa chúng vào sản phẩm thật. Claude duyệt cách đọc này ở KC-01.
+
+## Lời chủ repo 2026-11-22 — sáu câu hỏi đã có lời
+
+Claude hỏi chủ repo ngay sau khi duyệt sổ; lời ở `master_plan/shop-facts.md` §8.10 *Lượt 2026-11-22*, sáu câu đóng ở
+`docs/product/99-unknowns.md`. Lời ấy **thay mọi nhánh "có điều kiện" bên dưới** — chỗ nào trong bảng đối chiếu hay
+entry còn nói "nếu", đọc theo bảng này:
+
+| Câu | Lời | Hệ quả cho lane |
+|---|---|---|
+| Q-KC-01 · U-120 | Cùng một thứ; trang Khoản chi **thay cả Kho lẫn Nguyên liệu** | KC-02 giữ: nối khoản con nguyên liệu với `supply_item`; KC-11 gánh cả ghi lượng mua/dùng và tỉ lệ nhắc; thêm KC-14 gỡ hai trang cũ |
+| Q-KC-02 · U-121 | Ngày nhập ghi riêng trên khoản chi, mặc định bằng ngày chi | KC-03 giữ: thêm ngày nhập vào khoản chi |
+| Q-KC-03 · U-122 | Số còn = hiệu số máy tính (có thể âm) | Không lưu số đếm; đọc `balance` sẵn có |
+| Q-KC-04 · U-123 | Máy tính ước tính; mức dùng = TB 7 ngày gần nhất có ghi dùng; chỉ để xem | **KC-04 bỏ** (không cần chỗ lưu); KC-07 tính ở backend; KC-12 chỉ hiện, không có ô gõ mức dùng |
+| Q-KC-05 · U-124 | Xoá nguyên liệu đã dùng = ngừng dùng, giữ lịch sử | KC-02 thêm dấu ngừng dùng cho `supply_item`; KC-06 làm cửa ngừng dùng |
+| Q-KC-06 · U-125 | Thêm nguyên liệu kèm tiền bằng một lần bấm | KC-06 thêm cửa gộp nguyên khối; KC-10 dùng nó |
+
+Phần *cách đọc của phiên* ở §8.10 (đổi tên là đổi tên của một thứ; ngừng dùng chỉ cho nguyên liệu; ít hơn 7 ngày thì
+trung bình trên số ngày có; không có ngày nào thì *chưa tính được*) **chưa ai xác nhận** — KC-01 hỏi lại trước khi chốt ADR.
 
 **Chung cho mọi bước.** Đọc [CLAUDE.md][rules], chạy `./scripts/brief.sh`, đọc entry và owner liên quan trước khi
 nhận. Mức dưới đây là đề xuất phân rã theo [README.md][readme] và CLAUDE.md §3, để Claude duyệt trước khi giao:
@@ -92,19 +110,23 @@ cần chúng; Claude bỏ bước không cần, cập nhật phụ thuộc rồi
 
 | Bước | Việc | Mức | Ai | Đứng trên | Chặn bởi |
 |---|---|:--:|---|---|---|
-| [KC-01](#kc-01) | Thiết kế và ADR: nguồn dữ liệu, các quan hệ còn thiếu, ranh giới mẫu/thật | L2 | Claude, chủ repo duyệt | Bảng đối chiếu; §8.4/§8.10; ADR-071/074/106/128; khung FE | [Q-KC-01](#q-kc-01)…[Q-KC-06](#q-kc-06) đối với từng phần tương ứng |
-| [KC-02](#kc-02) | DB: định danh liên hệ danh mục chi–sổ lượng và vòng đời, có điều kiện | L2 | Claude test trước, Codex làm | KC-01 phần danh mục | [Q-KC-01](#q-kc-01), [Q-KC-05](#q-kc-05) |
-| [KC-03](#kc-03) | DB: ngày nhập và liên hệ với lần chi/lượng nhập, có điều kiện | L2 | Claude test trước, Codex làm | KC-01 phần ngày nhập; KC-02 nếu dùng liên hệ danh mục | [Q-KC-01](#q-kc-01), [Q-KC-02](#q-kc-02) |
-| [KC-04](#kc-04) | DB: dữ liệu gốc của dự tính nếu được phép lưu thêm | L2 | Claude test trước, Codex làm | KC-01 phần dự tính; KC-02 nếu dùng danh mục chung | [Q-KC-01](#q-kc-01), [Q-KC-03](#q-kc-03), [Q-KC-04](#q-kc-04) |
-| [KC-05](#kc-05) | BE: tổng tiền theo ngày và cách đọc lịch sử chi độc lập | L2 | Claude test trước, Codex làm | KC-01 phần đọc tiền; DB khoản chi hiện có | Duyệt hợp đồng đọc của KC-01; không phụ thuộc câu hỏi dự tính |
-| [KC-06](#kc-06) | BE: danh mục liên hệ sổ lượng, ngày nhập, vòng đời và lệnh thêm kèm tiền nếu cần | L2 | Claude test trước, Codex làm | KC-01; KC-02/KC-03 nếu giữ; KC-05 | [Q-KC-01](#q-kc-01), [Q-KC-02](#q-kc-02), [Q-KC-05](#q-kc-05); [Q-KC-06](#q-kc-06) chỉ nhánh thêm kèm tiền |
-| [KC-07](#kc-07) | BE: đọc/tính dự tính và ghi đầu vào đã duyệt, có điều kiện | L2 | Claude test trước, Codex làm | KC-01 phần dự tính; KC-04 nếu giữ; KC-06 phần định danh | [Q-KC-01](#q-kc-01), [Q-KC-03](#q-kc-03), [Q-KC-04](#q-kc-04) |
-| [KC-08](#kc-08) | FE: khung trang, chọn nhanh gọn, nút thu gọn, bố cục đáp ứng | L1 | Codex làm, Claude duyệt | KC-01 phần trình bày; FE hiện có | Duyệt phần trình bày KC-01; không chờ DB/BE mới |
-| [KC-09](#kc-09) | FE: Sổ khoản chi, Các khoản chi, mục ngoài nguyên liệu và lịch sử chi theo ngày | L2 | Claude test trước, Codex làm | KC-05, KC-08 | KC-05 có hợp đồng/tổng ngày được duyệt |
-| [KC-10](#kc-10) | FE: hoàn thiện hộp ghi/sửa/xoá, Loại chi, Sửa tiền đã ghi và thêm kèm tiền | L2 | Claude test trước, Codex làm | KC-05, KC-08; KC-06 cho trường/lệnh mới | [Q-KC-02](#q-kc-02), [Q-KC-05](#q-kc-05), [Q-KC-06](#q-kc-06) đối với các nhánh mới |
-| [KC-11](#kc-11) | FE: bảng nguyên liệu, chi tiết, lịch sử sử dụng và lịch sử mua hàng | L2 | Claude test trước, Codex làm | KC-06, KC-08, KC-09; API sổ lượng hiện có; KC-07 nếu chọn số còn mới | [Q-KC-01](#q-kc-01), [Q-KC-02](#q-kc-02), [Q-KC-03](#q-kc-03), [Q-KC-05](#q-kc-05) |
-| [KC-12](#kc-12) | FE: mức dùng/ngày, ước tính còn dùng và Sửa dự tính theo luật được duyệt | L2 | Claude test trước, Codex làm | KC-07, KC-11 | [Q-KC-03](#q-kc-03), [Q-KC-04](#q-kc-04) |
-| [KC-13](#kc-13) | Nghiệm thu trang thật với API/database, đối chiếu hình và hồi quy tiền/lượng | L2 | Codex viết kịch bản, Claude chạy và duyệt | KC-09…KC-12 và các quyết định bỏ/thay bước nếu có | Các nhánh câu hỏi còn mở không được nghiệm thu là xong |
+| [KC-01](#kc-01) | Thiết kế và ADR: nối danh mục, ngày nhập, ngừng dùng, cửa gộp, công thức ước tính, gộp ba trang | L3 | Claude, chủ repo duyệt | Bảng đối chiếu; §8.4/§8.10; ADR-071/074/106/128; khung FE | Cách đọc chưa xác nhận ở §8.10 *Lượt 2026-11-22* |
+| [KC-02](#kc-02) | DB: nối khoản con nguyên liệu với `supply_item`, dấu ngừng dùng | L2 | Claude test trước, Codex làm | KC-01 | — |
+| [KC-03](#kc-03) | DB: ngày nhập trên khoản chi | L2 | Claude test trước, Codex làm | KC-01; KC-02 | — |
+| ~~[KC-04](#kc-04)~~ | ~~DB: dữ liệu gốc của dự tính~~ — **bỏ 2026-11-22**: số còn và mức dùng đều suy từ sổ (U-122, U-123) | — | — | — | — |
+| [KC-05](#kc-05) | BE: tổng tiền theo ngày và cách đọc lịch sử chi độc lập | L2 | Claude test trước, Codex làm | KC-01 phần đọc tiền | — |
+| [KC-06](#kc-06) | BE: danh mục nối sổ lượng, ngày nhập, ngừng dùng, cửa thêm nguyên liệu kèm tiền | L2 | Claude test trước, Codex làm | KC-02, KC-03, KC-05 | — |
+| [KC-07](#kc-07) | BE: tính ước tính còn dùng (TB 7 ngày có ghi dùng) | L2 | Claude test trước, Codex làm | KC-06 phần định danh | — |
+| [KC-08](#kc-08) | FE: khung trang, chọn nhanh gọn, nút thu gọn, bố cục đáp ứng | L1 | Codex làm, Claude duyệt | KC-01 phần trình bày; FE hiện có | **làm được ngay** sau KC-01 phần trình bày |
+| [KC-09](#kc-09) | FE: Sổ khoản chi, Các khoản chi, mục ngoài nguyên liệu và lịch sử chi theo ngày | L2 | Claude test trước, Codex làm | KC-05, KC-08 | — |
+| [KC-10](#kc-10) | FE: hộp ghi/sửa/xoá, Loại chi, Sửa tiền đã ghi, thêm nguyên liệu kèm tiền một lần bấm | L2 | Claude test trước, Codex làm | KC-06, KC-08 | — |
+| [KC-11](#kc-11) | FE: bảng nguyên liệu, chi tiết, ghi lượng mua/dùng, tỉ lệ nhắc, hai lịch sử | L2 | Claude test trước, Codex làm | KC-06, KC-08, KC-09 | — |
+| [KC-12](#kc-12) | FE: hiện ước tính còn dùng (chỉ đọc) | L1 | Codex làm, Claude duyệt | KC-07, KC-11 | — |
+| [KC-14](#kc-14) | FE: gỡ trang Kho và Nguyên liệu khỏi menu, đường cũ chuyển về Khoản chi | L1 | Codex làm, Claude duyệt | KC-11, KC-12 | — |
+| [KC-13](#kc-13) | Nghiệm thu trang thật với API/database, đối chiếu hình và hồi quy tiền/lượng | L2 | Codex viết kịch bản, Claude chạy và duyệt | KC-09…KC-12, KC-14 | — |
+
+KC-01 là L3 vì gộp hai danh mục đã có dữ liệu và đổi luật xoá: Claude duyệt thiết kế trước code, có thể chia KC-02 thành
+lát nhỏ hơn. Mã KC-14 đứng trước KC-13 trong thứ tự làm; số chỉ là mã, không phải thứ tự.
 
 <a id="kc-01"></a>
 ## KC-01 — Thiết kế nguồn dữ liệu và ghi nhận quyết định trước code
@@ -175,7 +197,11 @@ nhất là mua nợ, trả nhiều lần hoặc nhập nhiều lần trong cùng
 **Nhận việc.**
 
 <a id="kc-04"></a>
-## KC-04 — DB: đầu vào dự tính được duyệt
+## KC-04 — DB: đầu vào dự tính được duyệt — **BỎ 2026-11-22**
+
+**Bỏ** vì chủ repo chọn số còn là hiệu số máy tính (U-122) và mức dùng máy tự tính từ sổ (U-123): không có đầu vào mới
+nào phải lưu. Phần dưới giữ làm lịch sử.
+
 
 **Vì sao.** Hiện chỉ có con số mua/dùng, đơn vị và tỉ lệ nhắc. Ghi thêm “số còn” hoặc “mức dùng/ngày” có thể tạo
 đáp số thứ hai cho sổ lượng; cần biết đó là số nào, ai nhập, lúc nào và có cần lịch sử.
@@ -422,8 +448,32 @@ Lượt này kiểm tích hợp, không dùng làm nơi sửa cùng lúc DB/BE/F
 
 **Nhận việc.**
 
+<a id="kc-14"></a>
+## KC-14 — FE: gỡ trang Kho và Nguyên liệu
+
+**Vì sao.** Chủ repo chọn 2026-11-22: trang Khoản chi thay cả hai trang (U-120). Gỡ chỉ sau khi KC-11 và KC-12 đã đưa đủ
+việc của hai trang về Khoản chi, để chủ quán không mất lối ghi lượng.
+
+**Acceptance.**
+
+- A1 — Thanh điều hướng của chủ quán không còn *Kho* và *Nguyên liệu*; `/chu-quan/kho` và `/chu-quan/nguyen-lieu` chuyển
+  về `/chu-quan/khoan-chi` (giữ `?thu=` nếu mở thẳng một nguyên liệu), không trả 404.
+- A2 — Mọi việc của hai trang cũ làm được ở Khoản chi: thêm thứ, đặt đơn vị lần đầu, ghi/sửa lượng mua vào · đã dùng có
+  lý do, đặt tỉ lệ nhắc, xem hai tổng, hiệu số, lần nhập gần nhất. Test cũ của hai trang chuyển sang Khoản chi, không xoá
+  ca nào mà không có ca thay.
+- A3 — Dòng `/chu-quan/kho` và `/chu-quan/nguyen-lieu` ở `docs/product/4-fe/01-khung-fe.md` đổi theo trong cùng thay đổi;
+  `fe-check`, `check-fe-rules`, gate đạt.
+
+**Phạm vi.** `fe/src/app/chu-quan/kho/`, `fe/src/app/chu-quan/nguyen-lieu/`, `fe/src/app/chu-quan/_components/thanh-dieu-huong.tsx`,
+`fe/src/app/chu-quan/_components/muc-chu-quan.ts`, `docs/product/4-fe/01-khung-fe.md`. Xoá tệp do chủ repo chạy lệnh.
+
+**Nhận việc.**
+
 <a id="cau-hoi-mo"></a>
-## Câu hỏi mở
+## Câu hỏi mở — đã có lời 2026-11-22
+
+Cả sáu câu dưới đây đã có lời (bảng *Lời chủ repo 2026-11-22* ở đầu sổ). Phần dưới giữ nguyên câu hỏi và đề xuất của
+Codex làm lịch sử; **lời thắng đề xuất** chỗ nào hai bên khác nhau.
 
 Các mã **Q-KC** dưới đây là mã tham chiếu trong sổ và **chưa có đáp án**. Claude đã chuyển cả sáu sang
 `docs/product/99-unknowns.md` ngày 2026-11-22: Q-KC-01 = **U-120**, Q-KC-02 = **U-121**, Q-KC-03 = **U-122**,

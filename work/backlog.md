@@ -53,7 +53,7 @@ của file ấy chỉ nhận dữ kiện admin của quán).
 | Vế 2026-09-29 | **chủ repo**: *"tôi muốn làm luôn db cho phần admin"* — nhắc lại 2026-09-30 (*"tiếp tục"*) | **đang hiệu lực** — mở thi công **lược đồ** admin cho phần đã đủ luật; `docs/decisions.md` **ADR-068** |
 | Vế 2026-10-14 | **chủ repo**: *"cập nhật backlog … cho db của admin, tôi sẽ làm be cho admin"* (T-184) | **đang hiệu lực** — lược đồ admin lượt hai `P2A-10`…`P2A-16`; backend admin sẽ làm — kế hoạch mở 2026-10-14 ở `T-191` (**ADR-110**: `P3A-01`…`P3A-10`) |
 | Vế 2026-11-01 | **chủ repo**: *"step by step complete above task request codex to do you check"* (nói về `work/backlog_CHAT.md`) | **đang hiệu lực** — mở lane `CHAT` cho nhánh đã đủ lời; không mở pha 5 (`T-109`) |
-| Vế 2026-11-22 | **chủ repo**: *"hãy yêu cầu codex làm backlog cho task trên và bạn kiểm tra từ db, be và fe"* (nói về `khoan-chi.html`) | **đang hiệu lực** — mở lane `KC` ở `work/backlog_KC.md` (T-363); chưa bước nào *Ready*: KC-01 cần lời U-120…U-125 trước |
+| Vế 2026-11-22 | **chủ repo**: *"hãy yêu cầu codex làm backlog cho task trên và bạn kiểm tra từ db, be và fe"* (nói về `khoan-chi.html`) | **đang hiệu lực** — mở lane `KC` ở `work/backlog_KC.md` (T-363); chủ repo trả lời U-120…U-125 cùng ngày (T-364): gộp trang Kho và Nguyên liệu vào Khoản chi; bước kế là KC-01 (thiết kế, L3) |
 
 **Vế mới nói chính xác cái gì.** Chủ quán chọn *"Song song: hỏi chủ quán về admin trong khi pha 2
 chạy"*, và phương án ấy nói rõ hai nửa:
@@ -99,6 +99,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-364 **Lời chủ repo cho sáu câu của lane Khoản chi chưa vào owner, sổ KC còn các nhánh có điều kiện** — L1 (ghi lời đã nói, chỉ tài liệu), chủ repo yêu cầu và trả lời 2026-11-22: gộp Kho và Nguyên liệu vào Khoản chi; đóng U-120…U-125 · [chi tiết](#t-364)
 - [x] T-363 **Trang Khoản chi theo bản thiết kế chưa có lộ trình dựng thật từ database, backend tới giao diện** — L1 (mở lane, chỉ tài liệu), chủ repo yêu cầu 2026-11-22; Codex viết sổ `work/backlog_KC.md`, Claude kiểm từng bước với database, backend và FE đang có · [chi tiết](#t-363)
 - [x] YT-06 **Thực đơn và trang chi tiết chưa có nút thả tim** — L1, sau YT-05; Codex làm trong `../lean_wt/YT-06`, Claude duyệt (nhận 2026-11-21) · [mô tả](backlog_YT.md#yt-06); **xong 2026-11-21**: `NutTim` trên thực đơn web và trang chi tiết, 22 test, `fe-check` 845/845
 - [x] YT-05 **Khách chưa có trang Yêu thích thật trên web** — L2, sau YT-04, theo `favourite.html`; Claude viết test trước `fe/src/app/khach/yeu-thich/yeu-thich.test.tsx`, Codex làm trong `../lean_wt/YT-05` trên nền YT-03 · YT-04 chưa commit (nhận 2026-11-20) · [mô tả](backlog_YT.md#yt-05); **xong 2026-11-21**: trang `/khach/yeu-thich`, 28 test FE, gate đủ ba bước xanh trên `657bfcb` (bước 49, hợp đồng 0.76.0)
@@ -608,6 +609,18 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-364"></a>
+### T-364 — Ghi lời chủ repo cho U-120…U-125 và sửa sổ KC
+
+Chủ repo yêu cầu 2026-11-22 sau T-363: *"hãy hỏi tôi các câu trong unknown tôi trả lời luôn"*. Claude hỏi ba lượt bằng câu hỏi có sẵn phương án; chủ repo trả lời, có hai câu bằng lời tự do. Mức L1: chỉ ghi lời đã nói vào owner, không đổi code, hợp đồng hay dữ liệu.
+
+Acceptance viết trước: A1 — lời vào `master_plan/shop-facts.md` §8.10 kèm nguyên văn, phần suy ra tách riêng có nhãn; §8.4 có con trỏ. A2 — U-120…U-125 rời `### Đang mở`, dời xuống *Đã có lời giải*; brief không còn in chúng. A3 — ADR-103 có *Sửa đổi* cho vế *không có dự kiến hết*. A4 — `work/backlog_KC.md` đọc theo lời: bảng lời đầu sổ, bước bỏ/thêm/đổi mức. A5 — `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-364.txt`): `master_plan/shop-facts.md`, `docs/decisions.md`, `docs/product/99-unknowns.md`, `work/backlog_KC.md`, `CLAUDE.md`, `work/backlog.md`. Claude làm.
+
+**Lời chủ repo 2026-11-22, cùng phiên** (Claude hỏi ba lượt, phần lớn chọn trong phương án có sẵn): nguyên liệu ở Khoản chi và sổ nguyên liệu là một thứ, trang Khoản chi thay cả Kho lẫn Nguyên liệu; ngày nhập ghi riêng; số còn là hiệu số; máy hiện ước tính còn dùng (TB 7 ngày có ghi dùng, chỉ để xem); xoá nguyên liệu đã dùng là ngừng dùng; thêm kèm tiền một lần bấm. Lời vào `master_plan/shop-facts.md` §8.10 *Lượt 2026-11-22* (con trỏ ở §8.4), **ADR-103** *Sửa đổi 2026-11-22*, U-120…U-125 dời xuống *Đã có lời giải*. Sổ KC: bảng lời ở đầu, KC-04 bỏ, KC-01 nâng L3, KC-12 hạ L1, thêm KC-14 gỡ hai trang cũ. Bước kế: KC-01.
+
 
 <a id="t-363"></a>
 ### T-363 — Lộ trình dựng trang Khoản chi từ database, backend tới FE

@@ -7128,6 +7128,10 @@ khoản của người, khoản chi (§8.10) — chưa có bước; thêm hay kh
 **Applies to:** `T-179`; `work/backlog_FE.md` · `master_plan/FE_master_plan_banh_cuon_ba_thanh.md`;
 **ADR-035** · **ADR-051** · **ADR-068** · **ADR-101** · **ADR-102**.
 
+**Sửa đổi 2026-11-22 (T-363, chủ repo):** vế *trang kho không có dự kiến hết* của điểm 4 không còn đứng. Chủ repo chọn
+cho máy hiện *ước tính còn dùng N ngày* (chỉ để xem, không nhắc, không chặn bán) và gộp trang Kho cùng trang Nguyên liệu
+vào trang Khoản chi — lời ở `master_plan/shop-facts.md` §8.10 *Lượt 2026-11-22*; thiết kế dựng ở `work/backlog_KC.md` KC-01.
+
 ### ADR-104 — Lời chủ quán 2026-10-14 lật hai luật đã dựng: tài khoản có mật khẩu thay chọn tên, SSE thay Telegram
 
 **Trạng thái:** **Đã chốt** 2026-10-14 — lời chủ quán do chủ repo chuyển trong hội thoại (Claude Code, task `T-180`).
