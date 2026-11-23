@@ -664,7 +664,29 @@ hai trang cũ. **Acceptance:** ghi con số mua vào/đã dùng của một ngà
 đặt đơn vị lần đầu; đặt tỉ lệ nhắc có lý do; nhóm *Chưa xếp mục* (thứ chưa có `expense_item_id`) xếp vào một mục theo dõi bằng
 `POST /expense-items` với `supply_item_id`; nhóm *Đã ngừng dùng* có nút *Dùng lại* (`reopenExpenseItem`); chuyển mục
 (`moveExpenseItem`) chỉ giữa mục cùng nguồn; mọi lỗi của sổ (`supply_item_stopped`, `supply_day_entry_already_recorded`…) hiện đúng
-ô. Không tự tính lượng. **Phạm vi:** như KC-11 cộng `du-lieu-kho.ts`, `du-lieu-nguyen-lieu.ts`. **Nhận việc:** —
+ô. Không tự tính lượng. **Phạm vi:** như KC-11 cộng `du-lieu-kho.ts`, `du-lieu-nguyen-lieu.ts`. **Nhận việc:**
+Claude Code, 2026-11-23 (chủ repo: *"yêu cầu codex làm bạn kiểm tra"*). Thực hiện: Codex trong `../lean_wt/KC-16`, nhánh
+`codex/KC-16` từ `3663709` + cây hiện tại của chuỗi KC-09…KC-15 (chỉ stage); duyệt: Claude. Phiếu: `../lean_wt/_claude_logs/KC-16/phieu.md`.
+Test viết trước: `fe/src/app/chu-quan/khoan-chi/kc16.test.tsx` (13 ca, 12 đỏ; ca *không bày hai nhóm* là ca chặn). Hình Claude chốt:
+ngăn chi tiết của một nguyên liệu thêm hai tổng, lượng nhập gần nhất, tỉ lệ nhắc, lời nhắc (chữ của trang Kho) và năm nút *Ghi
+lượng* · *Sổ lượng* · *Đặt tỉ lệ nhắc* · *Chuyển mục* · *Đặt đơn vị* (chỉ khi chưa có đơn vị); *Sổ lượng* liệt kê mọi con số theo
+thứ tự backend, *Sửa* đòi lý do; hộp *Chuyển mục* chỉ liệt kê mục khác cùng theo dõi lượng **và** cùng nguồn tiền (ADR-147 điểm 12),
+không có mục nào thì nói rõ; hai nhóm cấp trang *Nguyên liệu chưa xếp mục* (`expense_item_id` null, chưa ngừng — xếp bằng
+`POST /expense-items` chỉ gửi mã mục và mã thứ) và *Nguyên liệu đã ngừng dùng* (`stopped_at` khác null — *Dùng lại* có lý do), không
+bày khi rỗng. Con số và tỉ lệ gửi đúng chuỗi đã gõ theo khuôn hợp đồng (dấu chấm), FE không tính lượng; lỗi trùng con số báo ở ô
+*Ngày*; mọi ghi đọc lại `supply-items` · `supply-stock`, việc trên khoản con đọc thêm `expense-categories`, chuyển mục thêm `expenses`.
+
+**Kết quả 2026-11-24** (thực hiện: Codex, duyệt và tích hợp: Claude). Phiên Codex đầu bị ngắt khi phiên Claude đóng; Claude nối
+lại đúng phiên (`codex exec resume`). Codex thêm bảy hộp (`FormGhiLuong` · `FormSuaLuong` · `FormDatDonVi` · `FormDatTiLe` ·
+`FormChuyenMuc` · `FormXepMuc` · `FormDungLai`) vào `NoiDungHopThoai`, `SoLuong` trong ngăn chi tiết, hai nhóm cấp trang; hook
+`useXepNguyenLieu` · `useDungLaiKhoanCon` · `useChuyenMucKhoanCon` (`du-lieu-khoan-chi.ts`); các mutation sổ và tỉ lệ mang khoá
+`["expense-write"]` để hộp không đóng giữa lúc gửi, đọc lại thêm `supply-stock`; `oLoiNguyenLieu` đưa `supply_day_entry_already_recorded`
+về ô `entry_date` (trang Nguyên liệu cũ cũng hưởng). Không sửa test cũ nào, không sửa `kc16.test.tsx`. Claude duyệt diff, rồi xem trang
+thật (FE worktree cổng 3001, mọi `/api` chặn bằng dữ liệu mẫu, mọi lời gọi ghi bị chặn): mở *Sổ lượng* làm bảng nguyên liệu phình
+từ 204 lên 562 px ở 320 px vì `min-width` của bảng sổ lồng trong ô — Claude sửa bằng `.kc-ledger-wrap{width:0;min-width:100%}` để bảng
+sổ tự cuộn trong ngăn (đo lại 204/204). Bằng chứng: `./scripts/gate.sh` ở worktree và ở clone chính PASS; `vitest src/app/chu-quan`
+431/431; 320/390/1440 px không tràn, hộp *Ghi lượng* vừa màn, 0 lỗi JS, 0 lời gọi ghi. Ảnh: `../lean_wt/_claude_logs/KC-16/anh/`.
+Thấy khi xem, ngoài KC-16: ở 320 px khối *Lịch sử sử dụng nguyên liệu* (KC-15) bẻ từng chữ cái tên rất dài vì cột hai quá hẹp.
 
 ## Câu hỏi mở — đã có lời 2026-11-22
 

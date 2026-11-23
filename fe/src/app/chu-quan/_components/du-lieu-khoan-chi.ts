@@ -71,6 +71,31 @@ export function useThemKhoanCon() {
   const api = useApi();
   return useGhi((body: KieuKhoanChi["CreateExpenseItem"]) => call(api.POST("/expense-items", { body })), "expense-categories");
 }
+function useGhiLienKet<B, R>(gui: (body: B) => Promise<ApiResult<R>>, move = false) {
+  const qc = useQueryClient();
+  return useMutation({ mutationKey: ["expense-write"], mutationFn: gui, retry: false, onSuccess: async (r) => {
+    if (r.ok || (r.failure.kind === "rejected" && ["supply_item_already_linked", "supply_item_stopped", "expense_item_not_stopped", "expense_item_move_not_allowed", "supply_item_not_found", "expense_item_not_found", "expense_category_not_found"].includes(r.failure.code))) {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["expense-categories"] }),
+        qc.invalidateQueries({ queryKey: ["supply-items"] }),
+        qc.invalidateQueries({ queryKey: ["supply-stock"] }),
+        ...(move ? [qc.invalidateQueries({ queryKey: ["expenses"] })] : []),
+      ]);
+    }
+  } });
+}
+export function useXepNguyenLieu() {
+  const api = useApi();
+  return useGhiLienKet((body: KieuKhoanChi["CreateExpenseItem"]) => call(api.POST("/expense-items", { body })));
+}
+export function useDungLaiKhoanCon(id: number) {
+  const api = useApi();
+  return useGhiLienKet((body: KieuKhoanChi["ExpenseReason"]) => call(api.POST("/expense-items/{expense_item_id}/reopen", { params: { path: { expense_item_id: id } }, body })));
+}
+export function useChuyenMucKhoanCon(id: number) {
+  const api = useApi();
+  return useGhiLienKet((body: KieuKhoanChi["MoveExpenseItem"]) => call(api.PUT("/expense-items/{expense_item_id}/category", { params: { path: { expense_item_id: id } }, body })), true);
+}
 export function useThemKhoanConCoLuong() {
   const api = useApi();
   return useGhi((body: KieuKhoanChi["CreateSupplyExpenseItem"]) => call(api.POST("/supply-expense-items", { body })), "expense-categories");
@@ -101,6 +126,11 @@ export function loiKhoanChi(f: ApiFailure) {
     case "expense_category_in_use": return "Mục còn khoản chi, kể cả ngoài khoảng ngày đang lọc. Hãy chuyển hoặc xoá khoản chi trước.";
     case "expense_item_in_use": return "Khoản con còn khoản chi, kể cả ngoài khoảng ngày đang lọc. Hãy chuyển hoặc xoá khoản chi trước.";
     case "expense_item_not_found": return "Không tìm thấy khoản con này. Đã yêu cầu đọc lại danh mục.";
+    case "expense_item_not_stopped": return "Khoản con không còn ngừng dùng. Đã yêu cầu đọc lại danh mục.";
+    case "expense_item_move_not_allowed": return "Chỉ chuyển được sang mục theo dõi lượng cùng nguồn tiền. Đã yêu cầu đọc lại danh mục.";
+    case "supply_item_already_linked": return "Nguyên liệu đã nằm trong một mục. Đã yêu cầu đọc lại sổ.";
+    case "supply_item_stopped": return "Nguyên liệu đã ngừng dùng. Đã yêu cầu đọc lại sổ.";
+    case "supply_item_not_found": return "Không tìm thấy nguyên liệu này. Đã yêu cầu đọc lại sổ.";
     case "expense_item_name_taken": return "Tên khoản con bị trùng trong mục. Hãy chọn tên khác.";
     case "supply_item_name_taken": return "Tên này đã có trong sổ nguyên liệu. Hãy chọn tên khác.";
     case "expense_category_name_taken": return "Tên loại chi bị trùng. Hãy chọn tên khác.";

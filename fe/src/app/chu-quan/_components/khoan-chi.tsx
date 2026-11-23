@@ -15,7 +15,10 @@ import { useTongQuan } from "./du-lieu-tong-quan";
 import { useLoaiChi, useKhoanChi, useLichSuKhoanCon, useThemLoaiChi, useGhiKhoanChi, useSuaKhoanChi,
   useThemKhoanCon, useThemKhoanConCoLuong, useLichSuSuaTien, useDoiTenLoai, useDoiTenKhoanCon, useXoaLoai, useXoaKhoanCon, useXoaKhoanChi,
   loiKhoanChi, oLoiKhoanChi, type KieuKhoanChi } from "./du-lieu-khoan-chi";
-import { useNguyenLieu, useSoCacNguyenLieu, useSoNguyenLieu, type KieuNguyenLieu } from "./du-lieu-nguyen-lieu";
+import { useNguyenLieu, useSoCacNguyenLieu, useSoNguyenLieu, useDatDonVi, useGhiConSo, useSuaConSo,
+  loiNguyenLieu, oLoiNguyenLieu, type KieuNguyenLieu } from "./du-lieu-nguyen-lieu";
+import { useDatTiLeKho, loiKho } from "./du-lieu-kho";
+import { useXepNguyenLieu, useDungLaiKhoanCon, useChuyenMucKhoanCon } from "./du-lieu-khoan-chi";
 import "./khoan-chi.css";
 
 const loi = { loi: loiKhoanChi, oLoi: oLoiKhoanChi };
@@ -24,14 +27,25 @@ const ghi = z.object({ expense_category_id: soMenu, expense_item_id: z.string(),
 const sua = ghi.extend({ reason: chuMenu });
 const doiTen = z.object({ name: chuMenu, reason: chuMenu });
 const lyDo = z.object({ reason: chuMenu });
+const conSo = z.string().trim().regex(/^(0|[1-9][0-9]{0,8})(\.[0-9]{1,3})?$/, "Nhập số không âm, tối đa 9 chữ số nguyên; dùng dấu chấm, tối đa 3 chữ số lẻ.");
+const tiLe = z.string().trim().regex(/^(0(\.[0-9]{1,6})?|1(\.0{1,6})?)$/, "Nhập số từ 0 đến 1, dùng dấu chấm, tối đa 6 chữ số lẻ.");
+const ghiLuong = z.object({ entry_date: chuMenu, kind: z.enum(["purchased", "used"], { error: "Chọn loại con số." }), measure: conSo });
+const suaLuong = z.object({ measure: conSo, reason: chuMenu });
+const datDonVi = z.object({ purchase_unit: chuMenu });
+const datTiLe = z.object({ reminder_ratio: tiLe, reason: chuMenu });
+const chonMuc = z.object({ expense_category_id: z.string().min(1, "Chọn mục chi.") });
+const chuyenMuc = chonMuc.extend({ reason: chuMenu });
 type Loai = KieuKhoanChi["ExpenseCategory"];
 type Khoan = KieuKhoanChi["Expense"];
 type Con = KieuKhoanChi["ExpenseItem"];
 type DuLieu = KieuKhoanChi["Expenses"];
 type NguyenLieu = KieuNguyenLieu["SupplyItem"];
+type DongSo = KieuNguyenLieu["SupplyDayEntry"];
 type Mo = { kind: "tao"; category?: number; item?: number } | { kind: "sua"; entry: Khoan } | { kind: "them-loai" } |
   { kind: "them-con"; category: Loai } | { kind: "ten-loai"; category: Loai } | { kind: "ten-con"; item: Con } |
-  { kind: "xoa-loai"; category: Loai } | { kind: "xoa-con"; item: Con } | { kind: "xoa-chi"; entry: Khoan };
+  { kind: "xoa-loai"; category: Loai } | { kind: "xoa-con"; item: Con } | { kind: "xoa-chi"; entry: Khoan } |
+  { kind: "ghi-luong" | "dat-don-vi" | "dat-ti-le" | "chuyen-muc" | "xep-muc" | "dung-lai"; supply: NguyenLieu } |
+  { kind: "sua-luong"; supply: NguyenLieu; entry: DongSo };
 const tien = new Intl.NumberFormat("vi-VN");
 const money = (n: number) => `${tien.format(n)} đ`;
 const nguonTien = (ket: boolean) => ket ? "Trả từ két" : "Tiền riêng";
@@ -68,7 +82,7 @@ function baMuoiNgayCuoi(s: string) {
   date.setUTCDate(date.getUTCDate() - 29);
   return date.toISOString().slice(0, 10);
 }
-const title = (m: Mo) => m.kind === "xoa-con" && m.item.supply_item_id ? "Ngừng dùng" : ({ tao: "Ghi khoản chi", sua: "Sửa khoản chi", "them-loai": "Thêm mục chi", "them-con": "Thêm khoản con", "ten-loai": "Sửa mục chi", "ten-con": "Sửa khoản con", "xoa-loai": "Xoá mục chi", "xoa-con": "Xoá khoản con", "xoa-chi": "Xoá khoản chi" })[m.kind];
+const title = (m: Mo) => m.kind === "xoa-con" && m.item.supply_item_id ? "Ngừng dùng" : ({ tao: "Ghi khoản chi", sua: "Sửa khoản chi", "them-loai": "Thêm mục chi", "them-con": "Thêm khoản con", "ten-loai": "Sửa mục chi", "ten-con": "Sửa khoản con", "xoa-loai": "Xoá mục chi", "xoa-con": "Xoá khoản con", "xoa-chi": "Xoá khoản chi", "ghi-luong": "Ghi lượng", "sua-luong": "Sửa con số", "dat-don-vi": "Đặt đơn vị", "dat-ti-le": "Đặt tỉ lệ nhắc", "chuyen-muc": "Chuyển mục", "xep-muc": "Xếp vào mục", "dung-lai": "Dùng lại" })[m.kind];
 
 function ThemLoai({ loai, bao, dong }: { loai: Loai[]; bao: (s: string) => void; dong: () => void }) {
   const luu = useThemLoaiChi();
@@ -310,8 +324,18 @@ function LichSuSuDung({ item, supplyId }: { item: Con; supplyId: number }) {
     </>}
   </section>;
 }
+function SoLuong({ supply, mo }: { supply: NguyenLieu; mo: (m: Mo) => void }) {
+  const query = useSoNguyenLieu(supply.supply_item_id, true, Infinity);
+  return <section className="kc-item-history" aria-label={`Sổ lượng ${supply.name}`}>
+    {query.isError ? <p role="alert">Chưa đọc được sổ của {supply.name}. Hãy thử đọc lại.</p> : query.isPending ? <p role="status">Đang đọc sổ của {supply.name}…</p> : query.data.entries.length === 0 ? <p>Chưa ghi con số nào.</p> :
+      <div className="kc-table-wrap kc-ledger-wrap"><table className="kc-data-table kc-supply-ledger" aria-label={`Các con số của ${supply.name}`}><thead><tr><th>Ngày</th><th>Loại</th><th>Con số</th><th>Người ghi</th><th>Sửa</th></tr></thead><tbody>
+        {query.data.entries.map((entry) => <tr key={entry.supply_day_entry_id}><td>{ngay(entry.entry_date)}</td><td>{entry.kind === "purchased" ? "Mua vào" : "Đã dùng"}</td><td>{luong(entry.measure)}{query.data.purchase_unit ? ` ${query.data.purchase_unit}` : ""}</td><td>{entry.person_name}</td><td><Button variant="outline" aria-label={`Sửa con số ${entry.kind === "purchased" ? "Mua vào" : "Đã dùng"} ngày ${ngay(entry.entry_date)}`} onClick={() => mo({ kind: "sua-luong", supply, entry })}>Sửa</Button></td></tr>)}
+      </tbody></table></div>}
+  </section>;
+}
 function DongNguyenLieu({ item, supply, result, category, expanded, toggle, mo }: { item: Con; supply?: NguyenLieu; result?: DuLieu; category: Loai; expanded: boolean; toggle: () => void; mo: (m: Mo) => void }) {
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [ledgerOpen, setLedgerOpen] = useState(false);
   const id = useId();
   const itemTotal = result?.item_totals?.find((t) => t.expense_item_id === item.expense_item_id);
   return <Fragment><tr><td><button type="button" className="kc-item-name" aria-expanded={expanded} aria-controls={`${id}-detail`} onClick={toggle}>{item.name}</button></td><td>{supply ? uocTinh(supply) : "—"}</td><td>{supply ? luongCon(supply) : "—"}</td></tr>
@@ -319,8 +343,16 @@ function DongNguyenLieu({ item, supply, result, category, expanded, toggle, mo }
       <div><dt>Ngày nhập gần nhất</dt><dd>{supply?.latest_purchase_date ? ngay(supply.latest_purchase_date) : supply ? "Chưa ghi" : "—"}</dd></div>
       <div><dt>Đã dùng gần đây</dt><dd>{supply ? supply.usage_estimate.usage_days === 0 ? "Chưa ghi ngày dùng" : `${luong(supply.usage_estimate.used_in_window)}${supply.purchase_unit ? ` ${supply.purchase_unit}` : ""} trong ${supply.usage_estimate.usage_days} ngày có ghi gần nhất` : "—"}</dd></div>
       <div><dt>Tổng chi trong kỳ</dt><dd>{result ? money(itemTotal?.total_vnd ?? 0) : "—"}</dd></div>
+      <div><dt>Đơn vị mua</dt><dd>{supply ? supply.purchase_unit ?? "Chưa có đơn vị" : "—"}</dd></div>
+      <div><dt>Tổng mua vào</dt><dd>{supply ? `${luong(supply.purchased_total)}${supply.purchase_unit ? ` ${supply.purchase_unit}` : ""}` : "—"}</dd></div>
+      <div><dt>Tổng đã dùng</dt><dd>{supply ? `${luong(supply.used_total)}${supply.purchase_unit ? ` ${supply.purchase_unit}` : ""}` : "—"}</dd></div>
+      <div><dt>Lượng nhập gần nhất</dt><dd>{supply ? supply.latest_purchase_measure === null ? "Chưa có lần mua" : `${luong(supply.latest_purchase_measure)}${supply.purchase_unit ? ` ${supply.purchase_unit}` : ""}` : "—"}</dd></div>
+      <div><dt>Tỉ lệ nhắc</dt><dd>{supply ? luong(supply.reminder_ratio) : "—"}</dd></div>
+      <div><dt>Nhắc kiểm tra</dt><dd>{supply ? `${supply.check_reminder ? "Nhắc POS kiểm tra" : "Không nhắc"}${supply.reminder_status === "no_purchase" ? " · chưa có lần mua" : supply.reminder_status === "latest_purchase_zero" ? " · lần mua gần nhất bằng 0" : supply.reminder_status === "usage_before_first_purchase" ? " · có số dùng trước lần mua đầu" : ""}` : "—"}</dd></div>
     </dl><div className="kc-actions"><Button variant="outline" onClick={() => mo({ kind: "ten-con", item })}>Sửa tên</Button><Button variant="outline" className="kc-danger" onClick={() => mo({ kind: "xoa-con", item })}>Ngừng dùng</Button><Button variant="outline" onClick={() => mo({ kind: "tao", category: category.expense_category_id, item: item.expense_item_id })}>Ghi mua</Button><Button variant="outline" aria-expanded={historyOpen} aria-controls={`${id}-history`} onClick={() => setHistoryOpen(!historyOpen)}>Lịch sử sử dụng</Button></div>
+      {supply && <div className="kc-actions"><Button variant="outline" onClick={() => mo({ kind: "ghi-luong", supply })}>Ghi lượng</Button><Button variant="outline" aria-expanded={ledgerOpen} aria-controls={`${id}-ledger`} onClick={() => setLedgerOpen(!ledgerOpen)}>Sổ lượng</Button><Button variant="outline" onClick={() => mo({ kind: "dat-ti-le", supply })}>Đặt tỉ lệ nhắc</Button><Button variant="outline" onClick={() => mo({ kind: "chuyen-muc", supply })}>Chuyển mục</Button>{supply.purchase_unit === null && <Button variant="outline" onClick={() => mo({ kind: "dat-don-vi", supply })}>Đặt đơn vị</Button>}</div>}
       <div id={`${id}-history`} hidden={!historyOpen}>{historyOpen && item.supply_item_id && <LichSuSuDung item={item} supplyId={item.supply_item_id} />}</div>
+      <div id={`${id}-ledger`} hidden={!ledgerOpen}>{ledgerOpen && supply && <SoLuong supply={supply} mo={mo} />}</div>
     </div>}</td></tr></Fragment>;
 }
 function BangNguyenLieu({ category, result, visible, id, active, toggle, mo }: { category: Loai; result?: DuLieu; visible: boolean; id: string; active: number | null; toggle: (itemId: number) => void; mo: (m: Mo) => void }) {
@@ -453,6 +485,7 @@ export function TrangKhoanChi() {
   const router = useRouter();
   const tongQuan = useTongQuan();
   const loai = useLoaiChi();
+  const nguyenLieu = useNguyenLieu();
   const from = params.get("tu") ?? tongQuan.data?.sale_date;
   const to = params.get("den") ?? tongQuan.data?.sale_date;
   const query = useKhoanChi(from, to, params.get("loai"), params.get("nguon"));
@@ -475,6 +508,9 @@ export function TrangKhoanChi() {
     { key: "loai", field: "expense_category_id", label: "Lọc loại chi", value: params.get("loai") }, { key: "nguon", field: "paid_from_till", label: "Lọc nguồn", value: params.get("nguon") }];
   const days = from && to ? Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86400000) + 1 : 0;
   const categories = loai.data?.expense_categories ?? [];
+  const supplies = !nguyenLieu.isPending && !nguyenLieu.isError ? nguyenLieu.data?.supply_items ?? [] : [];
+  const chuaXep = supplies.filter((s) => s.expense_item_id === null && s.stopped_at === null);
+  const daNgung = supplies.filter((s) => s.stopped_at !== null);
   const grouped = theoNgay(query.data?.expenses ?? []);
   return <div className="kc-page">
     <header className="kc-row kc-header"><div><p className="kc-eyebrow">HÀNG &amp; TIỀN</p><h1 ref={heading} tabIndex={-1}>Khoản chi</h1><p className="kc-muted">Theo dõi từng khoản, rõ từng nguồn tiền.</p></div><div className="kc-actions"><Button variant="outline" onClick={() => open({ kind: "them-loai" })}>＋ Thêm mục chi</Button><Button disabled={!categories.length} onClick={() => open({ kind: "tao" })}>Ghi khoản chi</Button></div></header>
@@ -485,6 +521,8 @@ export function TrangKhoanChi() {
     <section className="kc-overview" aria-label="Tổng chi trong kỳ"><small>Tổng chi trong kỳ</small><strong>{query.data ? money(query.data.total_vnd) : "—"}</strong><small>{query.data ? `${query.data.expenses.length} khoản chi theo bộ lọc` : "Đang chờ dữ liệu"}</small></section>
     <section className="kc-categories" aria-label="Loại chi"><div className="kc-row"><div><h2>Mục chi &amp; sản phẩm</h2><p className="kc-muted">Chọn từng nguyên liệu hoặc sản phẩm khi ghi khoản chi.</p></div><Button variant="outline" disabled={loai.isFetching} onClick={() => void loai.refetch()}>Đọc lại loại chi</Button></div><TrangThai query={loai} ten="loại chi" daGhi={bao.startsWith("Đã ")} />
       {loai.data && (categories.length ? <div className="kc-category-list" role="list" aria-label="Danh sách loại chi">{categories.map((l) => <div role="listitem" key={l.expense_category_id}><MucChi category={l} data={query.data} from={from} to={to} selectedCategory={params.get("loai")} source={params.get("nguon")} mo={open} /></div>)}</div> : <p>Chưa có loại chi nào.</p>)}
+      {chuaXep.length > 0 && <section className="kc-supply-group" aria-labelledby={`${id}-unlinked`}><h3 id={`${id}-unlinked`}>Nguyên liệu chưa xếp mục</h3><ul>{chuaXep.map((s) => <li key={s.supply_item_id}><span>{s.name}{s.purchase_unit ? ` · ${s.purchase_unit}` : ""}</span><Button variant="outline" aria-label={`Xếp ${s.name} vào mục`} onClick={() => open({ kind: "xep-muc", supply: s })}>Xếp vào mục</Button></li>)}</ul></section>}
+      {daNgung.length > 0 && <section className="kc-supply-group" aria-labelledby={`${id}-stopped`}><h3 id={`${id}-stopped`}>Nguyên liệu đã ngừng dùng</h3><ul>{daNgung.map((s) => { const oldCategory = categories.find((c) => c.expense_category_id === s.expense_category_id); return <li key={s.supply_item_id}><span>{s.name}{oldCategory ? ` · ${oldCategory.name}` : ""}</span>{s.expense_item_id !== null && <Button variant="outline" aria-label={`Dùng lại ${s.name}`} onClick={() => open({ kind: "dung-lai", supply: s })}>Dùng lại</Button>}</li>; })}</ul></section>}
     </section>
     <section className="kc-filter" aria-label="Bộ lọc sổ khoản chi"><div className="kc-row kc-section-head"><h2>Sổ khoản chi</h2><Button variant="outline" aria-expanded={filtersOpen} aria-controls={`${id}-filters`} onClick={() => setFiltersOpen(!filtersOpen)}>{filtersOpen ? "Ẩn" : "Hiện"}</Button></div>
       <div id={`${id}-filters`} className="kc-filter-body" hidden={!filtersOpen}>
@@ -504,8 +542,84 @@ export function TrangKhoanChi() {
     </DialogContent></Dialog>
   </div>;
 }
+function FormGhiLuong({ supply, bao, dong }: { supply: NguyenLieu; bao: (s: string) => void; dong: () => void }) {
+  const luu = useGhiConSo();
+  const form = useForm<z.infer<typeof ghiLuong>>({ resolver: zodResolver(ghiLuong), defaultValues: { entry_date: "", measure: "" } });
+  const id = useId();
+  const dateError = form.formState.errors.entry_date?.message;
+  const kindError = form.formState.errors.kind?.message;
+  return <FormMenu form={form} ten={`Ghi lượng ${supply.name}`} nut="Lưu con số" cacO={["entry_date", "kind", "measure"]} loi={loiNguyenLieu} oLoi={oLoiNguyenLieu} dong={dong}
+    gui={(body) => luu.mutateAsync({ ...body, supply_item_id: supply.supply_item_id })} daLuu={() => { bao(`Đã ghi con số cho ${supply.name}.`); dong(); }}>
+    <Field data-invalid={!!dateError}><FieldLabel htmlFor={`${id}-date`}>Ngày</FieldLabel><Input id={`${id}-date`} type="date" {...form.register("entry_date")} aria-invalid={!!dateError} aria-describedby={dateError ? `${id}-date-error` : undefined} />{dateError && <FieldError id={`${id}-date-error`}>{dateError}</FieldError>}</Field>
+    <Field data-invalid={!!kindError}><FieldLabel htmlFor={`${id}-kind`}>Loại</FieldLabel><select id={`${id}-kind`} defaultValue="" {...form.register("kind")} aria-invalid={!!kindError} aria-describedby={kindError ? `${id}-kind-error` : undefined}><option value="">Chọn loại</option><option value="purchased">Mua vào</option><option value="used">Đã dùng</option></select>{kindError && <FieldError id={`${id}-kind-error`}>{kindError}</FieldError>}</Field>
+    <OMenu form={form} o="measure" nhan="Con số" /><p className="kc-muted">Dùng dấu chấm, tối đa 3 chữ số lẻ.</p>
+  </FormMenu>;
+}
+function FormSuaLuong({ supply, entry, bao, dong }: { supply: NguyenLieu; entry: DongSo; bao: (s: string) => void; dong: () => void }) {
+  const luu = useSuaConSo(entry.supply_day_entry_id);
+  const form = useForm<z.infer<typeof suaLuong>>({ resolver: zodResolver(suaLuong), defaultValues: { measure: entry.measure, reason: "" } });
+  return <FormMenu form={form} ten={`Sửa con số ${supply.name}`} nut="Lưu con số" cacO={["measure", "reason"]} loi={loiNguyenLieu} oLoi={oLoiNguyenLieu} dong={dong}
+    gui={luu.mutateAsync} daLuu={() => { bao(`Đã sửa con số cho ${supply.name}.`); dong(); }}>
+    <OMenu form={form} o="measure" nhan="Con số" /><p className="kc-muted">Dùng dấu chấm, tối đa 3 chữ số lẻ.</p><OMenu form={form} o="reason" nhan="Lý do" />
+  </FormMenu>;
+}
+function FormDatDonVi({ supply, bao, dong }: { supply: NguyenLieu; bao: (s: string) => void; dong: () => void }) {
+  const luu = useDatDonVi(supply.supply_item_id);
+  const form = useForm<z.infer<typeof datDonVi>>({ resolver: zodResolver(datDonVi), defaultValues: { purchase_unit: "" } });
+  return <FormMenu form={form} ten={`Đặt đơn vị ${supply.name}`} nut="Lưu đơn vị" cacO={["purchase_unit"]} loi={loiNguyenLieu} oLoi={oLoiNguyenLieu} dong={dong}
+    gui={luu.mutateAsync} daLuu={() => { bao(`Đã đặt đơn vị cho ${supply.name}.`); dong(); }}><OMenu form={form} o="purchase_unit" nhan="Đơn vị mua" /></FormMenu>;
+}
+function FormDatTiLe({ supply, bao, dong }: { supply: NguyenLieu; bao: (s: string) => void; dong: () => void }) {
+  const luu = useDatTiLeKho(supply.supply_item_id);
+  const form = useForm<z.infer<typeof datTiLe>>({ resolver: zodResolver(datTiLe), defaultValues: { reminder_ratio: supply.reminder_ratio, reason: "" } });
+  return <FormMenu form={form} ten={`Đặt tỉ lệ nhắc ${supply.name}`} nut="Lưu tỉ lệ" cacO={["reminder_ratio", "reason"]} loi={loiKho} oLoi={oLoiNguyenLieu} dong={dong}
+    gui={luu.mutateAsync} daLuu={() => { bao(`Đã đặt tỉ lệ nhắc cho ${supply.name}.`); dong(); }}><OMenu form={form} o="reminder_ratio" nhan="Tỉ lệ nhắc" /><p className="kc-muted">Dùng dấu chấm, từ 0 đến 1, tối đa 6 chữ số lẻ.</p><OMenu form={form} o="reason" nhan="Lý do" /></FormMenu>;
+}
+function FormChuyenMuc({ supply, categories, bao, dong }: { supply: NguyenLieu; categories: Loai[]; bao: (s: string) => void; dong: () => void }) {
+  const luu = useChuyenMucKhoanCon(supply.expense_item_id ?? 0);
+  const current = categories.find((c) => c.expense_category_id === supply.expense_category_id);
+  const choices = categories.filter((c) => c.tracks_supply && c.expense_category_id !== supply.expense_category_id && current && c.paid_from_till === current.paid_from_till);
+  const form = useForm<z.infer<typeof chuyenMuc>>({ resolver: zodResolver(chuyenMuc), defaultValues: { expense_category_id: "", reason: "" } });
+  const id = useId();
+  const error = form.formState.errors.expense_category_id?.message;
+  if (!choices.length || supply.expense_item_id === null) return <p>Không có mục theo dõi lượng nào khác cùng nguồn tiền.</p>;
+  return <FormMenu form={form} ten={`Chuyển mục ${supply.name}`} nut="Chuyển mục" cacO={["expense_category_id", "reason"]} {...loi} dong={dong}
+    gui={({ expense_category_id, reason }) => luu.mutateAsync({ expense_category_id: Number(expense_category_id), reason })}
+    daLuu={() => { const chosen = choices.find((c) => c.expense_category_id === Number(form.getValues("expense_category_id"))); bao(`Đã chuyển ${supply.name} sang ${chosen?.name ?? "mục đã chọn"}.`); dong(); }}>
+    <Field data-invalid={!!error}><FieldLabel htmlFor={id}>Chuyển sang mục</FieldLabel><select id={id} defaultValue="" {...form.register("expense_category_id")} aria-invalid={!!error} aria-describedby={error ? `${id}-error` : undefined}><option value="">Chọn mục</option>{choices.map((c) => <option key={c.expense_category_id} value={c.expense_category_id}>{c.name}</option>)}</select>{error && <FieldError id={`${id}-error`}>{error}</FieldError>}</Field><OMenu form={form} o="reason" nhan="Lý do" />
+  </FormMenu>;
+}
+function FormXepMuc({ supply, categories, bao, dong }: { supply: NguyenLieu; categories: Loai[]; bao: (s: string) => void; dong: () => void }) {
+  const luu = useXepNguyenLieu();
+  const choices = categories.filter((c) => c.tracks_supply);
+  const form = useForm<z.infer<typeof chonMuc>>({ resolver: zodResolver(chonMuc), defaultValues: { expense_category_id: "" } });
+  const id = useId();
+  const error = form.formState.errors.expense_category_id?.message;
+  if (!choices.length) return <p>Chưa có mục chi theo dõi lượng. Hãy thêm mục chi có theo dõi lượng trước.</p>;
+  return <FormMenu form={form} ten={`Xếp ${supply.name} vào mục`} nut="Xếp vào mục" cacO={["expense_category_id"]} {...loi} dong={dong}
+    gui={({ expense_category_id }) => luu.mutateAsync({ expense_category_id: Number(expense_category_id), supply_item_id: supply.supply_item_id })}
+    daLuu={() => { const chosen = choices.find((c) => c.expense_category_id === Number(form.getValues("expense_category_id"))); bao(`Đã xếp ${supply.name} vào ${chosen?.name ?? "mục đã chọn"}.`); dong(); }}>
+    <Field data-invalid={!!error}><FieldLabel htmlFor={id}>Mục chi</FieldLabel><select id={id} defaultValue="" {...form.register("expense_category_id")} aria-invalid={!!error} aria-describedby={error ? `${id}-error` : undefined}><option value="">Chọn mục chi</option>{choices.map((c) => <option key={c.expense_category_id} value={c.expense_category_id}>{c.name}</option>)}</select>{error && <FieldError id={`${id}-error`}>{error}</FieldError>}</Field>
+  </FormMenu>;
+}
+function FormDungLai({ supply, categories, bao, dong }: { supply: NguyenLieu; categories: Loai[]; bao: (s: string) => void; dong: () => void }) {
+  const luu = useDungLaiKhoanCon(supply.expense_item_id ?? 0);
+  const form = useForm<z.infer<typeof lyDo>>({ resolver: zodResolver(lyDo), defaultValues: { reason: "" } });
+  const category = categories.find((c) => c.expense_category_id === supply.expense_category_id);
+  return <FormMenu form={form} ten={`Dùng lại ${supply.name}`} nut="Dùng lại" cacO={["reason"]} {...loi} dong={dong}
+    gui={luu.mutateAsync} daLuu={() => { bao(`Đã dùng lại ${supply.name}.`); dong(); }}>
+    <p>Dùng lại {supply.name}? Thứ trở về {category?.name ?? "mục cũ"} cùng toàn bộ lịch sử.</p><OMenu form={form} o="reason" nhan="Lý do" />
+  </FormMenu>;
+}
 function NoiDungHopThoai({ opened, categories, bao, dong, suaTien }: { opened: Mo; categories: Loai[]; bao: (s: string) => void; dong: () => void; suaTien: (k: Khoan) => void }): ReactNode {
   switch (opened.kind) {
+    case "ghi-luong": return <FormGhiLuong supply={opened.supply} bao={bao} dong={dong} />;
+    case "sua-luong": return <FormSuaLuong supply={opened.supply} entry={opened.entry} bao={bao} dong={dong} />;
+    case "dat-don-vi": return <FormDatDonVi supply={opened.supply} bao={bao} dong={dong} />;
+    case "dat-ti-le": return <FormDatTiLe supply={opened.supply} bao={bao} dong={dong} />;
+    case "chuyen-muc": return <FormChuyenMuc supply={opened.supply} categories={categories} bao={bao} dong={dong} />;
+    case "xep-muc": return <FormXepMuc supply={opened.supply} categories={categories} bao={bao} dong={dong} />;
+    case "dung-lai": return <FormDungLai supply={opened.supply} categories={categories} bao={bao} dong={dong} />;
     case "tao": return <FormKhoan category={opened.category} item={opened.item} loai={categories} dong={dong} bao={bao} />;
     case "sua": return <FormKhoan khoan={opened.entry} loai={categories} dong={dong} bao={bao} />;
     case "them-loai": return <ThemLoai loai={categories} dong={dong} bao={bao} />;

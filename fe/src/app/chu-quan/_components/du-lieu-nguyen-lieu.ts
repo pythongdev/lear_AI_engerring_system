@@ -37,9 +37,14 @@ export function useSoCacNguyenLieu(ids: number[], enabled: boolean) {
 }
 function useGhi<B, R>(gui: (body: B) => Promise<ApiResult<R>>) {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: gui, retry: false, onSuccess: async (r) => {
-    if (r.ok || (r.failure.kind === "rejected" && ["supply_item_unit_already_set", "supply_day_entry_not_found", "supply_item_not_found"].includes(r.failure.code))) {
-      await qc.invalidateQueries({ queryKey: ["supply-items"] });
+  return useMutation({ mutationKey: ["expense-write"], mutationFn: gui, retry: false, onSuccess: async (r) => {
+    const stopped = !r.ok && r.failure.kind === "rejected" && r.failure.code === "supply_item_stopped";
+    if (r.ok || (r.failure.kind === "rejected" && ["supply_item_unit_already_set", "supply_day_entry_not_found", "supply_item_not_found", "supply_item_stopped"].includes(r.failure.code))) {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["supply-items"] }),
+        qc.invalidateQueries({ queryKey: ["supply-stock"] }),
+        ...(stopped ? [qc.invalidateQueries({ queryKey: ["expense-categories"] })] : []),
+      ]);
     }
   } });
 }
@@ -66,7 +71,8 @@ export function loiNguyenLieu(f: ApiFailure) {
     case "supply_item_not_found": return "Không tìm thấy nguyên liệu này";
     case "supply_item_unit_already_set": return "Nguyên liệu đã có đơn vị. Đã yêu cầu đọc lại.";
     case "supply_day_entry_not_found": return "Không tìm thấy con số này. Đã yêu cầu đọc lại sổ.";
-    case "supply_day_entry_already_recorded": return "Đã có con số cho nguyên liệu, ngày và loại này. Hãy dùng Sửa ở dòng đã có.";
+    case "supply_day_entry_already_recorded": return "Đã có con số cho nguyên liệu, ngày và loại này. Hãy dùng Sửa ở dòng đã có trong Sổ lượng.";
+    case "supply_item_stopped": return "Nguyên liệu đã ngừng dùng. Đã yêu cầu đọc lại sổ.";
     case "invalid_request": return "Dữ liệu chưa hợp lệ. Hãy kiểm tra lại.";
     case "unauthenticated": return "Phiên đăng nhập đã hết. Hãy đăng nhập lại.";
     case "owner_only": return "Chỉ chủ quán được thực hiện thao tác này.";
@@ -74,5 +80,5 @@ export function loiNguyenLieu(f: ApiFailure) {
   }
 }
 export function oLoiNguyenLieu(f: ApiFailure) {
-  return f.kind === "rejected" ? f.field ?? (f.code === "supply_item_name_taken" ? "name" : undefined) : undefined;
+  return f.kind === "rejected" ? f.field ?? (f.code === "supply_item_name_taken" ? "name" : f.code === "supply_day_entry_already_recorded" ? "entry_date" : undefined) : undefined;
 }

@@ -8,6 +8,7 @@ import type { components } from "@/lib/api/schema";
 export type NguyenLieuKho = components["schemas"]["SupplyItem"];
 export type DatTiLeKho = components["schemas"]["SetSupplyItemReminderRatio"];
 export const khongConNguyenLieu = (f: ApiFailure) => f.kind === "rejected" && f.code === "supply_item_not_found";
+const daNgungNguyenLieu = (f: ApiFailure) => f.kind === "rejected" && f.code === "supply_item_stopped";
 
 export function useKho() {
   const api = useApi();
@@ -20,13 +21,14 @@ export function useKho() {
 export function useDatTiLeKho(supply_item_id: number) {
   const api = useApi();
   const qc = useQueryClient();
-  return useMutation({ retry: false,
+  return useMutation({ mutationKey: ["expense-write"], retry: false,
     mutationFn: (body: DatTiLeKho) => call(api.PUT("/supply-items/{supply_item_id}/reminder-ratio", { params: { path: { supply_item_id } }, body })),
     onSuccess: async (r) => {
-      if (r.ok || khongConNguyenLieu(r.failure)) {
+      if (r.ok || khongConNguyenLieu(r.failure) || daNgungNguyenLieu(r.failure)) {
         await Promise.all([
           qc.invalidateQueries({ queryKey: ["supply-stock"] }),
           qc.invalidateQueries({ queryKey: ["supply-items"] }),
+          ...(!r.ok && daNgungNguyenLieu(r.failure) ? [qc.invalidateQueries({ queryKey: ["expense-categories"] })] : []),
         ]);
       }
     },
@@ -36,6 +38,7 @@ export function loiKho(f: ApiFailure) {
   if (f.kind !== "rejected") return "Chưa xác nhận được kết quả. Hãy đọc lại để kiểm tra, không gửi lại.";
   switch (f.code) {
     case "supply_item_not_found": return "Không tìm thấy nguyên liệu này. Đã yêu cầu đọc lại kho.";
+    case "supply_item_stopped": return "Nguyên liệu đã ngừng dùng. Đã yêu cầu đọc lại kho.";
     case "invalid_request": return "Dữ liệu chưa hợp lệ. Hãy kiểm tra lại ô này.";
     case "unauthenticated": return "Phiên đăng nhập đã hết. Hãy đăng nhập lại.";
     case "owner_only": return "Chỉ chủ quán được thực hiện thao tác này.";

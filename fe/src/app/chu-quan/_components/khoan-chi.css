@@ -59,3 +59,13 @@
 .kc-page .kc-history-jump{border-color:var(--kc-accent);color:var(--kc-accent)}
 @media(min-width:1024px){.kc-category-histories{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.kc-history-body .kc-day-list li{flex:1 1 100%;min-width:0;overflow-wrap:anywhere}.kc-page .kc-history-body .kc-history-table th{white-space:normal}}
+.kc-supply-group{margin-top:16px;padding:16px;border:1px solid var(--kc-line);border-radius:12px;background:var(--kc-panel);min-width:0}
+.kc-supply-group ul{list-style:none;margin:10px 0 0;padding:0}
+.kc-supply-group li{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:10px 0;border-top:1px solid var(--kc-line);overflow-wrap:anywhere}
+.kc-supply-group li span{min-width:0;flex:1}
+.kc-supply-group button{min-height:36px;padding:5px 9px}
+.kc-page .kc-supply-ledger{min-width:500px}
+.kc-page .kc-supply-ledger td:first-child{white-space:nowrap}
+.kc-page .kc-supply-ledger button{min-height:36px;padding:5px 9px}
+/* KC-16 (Claude): khung cuộn của Sổ lượng không góp bề rộng cho bảng nguyên liệu bên ngoài; bảng sổ tự cuộn ngang trong ngăn chi tiết. */
+.kc-page .kc-item-detail .kc-ledger-wrap{width:0;min-width:100%}
