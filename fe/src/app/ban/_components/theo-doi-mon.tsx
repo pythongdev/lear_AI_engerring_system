@@ -2,12 +2,14 @@
 
 import { useId, useState } from "react";
 import Link from "next/link";
+import { QrCode } from "lucide-react";
 import { cotVanHanh, type ThuVanHanh } from "@/app/chu-quan/_components/cot-van-hanh";
 import { DongMonDaGhi, tien } from "@/components/shared/dong-mon-da-ghi";
 import type { ApiFailure } from "@/lib/api/client";
 import type { components } from "@/lib/api/schema";
 import { SITE_NAME } from "@/lib/seo";
 import { useTheoDoi, type TienDoBan } from "./du-lieu-theo-doi";
+import "./thuc-don-khach.css";
 import "./theo-doi-mon.css";
 
 // Cùng luật nhãn với phieu-khach.tsx: nhãn chỉ có số thì đọc "Bàn N".
@@ -56,19 +58,18 @@ export function TheoDoiMon({ ma, initialData, initialFailure }: {
   const choDuyet = !!session?.pending_lines.length && session.items.length === 0;
   const duMon = !!session?.items.length && session.items.every((item) => item.missing === 0);
   const cauLuot = typeof luot === "number"
-    ? luot === 0 ? "Không còn lượt nào gọi trước bạn" : `Còn ${luot} lượt gọi trước bạn đang chờ món`
+    ? luot === 0 ? "Không còn lượt nào gọi trước bạn" : <>Còn <strong className="td-queue-count">{luot}</strong> lượt gọi trước bạn đang chờ món</>
     : choDuyet ? "Quán chưa xác nhận món của bạn" : duMon ? "Bàn bạn đã nhận đủ món" : null;
 
-  return <main className="theo-doi-mon" aria-label="Theo dõi món"><div className="td-shell">
+  return <main data-component="TheoDoiMon" className="khach-menu min-h-dvh bg-[var(--page)] text-[12px] leading-[1.45] text-[var(--text)]" aria-label="Theo dõi món"><div className="phone mx-auto max-w-[472px] bg-[var(--bg)] px-[15px] pb-4">
     {maCu ? <section className="td-card"><p role="status">Bạn vui lòng quét lại mã trên bàn.</p></section> : <>
       <header className="td-header">
         <p className="td-brand">{SITE_NAME}</p>
-        {data && <p className="td-context">{(session?.tables.length ? session.tables : [data.table_label]).map(nhanBan).join(" + ")}</p>}
-        <h1>Theo dõi món</h1>
-        {data && <p className="td-small td-muted">Cập nhật lúc {new Date(data.read_at).toLocaleTimeString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })} · tự làm mới</p>}
+        <h1>{data ? <><QrCode aria-hidden="true" />{(session?.tables.length ? session.tables : [data.table_label]).map(nhanBan).join(" + ")}</> : "Theo dõi món"}</h1>
+        {data && <p className="td-small td-muted">Theo dõi món · Cập nhật lúc {new Date(data.read_at).toLocaleTimeString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })} · tự làm mới</p>}
       </header>
-      {failure && <p role="alert">Chưa đọc được tiến độ mới.{data && " Đang giữ số của lần cập nhật trên."} Bạn vui lòng thử lại. <button className="td-button" onClick={() => void query.refetch()}>Đọc lại</button></p>}
-      {!data && !failure && <p role="status">Đang đọc tiến độ món…</p>}
+      {failure && <p className="td-card" role="alert">Chưa đọc được tiến độ mới.{data && " Đang giữ số của lần cập nhật trên."} Bạn vui lòng thử lại. <button className="td-button" onClick={() => void query.refetch()}>Đọc lại</button></p>}
+      {!data && !failure && <p className="td-card" role="status">Đang đọc tiến độ món…</p>}
       {chuaGoi ? <section className="td-card"><p role="status">Bàn bạn chưa gọi món.</p><Link className="td-button" href={menu}>Xem thực đơn</Link></section> : session && <>
         {cauLuot && <section className="td-card td-queue" aria-label="Lượt gọi trước">
           <h2 aria-live="polite">{cauLuot}</h2>
@@ -102,7 +103,7 @@ export function TheoDoiMon({ ma, initialData, initialFailure }: {
           <p className="td-total"><span>Tổng tiền đơn</span><strong className="td-money">{tien(session.lines_total_vnd)}</strong></p>
           <p className="td-small td-muted">Món chưa ra thì quầy chưa tính tiền.</p>
         </section>
-        <nav aria-label="Gọi món tại bàn"><Link className="td-button" href={menu}>Gọi thêm món</Link></nav>
+        <nav aria-label="Gọi món tại bàn"><Link className="flex h-[52px] w-full items-center justify-center rounded-xl bg-[var(--accent)] text-[15px] text-white" href={menu}>Gọi thêm món</Link></nav>
       </>}
     </>}
   </div></main>;

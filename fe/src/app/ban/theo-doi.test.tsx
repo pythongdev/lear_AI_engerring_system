@@ -34,8 +34,9 @@ it("T372: server đọc mã với no-store, lần đầu có bàn ghép và gi�
   const page = await TheoDoiPage({ params: Promise.resolve({ ma: "ma 4" }) });
   expect(server).toHaveBeenCalledWith(expect.stringContaining("/qr-codes/ma%204/progress"), { cache: "no-store" });
   render(<ApiProvider fetch={async () => Response.json(mau())}>{page}</ApiProvider>);
-  expect(screen.getByText("Bàn 4 + Bàn 5")).toBeTruthy();
-  expect(screen.getByText("Cập nhật lúc 09:42:08 · tự làm mới")).toBeTruthy();
+  expect(screen.getByRole("heading", { level: 1, name: "Bàn 4 + Bàn 5" })).toBeTruthy();
+  expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+  expect(screen.getByText("Theo dõi món · Cập nhật lúc 09:42:08 · tự làm mới")).toBeTruthy();
 });
 
 it.each([
@@ -136,12 +137,12 @@ it("T372: lỗi mạng giữ số cũ và mốc đọc, đọc lại thành côn
   });
   mo(mau(), fetch);
   expect(await screen.findByRole("alert")).toBeTruthy();
-  expect(screen.getByText("Còn 3 lượt gọi trước bạn đang chờ món")).toBeTruthy();
+  expect(screen.getByRole("heading", { name: "Còn 3 lượt gọi trước bạn đang chờ món" })).toBeTruthy();
   expect(screen.getByRole("table")).toBeTruthy();
   loi = false;
   fireEvent.click(screen.getByRole("button", { name: "Đọc lại" }));
   await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
-  expect(screen.getByText("Còn 1 lượt gọi trước bạn đang chờ món")).toBeTruthy();
+  expect(screen.getByRole("heading", { name: "Còn 1 lượt gọi trước bạn đang chờ món" })).toBeTruthy();
 });
 
 it("T372: refetchInterval 15 000 thực sự gọi lại bằng API", async () => {

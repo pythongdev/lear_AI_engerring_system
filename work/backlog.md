@@ -99,6 +99,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-373 **Trang Theo dõi món trong app dùng màu xanh lá riêng, trông khác trang đặt món `/ban/[ma]` và căn chưa gọn** — L1 (chỉ FE, không đổi dữ liệu hay chữ), chủ repo yêu cầu 2026-11-23; Codex làm trong `../lean_wt/T-373`, Claude duyệt · [chi tiết](#t-373); **xong 2026-11-24**: cùng khung và màu `.khach-menu` sáng/tối, 8/8 ảnh tràn 0px, vitest 96/96
 - [x] KC-16 **Trang Khoản chi chưa làm được việc của Kho và Nguyên liệu: ghi/sửa lượng có lý do, đơn vị lần đầu, tỉ lệ nhắc, xếp thứ *Chưa xếp mục*, dùng lại thứ đã ngừng, chuyển mục** — L2 (ghi sổ lượng, chuyển mục kéo theo khoản chi), chủ repo yêu cầu 2026-11-23 (*"yêu cầu codex làm bạn kiểm tra"*); Claude viết test trước, Codex làm trong `../lean_wt/KC-16`, Claude duyệt, gate xanh 2026-11-24 · [chi tiết](backlog_KC.md#kc-16)
 - [x] KC-15 **Mục nguyên liệu chưa có lịch sử sử dụng và lịch sử mua hàng của cả mục, cạnh nhau, Hiện/Ẩn độc lập** — L2 (đọc sổ lượng và khoản chi ngoài bộ lọc), chủ repo yêu cầu 2026-11-23 (*"tiếp tục yêu cầu codex làm bạn kiểm tra"*); Claude viết test trước, Codex làm trong `../lean_wt/KC-15`, Claude duyệt, gate xanh 2026-11-23 · [chi tiết](backlog_KC.md#kc-15)
 - [x] KC-11 **Trang Khoản chi chưa có bảng nguyên liệu ba cột (ước tính còn dùng, lượng còn lại), chi tiết dưới dòng và lịch sử sử dụng của từng thứ** — L2 (đọc sổ lượng, ước tính), chủ repo yêu cầu 2026-11-23 (*"tiếp tục yêu codex làm bạn kiểm tra"*); Claude chia lại KC-11 cũ thành KC-11 · KC-15 · KC-16 và gộp KC-12; Claude viết test trước, Codex làm trong `../lean_wt/KC-11`, Claude duyệt, gate xanh 2026-11-23 · [chi tiết](backlog_KC.md#kc-11)
@@ -680,6 +681,43 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-373"></a>
+### T-373 — Trang Theo dõi món theo style trang đặt món
+
+Chủ repo yêu cầu 2026-11-23: *"chỉnh sửa style để giống với style hiện tại của … căn chỉnh lại để đẹp hơn"*; chọn trong câu
+hỏi có sẵn phương án: sửa **trang theo dõi trong app** (`/ban/[ma]/theo-doi`, T-372) cho giống **trang đặt món** `/ban/[ma]`.
+Hiện `theo-doi-mon.css` tự khai bộ màu xanh lá của bản HTML; trang đặt món dùng `.khach-menu` (cam `#EA6A0C`, thẻ `--card`,
+có bản tối) trong `thuc-don-khach.css` và khung `.phone` của `phieu-khach.tsx`. Chỉ đổi phần nhìn.
+
+Acceptance viết trước khi làm:
+- A1 — trang dùng cùng khung và bộ màu với `/ban/[ma]`: `main.khach-menu` + khung `.phone`, biến `--bg` `--card` `--line`
+  `--muted` `--accent` `--text` `--badge` của `.khach-menu`; không còn màu riêng xanh lá; chế độ tối theo `.dark` như trang
+  đặt món.
+- A2 — đầu trang theo `MenuHeader`: tên quán giữa, cỡ 26px; dòng *Bàn N* có biểu tượng QR; *Theo dõi món* và mốc cập nhật.
+- A3 — các khối là thẻ cùng hình khối *Tóm tắt đơn hàng* (bo 10px, viền `--line`, nền `--card`); số và thanh tiến độ màu
+  `--accent`; *Gọi thêm món* cùng hình nút `CartBottomBar`; *Xem đơn đã đặt* là nút viền.
+- A4 — bảng số bánh căn giữa từng cột, số cùng hàng thẳng nhau, ô Trứng xếp dọc, hàng *Còn thiếu* nền `--badge`; vừa khung
+  360/430px không cuộn; đọc rõ ở cả sáng và tối.
+- A5 — không đổi dữ liệu, chữ, hành vi, lời gọi API; không sửa `thuc-don-khach.*` và `phieu-khach.tsx` (đang có thay đổi chưa
+  commit của việc khác) — chỉ import CSS sẵn có; test cũ xanh, test chỉ đổi nếu kiểm tên lớp (nêu từng chỗ); `tsc` sạch;
+  `./scripts/gate.sh` xanh.
+- A6 — Claude chạy app thật, chụp `/ban/3` và `/ban/3/theo-doi` cạnh nhau ở 360/430 × sáng/tối.
+
+Phạm vi (`work/scope/T-373.txt`): `fe/src/app/ban/_components/theo-doi-mon.tsx`, `fe/src/app/ban/_components/theo-doi-mon.css`,
+`fe/src/app/ban/[ma]/theo-doi/`, `fe/src/app/ban/theo-doi.test.tsx`, `work/backlog.md`. Thi công: Codex trong
+`../lean_wt/T-373`, nhánh `codex/T-373`; phiếu và log `../lean_wt/_claude_logs/T-373/`.
+
+**Kết quả 2026-11-24** (thực hiện: Codex, duyệt: Claude; một lượt, không vòng sửa). Lần gọi Codex chờ hạn mức 18:39 hôm trước
+chết theo phiên; gọi lại 2026-11-24. `theo-doi-mon.tsx`: khung `main.khach-menu` + `div.phone` như `phieu-khach.tsx`, import
+`./thuc-don-khach.css` (không sửa), `h1` = *Bàn N* có `QrCode`, dòng nhỏ *Theo dõi món · Cập nhật lúc … · tự làm mới*, số lượt
+trong `<strong>`, *Gọi thêm món* cùng hình `CartBottomBar`; `theo-doi-mon.css` bỏ hết `--td-*` và màu xanh lá, dùng biến
+`.khach-menu`. Test đổi hai chỗ chỉ vì chữ bị tách thẻ (`getByRole heading` thay `getByText`) và thêm kiểm một `h1`; chữ hiển
+thị không đổi. A1 — `grep "td-paper\|1e6b50\|e8f1ec\|14432f\|--td-"` rỗng. A5 — Claude chạy ở clone chính sau `git apply`:
+`vitest src/app/ban src/app/chu-quan/van-hanh` 96/96, `tsc --noEmit` sạch. A6 — Claude chụp app thật `/ban/3` và `/ban/3/theo-doi`
+360/430 × sáng/tối (`../lean_wt/_claude_logs/T-373/anh/`): hai trang cùng nền (`#F3F4F6` / `#0a0a0a`) và `--accent`
+(`#ea6a0c` / `#ff7a1a`), trang và khung bảng tràn 0 cả 8 ảnh. Gate của Codex đỏ vì sandbox không chạy Go/build; gate clone
+chính đỏ riêng ở `kc16.test.tsx` (test viết trước của KC-16 đang làm, không thuộc việc này), mọi test khác xanh.
 
 <a id="t-371"></a>
 ### T-371 — Trang Yêu thích: đưa phần nhìn về bản thiết kế
