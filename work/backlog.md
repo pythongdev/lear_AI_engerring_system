@@ -146,7 +146,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 - [x] T-339 **Bộ đối chiếu vết kêu oan với vết không người của mã xác nhận Gmail và sổ gọi model** — L2 (I-018), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; Codex làm, Claude duyệt · [chi tiết](#t-339)
 - [x] T-338 **Ngăn Cập nhật món trên trang Sản phẩm báo lỗi hai phần tử trùng key** — L1 (chỉ đổi key React, không đổi hành vi), chủ repo báo 2026-11-16; Codex làm, Claude duyệt · [chi tiết](#t-338)
 - [x] T-337 **Nút Thêm tất cả vào giỏ trên trang Yêu thích không nổi theo màn hình** — L1 (chỉ đổi vị trí khi cuộn trong bản HTML mẫu), xong 2026-11-16; chân trang cuộn theo nội dung, nút vẫn thêm tất cả món; gate đạt · [chi tiết](#t-337)
-- [ ] T-336 **Khối chứng minh bộ đối chiếu của `db-check` chạy 165 file cài lỗi nối tiếp trong một phiên, mất 567 trên 726 giây** — L1 (đổi cách chạy, không đổi điều được kiểm), mở 2026-11-16 theo Bước 6 của `work/proposals/danh-gia-he-thong-2026-11-11.md`, sau số đo của T-329; Codex làm, Claude duyệt bằng Docker và phép cài lỗi · [chi tiết](#t-336)
+- [x] T-336 **Khối chứng minh bộ đối chiếu của `db-check` chạy 165 file cài lỗi nối tiếp trong một phiên, mất 567 trên 726 giây** — L1 (đổi cách chạy, không đổi điều được kiểm), mở 2026-11-16 theo Bước 6 của `work/proposals/danh-gia-he-thong-2026-11-11.md`, sau số đo của T-329; Codex làm, Claude duyệt bằng Docker và phép cài lỗi · [chi tiết](#t-336)
 - [x] T-335 **Thu gọn điều hướng 14 trang chủ quán** — L1 (chỉ đổi cách hiển thị và mở trang, giữ route và quyền), xong 2026-11-16; ba trang theo dõi hiện trực tiếp, các trang còn lại gom thành ba nhóm; test 16/16 và gate đạt · [chi tiết](#t-335)
 - [x] T-334 **Gộp duyệt đơn vào Cộng thử ghép đơn trên trang Vận hành** — L1 (đổi vị trí thao tác, giữ API và quyền), xong 2026-11-16; bỏ khối Đơn chờ xác nhận riêng, xử lý đơn trong Cộng thử ghép đơn; test 33/33 và gate đạt · [chi tiết](#t-334)
 - [x] T-333 **Thiết kế lại bản mẫu Tổng quan chủ quán theo dữ liệu đang chạy trên máy dev** — L1 (chỉ bản HTML tĩnh, không đổi FE hay hợp đồng), chủ repo giao 2026-11-16; cập nhật bố cục, trạng thái thiếu dữ liệu và điều hướng theo `/chu-quan` · [chi tiết](#t-333)
@@ -1243,7 +1243,7 @@ giá trị `DB_CHECK_PROOF_JOBS` sai in `NOTE` và chạy 1 phiên. A1 — Codex
 42/42/41/41. A2 — Claude chạy `db-check` với 1 và 4 phiên, cả hai exit 0; 399 dòng `PASS`/`FAIL`/`NOTE` giống hệt (`diff` rỗng). A3 —
 phiên thoát khác 0 ⇒ `FAIL phiên N`; file không có đoạn kết quả ⇒ `ran != n_q` ⇒ `FAIL kêu <file>`. A4 — `i003_2` (phiên 3) khai thêm
 `I-999` ⇒ exit 1, `FAIL kêu i003_2 — khai: I-003/2 I-999 · kêu: I-003/2`; trả file lại. A5 — `scripts/db-check.test.sh` xanh ở clone
-chính; khối chứng minh 596 s (1 phiên) → 160 s (4 phiên). Log `../lean_wt/_claude_logs/T-336/`.
+chính; khối chứng minh 596 s (1 phiên) · 291 s (2 phiên) · 160 s (4 phiên). Log `../lean_wt/_claude_logs/T-336/`.
 
 <a id="t-335"></a>
 ### T-335 — Thu gọn điều hướng 14 trang chủ quán

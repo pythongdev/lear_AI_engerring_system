@@ -43,6 +43,29 @@ cleanup() { compose down -v --remove-orphans >/dev/null 2>&1; }
 fail() { echo "FAIL $*"; failed=1; }
 time_block() { printf '[time] db-check:%s %ss\n' "$1" "$((SECONDS - $2))"; }
 
+# In <phiên><TAB><file>, theo vòng tròn; tự hạ N về số file, N sai về 1.
+db_check_proof_assign() {
+  local requested="${1:-}" jobs=1 count i=0 file
+  shift
+  count=$#
+  [ "$count" -gt 0 ] || return 0
+  if [[ "$requested" =~ ^[0-9]+$ ]]; then
+    requested="$(printf '%s' "$requested" | sed 's/^0*//')"
+    if [ -n "$requested" ]; then
+      if [ "${#requested}" -gt "${#count}" ] ||
+         { [ "${#requested}" -eq "${#count}" ] && [[ "$requested" > "$count" ]]; }; then
+        jobs=$count
+      else
+        jobs=$requested
+      fi
+    fi
+  fi
+  for file in "$@"; do
+    printf '%s\t%s\n' "$((i % jobs + 1))" "$file"
+    i=$((i + 1))
+  done
+}
+
 # Chỉ nhận tên có PID dương; tên cũ không hậu tố và project làm việc không khớp.
 # PID được tái dùng, hay PID của user khác (kill -0 trả EPERM), vẫn coi là đang
 # sống: hỏi `ps -p`, không hỏi `kill -0` — thà để sót rác hơn gỡ nhầm.
@@ -77,6 +100,7 @@ cleanup_on_exit() {
   local status=$?
   trap - EXIT
   trap '' INT TERM
+  if [ -n "${proof_tmp:-}" ]; then rm -rf "$proof_tmp"; fi
   cleanup
   exit "$status"
 }
@@ -626,34 +650,84 @@ if out="$(scripts/reconcile.sh --project "$PROJECT" 2>&1)"; then
 else
   fail "đối chiếu trên dữ liệu mồi:"; printf '%s\n' "$out" | grep -Ev '^PASS I-|^PASS QD-' | sed 's/^/     /'
 fi
-# (c) biết kêu: MỘT giao dịch không bao giờ COMMIT — ngày bán mẫu đúng ⇒ mọi câu 0 dòng; rồi mỗi
-# file lỗi trong một savepoint: cài lỗi, trạng thái sau lỗi phải qua mọi ràng buộc còn lại (SET
-# CONSTRAINTS ALL IMMEDIATE, như lúc COMMIT), và tập câu kêu phải BẰNG ĐÚNG tập khai ở dòng
-# "-- kêu:" của file. Mỗi câu phải là mã đầu của ít nhất một file lỗi.
+# (c) biết kêu (T-336, 2026-11-16): 567/726 giây trước khi chia 165 file lỗi thành
+# các phiên song song. Mỗi phiên một giao dịch không COMMIT; bản sao database tránh ngày
+# mẫu ở hai phiên chờ nhau trên khoá duy nhất. Mỗi file lỗi vẫn ở một savepoint: cài lỗi,
+# SET CONSTRAINTS ALL IMMEDIATE như lúc COMMIT, chạy mọi câu, và so tập kêu với "-- kêu:".
+# Mỗi câu phải là mã đầu của ít nhất một file lỗi.
 PROOF=db/reconcile/proof
 queries="$(scripts/reconcile.sh --emit-queries)"
 n_q="$(printf '%s\n' "$queries" | grep -c "^.echo '@@@|")"
 faults="$(grep -l '^-- kêu: ' "$PROOF"/*.sql | sort)"
 refusals="$(grep -l '^-- tu-choi: ' "$PROOF"/*.sql | sort)"
-proof_out="$({ echo 'BEGIN;'
-               scripts/reconcile.sh --emit-prelude
-               cat "$PROOF/baseline.sql"
-               echo "\\echo '@@@@|ngày mẫu'"; printf '%s\n' "$queries"
-               for f in $refusals; do
-                 echo 'SAVEPOINT loi;'; echo "\\echo '@@@@|$(basename "$f" .sql)'"; cat "$f"
-                 echo 'ROLLBACK TO SAVEPOINT loi;'
-               done
-               for f in $faults; do
-                 echo 'SAVEPOINT loi;'
-                 echo "\\echo '@@@@|$(basename "$f" .sql)'"
-                 cat "$f"
-                 echo 'SET CONSTRAINTS ALL IMMEDIATE;'
-                 printf '%s\n' "$queries"
-                 echo 'ROLLBACK TO SAVEPOINT loi;'
-                 echo 'SET CONSTRAINTS ALL DEFERRED;'
-               done
-               echo 'ROLLBACK;'; } \
-             | compose exec -T -e PGTZ="$SHOP_TZ" db psql -X -q -U shop_owner -d banhcuon -tA 2>&1)"
+fault_files=()
+while IFS= read -r f; do
+  [ -n "$f" ] && fault_files+=("$f")
+done <<< "$faults"
+requested_jobs="${DB_CHECK_PROOF_JOBS-4}"
+if [[ ! "$requested_jobs" =~ ^0*[1-9][0-9]*$ ]]; then
+  printf -v rejected_jobs '%q' "$requested_jobs"
+  echo "NOTE db-check — DB_CHECK_PROOF_JOBS=$rejected_jobs không hợp lệ; bỏ giá trị, chạy 1 phiên"
+  requested_jobs=1
+fi
+assignments="$(db_check_proof_assign "$requested_jobs" "${fault_files[@]}")"
+proof_jobs="$(printf '%s\n' "$assignments" | awk -F '\t' '$1 > n {n = $1} END {print n+0}')"
+[ "$proof_jobs" -gt 0 ] || proof_jobs=1
+proof_started=$SECONDS
+proof_tmp="$(mktemp -d)" || { fail "không tạo được thư mục tạm cho phiên chứng minh"; exit 1; }
+declare -a proof_pids copy_ok
+# TEMPLATE chỉ nhận khi database mẫu chưa có phiên chứng minh nào nối vào.
+for ((job=2; job<=proof_jobs; job++)); do
+  if copy_out="$(compose exec -T db psql -U shop_owner -d postgres -v ON_ERROR_STOP=1 \
+      -c "CREATE DATABASE banhcuon_proof_$job TEMPLATE banhcuon" </dev/null 2>&1)"; then
+    copy_ok[$job]=1
+  else
+    copy_ok[$job]=0
+    fail "bản sao phiên $job — ${copy_out:-không có thông báo lỗi}"
+  fi
+done
+for ((job=1; job<=proof_jobs; job++)); do
+  : > "$proof_tmp/$job.out"
+  [ "${copy_ok[$job]:-1}" -eq 1 ] || continue
+  proof_db=banhcuon
+  [ "$job" -eq 1 ] || proof_db="banhcuon_proof_$job"
+  (
+    { echo 'BEGIN;'
+      scripts/reconcile.sh --emit-prelude
+      cat "$PROOF/baseline.sql" </dev/null
+      if [ "$job" -eq 1 ]; then
+        echo "\\echo '@@@@|ngày mẫu'"; printf '%s\n' "$queries"
+        for f in $refusals; do
+          echo 'SAVEPOINT loi;'; echo "\\echo '@@@@|$(basename "$f" .sql </dev/null)'"
+          cat "$f" </dev/null
+          echo 'ROLLBACK TO SAVEPOINT loi;'
+        done
+      fi
+      while IFS= read -r f <&3; do
+        echo 'SAVEPOINT loi;'
+        echo "\\echo '@@@@|$(basename "$f" .sql </dev/null)'"
+        cat "$f" </dev/null
+        echo 'SET CONSTRAINTS ALL IMMEDIATE;'
+        printf '%s\n' "$queries"
+        echo 'ROLLBACK TO SAVEPOINT loi;'
+        echo 'SET CONSTRAINTS ALL DEFERRED;'
+      done 3< <(printf '%s\n' "$assignments" | awk -F '\t' -v job="$job" '$1 == job {print $2}')
+      echo 'ROLLBACK;'
+    } | compose exec -T -e PGTZ="$SHOP_TZ" db psql -X -q -U shop_owner -d "$proof_db" -tA
+  ) > "$proof_tmp/$job.out" 2>&1 &
+  proof_pids[$job]=$!
+done
+for ((job=1; job<=proof_jobs; job++)); do
+  [ -n "${proof_pids[$job]:-}" ] || continue
+  if wait "${proof_pids[$job]}"; then
+    :
+  else
+    proof_status=$?
+    fail "phiên $job — psql thoát $proof_status: $(tail -n 1 "$proof_tmp/$job.out" </dev/null)"
+  fi
+done
+proof_out="$(for ((job=1; job<=proof_jobs; job++)); do cat "$proof_tmp/$job.out" </dev/null; done)"
+time_block reconcile-proof "$proof_started"
 # Mỗi đoạn: tên · số câu đã chạy · tập câu kêu (sắp xếp) · lỗi đầu tiên (nếu có).
 sections="$(printf '%s\n' "$proof_out" | awk '
   function flush() { if (name != "") printf "%s\t%d\t%s\t%s\n", name, ran, fired, err }
