@@ -176,6 +176,13 @@ trong sáu câu đụng luật quán đã chốt nên không được suy ra.
   ngoài không? (Mở 2026-11-04, Claude, CHAT-02 lượt hai.) Lời §8.11 điểm 5 cấm gửi dữ liệu cá nhân ra ngoài; bộ lọc của ADR-139 điểm 7 ẩn được
   số điện thoại và địa chỉ thư, **không** nhận ra tên hay địa chỉ gõ tự do. Ai trả lời: chủ repo (chấp nhận chỗ hở, hay chỉ cho dùng model
   chạy trong máy quán, hay chặn câu nghi có tên). Chặn gì: cắm hãng thật vào lane `CHAT`; không chặn thi công với nhà cung cấp giả.
+<a id="u-126"></a>
+- **U-126** — Khách có được **tự đổi tên, số điện thoại hay Gmail của tài khoản** không? (Mở 2026-11-24, Claude, T-375.) Chủ repo
+  muốn trang tài khoản khách có nút *cập nhật thông tin khi khách muốn sửa*; hợp đồng hiện chỉ có cửa sửa **bộ thông tin giao đã
+  nhớ** (`PUT /customer-accounts/current/delivery-profile`, ADR-131 điểm 6), còn tên · số · Gmail của tài khoản chỉ đọc. Số và
+  Gmail là thứ dùng để đăng nhập (ADR-131 điểm 1), nên đổi chúng kéo theo xác nhận lại, trùng với tài khoản khác và phiên đang mở.
+  Ai trả lời: chủ quán (có cho đổi không, đổi cái nào), chủ repo (cách xác nhận). Chặn gì: cửa sửa tên · số · Gmail của khách;
+  tạm thời nút *Cập nhật thông tin* chỉ sửa bộ thông tin giao, ba trường kia vẫn chỉ đọc.
 **Ngày 2026-11-22, T-363 mở U-120…U-125 — đóng cùng ngày** sau ba lượt hỏi chủ repo trong hội thoại. Lời đã vào
 `master_plan/shop-facts.md` §8.10 *Lượt 2026-11-22* và **ADR-103** *Sửa đổi 2026-11-22*. Sáu câu dời xuống
 [Đã có lời giải](#da-co-loi-giai).
