@@ -28,6 +28,18 @@ export function useKhoanChi(from: string | undefined, to: string | undefined, lo
     },
   });
 }
+export function useLichSuKhoanCon(expenseItemId: number, from: string, to: string, opened: boolean) {
+  const api = useApi();
+  return useQuery<KieuKhoanChi["Expenses"], ApiFailure>({
+    queryKey: ["expenses", { from, to, expense_item_id: expenseItemId }],
+    enabled: opened && !!from && !!to && from <= to,
+    queryFn: async () => {
+      const r = await call(api.GET("/expenses", { params: { query: { from, to, expense_item_id: expenseItemId } } }));
+      if (!r.ok) throw r.failure;
+      return r.data;
+    },
+  });
+}
 function useGhi<B, R>(gui: (body: B) => Promise<ApiResult<R>>, key: string) {
   const qc = useQueryClient();
   return useMutation({ mutationKey: ["expense-write"], mutationFn: gui, retry: false, onSuccess: async (r) => {

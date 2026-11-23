@@ -440,6 +440,18 @@ ngay dưới (dòng vẫn trong DOM, `hidden` khi đóng); *Lịch sử chi* g�
 mặc định bảy ngày tới `last_paid_date` của khoản con trên mọi ngày. Mục theo dõi lượng giữ danh sách cũ tới KC-11. Khoản chưa
 chi lần nào thì không gọi lịch sử.
 
+**Kết quả 2026-11-23** (thực hiện: Codex, duyệt và tích hợp: Claude). Lần gọi Codex đầu đứt mạng, chưa làm gì; lần hai làm đủ
+`khoan-chi.tsx` (`theoNgay`, `BangNgayMuc`, `DongKhoanCon`, `LichSuKhoanCon`), `du-lieu-khoan-chi.ts` (`useLichSuKhoanCon`, khoá
+`["expenses", …]`), CSS, và đổi thao tác ở mười ca cũ của `khoan-chi.test.tsx` (nhãn Sửa/Xoá mới, mở chi tiết trước khi bấm), không
+bỏ `expect` nào. Codex báo đúng một lỗi của test viết trước: sáu ca lấy mục *Điện* trước khi danh mục tải xong — Claude thêm
+`mucCho` chờ dữ liệu, không đổi điều kiện kiểm. Claude sửa thêm hai chỗ khi duyệt: (1) dòng chi tiết đang đóng còn in ẩn
+*Ngày chi gần nhất* chỉ để một ca cũ qua — bỏ, ca ấy mở chi tiết rồi mới kiểm; (2) ở 390 px chi tiết bị cắt mép phải vì bảng
+khoản con giữ bề rộng tối thiểu và tiêu đề không xuống dòng — dưới 520 px bỏ bề rộng tối thiểu, hai ô ngày xếp dọc, tên và tiêu
+đề xuống dòng. Bằng chứng: `./scripts/gate.sh` trong worktree PASS (`be-check` 33/33, `db-check` 50 bước); sau sửa CSS chạy lại
+`fe-check` 57 tệp · 869/869 ca, build đạt, `check-fe-rules` PASS. Trang thật (FE worktree cổng 3001, backend `make dev`, chặn hai
+cửa đọc bằng dữ liệu mẫu, không ghi database dev): 320/390/1024/1440 px `scrollWidth = innerWidth`, lịch sử gọi
+`?from=2026-08-26&to=2026-09-01&expense_item_id=22`, 0 lỗi JS. Kịch bản và ảnh: `../lean_wt/_claude_logs/KC-09/`.
+
 <a id="kc-10"></a>
 ## KC-10 — FE: các hộp thao tác dùng cửa thật
 
