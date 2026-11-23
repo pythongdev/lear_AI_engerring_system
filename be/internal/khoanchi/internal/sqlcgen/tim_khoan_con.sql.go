@@ -7,10 +7,12 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const timKhoanCon = `-- name: TimKhoanCon :one
-SELECT id FROM expense_item WHERE id = $1 AND expense_category_id = $2 AND deleted_at IS NULL FOR SHARE
+SELECT supply_item_id FROM expense_item WHERE id = $1 AND expense_category_id = $2 AND deleted_at IS NULL FOR SHARE
 `
 
 type TimKhoanConParams struct {
@@ -18,9 +20,9 @@ type TimKhoanConParams struct {
 	ExpenseCategoryID int64
 }
 
-func (q *Queries) TimKhoanCon(ctx context.Context, arg TimKhoanConParams) (int64, error) {
+func (q *Queries) TimKhoanCon(ctx context.Context, arg TimKhoanConParams) (pgtype.Int8, error) {
 	row := q.db.QueryRow(ctx, timKhoanCon, arg.ID, arg.ExpenseCategoryID)
-	var id int64
-	err := row.Scan(&id)
-	return id, err
+	var supply_item_id pgtype.Int8
+	err := row.Scan(&supply_item_id)
+	return supply_item_id, err
 }

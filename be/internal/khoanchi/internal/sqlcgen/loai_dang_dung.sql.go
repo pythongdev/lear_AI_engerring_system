@@ -10,12 +10,13 @@ import (
 )
 
 const loaiDangDung = `-- name: LoaiDangDung :one
-SELECT EXISTS (SELECT 1 FROM expense e WHERE e.expense_category_id = $1 AND e.deleted_at IS NULL)
+SELECT (EXISTS (SELECT 1 FROM expense e WHERE e.expense_category_id = $1 AND e.deleted_at IS NULL)
+    OR EXISTS (SELECT 1 FROM expense_item i WHERE i.expense_category_id = $1 AND i.supply_item_id IS NOT NULL AND i.deleted_at IS NULL))::boolean
 `
 
 func (q *Queries) LoaiDangDung(ctx context.Context, expenseCategoryID int64) (bool, error) {
 	row := q.db.QueryRow(ctx, loaiDangDung, expenseCategoryID)
-	var exists bool
-	err := row.Scan(&exists)
-	return exists, err
+	var column_1 bool
+	err := row.Scan(&column_1)
+	return column_1, err
 }

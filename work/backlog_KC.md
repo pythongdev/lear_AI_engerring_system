@@ -302,6 +302,33 @@ cần cấu trúc DB khác thì trả lại KC-01/02/03 trước, không lén g�
 
 **Nhận việc.**
 
+Claude Code, 2026-11-22 (chủ repo: *"tiếp tục yêu cầu codex làm bạn kiểm tra"*). Thực hiện: Codex trong worktree
+`../lean_wt/KC-06`, nhánh `codex/KC-06` từ `1fc16ae` + nền KC-01/KC-02/KC-08 chưa commit chỉ stage; duyệt: Claude. Phiếu:
+`../lean_wt/_claude_logs/KC-06/phieu.md`. Test viết trước: `be/internal/khoanchi/kc06_test.go` (tám test, tháng 4/2033) và
+`dung()` của `khoanchi_test.go` gắn thêm cửa sổ lượng. Hình hợp đồng Claude chốt (0.79.0): `tracks_supply` bắt buộc khi
+tạo mục; khoản con trả `supply_item_id`, thứ trong sổ trả `expense_item_id` · `expense_category_id` · `stopped_at`; xếp mục
+qua `POST /expense-items` với `supply_item_id`, tên lấy từ sổ; xoá khoản con nối là ngừng dùng; hai cửa mới
+`POST /expense-items/{id}/reopen` và `PUT /expense-items/{id}/category`; `received_date` và `purchased_measure` trên
+khoản chi; cửa gộp `POST /supply-expense-items`; bốn mã mới `supply_item_already_linked` · `supply_item_stopped` ·
+`expense_item_not_stopped` · `expense_item_move_not_allowed`. *Suy ra, chưa ai xác nhận:* mục theo dõi còn thứ đang dùng thì
+không xoá được mục (thay vì ngừng hết các thứ); thứ đã ngừng không vào nhắc kiểm của POS. Sandbox Codex không tới Docker
+nên Claude chạy `be-check`, `db-check` và gate.
+
+**Kết quả 2026-11-22** (thực hiện: Codex, duyệt và tích hợp: Claude). Codex làm hết phiếu: ba cửa mới
+`nguyenlieu/doi_ten_thu` · `nguyenlieu/ngung_thu` (vai `theo_cua_goi`, ADR-087 điểm 3) · `khoanchi/chuyen_muc`; hàm ghép
+giao dịch xuất ở `be/internal/nguyenlieu/transaction.go`; cửa gộp và ô lượng dùng lại câu ghi của sổ; mười tên từ chối
+KC-02 có giá trị thật; thêm `TestI025_KC06_ThuDaNgungKhongVaoNhacKiemPOS` và ca vết của hai cửa sửa mới ở
+`be/internal/don/vet_cua_test.go`; FE chỉ gửi `tracks_supply: false` và sinh lại `schema.ts`. Không sửa điều kiện nào của
+test viết trước. Claude sửa ba chỗ khi duyệt: (1) xếp lại cùng thứ vào cùng mục trả `expense_item_name_taken` thay vì
+`supply_item_already_linked` — `TimThu` nay đọc thêm *đã nối* và cửa báo trước khi chèn; (2) hai test cũ thiếu
+`tracks_supply` (một body ở `TestI029_LoaiChiMoiPhaiKhaiNguonVaTenRieng`, danh sách trường ở
+`be/internal/tongquan/handler_test.go` — `OverviewSupplies` dùng nguyên `SupplyItem`); (3) QC-13: `catalog.go` và
+`transaction.go` gọi thẳng `sqlcgen`, dời vào `repository.go` của từng miền. Gate trong worktree lượt hai: `./scripts/gate.sh`
+PASS — `be-check` 33/33 gói (mười test `KC06` PASS), `db-check` 50 bước, hợp đồng 0.79.0. **Còn để ý:** trang Tổng quan đọc
+cả thứ đã ngừng ở khối nguyên liệu (cờ nhắc đã tắt) — xem lại ở KC-13/KC-14; chuyển mục khoá khoản con rồi các khoản
+chi, ngược thứ tự với cửa sửa khoản, nên hai lệnh chạy cùng lúc có thể vướng khoá chéo (PostgreSQL huỷ một lệnh). Chưa ai
+duyệt độc lập ngoài Claude. Bước kế: KC-07 (ước tính còn dùng) hoặc KC-09 (FE bảng theo ngày).
+
 <a id="kc-07"></a>
 ## KC-07 — BE: số dự tính và đầu vào của nó
 
@@ -402,6 +429,16 @@ chỉ đổi thao tác (tên nút *7 ngày*, thêm bấm *Lọc ngày*), không 
 `fe/src/app/chu-quan/khoan-chi/khoan-chi.test.tsx`, `fe/src/lib/api/schema.ts` (sinh từ hợp đồng đã duyệt).
 
 **Nhận việc.**
+
+Claude Code, 2026-11-23 (chủ repo: *"ok hãy tiếp tục giao cho codex làm bạn kiểm tra"*). Thực hiện: Codex trong worktree
+`../lean_wt/KC-09`, nhánh `codex/KC-09` từ `1fc16ae` + nền KC-01/02/06/07/08 chưa commit chỉ stage; duyệt: Claude. Phiếu:
+`../lean_wt/_claude_logs/KC-09/phieu.md`. Test viết trước: `fe/src/app/chu-quan/khoan-chi/kc09.test.tsx` (mười một ca, đỏ cả
+mười một trước khi có code). Hình Claude chốt: bảng *Tổng chi theo ngày* trong khối Sổ khoản chi đọc `day_totals`; bảng *Các
+khoản chi theo ngày* gom các lần chi cùng ngày vào một ô, nút Sửa/Xoá mang tên và ngày; mục `tracks_supply = false` có bảng
+*Chi theo ngày* của mục và bảng khoản con ba cột (tổng và ngày gần nhất trong kỳ từ `item_totals`); bấm tên mở chi tiết ở dòng
+ngay dưới (dòng vẫn trong DOM, `hidden` khi đóng); *Lịch sử chi* gọi `listExpenses` chỉ với `from` · `to` · `expense_item_id`,
+mặc định bảy ngày tới `last_paid_date` của khoản con trên mọi ngày. Mục theo dõi lượng giữ danh sách cũ tới KC-11. Khoản chưa
+chi lần nào thì không gọi lịch sử.
 
 <a id="kc-10"></a>
 ## KC-10 — FE: các hộp thao tác dùng cửa thật

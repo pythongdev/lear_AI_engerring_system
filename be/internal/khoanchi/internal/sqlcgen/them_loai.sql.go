@@ -10,24 +10,31 @@ import (
 )
 
 const themLoai = `-- name: ThemLoai :one
-INSERT INTO expense_category (name, paid_from_till) VALUES ($1, $2)
-RETURNING id, name, paid_from_till
+INSERT INTO expense_category (name, paid_from_till, tracks_supply) VALUES ($1, $2, $3)
+RETURNING id, name, paid_from_till, tracks_supply
 `
 
 type ThemLoaiParams struct {
 	Name         string
 	PaidFromTill bool
+	TracksSupply bool
 }
 
 type ThemLoaiRow struct {
 	ID           int64
 	Name         string
 	PaidFromTill bool
+	TracksSupply bool
 }
 
 func (q *Queries) ThemLoai(ctx context.Context, arg ThemLoaiParams) (ThemLoaiRow, error) {
-	row := q.db.QueryRow(ctx, themLoai, arg.Name, arg.PaidFromTill)
+	row := q.db.QueryRow(ctx, themLoai, arg.Name, arg.PaidFromTill, arg.TracksSupply)
 	var i ThemLoaiRow
-	err := row.Scan(&i.ID, &i.Name, &i.PaidFromTill)
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.PaidFromTill,
+		&i.TracksSupply,
+	)
 	return i, err
 }

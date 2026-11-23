@@ -13,9 +13,9 @@ import (
 type repository struct{ q *sqlcgen.Queries }
 
 func newRepository(tx pgx.Tx) repository { return repository{q: sqlcgen.New(tx)} }
-func (r repository) themLoai(ctx context.Context, ten string, ket bool) (Loai, error) {
-	row, err := r.q.ThemLoai(ctx, sqlcgen.ThemLoaiParams{Name: ten, PaidFromTill: ket})
-	return Loai{ID: row.ID, Name: row.Name, PaidFromTill: row.PaidFromTill, Items: []KhoanCon{}}, err
+func (r repository) themLoai(ctx context.Context, ten string, ket, tracks bool) (Loai, error) {
+	row, err := r.q.ThemLoai(ctx, sqlcgen.ThemLoaiParams{Name: ten, PaidFromTill: ket, TracksSupply: tracks})
+	return Loai{ID: row.ID, Name: row.Name, PaidFromTill: row.PaidFromTill, TracksSupply: row.TracksSupply, Items: []KhoanCon{}}, err
 }
 func (r repository) docLoai(ctx context.Context) ([]Loai, error) {
 	rows, err := r.q.DocLoai(ctx)
@@ -24,7 +24,7 @@ func (r repository) docLoai(ctx context.Context) ([]Loai, error) {
 	}
 	out := make([]Loai, 0, len(rows))
 	for _, row := range rows {
-		out = append(out, Loai{ID: row.ID, Name: row.Name, PaidFromTill: row.PaidFromTill, Items: []KhoanCon{}, LastPaidDate: ngayHoacNil(row.LastPaidDate)})
+		out = append(out, Loai{ID: row.ID, Name: row.Name, PaidFromTill: row.PaidFromTill, TracksSupply: row.TracksSupply, Items: []KhoanCon{}, LastPaidDate: ngayHoacNil(row.LastPaidDate)})
 	}
 	items, err := r.q.DocKhoanCon(ctx)
 	if err != nil {
@@ -33,14 +33,16 @@ func (r repository) docLoai(ctx context.Context) ([]Loai, error) {
 	for _, item := range items {
 		for i := range out {
 			if out[i].ID == item.ExpenseCategoryID {
-				out[i].Items = append(out[i].Items, KhoanCon{ID: item.ID, CategoryID: item.ExpenseCategoryID, Name: item.Name, LastPaidDate: ngayHoacNil(item.LastPaidDate)})
+				out[i].Items = append(out[i].Items, KhoanCon{ID: item.ID, CategoryID: item.ExpenseCategoryID, Name: item.Name, SupplyItemID: idPointer(item.SupplyItemID), LastPaidDate: ngayHoacNil(item.LastPaidDate)})
 				break
 			}
 		}
 	}
 	return out, nil
 }
-func (r repository) timLoai(ctx context.Context, id int64) (bool, error) { return r.q.TimLoai(ctx, id) }
+func (r repository) timLoai(ctx context.Context, id int64) (sqlcgen.TimLoaiRow, error) {
+	return r.q.TimLoai(ctx, id)
+}
 func (r repository) khoaKhoan(ctx context.Context, id int64) (string, bool, error) {
 	row, err := r.q.KhoaKhoan(ctx, id)
 	return row.PaidDate, row.PaidFromTill, err
@@ -49,13 +51,13 @@ func (r repository) ngayTuongLai(ctx context.Context, ngay string, moc time.Time
 	return r.q.NgayTuongLai(ctx, sqlcgen.NgayTuongLaiParams{Column1: ngay, Column2: pgtype.Timestamptz{Time: moc, Valid: true}})
 }
 func (r repository) ghi(ctx context.Context, p YeuCau) (int64, error) {
-	return r.q.Ghi(ctx, sqlcgen.GhiParams{ExpenseCategoryID: p.CategoryID, AmountVnd: p.Amount, Column3: p.PaidDate, ExpenseItemID: nullableID(p.ItemID)})
+	return r.q.Ghi(ctx, sqlcgen.GhiParams{ExpenseCategoryID: p.CategoryID, AmountVnd: p.Amount, Column3: p.PaidDate, ExpenseItemID: nullableID(p.ItemID), Column5: dateValue(p.ReceivedDate)})
 }
 func (r repository) sua(ctx context.Context, id int64, p YeuCau) error {
-	return r.q.Sua(ctx, sqlcgen.SuaParams{ID: id, ExpenseCategoryID: p.CategoryID, AmountVnd: p.Amount, Column4: p.PaidDate, ExpenseItemID: nullableID(p.ItemID)})
+	return r.q.Sua(ctx, sqlcgen.SuaParams{ID: id, ExpenseCategoryID: p.CategoryID, AmountVnd: p.Amount, Column4: p.PaidDate, ExpenseItemID: nullableID(p.ItemID), Column6: dateValue(p.ReceivedDate)})
 }
 func khoan(row sqlcgen.DocKhoanRow) Khoan {
-	return Khoan{ItemID: idPointer(row.ExpenseItemID), ItemName: textPointer(row.ItemName), ID: row.ID, CategoryID: row.ExpenseCategoryID, CategoryName: row.CategoryName, PaidFromTill: row.PaidFromTill, Amount: row.AmountVnd, PaidDate: row.PaidDate, PersonID: row.PersonID, PersonName: row.PersonName, CreatedAt: row.CreatedAt.Time}
+	return Khoan{ItemID: idPointer(row.ExpenseItemID), ItemName: textPointer(row.ItemName), ID: row.ID, CategoryID: row.ExpenseCategoryID, CategoryName: row.CategoryName, PaidFromTill: row.PaidFromTill, Amount: row.AmountVnd, PaidDate: row.PaidDate, ReceivedDate: ngayHoacNil(row.ReceivedDate), PersonID: row.PersonID, PersonName: row.PersonName, CreatedAt: row.CreatedAt.Time}
 }
 func (r repository) docKhoan(ctx context.Context, id int64) (Khoan, error) {
 	row, err := r.q.DocKhoan(ctx, id)
@@ -103,17 +105,16 @@ func textPointer(v pgtype.Text) *string {
 	return &v.String
 }
 
-func (r repository) timKhoanCon(ctx context.Context, id, category int64) error {
-	_, err := r.q.TimKhoanCon(ctx, sqlcgen.TimKhoanConParams{ID: id, ExpenseCategoryID: category})
-	return err
+func (r repository) timKhoanCon(ctx context.Context, id, category int64) (*int64, error) {
+	supply, err := r.q.TimKhoanCon(ctx, sqlcgen.TimKhoanConParams{ID: id, ExpenseCategoryID: category})
+	return idPointer(supply), err
 }
 func (r repository) khoaLoai(ctx context.Context, id int64) error {
 	_, err := r.q.KhoaLoai(ctx, id)
 	return err
 }
-func (r repository) khoaCon(ctx context.Context, id int64) error {
-	_, err := r.q.KhoaKhoanCon(ctx, id)
-	return err
+func (r repository) khoaCon(ctx context.Context, id int64) (sqlcgen.KhoaKhoanConRow, error) {
+	return r.q.KhoaKhoanCon(ctx, id)
 }
 func (r repository) loaiDangDung(ctx context.Context, id int64) (bool, error) {
 	return r.q.LoaiDangDung(ctx, id)
@@ -123,15 +124,15 @@ func (r repository) conDangDung(ctx context.Context, id int64) (bool, error) {
 }
 func (r repository) doiTenLoai(ctx context.Context, id int64, name string) (Loai, error) {
 	row, err := r.q.SuaLoai(ctx, sqlcgen.SuaLoaiParams{ID: id, Name: name})
-	return Loai{ID: row.ID, Name: row.Name, PaidFromTill: row.PaidFromTill, Items: []KhoanCon{}}, err
+	return Loai{ID: row.ID, Name: row.Name, PaidFromTill: row.PaidFromTill, TracksSupply: row.TracksSupply, Items: []KhoanCon{}}, err
 }
-func (r repository) themCon(ctx context.Context, category int64, name string) (KhoanCon, error) {
-	row, err := r.q.ThemKhoanCon(ctx, sqlcgen.ThemKhoanConParams{ExpenseCategoryID: category, Name: name})
-	return KhoanCon{ID: row.ID, CategoryID: row.ExpenseCategoryID, Name: row.Name}, err
+func (r repository) themCon(ctx context.Context, category int64, name string, supply *int64) (KhoanCon, error) {
+	row, err := r.q.ThemKhoanCon(ctx, sqlcgen.ThemKhoanConParams{ExpenseCategoryID: category, Name: name, TracksSupply: supply != nil, SupplyItemID: nullableID(supply)})
+	return KhoanCon{ID: row.ID, CategoryID: row.ExpenseCategoryID, Name: row.Name, SupplyItemID: idPointer(row.SupplyItemID)}, err
 }
 func (r repository) doiTenCon(ctx context.Context, id int64, name string) (KhoanCon, error) {
 	row, err := r.q.SuaKhoanCon(ctx, sqlcgen.SuaKhoanConParams{ID: id, Name: name})
-	return KhoanCon{ID: row.ID, CategoryID: row.ExpenseCategoryID, Name: row.Name}, err
+	return KhoanCon{ID: row.ID, CategoryID: row.ExpenseCategoryID, Name: row.Name, SupplyItemID: idPointer(row.SupplyItemID)}, err
 }
 func (r repository) xoaLoai(ctx context.Context, id int64) error {
 	if err := r.q.XoaCacKhoanCon(ctx, id); err != nil {
@@ -141,6 +142,10 @@ func (r repository) xoaLoai(ctx context.Context, id int64) error {
 }
 func (r repository) xoaCon(ctx context.Context, id int64) error { return r.q.XoaKhoanCon(ctx, id) }
 func (r repository) xoa(ctx context.Context, id int64) error    { return r.q.Xoa(ctx, id) }
+func (r repository) docCon(ctx context.Context, id int64) (KhoanCon, error) {
+	row, err := r.q.DocCon(ctx, id)
+	return KhoanCon{ID: row.ID, CategoryID: row.ExpenseCategoryID, Name: row.Name, SupplyItemID: idPointer(row.SupplyItemID)}, err
+}
 
 // ngayHoacNil đổi chuỗi rỗng (mục/khoản con chưa có khoản chi nào) thành null trên JSON (KC-05).
 func ngayHoacNil(s string) *string {
@@ -148,4 +153,19 @@ func ngayHoacNil(s string) *string {
 		return nil
 	}
 	return &s
+}
+func dateValue(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
+// Ba câu của chuyển mục và dùng lại (KC-06); chỉ repository gọi sqlcgen (QC-13).
+func (r repository) moCon(ctx context.Context, id int64) error { return r.q.MoKhoanCon(ctx, id) }
+func (r repository) khoaCacKhoan(ctx context.Context, id int64) ([]sqlcgen.KhoaCacKhoanRow, error) {
+	return r.q.KhoaCacKhoan(ctx, nullableID(&id))
+}
+func (r repository) chuyenMuc(ctx context.Context, id, dest int64) error {
+	return r.q.ChuyenMuc(ctx, sqlcgen.ChuyenMucParams{ID: id, ExpenseCategoryID: dest})
 }

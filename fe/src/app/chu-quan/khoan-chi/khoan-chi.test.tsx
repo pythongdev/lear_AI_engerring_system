@@ -15,8 +15,8 @@ vi.mock("next/navigation", () => ({
 }));
 afterEach(() => { cleanup(); nav.search = ""; nav.replace.mockReset(); });
 type K = components["schemas"];
-const loai: K["ExpenseCategory"][] = [{ expense_category_id: 2, name: "Điện", paid_from_till: true }, { expense_category_id: 1, name: "Marketing", paid_from_till: false }];
-const khoan: K["Expense"] = { expense_id: 9, expense_category_id: 2, category_name: "Điện", paid_from_till: false, amount_vnd: 125000, paid_date: "2026-10-18", person_id: 1, person_name: "Hoa", created_at: "2026-10-18T01:00:00Z" };
+const loai: K["ExpenseCategory"][] = [{ expense_category_id: 2, name: "Điện", paid_from_till: true, tracks_supply: false }, { expense_category_id: 1, name: "Marketing", paid_from_till: false, tracks_supply: false }];
+const khoan: K["Expense"] = { expense_id: 9, expense_category_id: 2, category_name: "Điện", paid_from_till: false, amount_vnd: 125000, paid_date: "2026-10-18", received_date: null, person_id: 1, person_name: "Hoa", created_at: "2026-10-18T01:00:00Z" };
 const ds: K["Expenses"] = { from: "2026-10-19", to: "2026-10-19", expenses: [khoan], total_vnd: 987654, day_totals: [] };
 type Tra = { status: number; body?: unknown };
 type GoiDen = { method: string; path: string; body: unknown };
@@ -70,7 +70,7 @@ describe("Khoản chi", () => {
     gui(f); await waitFor(() => expect(sai(f, "Tên loại chi")).toBe("true"));
     go(f, "Tên loại chi", "  Quảng cáo  "); gui(f); await waitFor(() => expect(sai(f, "Nguồn tiền")).toBe("true")); expect(ghi(g)).toHaveLength(0);
     go(f, "Nguồn tiền", "rieng"); gui(f); await screen.findByText("Đã thêm loại chi.");
-    expect(ghi(g)).toEqual([{ method: "POST", path: "/expense-categories", body: { name: "Quảng cáo", paid_from_till: false } }]); expect(doc(g, "/expense-categories")).toHaveLength(2);
+    expect(ghi(g)).toEqual([{ method: "POST", path: "/expense-categories", body: { name: "Quảng cáo", paid_from_till: false, tracks_supply: false } }]); expect(doc(g, "/expense-categories")).toHaveLength(2);
   });
   it("tên loại trùng gắn ô tên", async () => {
     mo({ ghi: () => ({ status: 409, body: { code: "expense_category_name_taken" } }) });
@@ -148,7 +148,7 @@ describe("Khoản chi", () => {
   });
 });
 
-const con: K["ExpenseItem"] = { expense_item_id: 7, expense_category_id: 2, name: "Bột gạo" };
+const con: K["ExpenseItem"] = { expense_item_id: 7, expense_category_id: 2, name: "Bột gạo", supply_item_id: null };
 const categoriesWithItems = () => ({ status: 200, body: { expense_categories: [{ ...loai[0], items: [con] }, { ...loai[1], items: [] }] } });
 const dsWithItems: K["Expenses"] = { ...ds, expenses: [{ ...khoan, expense_item_id: 7, item_name: "Bột gạo" }], category_totals: [{ expense_category_id: 2, total_vnd: 555555 }], item_totals: [{ expense_item_id: 7, total_vnd: 333333, last_paid_date: "2026-10-18" }] };
 const docWithItems = () => ({ status: 200, body: dsWithItems });
@@ -259,11 +259,11 @@ describe("KC-08 — bố cục và thu gọn khoản chi", () => {
     // JSDOM kiểm CSS xếp dọc; kích thước và media query vẫn cần trình duyệt thật.
     render(<style>{readFileSync("src/app/chu-quan/_components/khoan-chi.css", "utf8")}</style>);
     const categories = [
-      { expense_category_id: 41, name: "Bao bì", paid_from_till: false },
-      { expense_category_id: 9, name: "Thuê mặt bằng", paid_from_till: true },
-      { expense_category_id: 27, name: "Vận chuyển", paid_from_till: false },
-      { expense_category_id: 3, name: "Sửa chữa", paid_from_till: true },
-      { expense_category_id: 18, name: "Internet", paid_from_till: false },
+      { expense_category_id: 41, name: "Bao bì", paid_from_till: false, tracks_supply: false },
+      { expense_category_id: 9, name: "Thuê mặt bằng", paid_from_till: true, tracks_supply: false },
+      { expense_category_id: 27, name: "Vận chuyển", paid_from_till: false, tracks_supply: false },
+      { expense_category_id: 3, name: "Sửa chữa", paid_from_till: true, tracks_supply: false },
+      { expense_category_id: 18, name: "Internet", paid_from_till: false, tracks_supply: false },
     ].slice(0, count);
     mo({ loai: () => ({ status: 200, body: { expense_categories: categories } }) });
     const list = await screen.findByRole("list", { name: "Danh sách loại chi" });

@@ -12,10 +12,20 @@ import (
 )
 
 const doc = `-- name: Doc :many
-SELECT i.id, i.name, i.purchase_unit,
+SELECT i.id, i.name, i.purchase_unit, linked.id AS expense_item_id, linked.expense_category_id, i.deleted_at AS stopped_at,
        trim_scale(t.purchased)::text AS purchased_total,
        trim_scale(t.used)::text AS used_total,
        trim_scale(t.purchased - t.used)::text AS balance,
+       (CASE WHEN t.purchased - t.used <= 0 THEN 'out_by_ledger'
+             WHEN usage.usage_days = 0 THEN 'no_usage'
+             WHEN usage.used_in_window = 0 THEN 'zero_usage'
+             ELSE 'ready' END)::text AS usage_status,
+       usage.usage_days AS usage_days,
+       trim_scale(usage.used_in_window)::text AS used_in_window,
+       (CASE WHEN t.purchased - t.used > 0 AND usage.used_in_window > 0
+             -- div(): thương nguyên chính xác, cả hai dương nên là làm tròn xuống (ADR-147 điểm 8); không qua phép chia có làm tròn.
+             THEN round(div((t.purchased - t.used) * usage.usage_days * 10, usage.used_in_window) / 10, 1)::text
+             ELSE '' END)::text AS days_left,
        trim_scale(i.reminder_ratio)::text AS reminder_ratio,
        COALESCE(last_purchase.entry_date::text, '')::text AS latest_purchase_date,
        COALESCE(trim_scale(last_purchase.entered_measure)::text, '')::text AS latest_purchase_measure,
@@ -24,10 +34,12 @@ SELECT i.id, i.name, i.purchase_unit,
              WHEN t.first_used < t.first_purchase THEN 'usage_before_first_purchase'
              ELSE 'ready' END)::text AS reminder_status,
        -- U-102 (chủ repo 2026-10-19, T-204): chưa có mốc nhập thì luôn nhắc; dùng trước lần nhập đầu thì so tỉ lệ như thường.
-       (CASE WHEN last_purchase.id IS NULL OR last_purchase.entered_measure = 0 THEN true
+       (CASE WHEN i.deleted_at IS NOT NULL THEN false
+             WHEN last_purchase.id IS NULL OR last_purchase.entered_measure = 0 THEN true
              ELSE t.purchased - t.used < i.reminder_ratio * last_purchase.entered_measure
         END)::boolean AS check_reminder
 FROM supply_item i
+LEFT JOIN expense_item linked ON linked.supply_item_id = i.id
 CROSS JOIN LATERAL (
   SELECT COALESCE(sum(e.entered_measure) FILTER (WHERE e.kind_code = 'purchased'), 0)::numeric AS purchased,
          COALESCE(sum(e.entered_measure) FILTER (WHERE e.kind_code = 'used'), 0)::numeric AS used,
@@ -35,6 +47,15 @@ CROSS JOIN LATERAL (
          min(e.entry_date) FILTER (WHERE e.kind_code = 'used') AS first_used
   FROM supply_day_entry e WHERE e.supply_item_id = i.id
 ) t
+CROSS JOIN LATERAL (
+  SELECT count(*)::integer AS usage_days,
+         COALESCE(sum(u.entered_measure), 0)::numeric AS used_in_window
+  FROM (
+    SELECT e.entered_measure FROM supply_day_entry e
+    WHERE e.supply_item_id = i.id AND e.kind_code = 'used' AND e.entry_date <= $2::timestamptz::date
+    ORDER BY e.entry_date DESC LIMIT 7
+  ) u
+) usage
 LEFT JOIN LATERAL (
   SELECT e.id, e.entry_date, e.entered_measure FROM supply_day_entry e
   WHERE e.supply_item_id = i.id AND e.kind_code = 'purchased'
@@ -44,13 +65,25 @@ WHERE ($1::bigint = 0 OR i.id = $1)
 ORDER BY i.name
 `
 
+type DocParams struct {
+	Column1 int64
+	Column2 pgtype.Timestamptz
+}
+
 type DocRow struct {
 	ID                    int64
 	Name                  string
 	PurchaseUnit          pgtype.Text
+	ExpenseItemID         pgtype.Int8
+	ExpenseCategoryID     pgtype.Int8
+	StoppedAt             pgtype.Timestamptz
 	PurchasedTotal        string
 	UsedTotal             string
 	Balance               string
+	UsageStatus           string
+	UsageDays             int32
+	UsedInWindow          string
+	DaysLeft              string
 	ReminderRatio         string
 	LatestPurchaseDate    string
 	LatestPurchaseMeasure string
@@ -58,8 +91,8 @@ type DocRow struct {
 	CheckReminder         bool
 }
 
-func (q *Queries) Doc(ctx context.Context, dollar_1 int64) ([]DocRow, error) {
-	rows, err := q.db.Query(ctx, doc, dollar_1)
+func (q *Queries) Doc(ctx context.Context, arg DocParams) ([]DocRow, error) {
+	rows, err := q.db.Query(ctx, doc, arg.Column1, arg.Column2)
 	if err != nil {
 		return nil, err
 	}
@@ -71,9 +104,16 @@ func (q *Queries) Doc(ctx context.Context, dollar_1 int64) ([]DocRow, error) {
 			&i.ID,
 			&i.Name,
 			&i.PurchaseUnit,
+			&i.ExpenseItemID,
+			&i.ExpenseCategoryID,
+			&i.StoppedAt,
 			&i.PurchasedTotal,
 			&i.UsedTotal,
 			&i.Balance,
+			&i.UsageStatus,
+			&i.UsageDays,
+			&i.UsedInWindow,
+			&i.DaysLeft,
 			&i.ReminderRatio,
 			&i.LatestPurchaseDate,
 			&i.LatestPurchaseMeasure,

@@ -7,26 +7,42 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const themKhoanCon = `-- name: ThemKhoanCon :one
-INSERT INTO expense_item (expense_category_id, name) VALUES ($1, $2) RETURNING id, expense_category_id, name
+INSERT INTO expense_item (expense_category_id, name, tracks_supply, supply_item_id)
+VALUES ($1, $2, $3, $4) RETURNING id, expense_category_id, name, supply_item_id
 `
 
 type ThemKhoanConParams struct {
 	ExpenseCategoryID int64
 	Name              string
+	TracksSupply      bool
+	SupplyItemID      pgtype.Int8
 }
 
 type ThemKhoanConRow struct {
 	ID                int64
 	ExpenseCategoryID int64
 	Name              string
+	SupplyItemID      pgtype.Int8
 }
 
 func (q *Queries) ThemKhoanCon(ctx context.Context, arg ThemKhoanConParams) (ThemKhoanConRow, error) {
-	row := q.db.QueryRow(ctx, themKhoanCon, arg.ExpenseCategoryID, arg.Name)
+	row := q.db.QueryRow(ctx, themKhoanCon,
+		arg.ExpenseCategoryID,
+		arg.Name,
+		arg.TracksSupply,
+		arg.SupplyItemID,
+	)
 	var i ThemKhoanConRow
-	err := row.Scan(&i.ID, &i.ExpenseCategoryID, &i.Name)
+	err := row.Scan(
+		&i.ID,
+		&i.ExpenseCategoryID,
+		&i.Name,
+		&i.SupplyItemID,
+	)
 	return i, err
 }

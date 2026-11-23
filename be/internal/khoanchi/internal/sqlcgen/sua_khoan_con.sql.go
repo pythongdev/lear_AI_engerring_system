@@ -7,10 +7,12 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const suaKhoanCon = `-- name: SuaKhoanCon :one
-UPDATE expense_item SET name = $2 WHERE id = $1 AND deleted_at IS NULL RETURNING id, expense_category_id, name
+UPDATE expense_item SET name = $2 WHERE id = $1 AND deleted_at IS NULL RETURNING id, expense_category_id, name, supply_item_id
 `
 
 type SuaKhoanConParams struct {
@@ -22,11 +24,17 @@ type SuaKhoanConRow struct {
 	ID                int64
 	ExpenseCategoryID int64
 	Name              string
+	SupplyItemID      pgtype.Int8
 }
 
 func (q *Queries) SuaKhoanCon(ctx context.Context, arg SuaKhoanConParams) (SuaKhoanConRow, error) {
 	row := q.db.QueryRow(ctx, suaKhoanCon, arg.ID, arg.Name)
 	var i SuaKhoanConRow
-	err := row.Scan(&i.ID, &i.ExpenseCategoryID, &i.Name)
+	err := row.Scan(
+		&i.ID,
+		&i.ExpenseCategoryID,
+		&i.Name,
+		&i.SupplyItemID,
+	)
 	return i, err
 }

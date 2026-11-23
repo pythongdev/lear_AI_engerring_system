@@ -3,10 +3,41 @@ package nguyenlieu_test
 import (
 	"banhcuon/be/internal/nguyenlieu"
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5"
 	"reflect"
 	"testing"
 	"time"
 )
+
+func TestI025_KC06_ThuDaNgungKhongVaoNhacKiemPOS(t *testing.T) {
+	k := dung(t)
+	thu := k.thu(t, "test-kc06-nhắc-"+t.Name(), "kg")
+	loai := k.so(t, "INSERT INTO shop.expense_category(name,paid_from_till,tracks_supply) VALUES ($1,false,true) RETURNING id", "test-kc06-nhắc-"+t.Name())
+	con := k.so(t, "INSERT INTO shop.expense_item(expense_category_id,name,tracks_supply,supply_item_id) SELECT $1,name,true,id FROM shop.supply_item WHERE id=$2 RETURNING id", loai, thu)
+	if k.kho(t, thu)["check_reminder"] != true {
+		t.Fatal("thứ đang dùng chưa có con số phải được nhắc")
+	}
+	if err := k.coVet(func(tx pgx.Tx) error {
+		if _, e := tx.Exec(k.ctx, "UPDATE shop.expense_item SET deleted_at=now(),deleted_by_person_id=shop.actor_person_id() WHERE id=$1", con); e != nil {
+			return e
+		}
+		_, e := tx.Exec(k.ctx, "UPDATE shop.supply_item SET deleted_at=now(),deleted_by_person_id=shop.actor_person_id() WHERE id=$1", thu)
+		return e
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if item := k.kho(t, thu); item["stopped_at"] == nil || item["check_reminder"] != false {
+		t.Fatalf("thứ đã ngừng còn nhắc POS: %v", item)
+	}
+	r := k.goi(t, "GET", "/supply-check-reminders", k.quay, nil)
+	canDat(t, r, 200)
+	for _, raw := range r.body["items"].([]any) {
+		item := raw.(map[string]any)
+		if item["supply_item_id"] == float64(thu) {
+			t.Fatalf("POS còn nhắc thứ đã ngừng: %v", item)
+		}
+	}
+}
 
 func TestI025_NhacKiemTraCoDuongDoc(t *testing.T) {
 	r := gin.New()

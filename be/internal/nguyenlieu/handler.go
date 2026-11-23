@@ -25,8 +25,6 @@ func Routes(r *gin.Engine, svc *Service) {
 
 type handler struct{ svc *Service }
 
-var measurePattern = regexp.MustCompile(`^(0|[1-9][0-9]{0,8})(\.[0-9]{1,3})?$`)
-
 func nguoi(c *gin.Context) int64 { id, _ := middleware.Nguoi(c); return id }
 func sai(c *gin.Context, field string) {
 	apierr.Write(c.Writer, apierr.Error{Code: apierr.CodeInvalidRequest, Field: field})
@@ -94,7 +92,7 @@ func docYeuCau(c *gin.Context, sua bool) (YeuCau, bool) {
 	if !apierr.ReadJSON(c.Writer, c.Request, &p) {
 		return p, false
 	}
-	if !measurePattern.MatchString(p.Measure) {
+	if !DoLuongHopLe(p.Measure) {
 		sai(c, "measure")
 		return p, false
 	}

@@ -493,6 +493,57 @@ var cacCaVet = []caVet{
 			canDat(t, traLoi{status: status, body: body}, 200)
 		}}
 	}},
+	{"nguyenlieu/doi_ten_thu", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		khoanchi.Routes(r, khoanchi.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		name := t.Name() + "-cũ"
+		thu := c.id(t, "INSERT INTO shop.supply_item(name) VALUES ($1) RETURNING id", name)
+		loai := c.id(t, "INSERT INTO shop.expense_category(name,paid_from_till,tracks_supply) VALUES ($1,false,true) RETURNING id", t.Name())
+		con := c.id(t, "INSERT INTO shop.expense_item(expense_category_id,name,tracks_supply,supply_item_id) VALUES ($1,$2,true,$3) RETURNING id", loai, name, thu)
+		return dichVet{"supply_item", thu, c.chu, "name", name, t.Name() + "-mới", func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/expense-items/%d", con), c.chu,
+				map[string]any{"name": t.Name() + "-mới", "reason": "đổi tên thứ kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
+	{"nguyenlieu/ngung_thu", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		khoanchi.Routes(r, khoanchi.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		name := t.Name()
+		thu := c.id(t, "INSERT INTO shop.supply_item(name) VALUES ($1) RETURNING id", name)
+		loai := c.id(t, "INSERT INTO shop.expense_category(name,paid_from_till,tracks_supply) VALUES ($1,false,true) RETURNING id", name)
+		con := c.id(t, "INSERT INTO shop.expense_item(expense_category_id,name,tracks_supply,supply_item_id) VALUES ($1,$2,true,$3) RETURNING id", loai, name, thu)
+		return dichVet{"supply_item", thu, c.chu, "deleted_at", nil, "mốc", func() {
+			status, body := c.goi(t, "DELETE", fmt.Sprintf("/expense-items/%d", con), c.chu, map[string]any{"reason": "ngừng thứ kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 204)
+		}}
+	}},
+	{"khoanchi/chuyen_muc", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		khoanchi.Routes(r, khoanchi.NewService(c.pool))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		c.srv = srv
+		name := t.Name()
+		thu := c.id(t, "INSERT INTO shop.supply_item(name) VALUES ($1) RETURNING id", name)
+		loai := c.id(t, "INSERT INTO shop.expense_category(name,paid_from_till,tracks_supply) VALUES ($1,false,true) RETURNING id", name+"-đầu")
+		moi := c.id(t, "INSERT INTO shop.expense_category(name,paid_from_till,tracks_supply) VALUES ($1,false,true) RETURNING id", name+"-sau")
+		con := c.id(t, "INSERT INTO shop.expense_item(expense_category_id,name,tracks_supply,supply_item_id) VALUES ($1,$2,true,$3) RETURNING id", loai, name, thu)
+		return dichVet{"expense_item", con, c.chu, "expense_category_id", float64(loai), float64(moi), func() {
+			status, body := c.goi(t, "PUT", fmt.Sprintf("/expense-items/%d/category", con), c.chu,
+				map[string]any{"expense_category_id": moi, "reason": "chuyển mục kiểm vết"})
+			canDat(t, traLoi{status: status, body: body}, 200)
+		}}
+	}},
 	{"khoanchi/xoa", func(t *testing.T, c canh) dichVet {
 		r := gin.New()
 		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))

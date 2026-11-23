@@ -12,7 +12,7 @@ import (
 )
 
 const doc = `-- name: Doc :many
-SELECT e.id, e.expense_category_id, c.name AS category_name, c.paid_from_till, e.amount_vnd, e.paid_date::text AS paid_date, e.person_id, p.display_name AS person_name, e.created_at, e.expense_item_id, i.name AS item_name
+SELECT e.id, e.expense_category_id, c.name AS category_name, c.paid_from_till, e.amount_vnd, e.paid_date::text AS paid_date, e.person_id, p.display_name AS person_name, e.created_at, e.expense_item_id, i.name AS item_name, COALESCE(e.received_date::text, '')::text AS received_date
 FROM expense e JOIN expense_category c ON c.id = e.expense_category_id JOIN person p ON p.id = e.person_id LEFT JOIN expense_item i ON i.id = e.expense_item_id
 WHERE e.deleted_at IS NULL AND e.paid_date >= $1::text::date AND e.paid_date <= $2::text::date
   AND ($3::bigint = 0 OR e.expense_category_id = $3::bigint)
@@ -42,6 +42,7 @@ type DocRow struct {
 	CreatedAt         pgtype.Timestamptz
 	ExpenseItemID     pgtype.Int8
 	ItemName          pgtype.Text
+	ReceivedDate      string
 }
 
 func (q *Queries) Doc(ctx context.Context, arg DocParams) ([]DocRow, error) {
@@ -72,6 +73,7 @@ func (q *Queries) Doc(ctx context.Context, arg DocParams) ([]DocRow, error) {
 			&i.CreatedAt,
 			&i.ExpenseItemID,
 			&i.ItemName,
+			&i.ReceivedDate,
 		); err != nil {
 			return nil, err
 		}

@@ -10,7 +10,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ replace }), useSearchPar
 beforeEach(() => { thamSo = ""; replace.mockReset(); });
 afterEach(cleanup);
 type K = components["schemas"];
-const thu: K["SupplyItem"] = { supply_item_id: 2, name: "Gạo", purchase_unit: null, purchased_total: "7", used_total: "11", balance: "-4", reminder_ratio: "0.2", latest_purchase_date: "2026-10-18", latest_purchase_measure: "7", reminder_status: "ready", check_reminder: true };
+const thu: K["SupplyItem"] = { supply_item_id: 2, expense_item_id: null, expense_category_id: null, stopped_at: null, name: "Gạo", purchase_unit: null, purchased_total: "7", used_total: "11", balance: "-4", usage_estimate: { status: "out_by_ledger", usage_days: 0, used_in_window: "0", days_left: null }, reminder_ratio: "0.2", latest_purchase_date: "2026-10-18", latest_purchase_measure: "7", reminder_status: "ready", check_reminder: true };
 const dong: K["SupplyDayEntry"] = { supply_day_entry_id: 9, supply_item_id: 2, entry_date: "2026-10-18", kind: "purchased", measure: "1.250", person_id: 1, person_name: "Hoa", created_at: "2026-10-18T01:00:00Z" };
 type Tra = { status: number; body?: unknown };
 function mo(opts: { ghi?: (g: GoiDen) => Tra; doc?: () => Tra; so?: () => Tra } = {}) {

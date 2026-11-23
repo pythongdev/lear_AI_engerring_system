@@ -256,7 +256,8 @@ func TestQC14_TongQuanNguyenLieuBangSupplyStockKhongCoSoNgay(t *testing.T) {
 	if err := json.Unmarshal(call("GET", "/supply-stock", "", 200), &stock); err != nil {
 		t.Fatal(err)
 	}
-	fields := []string{"supply_item_id", "name", "purchase_unit", "purchased_total", "used_total", "balance", "reminder_ratio", "latest_purchase_date", "latest_purchase_measure", "reminder_status", "check_reminder"}
+	fields := []string{"supply_item_id", "name", "purchase_unit", "purchased_total", "used_total", "balance", "reminder_ratio", "latest_purchase_date", "latest_purchase_measure", "reminder_status", "check_reminder",
+		"expense_item_id", "expense_category_id", "stopped_at", "usage_estimate"} // KC-07: SupplyItem thêm ước tính lúc đọc
 	found := false
 	for _, row := range overview.Shortages.Supplies.Items {
 		if _, ok := row["entries"]; ok {

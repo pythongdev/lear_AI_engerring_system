@@ -3,6 +3,7 @@ package khoanchi
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"math"
 	"sort"
@@ -11,6 +12,7 @@ import (
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/authz"
 	"banhcuon/be/internal/ngayban"
+	"banhcuon/be/internal/nguyenlieu"
 	"banhcuon/be/internal/vongdoi"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -25,6 +27,7 @@ type KhoanCon struct {
 	ID           int64   `json:"expense_item_id"`
 	CategoryID   int64   `json:"expense_category_id"`
 	Name         string  `json:"name"`
+	SupplyItemID *int64  `json:"supply_item_id"`
 }
 type Loai struct {
 	LastPaidDate *string    `json:"last_paid_date"` // ngày chi gần nhất trên mọi ngày, chưa chi thì null (KC-05)
@@ -32,6 +35,7 @@ type Loai struct {
 	ID           int64      `json:"expense_category_id"`
 	Name         string     `json:"name"`
 	PaidFromTill bool       `json:"paid_from_till"`
+	TracksSupply bool       `json:"tracks_supply"`
 }
 type Khoan struct {
 	ItemID       *int64    `json:"expense_item_id"`
@@ -42,17 +46,39 @@ type Khoan struct {
 	PaidFromTill bool      `json:"paid_from_till"`
 	Amount       int64     `json:"amount_vnd"`
 	PaidDate     string    `json:"paid_date"`
+	ReceivedDate *string   `json:"received_date"`
 	PersonID     int64     `json:"person_id"`
 	PersonName   string    `json:"person_name"`
 	CreatedAt    time.Time `json:"created_at"`
 }
 type YeuCau struct {
-	ItemID     *int64 `json:"expense_item_id"`
-	CategoryID int64  `json:"expense_category_id"`
-	Amount     int64  `json:"amount_vnd"`
-	PaidDate   string `json:"paid_date"`
-	Reason     string `json:"reason"`
+	ItemID           *int64  `json:"expense_item_id"`
+	CategoryID       int64   `json:"expense_category_id"`
+	Amount           int64   `json:"amount_vnd"`
+	PaidDate         string  `json:"paid_date"`
+	ReceivedDate     *string `json:"received_date"`
+	PurchasedMeasure *string `json:"purchased_measure"`
+	Reason           string  `json:"reason"`
+	ReceivedSent     bool    `json:"-"`
+	MeasureSent      bool    `json:"-"`
 }
+
+func (p *YeuCau) UnmarshalJSON(b []byte) error {
+	type plain YeuCau
+	var v plain
+	if err := json.Unmarshal(b, &v); err != nil {
+		return err
+	}
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(b, &fields); err != nil {
+		return err
+	}
+	*p = YeuCau(v)
+	_, p.ReceivedSent = fields["received_date"]
+	_, p.MeasureSent = fields["purchased_measure"]
+	return nil
+}
+
 type BoLoc struct {
 	From, To     string
 	CategoryID   *int64
@@ -88,10 +114,10 @@ type Service struct{ pool *pgxpool.Pool }
 
 func NewService(pool *pgxpool.Pool) *Service { return &Service{pool: pool} }
 
-func (s *Service) ThemLoai(ctx context.Context, nguoi int64, ten string, tuKet bool) (out Loai, err error) {
+func (s *Service) ThemLoai(ctx context.Context, nguoi int64, ten string, tuKet, tracks bool) (out Loai, err error) {
 	err = authz.Run(ctx, s.pool, nguoi, ThemLoai, func(tx pgx.Tx) error {
 		var e error
-		out, e = newRepository(tx).themLoai(ctx, ten, tuKet)
+		out, e = newRepository(tx).themLoai(ctx, ten, tuKet, tracks)
 		return e
 	})
 	return
@@ -108,24 +134,33 @@ func (s *Service) DocLoai(ctx context.Context, nguoi int64) (out []Loai, err err
 // GhiKhoan nhận hình đã kiểm; ngày của quán luôn quy bằng PostgreSQL.
 func (s *Service) GhiKhoan(ctx context.Context, nguoi int64, p YeuCau) (out Khoan, err error) {
 	err = authz.Run(ctx, s.pool, nguoi, Ghi, func(tx pgx.Tx) error {
-		repo := newRepository(tx)
-		tuKet, err := kiemKhoan(ctx, tx, repo, p)
-		if err != nil {
-			return err
-		}
-		if tuKet {
-			if err := khoaNgay(ctx, tx, []string{p.PaidDate}); err != nil {
-				return err
-			}
-		}
-		id, err := repo.ghi(ctx, p)
-		if err != nil {
-			return err
-		}
-		out, err = repo.docKhoan(ctx, id)
-		return err
+		var e error
+		out, e = ghiTrongGiaoDich(ctx, tx, p)
+		return e
 	})
 	return
+}
+func ghiTrongGiaoDich(ctx context.Context, tx pgx.Tx, p YeuCau) (Khoan, error) {
+	repo := newRepository(tx)
+	tuKet, supply, err := kiemKhoan(ctx, tx, repo, &p)
+	if err != nil {
+		return Khoan{}, err
+	}
+	if tuKet {
+		if err := khoaNgay(ctx, tx, []string{p.PaidDate}); err != nil {
+			return Khoan{}, err
+		}
+	}
+	if p.PurchasedMeasure != nil {
+		if err := nguyenlieu.DatMuaTrongGiaoDich(ctx, tx, *supply, *p.ReceivedDate, *p.PurchasedMeasure, p.Reason); err != nil {
+			return Khoan{}, err
+		}
+	}
+	id, err := repo.ghi(ctx, p)
+	if err != nil {
+		return Khoan{}, err
+	}
+	return repo.docKhoan(ctx, id)
 }
 func (s *Service) SuaKhoan(ctx context.Context, nguoi, id int64, p YeuCau) (out Khoan, err error) {
 	err = authz.Run(ctx, s.pool, nguoi, Sua, func(tx pgx.Tx) error {
@@ -137,7 +172,7 @@ func (s *Service) SuaKhoan(ctx context.Context, nguoi, id int64, p YeuCau) (out 
 		if err != nil {
 			return err
 		}
-		ketMoi, err := kiemKhoan(ctx, tx, repo, p)
+		ketMoi, _, err := kiemKhoan(ctx, tx, repo, &p)
 		if err != nil {
 			return err
 		}
@@ -159,34 +194,46 @@ func (s *Service) SuaKhoan(ctx context.Context, nguoi, id int64, p YeuCau) (out 
 	})
 	return
 }
-func kiemKhoan(ctx context.Context, tx pgx.Tx, repo repository, p YeuCau) (bool, error) {
+func kiemKhoan(ctx context.Context, tx pgx.Tx, repo repository, p *YeuCau) (bool, *int64, error) {
 	moc, err := ngayban.DongHo(ctx, tx)
 	if err != nil {
-		return false, err
+		return false, nil, err
 	}
 	future, err := repo.ngayTuongLai(ctx, p.PaidDate, moc)
 	if err != nil {
-		return false, err
+		return false, nil, err
 	}
 	if future {
-		return false, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "paid_date"}
+		return false, nil, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "paid_date"}
 	}
-	ket, err := repo.timLoai(ctx, p.CategoryID)
+	category, err := repo.timLoai(ctx, p.CategoryID)
 	if errors.Is(err, pgx.ErrNoRows) {
-		return false, apierr.Error{Code: apierr.CodeExpenseCategoryNotFound}
+		return false, nil, apierr.Error{Code: apierr.CodeExpenseCategoryNotFound}
 	}
 	if err != nil {
-		return false, err
+		return false, nil, err
 	}
+	var supply *int64
 	if p.ItemID != nil {
-		if err := repo.timKhoanCon(ctx, *p.ItemID, p.CategoryID); err != nil {
+		if supply, err = repo.timKhoanCon(ctx, *p.ItemID, p.CategoryID); err != nil {
 			if errors.Is(err, pgx.ErrNoRows) {
-				return false, apierr.Error{Code: apierr.CodeExpenseItemNotFound}
+				return false, nil, apierr.Error{Code: apierr.CodeExpenseItemNotFound}
 			}
-			return false, err
+			return false, nil, err
 		}
 	}
-	return ket, nil
+	if supply == nil {
+		if p.ReceivedSent {
+			return false, nil, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "received_date"}
+		}
+		if p.MeasureSent {
+			return false, nil, apierr.Error{Code: apierr.CodeInvalidRequest, Field: "purchased_measure"}
+		}
+	} else if p.ReceivedDate == nil {
+		d := p.PaidDate
+		p.ReceivedDate = &d
+	}
+	return category.PaidFromTill, supply, nil
 }
 
 // Khoá chung theo thứ tự ngày, bỏ ngày trùng; cửa ký dùng khoá riêng cùng ngày.

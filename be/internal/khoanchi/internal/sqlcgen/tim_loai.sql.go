@@ -10,12 +10,17 @@ import (
 )
 
 const timLoai = `-- name: TimLoai :one
-SELECT paid_from_till FROM expense_category WHERE id = $1 AND deleted_at IS NULL FOR SHARE
+SELECT paid_from_till, tracks_supply FROM expense_category WHERE id = $1 AND deleted_at IS NULL FOR SHARE
 `
 
-func (q *Queries) TimLoai(ctx context.Context, id int64) (bool, error) {
+type TimLoaiRow struct {
+	PaidFromTill bool
+	TracksSupply bool
+}
+
+func (q *Queries) TimLoai(ctx context.Context, id int64) (TimLoaiRow, error) {
 	row := q.db.QueryRow(ctx, timLoai, id)
-	var paid_from_till bool
-	err := row.Scan(&paid_from_till)
-	return paid_from_till, err
+	var i TimLoaiRow
+	err := row.Scan(&i.PaidFromTill, &i.TracksSupply)
+	return i, err
 }

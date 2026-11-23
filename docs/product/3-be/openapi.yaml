@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.78.0
+  version: 0.80.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -1928,6 +1928,94 @@ paths:
       responses:
         '204':
           description: Thành công.
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /expense-items/{expense_item_id}/reopen:
+    post:
+      operationId: reopenExpenseItem
+      tags: [khoanchi]
+      summary: Dùng lại khoản con nối và thứ đã ngừng, có lý do.
+      parameters:
+        - name: expense_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseReason'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseItem'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /expense-items/{expense_item_id}/category:
+    put:
+      operationId: moveExpenseItem
+      tags: [khoanchi]
+      summary: Chuyển khoản con nối sang mục cùng cờ theo dõi lượng và cùng nguồn tiền, có lý do.
+      parameters:
+        - name: expense_item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveExpenseItem'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseItem'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /supply-expense-items:
+    post:
+      operationId: createSupplyExpenseItem
+      tags: [khoanchi]
+      summary: Thêm thứ, khoản con nối, khoản chi và con số mua vào trong một giao dịch.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSupplyExpenseItem'
+      responses:
+        '201':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplyExpenseItemResult'
         default:
           description: Lời từ chối theo ErrorCode và x-http-status.
           content:
@@ -5941,7 +6029,7 @@ components:
           const: available
         items:
           type: array
-          description: Mỗi dòng dùng nguyên kết quả /supply-stock, gồm tổng nhập, tổng dùng, hiệu số và cờ nhắc; không mang sổ ngày entries. Không suy ra mức thiếu người hoặc thiếu món.
+          description: Mỗi dòng dùng nguyên kết quả /supply-stock, gồm tổng nhập, tổng dùng, hiệu số, cờ nhắc và ước tính còn dùng; không mang sổ ngày entries. Không suy ra mức thiếu người hoặc thiếu món.
           items:
             $ref: '#/components/schemas/SupplyItem'
     OverviewShortages:
@@ -6698,11 +6786,20 @@ components:
       examples: ['1.75', '10', '0', '-4']
     SupplyItem:
       type: object
-      required: [supply_item_id, name, purchase_unit, purchased_total, used_total, balance, reminder_ratio, latest_purchase_date, latest_purchase_measure, reminder_status, check_reminder]
+      required: [supply_item_id, name, purchase_unit, purchased_total, used_total, balance, usage_estimate, reminder_ratio, latest_purchase_date, latest_purchase_measure, reminder_status, check_reminder, expense_item_id, expense_category_id, stopped_at]
       properties:
         supply_item_id:
           type: integer
           format: int64
+        expense_item_id:
+          type: [integer, 'null']
+          format: int64
+        expense_category_id:
+          type: [integer, 'null']
+          format: int64
+        stopped_at:
+          type: [string, 'null']
+          format: date-time
         name:
           type: string
         purchase_unit:
@@ -6713,6 +6810,8 @@ components:
           $ref: '#/components/schemas/Measure'
         balance:
           $ref: '#/components/schemas/Measure'
+        usage_estimate:
+          $ref: '#/components/schemas/SupplyUsageEstimate'
         reminder_ratio:
           type: string
           pattern: '^(0(\.[0-9]+)?|1(\.0+)?)$'
@@ -6731,6 +6830,36 @@ components:
         check_reminder:
           type: boolean
           description: Nhắc POS kiểm tra khi phần còn lại dưới tỉ lệ của lần nhập gần nhất, hoặc khi chưa có mốc nhập. Bằng hoặc trên thì false. Không phải kết luận.
+    SupplyUsageEstimate:
+      type: object
+      additionalProperties: false
+      required: [status, usage_days, used_in_window, days_left]
+      description: >-
+        Ước tính chỉ để xem, tính lúc đọc và không cất. Nguồn số còn là balance (tổng mua vào trừ tổng đã dùng của mọi ngày);
+        nguồn mức dùng là trung bình các con số used của tối đa 7 ngày gần nhất có ghi tới ngày bán hôm nay của quán
+        (theo ngayban, không theo ngày đang xem của Tổng quan). Ngày thiếu không tính, ngày đã ghi 0 vẫn tính.
+        Số ngày còn bằng balance nhân usage_days chia used_in_window, làm tròn xuống một chữ số thập phân bằng numeric.
+        Ước tính không phải kết luận thiếu, không tạo lời nhắc POS và không tự tắt món; cờ nhắc cũ độc lập với ước tính.
+      properties:
+        status:
+          type: string
+          enum: [ready, out_by_ledger, no_usage, zero_usage]
+          description: >-
+            out_by_ledger khi balance không dương, ưu tiên trước mọi trạng thái khác;
+            no_usage khi balance dương nhưng chưa có ngày ghi used; zero_usage khi các ngày đã ghi đều dùng 0;
+            ready khi balance dương và tổng đã dùng trong cửa sổ dương, có thể tính days_left.
+        usage_days:
+          type: integer
+          minimum: 0
+          maximum: 7
+          description: Số ngày có con số used trong cửa sổ; một ngày ghi 0 vẫn được đếm.
+        used_in_window:
+          $ref: '#/components/schemas/Measure'
+          description: Tổng các con số used trong cửa sổ, chuỗi thập phân trim_scale; trả "0" khi chưa có ngày ghi used.
+        days_left:
+          type: [string, 'null']
+          pattern: '^[0-9]+\.[0-9]$'
+          description: Chỉ có chuỗi một chữ số thập phân khi status là ready; các trạng thái khác trả null.
     SupplyCheckReminderItem:
       type: object
       additionalProperties: false
@@ -6870,6 +6999,46 @@ components:
               minLength: 1
     CreateExpenseItem:
       type: object
+      required: [expense_category_id]
+      properties:
+        expense_category_id:
+          type: integer
+          format: int64
+          minimum: 1
+        name:
+          type: string
+          minLength: 1
+          description: Chỉ gửi cho mục thường; mục theo dõi lượng lấy tên từ thứ trong sổ.
+        supply_item_id:
+          type: integer
+          format: int64
+          minimum: 1
+          description: Bắt buộc cho mục theo dõi lượng; mục thường không nhận.
+    MoveExpenseItem:
+      type: object
+      required: [expense_category_id, reason]
+      properties:
+        expense_category_id:
+          type: integer
+          format: int64
+          minimum: 1
+        reason:
+          type: string
+          minLength: 1
+    CreateSupplyExpense:
+      type: object
+      required: [amount_vnd, paid_date]
+      properties:
+        amount_vnd:
+          type: integer
+          format: int64
+          minimum: 1
+        paid_date:
+          $ref: '#/components/schemas/SaleDate'
+        received_date:
+          $ref: '#/components/schemas/SaleDate'
+    CreateSupplyExpenseItem:
+      type: object
       required: [expense_category_id, name]
       properties:
         expense_category_id:
@@ -6879,9 +7048,29 @@ components:
         name:
           type: string
           minLength: 1
+        purchase_unit:
+          type: string
+          minLength: 1
+        expense:
+          $ref: '#/components/schemas/CreateSupplyExpense'
+        purchased_measure:
+          type: string
+          pattern: '^(0|[1-9][0-9]{0,8})(\.[0-9]{1,3})?$'
+    SupplyExpenseItemResult:
+      type: object
+      required: [supply_item, expense_item, expense]
+      properties:
+        supply_item:
+          $ref: '#/components/schemas/SupplyItem'
+        expense_item:
+          $ref: '#/components/schemas/ExpenseItem'
+        expense:
+          oneOf:
+            - $ref: '#/components/schemas/Expense'
+            - type: 'null'
     ExpenseItem:
       type: object
-      required: [expense_item_id, expense_category_id, name]
+      required: [expense_item_id, expense_category_id, name, supply_item_id]
       properties:
         last_paid_date:
           type: [string, 'null']
@@ -6897,6 +7086,9 @@ components:
           minimum: 1
         name:
           type: string
+        supply_item_id:
+          type: [integer, 'null']
+          format: int64
     ExpenseCategoryTotal:
       type: object
       required: [expense_category_id, total_vnd]
@@ -6921,7 +7113,7 @@ components:
           $ref: '#/components/schemas/SaleDate'
     CreateExpenseCategory:
       type: object
-      required: [name, paid_from_till]
+      required: [name, paid_from_till, tracks_supply]
       properties:
         name:
           type: string
@@ -6930,9 +7122,12 @@ components:
         paid_from_till:
           type: boolean
           description: Bắt buộc khai rõ; không nhận null và không mặc định.
+        tracks_supply:
+          type: boolean
+          description: Bắt buộc khai lúc tạo; không sửa được.
     ExpenseCategory:
       type: object
-      required: [expense_category_id, name, paid_from_till]
+      required: [expense_category_id, name, paid_from_till, tracks_supply]
       properties:
         last_paid_date:
           type: [string, 'null']
@@ -6949,6 +7144,8 @@ components:
         name:
           type: string
         paid_from_till:
+          type: boolean
+        tracks_supply:
           type: boolean
     ExpenseCategories:
       type: object
@@ -6978,19 +7175,43 @@ components:
         paid_date:
           $ref: '#/components/schemas/SaleDate'
           description: Ngày người ghi khai (U-072), không sau hôm nay của quán.
+        received_date:
+          $ref: '#/components/schemas/SaleDate'
+          description: Chỉ khoản con nối; thiếu thì bằng paid_date.
+        purchased_measure:
+          type: string
+          pattern: '^(0|[1-9][0-9]{0,8})(\.[0-9]{1,3})?$'
+          description: Chỉ khi tạo khoản chi của khoản con nối; đặt con số mua vào của ngày nhập.
+        reason:
+          type: string
+          description: Bắt buộc khi purchased_measure sửa một con số đã có và khác.
     UpdateExpense:
-      allOf:
-        - $ref: '#/components/schemas/WriteExpense'
-        - type: object
-          required: [reason]
-          properties:
-            reason:
-              type: string
-              minLength: 1
-              description: Cắt khoảng trắng hai đầu, không được rỗng; ghi vào vết sửa.
+      type: object
+      required: [expense_category_id, amount_vnd, paid_date, reason]
+      properties:
+        expense_item_id:
+          type: [integer, 'null']
+          format: int64
+          minimum: 1
+        expense_category_id:
+          type: integer
+          format: int64
+          minimum: 1
+        amount_vnd:
+          type: integer
+          format: int64
+          minimum: 1
+        paid_date:
+          $ref: '#/components/schemas/SaleDate'
+        received_date:
+          $ref: '#/components/schemas/SaleDate'
+        reason:
+          type: string
+          minLength: 1
+          description: Cắt khoảng trắng hai đầu, không được rỗng; ghi vào vết sửa.
     Expense:
       type: object
-      required: [expense_id, expense_category_id, category_name, paid_from_till, amount_vnd, paid_date, person_id, person_name, created_at]
+      required: [expense_id, expense_category_id, category_name, paid_from_till, amount_vnd, paid_date, received_date, person_id, person_name, created_at]
       properties:
         item_name:
           type: [string, 'null']
@@ -7018,6 +7239,9 @@ components:
         paid_date:
           $ref: '#/components/schemas/SaleDate'
           description: Ngày người ghi khai, cũng là ngày trừ két nếu loại trả từ két.
+        received_date:
+          type: [string, 'null']
+          format: date
         person_id:
           type: integer
           format: int64
@@ -8599,6 +8823,10 @@ components:
         - expense_category_in_use
         - expense_item_name_taken
         - expense_item_not_found
+        - expense_item_not_stopped
+        - expense_item_move_not_allowed
+        - supply_item_already_linked
+        - supply_item_stopped
         - supply_item_unit_already_set
         - supply_day_entry_already_recorded
         - supply_item_name_taken
@@ -8742,6 +8970,10 @@ components:
         expense_category_in_use: 409
         expense_item_name_taken: 409
         expense_item_not_found: 404
+        expense_item_not_stopped: 409
+        expense_item_move_not_allowed: 409
+        supply_item_already_linked: 409
+        supply_item_stopped: 409
         supply_item_unit_already_set: 409
         supply_day_entry_already_recorded: 409
         supply_item_name_taken: 409
@@ -9474,17 +9706,17 @@ components:
 # internal (không bao giờ là luật người dùng chạm tới) hoặc unreviewed (chưa lát nào xét — chạy như
 # internal_error). Lát dựng cửa chạm một bảng thì xét lại dòng của bảng ấy (01-hop-dong-api.md §4).
 x-constraint-errors:
-  # KC-02: lát database; KC-06 xét mã công khai tại cửa backend.
-  expense_category_id_tracks_supply_key: unreviewed
-  expense_item_category_tracks_supply_fkey: unreviewed
-  expense_item_supply_item_fkey: unreviewed
-  expense_item_supply_item_key: unreviewed
-  expense_item_supply_link_check: unreviewed
-  expense_item_supply_name_match_check: unreviewed
-  expense_item_supply_stopped_match_check: unreviewed
-  supply_item_deleted_by_person_fkey: unreviewed
-  supply_item_deleted_pair_check: unreviewed
-  supply_day_entry_supply_item_stopped_check: unreviewed
+  # KC-06: id/cờ/dấu cặp do cửa cấp trong một giao dịch; tên, trạng thái cặp do trigger giữ.
+  expense_category_id_tracks_supply_key: internal
+  expense_item_category_tracks_supply_fkey: internal
+  expense_item_supply_item_fkey: internal
+  expense_item_supply_item_key: supply_item_already_linked
+  expense_item_supply_link_check: internal
+  expense_item_supply_name_match_check: internal
+  expense_item_supply_stopped_match_check: internal
+  supply_item_deleted_by_person_fkey: internal
+  supply_item_deleted_pair_check: internal
+  supply_day_entry_supply_item_stopped_check: supply_item_stopped
   model_call_pkey: internal
   model_call_provider_code_check: internal
   model_call_model_code_check: internal

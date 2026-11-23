@@ -12,7 +12,7 @@ import (
 )
 
 const sua = `-- name: Sua :exec
-UPDATE expense SET expense_category_id = $2, amount_vnd = $3, paid_date = $4::text::date , expense_item_id = $5 WHERE id = $1
+UPDATE expense SET expense_category_id = $2, amount_vnd = $3, paid_date = $4::text::date, expense_item_id = $5, received_date = NULLIF($6::text, '')::date WHERE id = $1
 `
 
 type SuaParams struct {
@@ -21,6 +21,7 @@ type SuaParams struct {
 	AmountVnd         int64
 	Column4           string
 	ExpenseItemID     pgtype.Int8
+	Column6           string
 }
 
 func (q *Queries) Sua(ctx context.Context, arg SuaParams) error {
@@ -30,6 +31,7 @@ func (q *Queries) Sua(ctx context.Context, arg SuaParams) error {
 		arg.AmountVnd,
 		arg.Column4,
 		arg.ExpenseItemID,
+		arg.Column6,
 	)
 	return err
 }

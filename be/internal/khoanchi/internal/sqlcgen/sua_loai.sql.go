@@ -10,7 +10,7 @@ import (
 )
 
 const suaLoai = `-- name: SuaLoai :one
-UPDATE expense_category SET name = $2 WHERE id = $1 AND deleted_at IS NULL RETURNING id, name, paid_from_till
+UPDATE expense_category SET name = $2 WHERE id = $1 AND deleted_at IS NULL RETURNING id, name, paid_from_till, tracks_supply
 `
 
 type SuaLoaiParams struct {
@@ -22,11 +22,17 @@ type SuaLoaiRow struct {
 	ID           int64
 	Name         string
 	PaidFromTill bool
+	TracksSupply bool
 }
 
 func (q *Queries) SuaLoai(ctx context.Context, arg SuaLoaiParams) (SuaLoaiRow, error) {
 	row := q.db.QueryRow(ctx, suaLoai, arg.ID, arg.Name)
 	var i SuaLoaiRow
-	err := row.Scan(&i.ID, &i.Name, &i.PaidFromTill)
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.PaidFromTill,
+		&i.TracksSupply,
+	)
 	return i, err
 }

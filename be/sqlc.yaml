@@ -217,6 +217,7 @@ sql:
       - internal/khoanchi/sql/them_khoan_con
       - internal/khoanchi/sql/sua_khoan_con
       - internal/khoanchi/sql/xoa
+      - internal/khoanchi/sql/chuyen_muc
     gen:
       go:
         package: sqlcgen
@@ -231,6 +232,8 @@ sql:
       - internal/nguyenlieu/sql/ghi_so
       - internal/nguyenlieu/sql/sua_so
       - internal/nguyenlieu/sql/dat_ti_le
+      - internal/nguyenlieu/sql/doi_ten_thu
+      - internal/nguyenlieu/sql/ngung_thu
     gen:
       go:
         package: sqlcgen

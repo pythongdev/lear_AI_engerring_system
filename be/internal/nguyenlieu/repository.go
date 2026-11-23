@@ -40,8 +40,8 @@ func (r repository) sua(ctx context.Context, id int64, measure string) error {
 }
 
 // Cả danh sách lẫn chi tiết dùng Doc: chỉ SQL này tính tổng và hiệu số (I-026).
-func (r repository) doc(ctx context.Context, id int64) ([]Thu, error) {
-	rows, err := r.q.Doc(ctx, id)
+func (r repository) doc(ctx context.Context, id int64, moc time.Time) ([]Thu, error) {
+	rows, err := r.q.Doc(ctx, sqlcgen.DocParams{Column1: id, Column2: pgtype.Timestamptz{Time: moc, Valid: true}})
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,17 @@ func (r repository) doc(ctx context.Context, id int64) ([]Thu, error) {
 			unit = &u
 		}
 		item := Thu{ID: v.ID, Name: v.Name, PurchaseUnit: unit, PurchasedTotal: v.PurchasedTotal, UsedTotal: v.UsedTotal, Balance: v.Balance,
-			ReminderRatio: v.ReminderRatio, ReminderStatus: v.ReminderStatus, CheckReminder: v.CheckReminder}
+			ReminderRatio: v.ReminderRatio, ReminderStatus: v.ReminderStatus, CheckReminder: v.CheckReminder,
+			ExpenseItemID: idPointer(v.ExpenseItemID), ExpenseCategoryID: idPointer(v.ExpenseCategoryID)}
+		item.UsageEstimate = UocTinh{Status: v.UsageStatus, UsageDays: v.UsageDays, UsedInWindow: v.UsedInWindow}
+		if v.DaysLeft != "" {
+			d := v.DaysLeft
+			item.UsageEstimate.DaysLeft = &d
+		}
+		if v.StoppedAt.Valid {
+			stopped := v.StoppedAt.Time
+			item.StoppedAt = &stopped
+		}
 		if v.LatestPurchaseDate != "" {
 			d := v.LatestPurchaseDate
 			item.LatestPurchaseDate = &d
@@ -66,8 +76,8 @@ func (r repository) doc(ctx context.Context, id int64) ([]Thu, error) {
 	}
 	return out, nil
 }
-func (r repository) docThu(ctx context.Context, id int64) (Thu, error) {
-	rows, err := r.doc(ctx, id)
+func (r repository) docThu(ctx context.Context, id int64, moc time.Time) (Thu, error) {
+	rows, err := r.doc(ctx, id, moc)
 	if err != nil {
 		return Thu{}, err
 	}
@@ -96,4 +106,17 @@ func (r repository) docConSo(ctx context.Context, id int64) (ConSo, error) {
 		return ConSo{}, apierr.Error{Code: apierr.CodeSupplyDayEntryNotFound}
 	}
 	return rows[0], nil
+}
+
+// Câu của các hàm ghép giao dịch với cửa khoản chi (KC-06); chỉ repository gọi sqlcgen (QC-13).
+func (r repository) timThu(ctx context.Context, id int64) (sqlcgen.TimThuRow, error) {
+	return r.q.TimThu(ctx, id)
+}
+func (r repository) doiTenThu(ctx context.Context, id int64, name string) error {
+	return r.q.DoiTenThu(ctx, sqlcgen.DoiTenThuParams{ID: id, Name: name})
+}
+func (r repository) ngungThu(ctx context.Context, id int64) error { return r.q.NgungThu(ctx, id) }
+func (r repository) moThu(ctx context.Context, id int64) error    { return r.q.MoThu(ctx, id) }
+func (r repository) timMua(ctx context.Context, id int64, date, measure string) (sqlcgen.TimMuaRow, error) {
+	return r.q.TimMua(ctx, sqlcgen.TimMuaParams{SupplyItemID: id, Column2: date, Column3: measure})
 }

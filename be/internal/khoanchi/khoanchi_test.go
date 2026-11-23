@@ -21,6 +21,7 @@ import (
 	"banhcuon/be/internal/khoanchi"
 	"banhcuon/be/internal/middleware"
 	"banhcuon/be/internal/ngayban"
+	"banhcuon/be/internal/nguyenlieu"
 	"banhcuon/be/internal/platform/postgres"
 	"banhcuon/be/internal/taikhoan"
 	"banhcuon/be/internal/testhelper"
@@ -87,6 +88,7 @@ func dung(t *testing.T) khung {
 	r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(pool)))
 	khoanchi.Routes(r, khoanchi.NewService(pool))
 	ket.Routes(r, ket.NewService(pool))
+	nguyenlieu.Routes(r, nguyenlieu.NewService(pool)) // KC-06: cửa sổ lượng cùng máy chủ test
 	srv := httptest.NewServer(r)
 	t.Cleanup(srv.Close)
 
@@ -170,7 +172,7 @@ func tuChoi(t *testing.T, r traVe, status int, code, field string) {
 // loai tạo một loại chi qua cửa, tên riêng của test.
 func (k khung) loai(t *testing.T, ten string, tuKet bool) int64 {
 	t.Helper()
-	r := k.goi(t, "POST", "/expense-categories", k.chu, map[string]any{"name": ten + " · " + t.Name(), "paid_from_till": tuKet})
+	r := k.goi(t, "POST", "/expense-categories", k.chu, map[string]any{"name": ten + " · " + t.Name(), "paid_from_till": tuKet, "tracks_supply": false})
 	canDat(t, r, http.StatusCreated)
 	if r.body["paid_from_till"] != tuKet {
 		t.Fatalf("loại mới mang nguồn %v, muốn %v", r.body["paid_from_till"], tuKet)
@@ -206,7 +208,7 @@ func TestI029_ChiChuQuanGhiSuaVaDocKhoanChi(t *testing.T) {
 		method, path string
 		body         any
 	}{
-		{"POST", "/expense-categories", map[string]any{"name": "test-nước · " + t.Name(), "paid_from_till": true}},
+		{"POST", "/expense-categories", map[string]any{"name": "test-nước · " + t.Name(), "paid_from_till": true, "tracks_supply": false}},
 		{"POST", "/expenses", map[string]any{"expense_category_id": dien, "amount_vnd": 5000, "paid_date": "2033-05-02"}},
 		{"PUT", fmt.Sprintf("/expenses/%d", khoan), map[string]any{"expense_category_id": dien, "amount_vnd": 1000, "paid_date": "2033-05-02", "reason": "test: sửa"}},
 		{"GET", "/expense-categories", nil},
@@ -298,7 +300,7 @@ func TestI029_LoaiChiMoiPhaiKhaiNguonVaTenRieng(t *testing.T) {
 		t.Fatalf("lời từ chối hình mà database vẫn đổi: %s → %s", truoc, sau)
 	}
 	k.loai(t, "test-gas", true)
-	tuChoi(t, k.goi(t, "POST", "/expense-categories", k.chu, map[string]any{"name": "test-gas · " + t.Name(), "paid_from_till": false}), http.StatusConflict, "expense_category_name_taken", "")
+	tuChoi(t, k.goi(t, "POST", "/expense-categories", k.chu, map[string]any{"name": "test-gas · " + t.Name(), "paid_from_till": false, "tracks_supply": false}), http.StatusConflict, "expense_category_name_taken", "")
 }
 
 func TestI029_KhoanChiSaiHinhBiTuChoi(t *testing.T) {

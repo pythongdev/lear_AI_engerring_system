@@ -64,14 +64,18 @@ const (
 	CodeSupplyItemNameTaken           Code = "supply_item_name_taken"
 	CodeSupplyDayEntryAlreadyRecorded Code = "supply_day_entry_already_recorded"
 	CodeSupplyItemUnitAlreadySet      Code = "supply_item_unit_already_set"
+	CodeSupplyItemStopped             Code = "supply_item_stopped"
+	CodeSupplyItemAlreadyLinked       Code = "supply_item_already_linked"
 
-	CodeExpenseItemNotFound      Code = "expense_item_not_found"
-	CodeExpenseItemNameTaken     Code = "expense_item_name_taken"
-	CodeExpenseCategoryInUse     Code = "expense_category_in_use"
-	CodeExpenseItemInUse         Code = "expense_item_in_use"
-	CodeExpenseCategoryNotFound  Code = "expense_category_not_found"
-	CodeExpenseNotFound          Code = "expense_not_found"
-	CodeExpenseCategoryNameTaken Code = "expense_category_name_taken"
+	CodeExpenseItemNotFound       Code = "expense_item_not_found"
+	CodeExpenseItemNameTaken      Code = "expense_item_name_taken"
+	CodeExpenseCategoryInUse      Code = "expense_category_in_use"
+	CodeExpenseItemInUse          Code = "expense_item_in_use"
+	CodeExpenseCategoryNotFound   Code = "expense_category_not_found"
+	CodeExpenseNotFound           Code = "expense_not_found"
+	CodeExpenseCategoryNameTaken  Code = "expense_category_name_taken"
+	CodeExpenseItemNotStopped     Code = "expense_item_not_stopped"
+	CodeExpenseItemMoveNotAllowed Code = "expense_item_move_not_allowed"
 
 	CodeUsernameTaken           Code = "username_taken"
 	CodeEmailTaken              Code = "email_taken"
@@ -231,6 +235,10 @@ var statusOf = map[Code]int{
 	CodeSupplyItemUnitAlreadySet:      409,
 	CodeExpenseNotFound:               404,
 	CodeExpenseCategoryNameTaken:      409,
+	CodeSupplyItemStopped:             409,
+	CodeSupplyItemAlreadyLinked:       409,
+	CodeExpenseItemNotStopped:         409,
+	CodeExpenseItemMoveNotAllowed:     409,
 
 	CodeUsernameTaken:           409,
 	CodeEmailTaken:              409,
@@ -383,6 +391,8 @@ var constraintCodes = map[string]Code{
 	"expense_item_fkey":                                CodeExpenseItemNotFound,
 	"expense_category_name_key":                        CodeExpenseCategoryNameTaken,
 	"expense_category_fkey":                            CodeExpenseCategoryNotFound,
+	"expense_item_supply_item_key":                     CodeSupplyItemAlreadyLinked,
+	"supply_day_entry_supply_item_stopped_check":       CodeSupplyItemStopped,
 
 	"account_username_key":                 CodeUsernameTaken,
 	"account_email_key":                    CodeEmailTaken,

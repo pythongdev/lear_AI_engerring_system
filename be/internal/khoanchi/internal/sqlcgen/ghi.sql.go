@@ -12,8 +12,8 @@ import (
 )
 
 const ghi = `-- name: Ghi :one
-INSERT INTO expense (expense_category_id, amount_vnd, paid_date, expense_item_id)
-VALUES ($1, $2, $3::text::date, $4) RETURNING id
+INSERT INTO expense (expense_category_id, amount_vnd, paid_date, expense_item_id, received_date)
+VALUES ($1, $2, $3::text::date, $4, NULLIF($5::text, '')::date) RETURNING id
 `
 
 type GhiParams struct {
@@ -21,6 +21,7 @@ type GhiParams struct {
 	AmountVnd         int64
 	Column3           string
 	ExpenseItemID     pgtype.Int8
+	Column5           string
 }
 
 func (q *Queries) Ghi(ctx context.Context, arg GhiParams) (int64, error) {
@@ -29,6 +30,7 @@ func (q *Queries) Ghi(ctx context.Context, arg GhiParams) (int64, error) {
 		arg.AmountVnd,
 		arg.Column3,
 		arg.ExpenseItemID,
+		arg.Column5,
 	)
 	var id int64
 	err := row.Scan(&id)

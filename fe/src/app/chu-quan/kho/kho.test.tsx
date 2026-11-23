@@ -7,7 +7,7 @@ import Page from "./page";
 afterEach(cleanup);
 type Thu = components["schemas"]["SupplyItem"];
 type Tra = { status: number; body?: unknown };
-const thu: Thu = { supply_item_id: 9, name: "Gạo", purchase_unit: "kg", purchased_total: "1234567890123.125", used_total: "11.250", balance: "-4", reminder_ratio: "0.2", latest_purchase_date: "2026-10-08", latest_purchase_measure: "7.500", reminder_status: "ready", check_reminder: true };
+const thu: Thu = { supply_item_id: 9, expense_item_id: null, expense_category_id: null, stopped_at: null, name: "Gạo", purchase_unit: "kg", purchased_total: "1234567890123.125", used_total: "11.250", balance: "-4", usage_estimate: { status: "out_by_ledger", usage_days: 0, used_in_window: "0", days_left: null }, reminder_ratio: "0.2", latest_purchase_date: "2026-10-08", latest_purchase_measure: "7.500", reminder_status: "ready", check_reminder: true };
 function mo(opts: { doc?: (lan: number) => Tra; ghi?: () => Tra } = {}) {
   let lan = 0;
   return voiBackend(<Page />, (g) => {
@@ -28,7 +28,7 @@ async function nhap() { const f = await form(); go(f, "Tỉ lệ nhắc", " 0.35
 
 describe("Kho", () => {
   it("giữ thứ tự backend, nguyên chuỗi ba số kể cả -4, lần nhập và tỉ lệ; không tự kết luận", async () => {
-    const g = mo({ doc: () => ({ status: 200, body: { supply_items: [thu, { ...thu, supply_item_id: 2, name: "Bột", purchase_unit: null, latest_purchase_date: null, latest_purchase_measure: null, check_reminder: false }] } }) });
+    const g = mo({ doc: () => ({ status: 200, body: { supply_items: [thu, { ...thu, supply_item_id: 2, expense_item_id: null, expense_category_id: null, stopped_at: null, name: "Bột", purchase_unit: null, latest_purchase_date: null, latest_purchase_measure: null, check_reminder: false }] } }) });
     const list = await screen.findByRole("list", { name: "Kho nguyên liệu" }); const rows = within(list).getAllByRole("listitem");
     expect(rows.map((r) => r.querySelector("h2")?.textContent)).toEqual(["Gạo", "Bột"]);
     expect(Array.from(rows[0].querySelectorAll("dd")).map((d) => d.textContent)).toEqual(["1234567890123.125 kg", "11.250 kg", "-4 kg", "08/10/2026 · 7.500 kg", "0.2"]);

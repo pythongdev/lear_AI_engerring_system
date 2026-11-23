@@ -4,6 +4,7 @@ package nguyenlieu
 import (
 	"context"
 	"errors"
+	"regexp"
 	"time"
 
 	"banhcuon/be/internal/apierr"
@@ -19,19 +20,35 @@ var DatDonVi = authz.Door{Code: "nguyenlieu/dat_don_vi", Need: authz.NeedOwner}
 var GhiSo = authz.Door{Code: "nguyenlieu/ghi_so", Need: authz.NeedOwner}
 var DatTiLe = authz.Door{Code: "nguyenlieu/dat_ti_le", Need: authz.NeedOwner}
 var SuaSo = authz.Door{Code: "nguyenlieu/sua_so", Need: authz.NeedOwner}
+var DoiTenThu = authz.Door{Code: "nguyenlieu/doi_ten_thu", Need: authz.NeedCallingDoor}
+var NgungThu = authz.Door{Code: "nguyenlieu/ngung_thu", Need: authz.NeedCallingDoor}
+
+var measurePattern = regexp.MustCompile(`^(0|[1-9][0-9]{0,8})(\.[0-9]{1,3})?$`)
+
+func DoLuongHopLe(s string) bool { return measurePattern.MatchString(s) }
 
 type Thu struct {
-	ReminderRatio         string  `json:"reminder_ratio"`
-	LatestPurchaseDate    *string `json:"latest_purchase_date"`
-	LatestPurchaseMeasure *string `json:"latest_purchase_measure"`
-	ReminderStatus        string  `json:"reminder_status"`
-	CheckReminder         bool    `json:"check_reminder"`
-	ID                    int64   `json:"supply_item_id"`
-	Name                  string  `json:"name"`
-	PurchaseUnit          *string `json:"purchase_unit"`
-	PurchasedTotal        string  `json:"purchased_total"`
-	UsedTotal             string  `json:"used_total"`
-	Balance               string  `json:"balance"`
+	ReminderRatio         string     `json:"reminder_ratio"`
+	LatestPurchaseDate    *string    `json:"latest_purchase_date"`
+	LatestPurchaseMeasure *string    `json:"latest_purchase_measure"`
+	ReminderStatus        string     `json:"reminder_status"`
+	CheckReminder         bool       `json:"check_reminder"`
+	ExpenseItemID         *int64     `json:"expense_item_id"`
+	ExpenseCategoryID     *int64     `json:"expense_category_id"`
+	StoppedAt             *time.Time `json:"stopped_at"`
+	ID                    int64      `json:"supply_item_id"`
+	Name                  string     `json:"name"`
+	PurchaseUnit          *string    `json:"purchase_unit"`
+	PurchasedTotal        string     `json:"purchased_total"`
+	UsedTotal             string     `json:"used_total"`
+	Balance               string     `json:"balance"`
+	UsageEstimate         UocTinh    `json:"usage_estimate"`
+}
+type UocTinh struct {
+	Status       string  `json:"status"`
+	UsageDays    int32   `json:"usage_days"`
+	UsedInWindow string  `json:"used_in_window"`
+	DaysLeft     *string `json:"days_left"`
 }
 type ConSo struct {
 	ID         int64     `json:"supply_day_entry_id"`
@@ -65,7 +82,11 @@ func (s *Service) Them(ctx context.Context, nguoi int64, ten, donVi string) (out
 		if e != nil {
 			return e
 		}
-		out, e = repo.docThu(ctx, id)
+		moc, e := ngayban.DongHo(ctx, tx)
+		if e != nil {
+			return e
+		}
+		out, e = repo.docThu(ctx, id, moc)
 		return e
 	})
 	return
@@ -86,7 +107,11 @@ func (s *Service) Dat(ctx context.Context, nguoi, id int64, donVi string) (out T
 		if e = vongdoi.CoVet(ctx, tx, "nguyenlieu/dat_don_vi: đặt đơn vị lần đầu", func() error { return repo.dat(ctx, id, donVi) }); e != nil {
 			return e
 		}
-		out, e = repo.docThu(ctx, id)
+		moc, e := ngayban.DongHo(ctx, tx)
+		if e != nil {
+			return e
+		}
+		out, e = repo.docThu(ctx, id, moc)
 		return e
 	})
 	return
@@ -135,8 +160,11 @@ func (s *Service) Sua(ctx context.Context, nguoi, id int64, p YeuCau) (out ConSo
 }
 func (s *Service) Doc(ctx context.Context, nguoi int64) (out []Thu, err error) {
 	err = authz.Read(ctx, s.pool, nguoi, authz.NeedOwner, func(tx pgx.Tx) error {
-		var e error
-		out, e = newRepository(tx).doc(ctx, 0)
+		moc, e := ngayban.DongHo(ctx, tx)
+		if e != nil {
+			return e
+		}
+		out, e = newRepository(tx).doc(ctx, 0, moc)
 		return e
 	})
 	return
@@ -144,8 +172,11 @@ func (s *Service) Doc(ctx context.Context, nguoi int64) (out []Thu, err error) {
 func (s *Service) DocChiTiet(ctx context.Context, nguoi, id int64) (out ChiTiet, err error) {
 	err = authz.Read(ctx, s.pool, nguoi, authz.NeedOwner, func(tx pgx.Tx) error {
 		repo := newRepository(tx)
-		var e error
-		out.Thu, e = repo.docThu(ctx, id)
+		moc, e := ngayban.DongHo(ctx, tx)
+		if e != nil {
+			return e
+		}
+		out.Thu, e = repo.docThu(ctx, id, moc)
 		if e != nil {
 			return e
 		}
@@ -169,7 +200,11 @@ func (s *Service) DatTiLe(ctx context.Context, nguoi, id int64, ratio, reason st
 		if e = vongdoi.CoVet(ctx, tx, reason, func() error { return repo.datTiLe(ctx, id, ratio) }); e != nil {
 			return e
 		}
-		out, e = repo.docThu(ctx, id)
+		moc, e := ngayban.DongHo(ctx, tx)
+		if e != nil {
+			return e
+		}
+		out, e = repo.docThu(ctx, id, moc)
 		return e
 	})
 	return
@@ -193,7 +228,11 @@ func (s *Service) DocNhacKiemTra(ctx context.Context, nguoi int64) (out NhacKiem
 		if e := tx.QueryRow(ctx, "SELECT now()").Scan(&out.ReadAt); e != nil {
 			return e
 		}
-		items, e := newRepository(tx).doc(ctx, 0)
+		moc, e := ngayban.DongHo(ctx, tx)
+		if e != nil {
+			return e
+		}
+		items, e := newRepository(tx).doc(ctx, 0, moc)
 		if e != nil {
 			return e
 		}

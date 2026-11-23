@@ -7,15 +7,23 @@ package sqlcgen
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const khoaKhoanCon = `-- name: KhoaKhoanCon :one
-SELECT expense_category_id FROM expense_item WHERE id = $1 AND deleted_at IS NULL FOR UPDATE
+SELECT expense_category_id, supply_item_id, (deleted_at IS NOT NULL)::boolean AS stopped FROM expense_item WHERE id = $1 FOR UPDATE
 `
 
-func (q *Queries) KhoaKhoanCon(ctx context.Context, id int64) (int64, error) {
+type KhoaKhoanConRow struct {
+	ExpenseCategoryID int64
+	SupplyItemID      pgtype.Int8
+	Stopped           bool
+}
+
+func (q *Queries) KhoaKhoanCon(ctx context.Context, id int64) (KhoaKhoanConRow, error) {
 	row := q.db.QueryRow(ctx, khoaKhoanCon, id)
-	var expense_category_id int64
-	err := row.Scan(&expense_category_id)
-	return expense_category_id, err
+	var i KhoaKhoanConRow
+	err := row.Scan(&i.ExpenseCategoryID, &i.SupplyItemID, &i.Stopped)
+	return i, err
 }

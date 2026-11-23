@@ -53,6 +53,7 @@ của file ấy chỉ nhận dữ kiện admin của quán).
 | Vế 2026-09-29 | **chủ repo**: *"tôi muốn làm luôn db cho phần admin"* — nhắc lại 2026-09-30 (*"tiếp tục"*) | **đang hiệu lực** — mở thi công **lược đồ** admin cho phần đã đủ luật; `docs/decisions.md` **ADR-068** |
 | Vế 2026-10-14 | **chủ repo**: *"cập nhật backlog … cho db của admin, tôi sẽ làm be cho admin"* (T-184) | **đang hiệu lực** — lược đồ admin lượt hai `P2A-10`…`P2A-16`; backend admin sẽ làm — kế hoạch mở 2026-10-14 ở `T-191` (**ADR-110**: `P3A-01`…`P3A-10`) |
 | Vế 2026-11-01 | **chủ repo**: *"step by step complete above task request codex to do you check"* (nói về `work/backlog_CHAT.md`) | **đang hiệu lực** — mở lane `CHAT` cho nhánh đã đủ lời; không mở pha 5 (`T-109`) |
+| Vế 2026-11-18 | **chủ repo**: *"hãy đưa ra các step để tạo page trên từ data base, be và fe, hãy tạo backlog riêng … yêu cầu codex làm bạn kiểm tra"*, rồi *"thiết kế giống file html trên. nhưng dữ liệu cần được cập nhật theo database của quán"* (nói về `favourite.html`) | **đang hiệu lực** — mở lane `YT` ở `work/backlog_YT.md` (T-348); bước YT-01 giao Codex ngay |
 | Vế 2026-11-22 | **chủ repo**: *"hãy yêu cầu codex làm backlog cho task trên và bạn kiểm tra từ db, be và fe"* (nói về `khoan-chi.html`) | **đang hiệu lực** — mở lane `KC` ở `work/backlog_KC.md` (T-363); chủ repo trả lời U-120…U-125 cùng ngày (T-364): gộp trang Kho và Nguyên liệu vào Khoản chi; bước kế là KC-01 (thiết kế, L3) |
 
 **Vế mới nói chính xác cái gì.** Chủ quán chọn *"Song song: hỏi chủ quán về admin trong khi pha 2
@@ -92,57 +93,81 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## Ready
 
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
-- [ ] T-343 **Trigger giữ số đếm của ngày đã ký không lấy khoá ngày, nên lệnh SQL thẳng chạy cùng lúc với lần ký vẫn lọt** — L3 (ADR-080, I-021), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database · [chi tiết](#t-343)
-- [ ] T-367 **Trang Yêu thích trên app lệch bản thiết kế `favourite.html` ở màu, thẻ món, tab lọc và hộp tạo bộ** — L1 (chỉ FE), mở 2026-11-22 từ nghiệm thu YT-07; chủ repo chọn lệch nào sửa trước khi làm · [chi tiết](#t-367)
 
 [↑ đầu file](#top)
 
 <a id="in-progress"></a>
 ## In Progress
 
+- [ ] KC-09 **Trang Khoản chi chưa có bảng tổng theo ngày, các khoản chi gom theo ngày, bảng khoản con ba cột và lịch sử chi riêng của từng khoản con** — L2 (hiện tiền từ backend), chủ repo yêu cầu 2026-11-23 (*"ok hãy tiếp tục giao cho codex làm bạn kiểm tra"*); Claude viết test trước, Codex làm trong `../lean_wt/KC-09`, Claude duyệt · [chi tiết](backlog_KC.md#kc-09)
+- [ ] T-367 **Trang Yêu thích trên app lệch bản thiết kế `favourite.html` ở màu, thẻ món, tab lọc và hộp tạo bộ** — L1 (chỉ FE), mở 2026-11-22 từ nghiệm thu YT-07; chủ repo chọn 2026-11-23 sửa điểm 3–6, không sửa màu nhấn và đầu trang; Codex làm, Claude duyệt · [chi tiết](#t-367)
+- [ ] T-343 **Trigger giữ số đếm của ngày đã ký không lấy khoá ngày, nên lệnh SQL thẳng chạy cùng lúc với lần ký vẫn lọt** — L3 (ADR-080, I-021), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; thiết kế được duyệt 2026-11-23 (Sửa đổi ADR-080), Claude viết test, Codex viết migration · [chi tiết](#t-343)
+- [x] T-368 **Tạo tài khoản khách thử để đăng nhập trang Yêu thích trên máy dev** — L1, chủ repo yêu cầu và xong 2026-11-23; tài khoản khách trong database làm việc đăng nhập và đọc Yêu thích đạt, thông tin ở `docs/command/tai-khoan-dev.md` · [chi tiết](#t-368)
 - [x] KC-07 **Backend chưa trả ước tính còn dùng của từng nguyên liệu: mức dùng 7 ngày có ghi, số ngày còn, Hết theo sổ** — L2 (hợp đồng đọc lượng, I-025), chủ repo yêu cầu 2026-11-23 (*"tiếp tục yêu cầu codex làm bạn kiểm tra"*); Claude viết test trước, Codex làm trong `../lean_wt/KC-07`, Claude duyệt và sửa phép chia, chủ repo xác nhận ba điểm suy ra · [chi tiết](backlog_KC.md#kc-07)
-- [x] YT-07 **Trang Yêu thích chưa được nghiệm thu trên app chạy so với bản thiết kế** — L1, sau YT-06; Codex viết kịch bản Playwright trong `../lean_wt/YT-07`, Claude chạy trên app thật và duyệt (nhận 2026-11-22) · [mô tả](backlog_YT.md#yt-07); **xong 2026-11-22**: kịch bản trên app thật `TONG pass=65 fail=0`; lệch so với bản thiết kế ghi thành T-367
-- [x] T-349 **Next.js 16.4.2 dính hai khuyến cáo bảo mật mới, `next build` lại dừng cách lượt** — L1 (đổi phụ thuộc `fe/`), chủ repo yêu cầu 2026-11-19; nâng `next` · `eslint-config-next` lên 16.4.6; Codex làm, Claude duyệt · [chi tiết](#t-349); **xong 2026-11-22**: `npm ls` 16.4.6, audit không còn `next`, `next build` hai lần exit 0
-- [x] T-332 **Gate 7b báo động giả khi chủ repo commit khối trước lúc hook chấm: file scope vừa bị hook dọn nên mọi file của khối bị coi là ngoài scope** — L1, mở 2026-11-16, F-081 (lần hai); Codex làm, Claude duyệt · [chi tiết](#t-332); **xong 2026-11-22**: Claude duyệt, test 7b đủ ca A1–A4, gate xanh
-- [x] T-329 **`db-check` mất hơn 700 giây mỗi lượt mà không ai biết thời gian nằm ở khối nào, và còn in một dòng `Broken pipe`** — L1 (chỉ đo và gỡ dòng nhiễu, không đổi điều kiện đạt/đỏ), mở 2026-11-16 theo Bước 6 của `work/proposals/danh-gia-he-thong-2026-11-11.md`; Codex làm, Claude duyệt và chạy `db-check` thật · [chi tiết](#t-329); **xong 2026-11-22**: Claude đo `db-check` 809 giây, khối đối chiếu 643 giây, không còn `Broken pipe`
+- [x] T-366 **Các khối dưới Mua nguyên liệu còn nhiều viền bao** — L1 (chỉ bản HTML xem thử), chủ repo yêu cầu và xong 2026-11-22; bỏ viền khung và căn hai lịch sử sát mép nội dung như Mua nguyên liệu · [chi tiết](#t-366)
+- [x] KC-06 **Backend chưa ghi được phần gộp Kho vào Khoản chi: cờ theo dõi lượng, xếp mục, một tên, ngừng dùng và dùng lại, chuyển mục, ngày nhập, ô lượng, thêm thứ kèm tiền** — L2 (cửa ghi tiền và lượng, hợp đồng), chủ repo yêu cầu 2026-11-22 (*"tiếp tục yêu cầu codex làm bạn kiểm tra"*); Claude viết test trước, Codex làm trong `../lean_wt/KC-06`, Claude duyệt và sửa ba chỗ, gate xanh 2026-11-22 · [chi tiết](backlog_KC.md#kc-06)
 - [x] KC-05 **Backend chưa trả tổng tiền theo ngày, chưa đọc được lịch sử một khoản con và ngày chi gần nhất ngoài bộ lọc** — L2 (hợp đồng đọc tiền), chủ repo yêu cầu 2026-11-22; Claude viết test trước rồi tự làm vì Codex hết hạn mức, chưa ai duyệt độc lập · [chi tiết](backlog_KC.md#kc-05)
 - [x] KC-02 **Database chưa nối mục chi với sổ nguyên liệu: chưa có cờ theo dõi lượng, nối một thứ một khoản con, ngừng dùng, ngày nhập** — L2, chủ repo yêu cầu 2026-11-22; Claude viết test trước, Codex làm migration, Claude làm nốt khi Codex hết hạn mức · [chi tiết](backlog_KC.md#kc-02)
-- [x] KC-08 **Trang Khoản chi thật chưa có bố cục gọn của bản HTML: khối chọn ngày, mục xếp dọc, đầu khối có Hiện/Ẩn** — L1 (chỉ FE, dùng API đang có), chủ repo yêu cầu 2026-11-22; Codex làm trong `../lean_wt/KC-08`, Claude duyệt · [chi tiết](backlog_KC.md#kc-08)
 - [x] KC-01 **Gộp Kho và Nguyên liệu vào Khoản chi chưa có thiết kế chốt: nối danh mục, ngày nhập, ngừng dùng, cửa gộp, ước tính** — L3, chủ repo yêu cầu 2026-11-22 (*"tiếp tục yêu cầu codex làm bạn kiểm tra"*); Claude viết ADR, chủ repo duyệt · [chi tiết](backlog_KC.md#kc-01)
+- [x] KC-08 **Trang Khoản chi thật chưa có bố cục gọn của bản HTML: khối chọn ngày, mục xếp dọc, đầu khối có Hiện/Ẩn** — L1 (chỉ FE, dùng API đang có), chủ repo yêu cầu 2026-11-22; Codex làm trong `../lean_wt/KC-08`, Claude duyệt · [chi tiết](backlog_KC.md#kc-08)
+- [x] T-365 **Khung Mua nguyên liệu còn viền ngoài** — L1 (chỉ bản HTML xem thử), chủ repo yêu cầu và xong 2026-11-22: bỏ viền khung ngoài riêng mục Mua nguyên liệu · [chi tiết](#t-365)
 - [x] T-364 **Lời chủ repo cho sáu câu của lane Khoản chi chưa vào owner, sổ KC còn các nhánh có điều kiện** — L1 (ghi lời đã nói, chỉ tài liệu), chủ repo yêu cầu và trả lời 2026-11-22: gộp Kho và Nguyên liệu vào Khoản chi; đóng U-120…U-125 · [chi tiết](#t-364)
 - [x] T-363 **Trang Khoản chi theo bản thiết kế chưa có lộ trình dựng thật từ database, backend tới giao diện** — L1 (mở lane, chỉ tài liệu), chủ repo yêu cầu 2026-11-22; Codex viết sổ `work/backlog_KC.md`, Claude kiểm từng bước với database, backend và FE đang có · [chi tiết](#t-363)
+- [x] YT-07 **Trang Yêu thích chưa được nghiệm thu trên app chạy so với bản thiết kế** — L1, sau YT-06; Codex viết kịch bản Playwright trong `../lean_wt/YT-07`, Claude chạy trên app thật và duyệt (nhận 2026-11-22) · [mô tả](backlog_YT.md#yt-07); **xong 2026-11-22**: kịch bản trên app thật `TONG pass=65 fail=0`; lệch so với bản thiết kế ghi thành T-367
+- [x] T-362 **Khối Tổng tiền theo khoảng ngày cần gọn hơn** — L1 (chỉ bản HTML xem thử), chủ repo yêu cầu và xong 2026-11-22; rút nội dung và bố cục chọn nhanh · [chi tiết](#t-362)
+- [x] T-361 **Bốn khu khoản chi cần đầu khối gọn và bảng mỗi ngày một hàng** — L1 (chỉ bản HTML xem thử), chủ repo yêu cầu và xong 2026-11-21; áp dụng cho Điện, nước; Đồ dùng cho quán; Sổ khoản chi; Các khoản chi · [chi tiết](#t-361)
+- [x] T-360 **Lịch sử mua hàng cần trình bày giống lịch sử sử dụng nguyên liệu** — L1 (chỉ bản HTML xem thử), chủ repo yêu cầu và xong 2026-11-21; tiêu đề và nút cùng hàng, bảng gộp theo ngày nhập · [chi tiết](#t-360)
 - [x] YT-06 **Thực đơn và trang chi tiết chưa có nút thả tim** — L1, sau YT-05; Codex làm trong `../lean_wt/YT-06`, Claude duyệt (nhận 2026-11-21) · [mô tả](backlog_YT.md#yt-06); **xong 2026-11-21**: `NutTim` trên thực đơn web và trang chi tiết, 22 test, `fe-check` 845/845
-- [x] YT-05 **Khách chưa có trang Yêu thích thật trên web** — L2, sau YT-04, theo `favourite.html`; Claude viết test trước `fe/src/app/khach/yeu-thich/yeu-thich.test.tsx`, Codex làm trong `../lean_wt/YT-05` trên nền YT-03 · YT-04 chưa commit (nhận 2026-11-20) · [mô tả](backlog_YT.md#yt-05); **xong 2026-11-21**: trang `/khach/yeu-thich`, 28 test FE, gate đủ ba bước xanh trên `657bfcb` (bước 49, hợp đồng 0.76.0)
-- [x] YT-04 **Chưa có API đọc và ghi món yêu thích theo tài khoản khách** — L2; Claude viết test trước `be/internal/yeuthich/http_test.go` (9 ca, đỏ 2026-11-20), Codex làm trong `../lean_wt/YT-04` trên nền YT-03 chưa commit · [mô tả](backlog_YT.md#yt-04); **xong trong worktree 2026-11-20**: chín `TestI045_*` và be-check 33/33 đạt, hợp đồng 0.74.0; thêm I-045; đưa về cây chính 2026-11-21 trên `657bfcb` (hợp đồng 0.76.0)
-- [x] YT-03 **Database chưa có chỗ cất món yêu thích và bộ món riêng của khách** — L2; Claude viết test trước `db/tests/yt03_customer_favourite.sql` (đỏ 2026-11-19), Codex làm trong `../lean_wt/YT-03` · [mô tả](backlog_YT.md#yt-03); **xong trong worktree 2026-11-20**: db-check và be-check 32/32 đạt; đưa về cây chính 2026-11-21 trên `657bfcb` (bước 49, hợp đồng 0.75.0)
-- [x] T-342 **Ngày bán và mốc ghi tiền không bị buộc khớp nhau ở database, chỉ phát hiện sau bằng bộ đối chiếu** — L2 (QD-31, tiền theo ngày), mở 2026-11-20 song song với T-341 (chủ repo: *"làm song song"*), ADR-146, Claude viết test trước `db/tests/qd31_sale_date_matches_booked_at.sql`, Codex làm trong `../lean_wt/T-342`; chủ repo yêu cầu 2026-11-16 sau bản đánh giá database · [chi tiết](#t-342)
-- [x] T-341 **Vai ứng dụng còn quyền sửa dòng đơn, nên dòng combo sửa được thành hình sai** — L2 (I-034), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; mở 2026-11-20 (*"tiếp tục yêu cầu codex làm task khác"*), Claude viết test trước `db/tests/i034_order_line_no_app_update.sql`, Codex làm trong `../lean_wt/T-341` · [chi tiết](#t-341)
-- [x] T-347 **Trang Vận hành và trang Tổng kết đọc chậm dần theo toàn bộ lịch sử bán (đo được 595 giây và 1,8 giây trên dữ liệu ba năm)** — L2 (câu đọc của I-019 và I-014, kết quả không được đổi), Claude mở 2026-11-18 từ số đo của T-340, làm 2026-11-20 (*"tiếp tục yêu cầu codex làm bạn kiểm tra"*): Claude viết test "kết quả không đổi" trước, Codex làm trong `../lean_wt/T-347` · F-083 · [chi tiết](#t-347)
+- [x] T-359 **Lịch sử sử dụng nguyên liệu cần liệt kê theo từng ngày** — L1 (chỉ bản HTML xem thử), chủ repo bổ sung và xong 2026-11-21: mỗi ngày một hàng; đầu khối chỉ còn tiêu đề và nút Hiện/Ẩn cùng hàng · [chi tiết](#t-359)
+- [x] T-358 **Bộ lọc ngày của nguyên liệu cần mở bằng nút ngay tại đầu bảng** — L1 (chỉ bản HTML xem thử), chủ repo yêu cầu và xong 2026-11-21; nút Lọc ngày mở hai ô chọn ngày và giữ lọc khi thu gọn · [chi tiết](#t-358)
+- [x] T-357 **Hai lịch sử nguyên liệu cần nằm cùng hàng và có nút Ẩn/Hiện riêng** — L1 (chỉ bản HTML xem thử), chủ repo yêu cầu và xong 2026-11-21; hai khung cạnh nhau trên màn rộng, nút Ẩn/Hiện độc lập · [chi tiết](#t-357)
+- [x] T-356 **Điện nước và đồ dùng chưa mở chi tiết, lịch sử theo từng khoản con như nguyên liệu** — L1 (chỉ bản HTML xem thử), chủ repo yêu cầu và xong 2026-11-21; nút tên mở chi tiết ngay dưới dòng, nút lịch sử xem các lần chi trong 7 ngày và chọn khoảng ngày · [chi tiết](#t-356)
+- [x] T-355 **Chi tiết nguyên liệu thiếu nút xem lịch sử dùng theo tuần và khoảng ngày** — L1 (chỉ bản HTML xem thử), chủ repo yêu cầu và xong 2026-11-21; nút Lịch sử sử dụng trong chi tiết từng nguyên liệu, mặc định 7 ngày và chọn khoảng ngày · [chi tiết](#t-355)
 - [x] T-354 **Ba thông tin của mỗi nguyên liệu bị xếp thành nhiều dòng trên điện thoại** — L1 (chỉ bản HTML xem thử), chủ repo yêu cầu và xong 2026-11-21; tên, ước tính còn dùng và lượng còn lại nằm cùng một hàng, chi tiết vẫn mở ngay dưới hàng được chọn · [chi tiết](#t-354)
 - [x] T-353 **Bảng Mua nguyên liệu cần xem nhanh số còn và mở chi tiết từng thứ** — L1 (bản HTML xem thử), chủ repo yêu cầu 2026-11-20 và bổ sung vị trí mở chi tiết; xong 2026-11-20: bảng ba cột, nút tên mở trượt chi tiết ngay dưới dòng được chọn, lịch sử sử dụng theo thứ đang chọn · [chi tiết](#t-353)
-- [x] T-307 **Chủ quán chưa đổi được ảnh món lẻ ở `/chu-quan/san-pham`: ảnh vẫn chọn theo tên món viết cứng trong code** — L2 (cột `menu_item.image_code`, hai cửa API, ghi tệp), chủ repo yêu cầu lại 2026-11-19; hồi sinh bản Codex làm 2026-11-07 ở `../lean_wt/T-307` (chưa ghép, chưa duyệt) lên nền `e69d481` theo ADR-142 điểm 4; Codex làm, Claude duyệt · [chi tiết](#t-307)
+- [x] T-347 **Trang Vận hành và trang Tổng kết đọc chậm dần theo toàn bộ lịch sử bán (đo được 595 giây và 1,8 giây trên dữ liệu ba năm)** — L2 (câu đọc của I-019 và I-014, kết quả không được đổi), Claude mở 2026-11-18 từ số đo của T-340, làm 2026-11-20 (*"tiếp tục yêu cầu codex làm bạn kiểm tra"*): Claude viết test "kết quả không đổi" trước, Codex làm trong `../lean_wt/T-347` · F-083 · [chi tiết](#t-347)
+- [x] T-342 **Ngày bán và mốc ghi tiền không bị buộc khớp nhau ở database, chỉ phát hiện sau bằng bộ đối chiếu** — L2 (QD-31, tiền theo ngày), mở 2026-11-20 song song với T-341 (chủ repo: *"làm song song"*), ADR-146, Claude viết test trước `db/tests/qd31_sale_date_matches_booked_at.sql`, Codex làm trong `../lean_wt/T-342`; chủ repo yêu cầu 2026-11-16 sau bản đánh giá database · [chi tiết](#t-342)
+- [x] T-341 **Vai ứng dụng còn quyền sửa dòng đơn, nên dòng combo sửa được thành hình sai** — L2 (I-034), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; mở 2026-11-20 (*"tiếp tục yêu cầu codex làm task khác"*), Claude viết test trước `db/tests/i034_order_line_no_app_update.sql`, Codex làm trong `../lean_wt/T-341` · [chi tiết](#t-341)
+- [x] YT-05 **Khách chưa có trang Yêu thích thật trên web** — L2, sau YT-04, theo `favourite.html`; Claude viết test trước `fe/src/app/khach/yeu-thich/yeu-thich.test.tsx`, Codex làm trong `../lean_wt/YT-05` trên nền YT-03 · YT-04 chưa commit (nhận 2026-11-20) · [mô tả](backlog_YT.md#yt-05); **xong 2026-11-21**: trang `/khach/yeu-thich`, 28 test FE, gate đủ ba bước xanh trên `657bfcb` (bước 49, hợp đồng 0.76.0)
+- [x] T-352 **Bản HTML Khoản chi chưa có lịch sử mua nguyên liệu dễ tìm** — L1 (chỉ bản xem thử), chủ repo yêu cầu và xong 2026-11-20; hiện từng lần mua với ngày nhập, ngày chi, mặt hàng và số tiền · [chi tiết](#t-352)
+- [x] T-351 **Bản HTML Khoản chi chưa có lịch sử nguyên liệu đã dùng theo từng ngày** — L1 (chỉ bản xem thử), chủ repo yêu cầu và xong 2026-11-20; dưới danh mục nguyên liệu có lịch sử theo ngày, lọc từng thứ và trạng thái chưa có lần ghi · [chi tiết](#t-351)
+- [x] YT-04 **Chưa có API đọc và ghi món yêu thích theo tài khoản khách** — L2; Claude viết test trước `be/internal/yeuthich/http_test.go` (9 ca, đỏ 2026-11-20), Codex làm trong `../lean_wt/YT-04` trên nền YT-03 chưa commit · [mô tả](backlog_YT.md#yt-04); **xong trong worktree 2026-11-20**: chín `TestI045_*` và be-check 33/33 đạt, hợp đồng 0.74.0; thêm I-045; đưa về cây chính 2026-11-21 trên `657bfcb` (hợp đồng 0.76.0)
 - [x] T-350 **Bản HTML Khoản chi chưa hiện ngày nhập và ước tính hàng còn dùng được bao nhiêu ngày** — L1 (chỉ bản thiết kế minh hoạ), chủ repo yêu cầu 2026-11-19, xong 2026-11-20; ngày nhập tách ngày chi, số còn và mức tiêu thụ tự nhập, ước tính ngày còn; Codex làm · [chi tiết](#t-350)
+- [x] T-307 **Chủ quán chưa đổi được ảnh món lẻ ở `/chu-quan/san-pham`: ảnh vẫn chọn theo tên món viết cứng trong code** — L2 (cột `menu_item.image_code`, hai cửa API, ghi tệp), chủ repo yêu cầu lại 2026-11-19; hồi sinh bản Codex làm 2026-11-07 ở `../lean_wt/T-307` (chưa ghép, chưa duyệt) lên nền `e69d481` theo ADR-142 điểm 4; Codex làm, Claude duyệt · [chi tiết](#t-307)
+- [x] T-349 **Next.js 16.4.2 dính hai khuyến cáo bảo mật mới, `next build` lại dừng cách lượt** — L1 (đổi phụ thuộc `fe/`), chủ repo yêu cầu 2026-11-19; nâng `next` · `eslint-config-next` lên 16.4.6; Codex làm, Claude duyệt · [chi tiết](#t-349); **xong 2026-11-22**: `npm ls` 16.4.6, audit không còn `next`, `next build` hai lần exit 0
+- [x] YT-03 **Database chưa có chỗ cất món yêu thích và bộ món riêng của khách** — L2; Claude viết test trước `db/tests/yt03_customer_favourite.sql` (đỏ 2026-11-19), Codex làm trong `../lean_wt/YT-03` · [mô tả](backlog_YT.md#yt-03); **xong trong worktree 2026-11-20**: db-check và be-check 32/32 đạt; đưa về cây chính 2026-11-21 trên `657bfcb` (bước 49, hợp đồng 0.75.0)
+- [x] YT-02 **Chưa chốt món yêu thích của khách lưu gì, ở đâu, và món ngừng bán thì hiện ra sao** — L2, xong 2026-11-19: Claude soạn ADR-145, chủ repo chọn *"Duyệt, giao Codex làm"*; U-119 đóng (*"Mời đăng nhập"*); route `/khach/yeu-thich` dự kiến ở `01-khung-fe.md` · [mô tả](backlog_YT.md#yt-02)
+- [x] YT-01 **Bản thiết kế trang Yêu thích còn món bịa, chưa theo menu và giá thật của database quán** — L1 (tệp HTML mẫu, không đổi hành vi app), chủ repo yêu cầu 2026-11-18; dữ liệu chụp từ `GET /menu` và `POST /price-quotes` của app đang chạy, thay phiếu `prompt/t-345.md`; Codex làm, Claude duyệt, xong cùng ngày: 7 món lẻ, 7 combo, 33 ô giá khớp database; trình duyệt 20/20 đạt ở 360px và 430px · [mô tả](backlog_YT.md#yt-01)
+- [x] T-348 **Trang Yêu thích chưa có lộ trình dựng thật từ database, backend tới giao diện** — L1 (mở lane, chỉ tài liệu), chủ repo yêu cầu 2026-11-18; sổ `work/backlog_YT.md` bảy bước, dòng §2 ở `CLAUDE.md`, mở U-119 · [chi tiết](#t-348)
+- [x] T-346 **Bản thiết kế thứ hai cho trang Yêu thích: Mâm quen và món đã thả tim theo nhân, menu thật** — L1 (tệp HTML mẫu mới, không đổi hành vi app), chủ repo yêu cầu 2026-11-18, xong cùng ngày; `favourite/mon-quen.html`, danh mục 13 món khớp §4.9 · §4.3; Codex làm, Claude duyệt và chạy trình duyệt · [chi tiết](#t-346)
+- [x] T-344 **`next build` tự dừng một lần mỗi khi Next.js có khuyến cáo bảo mật mới, làm gate lúc đỏ lúc xanh — lần hai (F-076)** — L1, xong 2026-11-18; `fe-check` nhận ra đúng lời dừng, chạy lại build đúng một lần và in `NOTE` mỗi lượt cho tới khi `next` được nâng; nâng `next` lên 16.4.6 vẫn chờ chủ repo quyết; Codex làm một vòng, Claude duyệt · [chi tiết](#t-344)
 - [x] T-340 **Bảng vết và bốn đường đọc chính chưa có chỉ mục, mỗi lần tính giá quét cả lịch sử sửa** — L2 (lược đồ; không đổi dữ liệu hay hành vi), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; Codex làm song song với T-339 từ 2026-11-17 (scope không chạm nhau), Claude duyệt · [chi tiết](#t-340)
 - [x] T-339 **Bộ đối chiếu vết kêu oan với vết không người của mã xác nhận Gmail và sổ gọi model** — L2 (I-018), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; Codex làm, Claude duyệt · [chi tiết](#t-339)
 - [x] T-338 **Ngăn Cập nhật món trên trang Sản phẩm báo lỗi hai phần tử trùng key** — L1 (chỉ đổi key React, không đổi hành vi), chủ repo báo 2026-11-16; Codex làm, Claude duyệt · [chi tiết](#t-338)
-- [x] T-344 **`next build` tự dừng một lần mỗi khi Next.js có khuyến cáo bảo mật mới, làm gate lúc đỏ lúc xanh — lần hai (F-076)** — L1, xong 2026-11-18; `fe-check` nhận ra đúng lời dừng, chạy lại build đúng một lần và in `NOTE` mỗi lượt cho tới khi `next` được nâng; nâng `next` lên 16.4.6 vẫn chờ chủ repo quyết; Codex làm một vòng, Claude duyệt · [chi tiết](#t-344)
+- [x] T-337 **Nút Thêm tất cả vào giỏ trên trang Yêu thích không nổi theo màn hình** — L1 (chỉ đổi vị trí khi cuộn trong bản HTML mẫu), xong 2026-11-16; chân trang cuộn theo nội dung, nút vẫn thêm tất cả món; gate đạt · [chi tiết](#t-337)
+- [ ] T-336 **Khối chứng minh bộ đối chiếu của `db-check` chạy 165 file cài lỗi nối tiếp trong một phiên, mất 567 trên 726 giây** — L1 (đổi cách chạy, không đổi điều được kiểm), mở 2026-11-16 theo Bước 6 của `work/proposals/danh-gia-he-thong-2026-11-11.md`, sau số đo của T-329; Codex làm, Claude duyệt bằng Docker và phép cài lỗi · [chi tiết](#t-336)
 - [x] T-335 **Thu gọn điều hướng 14 trang chủ quán** — L1 (chỉ đổi cách hiển thị và mở trang, giữ route và quyền), xong 2026-11-16; ba trang theo dõi hiện trực tiếp, các trang còn lại gom thành ba nhóm; test 16/16 và gate đạt · [chi tiết](#t-335)
 - [x] T-334 **Gộp duyệt đơn vào Cộng thử ghép đơn trên trang Vận hành** — L1 (đổi vị trí thao tác, giữ API và quyền), xong 2026-11-16; bỏ khối Đơn chờ xác nhận riêng, xử lý đơn trong Cộng thử ghép đơn; test 33/33 và gate đạt · [chi tiết](#t-334)
 - [x] T-333 **Thiết kế lại bản mẫu Tổng quan chủ quán theo dữ liệu đang chạy trên máy dev** — L1 (chỉ bản HTML tĩnh, không đổi FE hay hợp đồng), chủ repo giao 2026-11-16; cập nhật bố cục, trạng thái thiếu dữ liệu và điều hướng theo `/chu-quan` · [chi tiết](#t-333)
+- [x] T-332 **Gate 7b báo động giả khi chủ repo commit khối trước lúc hook chấm: file scope vừa bị hook dọn nên mọi file của khối bị coi là ngoài scope** — L1, mở 2026-11-16, F-081 (lần hai); Codex làm, Claude duyệt · [chi tiết](#t-332); **xong 2026-11-22**: Claude duyệt, test 7b đủ ca A1–A4, gate xanh
 - [ ] T-331 **`make dev-iphone` chỉ có trong worktree Codex, gõ ở repo chính thì báo không có lệnh** — L2 (Origin của dev server và cookie phiên), mở 2026-11-16 theo yêu cầu chủ repo; đưa bản Codex làm dưới nhãn T-328 (trùng mã với việc bố cục Combo) từ `codex/T-328-iphone` vào cây chính · [chi tiết](#t-331)
 - [x] T-330 **`fe-check` coi thư mục `fe/node_modules` rỗng là đã cài, nên đỏ bằng một lỗi `ENOENT` khó hiểu thay vì tự cài lại** — L1, xong 2026-11-16; script kiểm công cụ nó sắp gọi trước và sau một lần `npm ci`, không cài được thì nêu tên thứ thiếu và lệnh cần chạy; Codex làm một vòng, Claude duyệt; gate đạt · [chi tiết](#t-330)
+- [x] T-329 **`db-check` mất hơn 700 giây mỗi lượt mà không ai biết thời gian nằm ở khối nào, và còn in một dòng `Broken pipe`** — L1 (chỉ đo và gỡ dòng nhiễu, không đổi điều kiện đạt/đỏ), mở 2026-11-16 theo Bước 6 của `work/proposals/danh-gia-he-thong-2026-11-11.md`; Codex làm, Claude duyệt và chạy `db-check` thật · [chi tiết](#t-329); **xong 2026-11-22**: Claude đo `db-check` 809 giây, khối đối chiếu 643 giây, không còn `Broken pipe`
 - [x] T-328 **Trang Combo cần cùng cách bày với trang Sản phẩm** — L1 (đổi giao diện và cách mở chi tiết, không đổi giá hay cửa ghi), xong 2026-11-13 theo yêu cầu chủ repo; bảng combo, đầu trang và ngăn chi tiết theo khuôn Sản phẩm; giữ tìm, lọc và thao tác cũ; test 22/22 và gate đạt · [chi tiết](#t-328)
+- [x] T-327 **Hai ca `--amend` của test Gate 8 đỏ ở nơi `ps` bị chặn, làm gate của Codex đỏ không do diff** — L1 (test tự nói khi không kiểm được, hook nói rõ lý do; không nới luật trùng subject), xong 2026-11-12, F-079; ở nơi `ps` bị chặn hai ca được nêu tên là không kiểm được thay vì đỏ, lời từ chối của hook giải thích và chỉ đường `--amend --no-verify`; Codex làm một vòng, Claude duyệt; gate đạt · [chi tiết](#t-327)
 - [x] T-326 **Tổng thiếu theo bàn có cột Canh nhưng giò không có chỗ hiện để đem ra** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-12; ở riêng mục này cột *Canh* thay bằng cột *Giò*, *Bàn đang phục vụ* giữ nguyên; Codex làm, Claude duyệt; fe-check 790/790 và gate đạt · [chi tiết](#t-326)
-- [x] T-318 **Cột Khác ở Tổng thiếu theo bàn hiện "N nước chấm" làm nhân viên hiểu sai** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; chủ repo chọn bỏ hẳn cột Khác khỏi mục này (cả giò lẫn nước chấm), *Bàn đang phục vụ* giữ cột Khác; Claude làm; fe-check và gate đạt · [chi tiết](#t-318)
 - [x] T-325 **`db-check` đỏ ngay ở bản đã commit: I-043 và I-044 không có câu đối chiếu và không có dòng lý do ở bộ đối chiếu** — L1 (chỉ tài liệu ánh xạ, không đổi bất biến), xong 2026-11-12, F-080; thêm hai dòng §2.1 nêu vì sao hai mệnh đề không đọc lại được từ dữ liệu và test tầng 3 nào giữ chúng; Codex làm, Claude duyệt và chạy `db-check` đạt · [chi tiết](#t-325)
 - [x] T-324 **Mỗi lượt gate chạy lại mọi `scripts/*.test.sh` dù không script nào đổi, mất 94 trên 143 giây** — L1 (đổi điều kiện chạy một bước của Gate 1), xong 2026-11-12 theo Bước 6 của bản đánh giá; test của script chỉ chạy khi `scripts/` hay đầu vào riêng của từng file đổi, brief tự báo khi vượt trần; lượt không đổi `scripts/` ở cây chính còn 49 giây; Codex làm hai vòng, Claude duyệt; gate đạt · [chi tiết](#t-324)
-- [ ] T-323 **Sáu finding "gate đỏ rồi chạy lại thì xanh" chưa được chữa chung: các gói test Go dùng chung một database, F-078 chưa rõ nguyên nhân** — L2, mở 2026-11-11 theo Bước 9 của `work/proposals/danh-gia-he-thong-2026-11-11.md`; lát 1 (L1, Codex làm, Claude duyệt, mở 2026-11-12): `db-check` không gỡ database `be-check` giữ lại và test combo tự khai ca quầy gây lỗi; lát 2 (tách database theo gói) chờ Claude thiết kế và viết test trước · [chi tiết](#t-323)
+- [x] T-323 **Sáu finding "gate đỏ rồi chạy lại thì xanh" chưa được chữa chung: các gói test Go dùng chung một database, F-078 chưa rõ nguyên nhân** — L2, ADR-144, xong 2026-11-12 theo Bước 9 của `work/proposals/danh-gia-he-thong-2026-11-11.md`; lát 1: `db-check` không gỡ database được giữ, test combo tự khai ca quầy gây lỗi; lát 2: mỗi gói test Go một database riêng, lỗi dữ liệu của một gói không còn làm đỏ gói khác; Claude viết test hồi quy trước, Codex làm, Claude duyệt bằng Docker và phép cài lỗi; gate đạt; F-078 vẫn mở · [chi tiết](#t-323)
 - [x] T-322 **`README.md` vẽ cây thư mục cũ và bảng mục lục viết tay của `work/findings.md` lệch từ F-060** — L1 (chỉ tài liệu), xong 2026-11-11 theo Bước 8 của `work/proposals/danh-gia-he-thong-2026-11-11.md`; cây thư mục chỉ còn đường dẫn có thật, bảng mục lục thay bằng cách xem finding đang mở; Codex làm, Claude duyệt; gate đạt · [chi tiết](#t-322)
 - [x] T-321 **Gate không in thời gian từng cổng nên chưa biết 231 giây nằm ở đâu so với hạn hook 180 giây** — L1 (chỉ đo, không đổi điều kiện đạt/đỏ), xong 2026-11-11 theo Bước 6 của bản đánh giá; gate in thời gian từng cổng, từng bước Gate 1 và ba test chậm nhất; đo ở cây chính: 222 giây, trong đó Gate 3 chiếm 106 giây; Codex làm, Claude duyệt; gate đạt · [chi tiết](#t-321)
 - [x] T-320 **Không có gì dọn sau commit: file scope và dòng đã xong tồn lại vì bước dọn rơi vào lúc không phiên nào chạy** — L1, xong 2026-11-11 theo Bước 4 của bản đánh giá; hook `post-commit` xoá scope của việc đã tick, `scripts/archive-done.sh` chuyển việc đã xong sang Done và archive (chưa chạy `--apply` trên backlog thật); Codex làm, Claude duyệt và sửa nốt một lỗi; gate đạt · [chi tiết](#t-320)
 - [x] T-319 **Scope của việc đã xong làm Gate 3 cho qua gần mọi file và làm brief phình tới mức không tới được phiên Claude** — L1 (đổi hành vi hai script gác, không đổi dữ liệu), ADR-143, xong 2026-11-11 theo Bước 2 và Bước 3 của bản đánh giá; Gate 3 bỏ qua scope của việc đã rời In Progress, brief từ 141 KB còn 6,9 KB và in đúng ADR mới nhất; Codex làm, Claude duyệt và sửa nốt hai điểm; gate đạt · [chi tiết](#t-319)
+- [x] T-318 **Cột Khác ở Tổng thiếu theo bàn hiện "N nước chấm" làm nhân viên hiểu sai** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; chủ repo chọn bỏ hẳn cột Khác khỏi mục này (cả giò lẫn nước chấm), *Bàn đang phục vụ* giữ cột Khác; Claude làm; fe-check và gate đạt · [chi tiết](#t-318)
 - [x] T-317 **Nút chuyển chế độ của từng bàn ở Tổng thiếu theo bàn là chữ dài, chiếm chỗ ô bàn** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; nút *Chi tiết đem ra* / *Xem đơn đã đặt* thành nút icon, giữ tên truy cập và `aria-pressed`; Codex làm, Claude duyệt; fe-check 784/784 và gate đạt · [chi tiết](#t-317)
 - [x] T-316 **Dòng món ở Tổng thiếu theo bàn và Cộng thử ghép đơn dài như hoá đơn nên nhân viên khó đọc nhanh** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; mỗi dòng gọn thành "số + tên ngắn + lựa chọn" (ví dụ "1 canh không rau"), bỏ giá, suất trong combo và dòng tổng ở hai mục này; Claude làm; fe-check và gate đạt · [chi tiết](#t-316)
+- [ ] T-315 **Combo chưa có nút Sửa nên chủ quán không đổi được tên, món, ảnh của combo** — L3, ADR-142, I-032, mở 2026-11-10; dùng bản cũ T-309 (sửa tên · giá · món) và T-307 (ảnh món) làm nền, thêm ảnh combo và hộp thoại *Sửa combo* ba phần; Codex làm, Claude duyệt · [chi tiết](#t-315)
+- [x] T-314 **Tổng thiếu theo bàn chỉ hiện số theo cột nên lúc đầu khó đọc bàn đã đặt gì** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-10; mỗi hàng bàn mặc định hiện dòng món như đơn khách đặt, nút *Chi tiết đem ra* của từng bàn chuyển sang ô cột và ô đem ra; Codex làm, Claude duyệt; fe-check 766/766 và gate đạt · [chi tiết](#t-314)
 - [x] T-313 **Vận hành chỉ đếm theo thành phần nên chủ quán không thấy dòng món của bàn như ở Đơn chờ** — L2 (thêm trường vào hợp đồng API), xong 2026-11-09; `GET /service-board` thêm `lines` và `lines_total_vnd` cho mỗi phiên, hợp đồng 0.71.0; *Cộng thử ghép đơn* thay hàng cột bằng dòng món, *Tổng thiếu theo bàn* giữ cột và ô đem ra, thêm dòng món khi mở chi tiết bàn; Codex làm, Claude sửa nốt và duyệt; be-check, fe-check 745/745 và gate đạt · [chi tiết](#t-313)
 - [x] T-312 **Máy dev không đặt được đơn ngoài giờ bán nên không thử được luồng khách → Vận hành** — L2, ADR-141, xong 2026-11-09; cờ `BANHCUON_DEV_BO_GIO_BAN` (make dev bật sẵn, chỉ origin localhost) bỏ riêng điều kiện giờ bán; Claude viết test trước, Codex làm, Claude duyệt; be-check và gate đạt, đơn QR thử lúc 13:21 hiện ở hàng chờ chủ quán · [chi tiết](#t-312)
 
@@ -151,11 +176,27 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 - [x] CHAT-15 **Chat chưa gọi được cửa giao việc mà vẫn giữ quyền đánh dấu** — L2, ADR-140 điểm 2 · 4 · 7, xong lát BE 2026-11-09; Claude viết test trước, Codex dựng bốn công cụ ghi `giao_viec` · `sua_viec` · `an_viec` · `danh_dau_viec` chỉ sinh đề xuất cho lớp `quay_hoac_chu_quan`, nội dung việc và tên người không tới model, hợp đồng 0.69.0; be-check và gate đạt; **xong lát FE 2026-11-09**: `cuaGhiChat` có bốn cửa giao việc, thẻ giao mới có ô chọn người nhận từ `GET /people`; Claude viết test trước, Codex làm, Claude duyệt, fe-check 743/743 và gate đạt; còn đọc lại sau ghi và eval model thật (chờ `U-112`); trước đó còn dòng `cuaGhiChat` FE và ô chọn người nhận · [mô tả](backlog_CHAT.md#chat-15)
 - [x] CHAT-11 **Người dùng chưa nhìn thấy rõ điều mình sắp ghi** — L2, ADR-140 điểm 3 · 4 · 5 · 6, xong 2026-11-09; Claude viết test trước, Codex dựng `TheDeXuat` ở `HoiQuan` mặt người làm (bản chụp bất biến, gọi qua bảng `cuaGhiChat` rỗng ở bản chạy, dấu FE sinh, chưa rõ kết quả, hết hạn 10 phút); fe-check 727/727 và gate đạt; chưa nhóm ghi nào mở · [mô tả](backlog_CHAT.md#chat-11)
 
+- [x] T-311 **Khách đặt món bị từ chối mà không thấy lời báo** — L1, xong 2026-11-08; lời báo của phiếu khách chuyển xuống ngay trên nút đặt, câu ngoài giờ nói rõ đơn chưa gửi; Codex làm, Claude duyệt, test 42/42 và gate đạt · [chi tiết](#t-311)
+
 - [x] CHAT-10 **Lời model chưa có ranh giới giữa đề xuất và thực thi** — L2, ADR-140, xong 2026-11-08; Claude viết test trước, Codex dựng khung công cụ ghi chỉ sinh đề xuất (`LuotCoGhi`, danh sách rỗng ở bản chạy) và `proposal` của `askChat`, hợp đồng 0.68.0; be-check đạt; tiếp theo `CHAT-11` (thẻ FE) · [mô tả](backlog_CHAT.md#chat-10)
 
 - [x] CHAT-02 **Lượt ba: thẻ lệnh ghi chưa có thiết kế nên CHAT-10 chưa giao được** — L3, xong 2026-11-08; Claude soạn ADR-140 (thẻ chỉ là đề xuất, người bấm gọi đúng cửa màn tay, không đường ghi mới, model không điền người), chủ repo chọn *"Duyệt, giao Codex làm"*; thêm `I-044` · [mô tả](backlog_CHAT.md#chat-02)
 
 - [x] T-306 **Đơn QR mới hiện ngay trên trang Vận hành đang mở** — L1, xong 2026-11-06; nhận tín hiệu sau khi khách đồng ý đặt món và đọc lại bảng từ backend; test 17/17 và gate đạt · [chi tiết](#t-306)
+
+
+
+- [ ] T-303 **Thu gọn giá trong bảng Sản phẩm** — L1, chủ repo yêu cầu 2026-11-05; mặc định hiện Thịt · Thường khi có, mở xem đủ các giá còn lại · [chi tiết](#t-303)
+
+
+
+- [x] T-295 **Canh bánh cuốn hiện ba nút chọn mức rau trên menu khách** — L1, chủ repo yêu cầu 2026-11-05; ba nút chọn trên thẻ món, test 16/16 và gate đạt · [chi tiết](#t-295)
+
+- [ ] T-294 **Dùng ảnh mới cho mọi thẻ combo trên menu khách** — L1, chủ repo giao Codex 2026-11-04; ảnh nguồn trong `docs/private/anh/final/` · [chi tiết](#t-294)
+
+- [ ] T-293 **Dùng ảnh mới cho combo Đầy đủ trứng chín trên menu khách** — L1, chủ repo giao Codex 2026-11-04; ảnh nguồn trong `docs/private/anh/anh-kick-co4-3/` · [chi tiết](#t-293)
+
+- [ ] T-292 **Xoay ảnh Suất giò 180 độ trên menu khách** — L1, chủ repo giao Codex 2026-11-04; giữ các ảnh khác nguyên chiều · [chi tiết](#t-292)
 
 - [ ] T-286 **Chưa có số đo thật để chọn model cho chat** — L1, chủ repo chọn *"Chạy thử qua API cả ba"* 2026-11-03 (`U-112`); Codex dựng bộ thử ngoài repo, Claude duyệt đạt 2026-11-03; chờ chủ repo tạo khoá API và chạy thật · [chi tiết](#t-286)
 - [ ] T-279 **Bản HTML chi tiết món kể chuyện theo cuộn** — L1, chủ repo giao Codex 2026-10-31; dựa trên ý tưởng đầy đủ và mẫu Paris · [chi tiết](#t-279)
@@ -211,18 +252,32 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 - [x] T-308 **Chủ quán nhận và xử lý đơn mới trên trang Vận hành** — L2, xong 2026-11-08; chủ quán xem món của đơn chờ, duyệt hay từ chối ngay trên Vận hành, trang mở được tính là quán nhìn thấy đơn; Codex làm, Claude duyệt, chủ repo xác nhận luật; be-check, test FE 342/342 và gate đạt · [chi tiết](#t-308)
 - [x] CHAT-09 **Số hỏi trong chat chưa có mốc đọc và chưa tách người dùng** — L2, ADR-139 điểm 2 · 8 · 9; 2026-11-08 Codex dựng mặt người làm của `HoiQuan` (tên nguồn nội bộ, mốc giờ:phút:giây, lời mốc đọc hay cảnh báo không nguồn, link màn tay theo khung, 401 nhắc đăng nhập), `OChat` truyền `khung`; Claude viết test trước, sửa một lỗi kiểu của mình và duyệt; fe-check 702/702 và gate đạt; **chưa có biên bản chỉ đọc** (nhà giả chỉ gọi `doc_menu`), CHAT-10 không mở trước nó · [mô tả](backlog_CHAT.md#chat-09)
 - [x] CHAT-08 **Người làm chưa hỏi được số theo bàn và theo quyền bằng chat** — L2, ADR-139 điểm 7 · 9 và *Sửa đổi 2026-11-06*; 2026-11-06 Codex dựng `NguonNoiBo` với ba công cụ đọc theo lớp (`doc_bang_tram` · `doc_bang_phuc_vu` · `doc_tong_quan`) và phép chiếu bỏ tên, id người, hợp đồng 0.66.0; Claude viết test trước (`I-043`), sửa hai sót của mình và duyệt; be-check, eval CHAT-06 và gate đạt; chưa có FE (CHAT-09) · [mô tả](backlog_CHAT.md#chat-08)
+- [x] T-305 **Giảm nền cam trong hộp xác nhận đặt món** — L1, xong 2026-11-05; bỏ nền cam ở phần đầu và tổng tiền, giữ nút xác nhận nổi bật · [chi tiết](backlog_archive.md#t-305)
+
+- [x] T-304 **Làm hộp xác nhận đặt món trên bàn rõ và có màu hơn** — L1, xong 2026-11-05; tông cam sáng/tối và thẻ món dễ đọc, kiểm trên điện thoại · [chi tiết](backlog_archive.md#t-304)
 
 - [x] T-302 **Khách xem lại đơn trước khi đặt tại bàn** — L2, xong 2026-11-05; huỷ giữ giỏ, đồng ý mới gửi, kiểm thử 35/35 · [chi tiết](backlog_archive.md#t-302)
 
 - [x] T-300 **Nút chat của khách là chữ nhỏ, khó thấy và đè nút món** — L1, xong 2026-11-05; nút nổi tròn cam *Trợ lý bánh cuốn* góc phải dưới, bấm lại để đóng; Codex làm, Claude duyệt; fe-check 672/672, gate và ảnh chụp Playwright đạt · [chi tiết](#t-300)
+- [x] T-301 **Chọn số bát canh riêng theo từng mức rau** — L1, xong 2026-11-05; test 16/16 và gate đạt · [chi tiết](backlog_archive.md#t-301)
+
+- [x] T-300 **Bỏ khung viền ngoài bảng canh đã chọn** — L1, xong 2026-11-05; gate đạt · [chi tiết](backlog_archive.md#t-300)
+
 - [x] T-299 **Chạy `make dev` thường không thấy nút chat** — L1, xong 2026-11-05; `Makefile` mặc định máy dev `NEXT_PUBLIC_CHAT_ENABLED ?= true` · `CHAT_MODEL_PROVIDER ?= gia`, đặt trống hay `tat` để tắt; Codex làm, Claude duyệt, `make -n` và gate đạt · [chi tiết](#t-299)
+- [x] T-298 **Thẻ Canh bánh cuốn hiện số bát theo mức rau** — L1, xong 2026-11-05; test 16/16 và gate đạt · [chi tiết](backlog_archive.md#t-298)
+
 - [x] CHAT-07 **Ô chat công khai chưa nối hỏi đáp đã qua kiểm** — L1, chủ repo yêu cầu 2026-11-05; Codex dựng `HoiQuan` (`askChat`, huỷ khi đóng, suy giảm có link `/dat-mon`), `OChatKhach` ở layout gốc cho mọi trang khách và thẻ *Hỏi quán* trong `OChat` ở ba khung, cùng cờ tắt mặc định; Claude duyệt, sửa test ba thẻ của CHAT-32; fe-check 669/669 và gate đạt; chưa diễn trên trình duyệt · [mô tả](backlog_CHAT.md#chat-07)
+- [x] T-297 **Tóm tắt canh bánh cuốn hiện số bát và mức rau** — L1, xong 2026-11-05; test 16/16 và gate đạt · [chi tiết](backlog_archive.md#t-297)
+
 - [x] CHAT-06 **Chưa có bộ kiểm chữ ngăn trả sai giá và làm theo lời chèn lệnh** — L2, ADR-136 điểm 8 · ADR-139 Consequences; 2026-11-05 Codex dựng người chấm tất định và bộ chạy `be/internal/troly/danhgia` (qua `troly.Lop`, mỗi lần gọi một dòng sổ); Claude viết 21 ca và test trước, sửa hai lỗi của mình khi chạy thật và duyệt; trên nhà giả `ket_luan=mo_duoc`, P04 trượt ghim `U-118`; chạy lại khi có model thật · [mô tả](backlog_CHAT.md#chat-06)
 - [x] T-296 **Tài khoản dev không đăng nhập được bằng tên trong hướng dẫn** — L1, chủ repo yêu cầu 2026-11-05 tạo tài khoản cho mọi nhân viên và lệnh make chạy lại; sửa lệnh hiện có theo email đăng nhập của API, cập nhật bảng tài khoản; gate xanh · [chi tiết](#t-296)
 
 - [x] CHAT-05 **Khách chưa có đường hỏi quán chỉ đọc có nguồn** — L2, ADR-139 điểm 8 · 9 · 10; 2026-11-05 Codex dựng `POST /chat/turns` (`askChat`, công khai, hợp đồng 0.65.0) với hai công cụ đọc `doc_menu` · `tinh_gia` gọi đúng service của `GET /menu` · `POST /price-quotes`, nhà giả mặc định cho server; Claude viết test trước và duyệt; chưa giao diện, chưa mở khách thật; tiếp theo `CHAT-06` · [mô tả](backlog_CHAT.md#chat-05)
 - [x] CHAT-03 **Chưa có lớp gọi model tắt được và giữ được trần chi phí** — L2, ADR-139 điểm 1…4 · 6 · 7 · 12; 2026-11-05 Codex dựng gói `troly` (cấu hình `tat`/`gia`, vòng công cụ tối đa 4 lần, giữ chỗ trước mỗi lần gọi qua `troly/giu_cho`, chốt qua `troly/chot`, bộ lọc số điện thoại · thư, hợp đồng 0.64.0, PT-9); Claude viết test trước, thêm `I-041` · `I-042`, sửa Gate 1f nhận `GRANT INSERT (cột…)` và duyệt; `F-077` mở · [mô tả](backlog_CHAT.md#chat-03)
 - [x] CHAT-35 **Chưa có sổ gọi model để giữ trần chi phí qua khởi động lại** — L2, ADR-139 điểm 5 · 6 · 11; 2026-11-05 Codex dựng `model_call` (bước 44, `20261104180000_so_goi_model`), trigger giữ trần tháng 10 USD · ngày 1 USD dưới khoá giao dịch, chốt một lần, quyền ghi theo cột, bốn câu đối chiếu `I-040`, hợp đồng 0.63.0; Claude viết test trước, sửa vết người rỗng và duyệt · [mô tả](backlog_CHAT.md#chat-35)
+- [x] T-290 **Bản HTML xem trước trang giới thiệu kể chuyện theo cuộn** — L1, 2026-11-04; một ảnh, ba cảnh cuộn và đường về thực đơn bàn 3 · [chi tiết](backlog_archive.md#t-290)
+- [x] T-291 **Ảnh thẻ món và combo cao 220 px, hiện trọn ảnh** — L1, 2026-11-04; menu khách giữ trọn ảnh trong khung 220 px · [chi tiết](backlog_archive.md#t-291)
+- [x] T-289 **Dùng ảnh ngang mới cho Suất giò** — L1, 2026-11-04; ảnh mới dùng chung ở menu khách và trang combo · [chi tiết](backlog_archive.md#t-289)
 - [x] T-288 **Ảnh giới thiệu quán dưới tên trên menu bàn** — L1, 2026-11-04; Codex thêm ảnh mở `/gioi-thieu`, trang có đường về bàn; gate xanh · [chi tiết](backlog_archive.md#t-288)
 - [x] T-243 **Món đã ngừng bán chưa bán lại được** — L2; 2026-11-04 Codex dựng `POST /menu-items/{id}/resumption` (`menu/ban_lai`, mã `menu_item_not_discontinued`, hợp đồng 0.62.0) qua cửa nội bộ `menu/moc_ngung_ban` giữ ô mốc ngừng bán (ADR-126 *Sửa đổi*), form *Bán lại* trên trang Sản phẩm; Claude viết test trước và duyệt · [chi tiết](#t-243)
 - [x] T-223 **Rời quán của đơn giao ghi luôn mốc *đã ra bàn*** — L2; 2026-11-04 Codex sửa cửa `don/roi_quan`: khoá việc của đơn, còn `pending` ⇒ `delivery_jobs_not_made` 409, `made` ⇒ `served` qua `vongdoi.ChuyenViec` rồi Đang giao (hợp đồng 0.61.0, ADR-088 *Sửa đổi*); Claude viết test trước và duyệt · [chi tiết](#t-223)
@@ -620,6 +675,15 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
 
+<a id="t-368"></a>
+### T-368 — Tạo tài khoản khách thử cho trang Yêu thích
+
+Chủ repo yêu cầu 2026-11-23, sau khi hỏi link trang Yêu thích: tạo tài khoản dev đăng nhập được và lưu thông tin vào `docs/command/tai-khoan-dev.md`. Mức L1: chỉ tạo dữ liệu thử trong database làm việc và sửa hướng dẫn, không đổi code hay hợp đồng. Phạm vi `work/scope/T-368.txt`: `docs/command/tai-khoan-dev.md`, `work/backlog.md`.
+
+Acceptance trước khi làm: A1 — tài khoản khách thử có thể đăng nhập qua `POST /customer-sessions` và đọc `GET /customer-accounts/current/favourites`; A2 — tài liệu ghi đúng đường đăng nhập khách, số điện thoại và mật khẩu thử, phân biệt với tài khoản người làm; A3 — `./scripts/gate.sh` đạt hoặc báo rõ lỗi ngoài phạm vi.
+
+Kết quả 2026-11-23 (Codex): A1 — đăng ký `POST /customer-accounts` HTTP 201, đăng nhập `POST /customer-sessions` HTTP 201, đọc `GET /customer-accounts/current/favourites` HTTP 200, cả hai phản hồi cùng `customer_account_id`. A2 — đã ghi tài khoản khách thử, đường `/khach/dang-nhap` và `/khach/yeu-thich`, cách đăng ký lại sau `make reset` vào `docs/command/tai-khoan-dev.md`; tài khoản người làm vẫn dùng đường riêng. A3 — `./scripts/gate.sh` thoát 0: Gate 3, 1b–1h và Gate 1 PASS, dòng cuối `PASS gate không cổng nào đỏ` (1118 giây); các NOTE về file scope cũ và file không theo dõi thuộc cây chung, không do việc này tạo. `git diff --check` đạt. Chưa review độc lập; giữ scope tới khi chủ repo commit.
+
 <a id="t-367"></a>
 ### T-367 — Trang Yêu thích trên app lệch bản thiết kế
 
@@ -636,6 +700,257 @@ Mở 2026-11-22 (Claude) từ nghiệm thu YT-07: so ảnh app với ảnh `favo
 
 Bản thiết kế là đề xuất, không phải hợp đồng (CLAUDE.md §2), và điểm 1–2 chạm khuôn chung của mọi trang khách; nên **chủ repo chọn
 điểm nào sửa** trước khi viết Acceptance. Ghi chú phụ: kịch bản chụp ảnh app trước lúc trả giá thử, ảnh dòng *Bánh cuốn Thịt · Thường* hiện 5.000đ.
+
+**Chủ repo chọn 2026-11-23:** sửa điểm 3–6; **không** sửa điểm 1 (màu nhấn) và 2 (đầu trang, thanh điều hướng), nên khuôn chung của
+trang khách giữ nguyên. Acceptance viết trước sửa:
+- A1 (điểm 3) — thẻ dòng tim có ảnh món bằng `AnhSanPham` như thực đơn web; thẻ món lẻ còn bán có bộ chọn cho từng nhóm lựa chọn đang
+  hiện, đổi lựa chọn gửi `PUT …/favourites/{id}` với hình mới (backend gộp nếu trùng, ADR-145); combo không có bộ chọn; nút thêm vào giỏ
+  là nút nhỏ `＋ Giỏ` có `aria-label` đọc tên món.
+- A2 (điểm 4) — ba tab ghi số đếm `Tất cả (N)` · `Món lẻ (N)` · `Combo (N)`.
+- A3 (điểm 5) — thẻ bộ món riêng ghi `{tổng số lượng} phần`; chân trang ghi `{tổng số lượng dòng còn bán} phần đã chọn`; bỏ nút
+  *Đọc lại danh sách* luôn hiện, nhưng khi giá lỗi vẫn thử lại được tại chỗ báo lỗi.
+- A4 (điểm 6) — hộp tạo/sửa bộ món riêng là danh sách chọn có checkbox, bộ chọn lựa chọn, nút −/＋ (1–99), chân hộp ghi
+  `{số món} món · {số phần} phần` và tổng tiền từ `/price-quotes`; giữ luật tên 1–60 ký tự, tối đa 20 dòng, không lưu dòng hết bán,
+  body POST/PUT giữ nguyên hình. Hộp *Lưu thành bộ* (`da_luu`) giữ như cũ.
+- A5 — test cũ của `fe/src/app/khach/yeu-thich/` xanh (test phải đổi thì nêu từng chỗ), test mới cho A1–A4, `tsc` sạch.
+- A6 — không tràn ngang ở 360/430px, Claude chạy app thật chụp ảnh sáng/tối so bản thiết kế; `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-367.txt`): `fe/src/components/khach/yeu-thich.tsx`, `fe/src/components/khach/yeu-thich/`,
+`fe/src/app/khach/yeu-thich/`, `work/backlog.md`. Thi công: Codex trong `../lean_wt/T-367`, nhánh `codex/T-367`, nền `3cf3962`;
+phiếu và log `../lean_wt/_claude_logs/T-367/`.
+
+**Kết quả 2026-11-23** (thực hiện: Codex, duyệt: Claude; một lượt, không vòng sửa). `the.tsx`: ảnh `AnhSanPham`, bộ chọn mới
+`yeu-thich/lua-chon.tsx` (một `<select>` mỗi nhóm, cùng luật hiện/ẩn và `chonNhom` với `LuaChon` dùng chung) gửi `PUT` hình mới,
+nút `＋ Giỏ`, nút *Thử lại giá* cạnh lời giá lỗi; `yeu-thich.tsx`: tab có số đếm, `N phần đã chọn`, bỏ nút *Đọc lại danh sách*;
+`hop-bo.tsx`: danh sách checkbox gộp món · combo · dòng tim theo hình, nút −/＋, chân hộp `N món · M phần` với tổng từ `/price-quotes`.
+A1–A4 — test mới trong `yeu-thich.test.tsx`, `bo-mon.test.tsx` (test cũ đổi thao tác theo nút mới). A5 — Claude chạy ở clone chính sau
+`git apply`: `npx vitest run src/app/khach src/components/khach` 76/76, `tsc --noEmit` sạch. A6 — Claude chụp app thật (tài khoản thử của
+T-368) 360/430 × sáng/tối, trang và hộp tạo bộ: 8/8 ảnh tràn 0px, chân hộp *1 món · 1 phần · 4.000đ*; ảnh và kịch bản
+`../lean_wt/_claude_logs/T-367/anh/`, `chup.cjs`. Ghi nhận, không sửa: chân hộp dính đáy để lộ mép hàng kế dưới nút; một
+`console.error` 401 ở trang đăng nhập trước khi có phiên (có từ trước); giá hiện trong ảnh là giá của database làm việc.
+
+<a id="t-366"></a>
+### T-366 — Bỏ viền khung các component Khoản chi
+
+Chủ repo yêu cầu 2026-11-22 cho bản HTML Khoản chi: sau khi khung Mua nguyên liệu được bỏ viền, các component ở dưới, đặc biệt Lịch sử sử dụng nguyên liệu và Lịch sử mua hàng, cũng không cần viền bao. Chỉ sửa giao diện bản xem thử.
+
+Acceptance viết trước: Mua nguyên liệu, hai lịch sử, các mục chi còn lại, Sổ khoản chi và Các khoản chi không có viền bao khung; bảng vẫn có đường phân cách hàng, nút và ô nhập vẫn rõ viền; các nút Hiện/Ẩn và bộ lọc vẫn hoạt động. Kiểm kiểu hiển thị trên màn rộng và hẹp, chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+Chủ repo bổ sung 2026-11-22: chữ trong *Lịch sử sử dụng nguyên liệu* và *Lịch sử mua hàng* cần gần mép ngoài của khung hơn, giống tiêu đề *Mua nguyên liệu*. Acceptance bổ sung trước sửa: cạnh trái hai tiêu đề lịch sử thẳng với cạnh trái tiêu đề *Mua nguyên liệu* trên màn rộng và hẹp; nút Hiện/Ẩn, bộ chọn và bảng vẫn dùng được, không tràn ngang. Kiểm vị trí bằng trình duyệt và chạy gate.
+
+**Bàn giao 2026-11-22:** Codex sửa trên nhánh `P4A-01`, chưa review độc lập. CSS bỏ viền bao của ba mục chi, khung DanhSachKhoanCon, hai lịch sử nguyên liệu, Sổ khoản chi và Các khoản chi; giữ đường phân cách hàng, viền nút và ô nhập. jsdom kiểm sáu nhóm khung đều có viền 0 px và hai nút Hiện/Ẩn lịch sử hoạt động. Chrome kiểm ở 390 px: `scrollWidth=390`, các khung lịch sử 0 px và nút 1 px; ở 1440 px: hai khung lịch sử 0 px, đường phân cách hàng nguyên liệu 1 px. `git diff --check` đạt. `./scripts/gate.sh` trên cây chung đạt Gate 3, 1b–1h nhưng đỏ Gate 1 `db-check` sau 783 giây; cây chung có thay đổi DB chưa commit, chưa xác định nguyên nhân cụ thể của lỗi này. Trên bản kiểm riêng chỉ chép HTML và backlog lên nền `8d71696`, gate đạt Gate 3, 1b, 1c, 1e–1h, Gate 1d và 1 SKIP vì chỉ tài liệu đổi. Nền `HEAD=1fc16ae` riêng lẻ đỏ Gate 1g vì hợp đồng đã gọi tên 10 ràng buộc của migration KC-02 còn chưa commit. HTML và backlog vẫn chứa nhiều thay đổi chưa commit của việc khác; phải stage riêng phần T-366, scope giữ tới khi commit.
+
+**Bổ sung theo phản hồi 2026-11-22:** Codex bỏ đệm ngang hai lớp của vùng lịch sử, để tiêu đề, bộ chọn và bảng gần mép ngoài như Mua nguyên liệu. Chrome ở 390 px đo cả ba tiêu đề tại x=32 px, `scrollWidth=390`; ở 1440 px, Mua nguyên liệu và Lịch sử sử dụng tại x=278 px, Lịch sử mua hàng tại x=770 px là mép cột riêng. Nút Hiện/Ẩn chuyển `true→false→true`. Gate trên bản kiểm riêng từ `8d71696` xanh: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và 1 SKIP vì chỉ tài liệu đổi. Scope và yêu cầu stage riêng vẫn giữ như trên.
+
+<a id="t-365"></a>
+### T-365 — Bỏ viền ngoài khung Mua nguyên liệu
+
+Chủ repo yêu cầu 2026-11-22 bỏ viền bên ngoài mục *Mua nguyên liệu* trong bản HTML Khoản chi. Chỉ đổi giao diện bản xem thử.
+
+Acceptance viết trước: khung ngoài của mục Mua nguyên liệu không còn viền; viền của các mục chi khác và viền bảng, nút bên trong giữ nguyên. Kiểm quy tắc CSS áp dụng đúng mục và chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-22:** Codex sửa trên nhánh `P4A-01`, chưa review độc lập. CSS chỉ bỏ viền `.category` chứa bảng nguyên liệu, giữ viền các mục khác và khung bảng bên trong. Chrome headless kiểm trên bản HTML hiện tại: viền ngoài Mua nguyên liệu `0px`, Điện, nước và Đồ dùng cho quán `1px`; viền khung bên trong cả ba `1px`. `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm riêng chỉ chứa HTML và backlog đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Lượt gate trên cây chung bị dừng khi đang kiểm database do các thay đổi ngoài phạm vi này. HTML và backlog còn nhiều thay đổi chưa commit của việc khác; `.git/T-365.patch` chỉ chứa phần T-365 để stage riêng. Scope giữ đến khi chủ repo commit.
+
+<a id="t-364"></a>
+### T-364 — Ghi lời chủ repo cho U-120…U-125 và sửa sổ KC
+
+Chủ repo yêu cầu 2026-11-22 sau T-363: *"hãy hỏi tôi các câu trong unknown tôi trả lời luôn"*. Claude hỏi ba lượt bằng câu hỏi có sẵn phương án; chủ repo trả lời, có hai câu bằng lời tự do. Mức L1: chỉ ghi lời đã nói vào owner, không đổi code, hợp đồng hay dữ liệu.
+
+Acceptance viết trước: A1 — lời vào `master_plan/shop-facts.md` §8.10 kèm nguyên văn, phần suy ra tách riêng có nhãn; §8.4 có con trỏ. A2 — U-120…U-125 rời `### Đang mở`, dời xuống *Đã có lời giải*; brief không còn in chúng. A3 — ADR-103 có *Sửa đổi* cho vế *không có dự kiến hết*. A4 — `work/backlog_KC.md` đọc theo lời: bảng lời đầu sổ, bước bỏ/thêm/đổi mức. A5 — `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-364.txt`): `master_plan/shop-facts.md`, `docs/decisions.md`, `docs/product/99-unknowns.md`, `work/backlog_KC.md`, `CLAUDE.md`, `work/backlog.md`. Claude làm.
+
+**Lời chủ repo 2026-11-22, cùng phiên** (Claude hỏi ba lượt, phần lớn chọn trong phương án có sẵn): nguyên liệu ở Khoản chi và sổ nguyên liệu là một thứ, trang Khoản chi thay cả Kho lẫn Nguyên liệu; ngày nhập ghi riêng; số còn là hiệu số; máy hiện ước tính còn dùng (TB 7 ngày có ghi dùng, chỉ để xem); xoá nguyên liệu đã dùng là ngừng dùng; thêm kèm tiền một lần bấm. Lời vào `master_plan/shop-facts.md` §8.10 *Lượt 2026-11-22* (con trỏ ở §8.4), **ADR-103** *Sửa đổi 2026-11-22*, U-120…U-125 dời xuống *Đã có lời giải*. Sổ KC: bảng lời ở đầu, KC-04 bỏ, KC-01 nâng L3, KC-12 hạ L1, thêm KC-14 gỡ hai trang cũ. Bước kế: KC-01.
+
+
+<a id="t-363"></a>
+### T-363 — Lộ trình dựng trang Khoản chi từ database, backend tới FE
+
+Chủ repo yêu cầu 2026-11-22, khi đang mở `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`: *"hãy yêu cầu codex làm backlog cho task trên và bạn kiểm tra từ db, be và fe"*. Claude đọc (suy ra, theo tiền lệ *Vế 2026-11-18* và T-348): "task trên" là trang Khoản chi theo bản HTML đã sửa qua T-350…T-362; việc cần là một sổ backlog riêng đi từ database → backend → FE, Codex viết, Claude đối chiếu với thứ đang có. Mức L1: chỉ tài liệu kế hoạch, không đổi code, hợp đồng hay dữ liệu.
+
+Acceptance viết trước: A1 — `work/backlog_KC.md` liệt kê từng tính năng của bản HTML với trạng thái hiện có ở database (`db/migrations/`), backend (`docs/product/3-be/openapi.yaml`, `be/internal/khoanchi`, `be/internal/nguyenlieu`) và FE (`fe/src/app/chu-quan/`), mỗi dòng có đường dẫn làm bằng chứng. A2 — các bước `KC-XX` theo thứ tự DB → BE → FE, mỗi bước một mức, ai làm, đứng trên, chặn bởi, Acceptance và phạm vi; không gộp DB · BE · FE trong một bước. A3 — chỗ bản HTML cần dữ liệu mà luật quán chưa nói được ghi là câu hỏi mở cho Claude chuyển vào `docs/product/99-unknowns.md`, không tự quyết. A4 — `CLAUDE.md` §2 có dòng owner cho sổ mới. A5 — `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-363.txt`): `work/backlog_KC.md`, `CLAUDE.md`, `docs/product/99-unknowns.md`, `work/backlog.md`. Codex viết `work/backlog_KC.md` trong `../lean_wt/T-363` (nhánh `codex/T-363`), phiếu và báo cáo ở `../lean_wt/_claude_logs/T-363/`; Claude duyệt và làm phần còn lại.
+
+**Bàn giao 2026-11-22** (thực hiện: Codex, duyệt: Claude; worktree `../lean_wt/T-363`, nhánh `codex/T-363` từ `1693c48`). Codex viết `work/backlog_KC.md`: bảng đối chiếu 22 tính năng × DB · API · FE kèm bằng chứng, mười ba bước KC-01…KC-13, sáu câu Q-KC. Codex hết hạn mức trước khi gửi báo cáo, nên Claude duyệt thẳng trên tệp và đối chiếu với bản kiểm riêng (`../lean_wt/_claude_logs/T-363/claude-doi-chieu.md`): khớp ở mọi điểm chính. Claude sửa bốn chỗ: hai link tuyệt đối ra ngoài repo; Q-KC-04 thiếu chỗ va với `U-045` đã đóng và ADR-103 điểm 4 (trang kho *không có dự kiến hết*); KC-13 ghi đúng người chạy; nối Q-KC-01…06 với U-120…U-125 mới mở ở `docs/product/99-unknowns.md`. Thêm dòng §2 ở `CLAUDE.md` và vế 2026-11-22 ở bảng lời chốt. Chưa bước KC nào *Ready*.
+
+<a id="t-362"></a>
+### T-362 — Thu gọn khối chọn khoảng ngày
+
+Chủ repo yêu cầu 2026-11-22 làm gọn component *Tổng tiền theo khoảng ngày* trong bản HTML Khoản chi. Chỉ sửa bản thiết kế minh hoạ trên nhánh `P4A-01`.
+
+Acceptance viết trước: bỏ câu hướng dẫn dài; giữ tiêu đề, bốn lựa chọn nhanh 7/10/14/30 ngày và khoảng ngày đang áp dụng trong bố cục ít hàng hơn, không tràn trang ở màn hẹp. Nút được chọn vẫn nổi bật; chọn nhanh vẫn tính cả ngày kết thúc và cập nhật các bộ lọc/tổng tiền. Thay đổi Từ ngày / Đến ngày bên dưới vẫn cập nhật khoảng ngày hiển thị. Kiểm tương tác, bố cục và chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-22:** Codex sửa trên nhánh `P4A-01` (nền `1693c48`), chưa review độc lập; tệp đổi là bản HTML Khoản chi và mục T-362 trong backlog. Khối chỉ còn tiêu đề, ngày áp dụng dạng ngắn và bốn nút 7/10/14/30 ngày; ở 320 px các nút thành lưới 2×2, từ 390 px trở lên là một hàng. jsdom kiểm ngày đầu, chọn nhanh tính cả ngày kết thúc, ngày sửa tay, ngày khác tháng và khoảng không hợp lệ. Chrome kiểm 320/390/1024/1440 px: chiều cao khối lần lượt từ 319/277/181/181 px còn 165/122/100/100 px, trang không tràn. `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm chỉ chứa HTML và backlog đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. HTML và backlog còn thay đổi chưa commit của T-355 đến T-361; commit các việc đó trước T-362, dùng `.git/T-362.patch` để stage riêng phần này. Scope giữ đến khi chủ repo commit.
+
+<a id="t-361"></a>
+### T-361 — Bốn khu khoản chi theo ngày
+
+Chủ repo yêu cầu 2026-11-21 thiết kế *Điện, nước*, *Đồ dùng cho quán*, *Sổ khoản chi* và *Các khoản chi* giống *Lịch sử sử dụng nguyên liệu*: đầu khối gọn và bảng mỗi ngày một hàng. Chỉ sửa bản HTML Khoản chi minh hoạ trên nhánh `P4A-01`.
+
+Acceptance viết trước: mỗi khu có tiêu đề và nút Hiện/Ẩn cùng hàng; nội dung mở có bảng một dòng cho mỗi ngày, ngày mới trước, các khoản cùng ngày nằm ngang trong một ô và cuộn trong khung trên màn hẹp. *Sổ khoản chi* tổng hợp số lần và tổng tiền theo ngày của bộ lọc chung; *Các khoản chi* liệt kê chi tiết từng lần trong ngày và giữ nút Sửa/Xoá. Hai mục chi giữ lọc ngày riêng, mở chi tiết khoản con, lịch sử, thêm/đổi tên/xoá/ghi chi. Tổng tiền, trạng thái rỗng và thao tác cũ vẫn đúng. Kiểm tương tác, bố cục và chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-21:** Codex sửa trên nhánh `P4A-01` (nền `ad98ef3`), chưa review độc lập; tệp đổi là bản HTML Khoản chi và mục T-361 trong backlog. Bốn đầu khối giữ tiêu đề và nút Hiện/Ẩn cùng hàng. Điện, nước và Đồ dùng cho quán có bảng mỗi ngày một hàng, lọc ngày riêng và bảng khoản con mở theo nhu cầu để giữ thao tác; Sổ khoản chi tổng hợp ngày, Các khoản chi liệt kê từng khoản trong ngày kèm Sửa/Xoá. jsdom kiểm gộp ngày, bộ lọc, mở/thu gọn; Chrome kiểm 320/390/1024/1440 px: trang không tràn, bảng cuộn trong khung. `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm chỉ chứa HTML và backlog đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. HTML và backlog còn thay đổi chưa commit của T-355 đến T-360; commit các việc đó trước T-361, dùng `.git/T-361.patch` để stage riêng phần này. Scope giữ đến khi chủ repo commit.
+
+<a id="t-360"></a>
+### T-360 — Lịch sử mua hàng theo kiểu lịch sử sử dụng
+
+Chủ repo yêu cầu 2026-11-21 thiết kế *Lịch sử mua hàng* giống *Lịch sử sử dụng nguyên liệu* trong bản HTML Khoản chi. Chỉ sửa bản thiết kế minh hoạ trên nhánh `P4A-01`.
+
+Acceptance viết trước: đầu khối chỉ còn tiêu đề và nút Hiện/Ẩn trên một hàng, bỏ câu mô tả và số đếm. Bảng có mỗi ngày nhập hàng một hàng, ngày mới trước; các lần mua cùng ngày nằm ngang trong hàng ấy, mỗi lần vẫn hiện nguyên liệu, ngày chi, số tiền và người ghi. Lần mua chưa ghi ngày nhập vẫn được nói rõ. Bộ chọn nguyên liệu, nút Ẩn/Hiện, lối nhảy tới lịch sử và lịch sử sử dụng vẫn hoạt động. Trên màn hẹp bảng cuộn bên trong khung, trang không tràn. Kiểm tương tác, bố cục và chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-21:** Codex sửa trên nhánh `P4A-01` (nền `ad98ef3`), chưa review độc lập; tệp đổi là bản HTML Khoản chi và mục T-360 trong backlog. Đầu khối mua chỉ còn tiêu đề và nút Hiện/Ẩn cùng hàng. Bảng có mỗi ngày nhập hàng một dòng, các lần mua cùng ngày nằm ngang, từng lần vẫn có nguyên liệu, số tiền, ngày chi và người ghi; ngày nhập chưa ghi có hàng riêng. jsdom kiểm gộp ngày, đầy đủ thông tin, lọc nguyên liệu, rỗng, Hiện/Ẩn, lối nhảy và lịch sử dùng. Chrome kiểm 320/390/1024/1440 px: đầu khối và từng ngày cùng một hàng, cuộn trong bảng, trang không tràn. `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm chỉ chứa HTML và backlog đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. HTML và backlog còn thay đổi chưa commit của T-355 đến T-359; commit các việc đó trước T-360, dùng `.git/T-360.patch` để stage riêng phần này. Scope giữ đến khi chủ repo commit.
+
+<a id="t-359"></a>
+### T-359 — Lịch sử sử dụng nguyên liệu theo ngày
+
+Chủ repo yêu cầu 2026-11-21 đổi bảng *Lịch sử sử dụng nguyên liệu* trong bản HTML Khoản chi. Chủ repo chọn cách mỗi ngày có dữ liệu là một dòng, trong dòng liệt kê nguyên liệu và lượng đã dùng của ngày đó. Chỉ sửa bản thiết kế tĩnh trên nhánh `P4A-01`.
+
+Acceptance viết trước: các ngày có lần dùng được xếp mới trước, mỗi ngày xuất hiện đúng một dòng; từng nguyên liệu và lượng dùng kèm đơn vị của ngày đó hiện đầy đủ trong dòng ấy. Bộ chọn nguyên liệu giữ tác dụng và số ngày hiển thị cập nhật theo lựa chọn; không có dữ liệu thì vẫn có lời rõ. Nút Ẩn/Hiện, mở chi tiết và các lịch sử khác vẫn hoạt động; trên điện thoại bảng dễ đọc và không làm tràn trang. Kiểm tương tác, bố cục và chạy `./scripts/gate.sh`.
+
+Chủ repo làm rõ 2026-11-21: *mỗi ngày là một dòng* nghĩa là toàn bộ tên và lượng của ngày nằm trên **một hàng nhìn thấy được**, không xếp các nguyên liệu thành nhiều dòng trong cùng ô. Trên màn hẹp, cuộn ngang bên trong bảng để giữ nguyên một hàng/ngày; trang không tràn ngang.
+
+Chủ repo bổ sung 2026-11-21: trong đầu khối *Lịch sử sử dụng nguyên liệu*, chỉ giữ tiêu đề và nút Hiện/Ẩn trên cùng một hàng; bỏ dòng giải thích và số ngày/lần ghi. Khi mở, bộ chọn nguyên liệu và bảng theo ngày vẫn dùng được; trên điện thoại đầu khối không tràn trang.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-21:** Codex sửa trên nhánh `P4A-01` (nền `657bfcb`), chưa review độc lập; tệp đổi là bản HTML Khoản chi và mục T-359 trong backlog. Bảng lịch sử tổng nay có một dòng cho mỗi ngày đã ghi, mới trước cũ; từng dòng liệt kê tên, lượng và đơn vị của các nguyên liệu trong ngày. Dữ liệu mẫu hiện ba ngày/bốn lần ghi, ngày 23/10 có hai nguyên liệu trong cùng dòng. jsdom kiểm gộp và thứ tự ngày, lọc nguyên liệu, trạng thái rỗng, Ẩn/Hiện, mở chi tiết và lịch sử mua. Chrome kiểm 320/390/1024/1440 px: bảng vẫn là bảng với ba dòng ngày, không tràn trang. `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm chỉ chứa HTML và backlog đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. HTML và backlog còn thay đổi chưa commit của T-355 đến T-358; commit các việc đó trước T-359, dùng `.git/T-359.patch` để stage riêng phần này. Scope giữ đến khi chủ repo commit.
+
+**Làm rõ và kiểm lại 2026-11-21:** Chủ repo muốn mỗi ngày nằm trên đúng một hàng nhìn thấy được. Codex giữ danh sách nguyên liệu của ngày trên một dòng ngang, bỏ kiểu xếp dọc ở màn hẹp; phần bảng tự cuộn ngang khi thiếu chỗ, trang không tràn. jsdom kiểm ba hàng ngày và bộ lọc; Chrome ở 320/390 px cho hàng có hai nguyên liệu cao 38 px, cùng một đường ngang, cuộn trong khung bảng; 1024/1440 px cũng giữ một hàng. `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm từ nền `ad98ef3` chỉ chứa HTML và backlog đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Vẫn chưa review độc lập; commit theo thứ tự ghi trên, bản vá `.git/T-359.patch` được cập nhật để stage riêng T-359.
+
+**Sửa đầu khối 2026-11-21:** Codex giữ đúng tiêu đề *Lịch sử sử dụng nguyên liệu* và nút Hiện/Ẩn trên cùng một hàng, bỏ dòng giải thích và số đếm. Bộ chọn nguyên liệu và bảng vẫn hiện khi mở. jsdom kiểm trạng thái Hiện/Ẩn, bộ chọn và bảng; Chrome kiểm 320/390/1024/1440 px: nút cùng hàng, đầu khối và trang không tràn. `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm từ nền `ad98ef3` chỉ chứa HTML và backlog đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Bản vá `.git/T-359.patch` stage riêng phần việc này; scope giữ tới khi chủ repo commit.
+
+<a id="t-358"></a>
+### T-358 — Nút mở bộ lọc ngày ở đầu bảng nguyên liệu
+
+Chủ repo yêu cầu 2026-11-21 thêm nút lọc bên cạnh *Lịch sử mua hàng* và *Hiện nguyên liệu*, bấm nút thì hai ô chọn ngày tháng xuất hiện. Chỉ sửa bản HTML Khoản chi minh hoạ trên nhánh `P4A-01`.
+
+Acceptance viết trước: đầu bảng *Mua nguyên liệu* có nút *Lọc ngày*; mặc định hai ô Từ ngày/Đến ngày được thu gọn, bấm nút mở ra và bấm lại ẩn đi. Nút báo trạng thái mở bằng `aria-expanded` và cho biết khi khoảng ngày đang được áp dụng; ẩn bộ lọc không xoá ngày đã chọn. Lọc và xoá lọc vẫn cập nhật bảng nguyên liệu như trước; mở chi tiết, lịch sử và các mục chi khác vẫn hoạt động. Trên màn hẹp, các nút không làm tràn trang. Kiểm tương tác, bố cục và chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-21:** Codex sửa trên nhánh `P4A-01` (nền `657bfcb`), chưa review độc lập. Nút *Lọc ngày* đứng cạnh *Lịch sử mua hàng* và *Ẩn/Hiện nguyên liệu*; hai ô ngày mặc định ẩn, mở/đóng bằng nút có `aria-expanded` và hiện *Đang lọc* khi đã chọn ngày. Thu gọn giữ ngày và kết quả lọc; xoá lọc đưa tổng mua về như cũ. jsdom kiểm nút, lọc, thu gọn/mở lại, xoá lọc, chi tiết nguyên liệu và lịch sử mua. Chrome kiểm 320/390/1024/1440 px không tràn ngang; 320/390 px khi đang lọc cũng không tràn. `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm tách riêng chứa HTML và backlog đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Gate trên cây làm việc chung đạt Gate 3, 1b–1h nhưng đỏ ở `db-check` của Gate 1 sau 692 giây; thay đổi T-358 chỉ ở HTML và backlog, không sửa DB. Tệp HTML và backlog còn các thay đổi chưa commit của T-355, T-356 và T-357; commit ba việc đó trước T-358, mỗi khối chỉ lấy phần của mình bằng bản vá `.git/T-358.patch` đã kiểm khả năng áp vào index. Scope giữ đến khi chủ repo commit.
+
+<a id="t-357"></a>
+### T-357 — Xếp ngang và thu gọn hai lịch sử nguyên liệu
+
+Chủ repo yêu cầu 2026-11-21 đặt *Lịch sử sử dụng nguyên liệu* và *Lịch sử mua hàng* thành một hàng, thêm nút Ẩn/Hiện. Chỉ sửa bản HTML Khoản chi minh hoạ trên nhánh `P4A-01`.
+
+Acceptance viết trước: trên màn rộng, hai lịch sử hiện cạnh nhau sau bảng nguyên liệu; màn hẹp vẫn đọc được, không tràn trang. Mỗi lịch sử có nút Ẩn/Hiện riêng với trạng thái hiển thị rõ; ẩn lịch sử này không làm mất bộ lọc hay đóng lịch sử kia. Nút nhảy tới lịch sử mua vẫn mở được phần đang ẩn. Mở chi tiết nguyên liệu, đổi bộ lọc và vẽ lại trang giữ đúng trạng thái của từng lịch sử. Kiểm tương tác, bố cục và chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-21:** Codex sửa trên nhánh `P4A-01`, chưa review độc lập; T-355 và T-356 trong cùng tệp HTML vẫn chưa commit. Hai lịch sử nằm trong hai khung cùng hàng trên màn rộng, xếp dọc trên điện thoại. Nút Ẩn/Hiện trong từng khung đổi đúng trạng thái và thuộc tính truy cập; ẩn một khung không ảnh hưởng khung kia, bộ lọc giữ lại khi hiện lại hay vẽ lại trang. Nút nhảy lịch sử mua mở lại khung đã ẩn. jsdom kiểm hai nút độc lập, lọc, mở chi tiết nguyên liệu, vẽ lại và nút nhảy. Chrome kiểm 320/390 px xếp dọc, 1024/1440 px cùng hàng, `scrollWidth` không vượt `innerWidth`; bảng mua cuộn trong khung ở màn vừa. `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm tách riêng gồm hai tệp của T-355, T-356 và T-357 đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Commit T-355, T-356 rồi T-357 theo thứ tự, mỗi khối lấy đúng phần của mình; scope giữ tới khi chủ repo commit.
+
+<a id="t-356"></a>
+### T-356 — Mở chi tiết và lịch sử cho các mục chi còn lại
+
+Chủ repo yêu cầu 2026-11-21 áp dụng cách bày của *Mua nguyên liệu* cho *Điện, nước*, *Đồ dùng cho quán* và các mục chi khác. Chỉ bản HTML Khoản chi minh hoạ; các khoản con này có ngày và tiền chi, không có số lượng tồn hay sử dụng. Codex làm trực tiếp trên nhánh `P4A-01`.
+
+Acceptance viết trước: mỗi khoản con ở mục không phải nguyên liệu hiện tên, ngày chi gần nhất và tổng chi trong kỳ trên một hàng; bấm tên mở trượt chi tiết ngay dưới dòng với nguồn tiền và các thao tác cũ. Trong chi tiết có nút *Lịch sử chi* mở bảng những lần chi của đúng khoản con, mặc định bảy ngày kể cả hai đầu đến lần chi mới nhất của mục, chọn khoảng ngày khác và đặt lại được. Khoảng sai, chưa có lần chi, và khoảng trống có lời rõ. Thêm/sửa/xoá khoản chi, đổi tên hoặc xoá khoản con cập nhật cả bảng và lịch sử; nguyên liệu và lịch sử mua/sử dụng vẫn hoạt động. Kiểm trên màn hẹp không tràn và chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-21:** Codex sửa trên nhánh `P4A-01`, chưa review độc lập; T-355 ở cùng tệp HTML vẫn chưa commit. Các mục không phải nguyên liệu nay có bảng ba cột, nút tên mở trượt chi tiết ngay dưới dòng, giữ nguồn tiền và ba thao tác. Nút *Lịch sử chi* hiện ngày, số tiền và người ghi của đúng khoản con; mặc định bảy ngày đến lần chi mới nhất trong mục, chọn ngày và đặt lại được, khoảng sai và không có dòng đều có lời rõ. jsdom kiểm Điện nước, Đồ dùng, mục tạo mới, lọc hai đầu, đặt lại, đổi tên, xoá khoản con, ghi/sửa/xoá khoản chi cập nhật lịch sử, và nguyên liệu vẫn mở được. Chrome ở 320 px, 390 px và 1440 px: ba ô cùng hàng, chi tiết Tiền điện nằm trước Tiền nước, bảng lịch sử đọc được và `scrollWidth` không vượt `innerWidth`. `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm tách riêng gồm hai tệp của T-355 và T-356 đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Commit T-355 trước rồi T-356, mỗi khối lấy đúng phần của mình; scope giữ tới khi chủ repo commit.
+
+<a id="t-355"></a>
+### T-355 — Lịch sử sử dụng trong chi tiết nguyên liệu
+
+Chủ repo yêu cầu 2026-11-21: sau khi bấm tên mở chi tiết, có nút *Lịch sử*; bấm nút thì hiện bảng ngày đã sử dụng của nguyên liệu ấy trong một tuần, có thể chọn khoảng ngày khác. Chỉ bản HTML Khoản chi minh hoạ. Codex thực hiện trực tiếp trên nhánh `P4A-01`.
+
+Acceptance viết trước: nút nằm trong chi tiết đang mở; bảng riêng mặc định lọc bảy ngày lịch bao gồm ngày dùng mới nhất của dữ liệu mẫu, hiện ngày và lượng đã dùng theo đơn vị của đúng nguyên liệu. Hai ô Từ ngày/Đến ngày lọc bao gồm cả hai đầu; khoảng không hợp lệ hoặc không có dòng được giải thích rõ; có nút đặt lại bảy ngày. Đổi nguyên liệu đóng lịch sử cũ; đổi tên và xoá cập nhật lịch sử; bảng lịch sử tổng và lịch sử mua hàng đang có vẫn hoạt động. Màn hình hẹp không tràn, chi tiết vẫn nằm ngay dưới dòng được chọn. Kiểm tương tác và chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-21:** Codex sửa trên nhánh `P4A-01`, chưa review độc lập; tệp đổi của việc này là bản HTML và mục T-355 trong backlog. Trong chi tiết từng nguyên liệu, nút *Lịch sử sử dụng* mở bảng ngày và lượng dùng của đúng thứ đang chọn. Mặc định là 18–24/10/2026 (bảy ngày kể cả hai đầu, kết thúc ở ngày dùng mới nhất của số mẫu); chọn Từ ngày/Đến ngày để lọc lại, có nút đặt lại, lời báo cho khoảng sai và khoảng rỗng. Bảng lịch sử tổng và lịch sử mua hàng giữ nguyên. jsdom kiểm mở/đóng, lọc bao gồm hai đầu, khoảng sai, khoảng rỗng, đặt lại, chuyển nguyên liệu, đổi tên, xoá và lịch sử tổng. Chrome ở 320 px, 390 px và 1440 px: chi tiết vẫn nằm giữa Thịt heo và Bột gạo, bảng hai cột hiển thị được, `scrollWidth` không vượt `innerWidth` (1440 px có thanh cuộn đứng nên là 1425 px). `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm tách riêng chỉ chứa hai tệp T-355 đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Scope giữ tới khi chủ repo commit.
+
+<a id="t-354"></a>
+### T-354 — Ba cột nguyên liệu cùng một hàng ở màn hình hẹp
+
+Chủ repo yêu cầu 2026-11-21: tên nguyên liệu, ước tính còn dùng và lượng còn lại nằm trên cùng một hàng. Chỉ sửa bản HTML Khoản chi để thử giao diện, không đổi dữ liệu hay giao diện chạy thật. Codex thực hiện trực tiếp trên nhánh `P4A-01`.
+
+Acceptance viết trước: ở màn hình 390 px, ba cột của mỗi nguyên liệu nằm trên cùng một hàng, đọc được số và đơn vị, trang không tràn ngang. Bấm Thịt heo vẫn mở chi tiết giữa Thịt heo và Bột gạo; các thao tác và lịch sử còn hoạt động. Bố cục rộng giữ ba cột. Kiểm bằng Chrome và `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-21:** Codex sửa trên nhánh `P4A-01`, chưa review độc lập. Tệp đổi của việc này là bản HTML và mục T-354 trong backlog. Ở màn hẹp, bảng nguyên liệu vẫn là bảng ba cột với tiêu đề và một hàng cho mỗi thứ; câu thiếu số được rút gọn thành *Chưa tính* ở ô nhưng tên truy cập vẫn giải thích đầy đủ. Số ngày ước tính ở ô điện thoại hiện ngắn, số đầy đủ giữ trên màn rộng. Chrome ở 320 px và 390 px: ba ô của mỗi hàng có cùng tọa độ y, chín hàng mẫu đều cao 55 px, `scrollWidth` bằng `innerWidth`; bấm Thịt heo thì chi tiết nằm trước Bột gạo và lịch sử lọc theo Thịt heo. Ở 1440 px, ba ô vẫn cùng hàng và lời ước tính đầy đủ hiện ra. jsdom kiểm cú pháp, ba cột, số rút gọn, mở chi tiết và đổi lựa chọn đều đạt; `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm tách riêng chỉ chứa hai tệp T-354 đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Scope giữ tới khi chủ repo commit.
+
+<a id="t-353"></a>
+### T-353 — Bảng nguyên liệu gọn và chi tiết mở trượt
+
+Chủ repo yêu cầu 2026-11-20 cho phần *Mua nguyên liệu* trong bản HTML Khoản chi. Codex làm trực tiếp; chỉ sửa bản xem thử, không đổi dữ liệu Kho, API hoặc giao diện chạy thật. Số còn và số ngày dự tính tiếp tục lấy từ ô nhập minh hoạ đã có.
+
+Acceptance viết trước: bảng nguyên liệu chính có tên, ước tính còn dùng và lượng còn lại; tên là nút mở phần chi tiết bằng hiệu ứng trượt ngay dưới dòng nguyên liệu được chọn, trước dòng nguyên liệu kế tiếp (chủ repo làm rõ 2026-11-20 bằng ví dụ Thịt heo nằm trước Bột gạo). Chi tiết giữ ngày nhập gần nhất, mức dùng mỗi ngày, tổng chi trong kỳ và bốn thao tác đang có. Bảng lịch sử sử dụng ở dưới hiện đúng nguyên liệu được chọn, có thể xem tất cả và vẫn báo khi chưa có lần dùng. Đổi tên, xoá, nhập lại số dự tính, lọc ngày và lịch sử mua hàng tiếp tục hoạt động; màn hẹp không tràn. Kiểm tương tác trên HTML và chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao lượt đầu 2026-11-20:** Codex sửa trên nhánh `P4A-01`, chưa review độc lập; tệp đổi của việc này là bản HTML và mục T-353 trong backlog. Bảng nguyên liệu hiện ba cột; nút tên mở ngăn chi tiết trượt với ngày nhập, mức dùng, tổng chi và bốn thao tác. Bảng lịch sử sử dụng dưới ngăn tự lọc theo nguyên liệu đang chọn, chọn *Tất cả nguyên liệu* trả lại đủ dòng; lịch sử mua hàng giữ riêng. Kiểm JavaScript bằng Node: cú pháp đạt; jsdom đạt các ca mở/đóng, đổi tên, xoá, sửa dự tính, lọc ngày, lịch sử rỗng và lịch sử mua độc lập. Chrome ở 390 px: `innerWidth=390`, `scrollWidth=390`, bảng ba cột và ngăn chi tiết mở từ 0 lên 229 px; ảnh hai cỡ 390 px và 1440 px đã xem. `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm tách riêng chỉ chứa hai tệp của T-353 đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Lượt gate ở cây chung được dừng vì kéo theo backend/database đang được việc khác sửa và có gate khác chạy đồng thời. Scope giữ đến khi chủ repo commit.
+
+**Sửa theo lời chủ repo 2026-11-20:** Chủ repo muốn bấm *Thịt heo* thì chi tiết nằm trước *Bột gạo*. Codex chuyển ngăn chi tiết thành hàng ngay sau từng nguyên liệu, giữ hiệu ứng trượt và việc lọc lịch sử. jsdom kiểm thứ tự Thịt heo → chi tiết → Bột gạo, chuyển lựa chọn thì ngăn cũ đóng, đóng/mở lại, đổi tên và lịch sử mua vẫn đúng. Chrome ở 390 px đo `scrollWidth=390`, ngăn Thịt heo cao 275 px; ở 1440 px không tràn ngang, ảnh hai cỡ đã xem. `./scripts/gate.sh` trên bản kiểm tách riêng chỉ chứa hai tệp T-353 đạt: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Scope giữ đến khi chủ repo commit.
+
+<a id="t-352"></a>
+### T-352 — Lịch sử mua nguyên liệu trong bản HTML Khoản chi
+
+Chủ repo nhắc 2026-11-20 rằng sau mục lịch sử sử dụng vẫn chưa thấy lịch sử mua hàng. Chỉ sửa bản HTML minh hoạ trên nhánh `P4A-01`; các lần mua lấy từ khoản chi nguyên liệu đang có, không thêm dữ liệu mua giả hay thay đổi Kho, API, FE chạy thật. Codex thực hiện; chưa review độc lập.
+
+Acceptance viết trước: trong khối *Mua nguyên liệu* có lối xem *Lịch sử mua hàng* dễ thấy và danh sách riêng với lịch sử sử dụng. Mỗi lần mua hiện ngày nhập hàng, ngày chi, nguyên liệu, số tiền và người ghi; mặc định ngày nhập gần nhất trước, lọc được một nguyên liệu hoặc tất cả, trường hợp chưa có lần mua có lời rõ. Ghi, sửa, xoá khoản chi và đổi tên nguyên liệu trong bản xem thử phải cập nhật lịch sử; bộ lọc tiền chung không che lịch sử. Màn hình hẹp vẫn đọc được mọi cột. Kiểm tương tác, bố cục và chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-20:** Trong đầu khối *Nguyên liệu* có lối nhảy *Lịch sử mua hàng*; bảng mới đặt ngay trên lịch sử sử dụng và mặc định hiện hai lần mua mẫu theo ngày nhập mới trước. Mỗi dòng hiện ngày nhập, ngày chi, mặt hàng, số tiền và người ghi; có lọc nguyên liệu và lời khi chưa có lần mua. Lịch sử đọc trực tiếp từ các khoản chi nguyên liệu nên ghi, sửa, xoá, đổi tên cập nhật cùng dữ liệu; không chịu bộ lọc tiền chung. Không dựng số lượng mua vì bản chi chỉ lưu số tiền. Kiểm jsdom: 13 điều kiện PASS về dữ liệu, thứ tự, lọc, thêm/sửa/xoá, đổi tên và giữ lịch sử sử dụng. Chrome DevTools: viewport 390px có `scrollWidth=390`, khối lịch sử rộng 322px và đủ năm nhãn; viewport 1440px có `scrollWidth=1440`; đã xem ảnh hai cỡ. `git diff --check` đạt. `./scripts/gate.sh` trong bản sao chỉ chứa hai file task đạt: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Chưa review độc lập; scope giữ tới khi chủ repo commit.
+
+<a id="t-351"></a>
+### T-351 — Lịch sử dùng nguyên liệu trong bản HTML Khoản chi
+
+Chủ repo yêu cầu 2026-11-20: thêm mục *history* dưới khối *Nguyên liệu · 9 loại* để xem những ngày trước mỗi thứ đã dùng thế nào. Chỉ bản HTML minh hoạ; dữ liệu mẫu không phải số thật của quán và không đổi Kho, API hay FE chạy thật. Codex làm trên nhánh `P4A-01`, chưa review độc lập.
+
+Acceptance viết trước: mục *Lịch sử sử dụng* hiện ngày, nguyên liệu và lượng đã dùng theo đơn vị; ngày gần nhất đứng trước; có lọc một nguyên liệu hoặc xem tất cả; nguyên liệu chưa có dòng lịch sử được nói rõ; trên màn hình hẹp các ô vẫn có nhãn và không mất thông tin. Đổi tên hoặc xoá nguyên liệu trong bản xem thử cập nhật lịch sử tương ứng. Số lịch sử không tự đổi mức tiêu thụ mỗi ngày đang nhập cho dự tính. Kiểm tương tác, bố cục và chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-20:** Thêm bảng *Lịch sử sử dụng nguyên liệu* ngay dưới danh mục nguyên liệu, mặc định hiện bốn dòng minh hoạ theo ngày mới trước; chọn xem từng nguyên liệu hoặc tất cả. Nguyên liệu chưa có dòng hiện lời rõ. Lịch sử đứng riêng với bộ lọc khoản chi và mức dùng/ngày dự tính; đổi tên cập nhật lịch sử và lựa chọn đang lọc, xoá nguyên liệu trong bản xem thử dọn các dòng của nó. jsdom: 14 điều kiện PASS về thứ tự ngày, lọc, số và đơn vị, trạng thái rỗng, đổi tên, xoá, và không đổi dự tính. Chrome DevTools: viewport 390px có `scrollWidth=390`, bảng rộng 294px trong khung 322px, ba nhãn hiện; viewport 1440px có `scrollWidth=1440`; đã xem ảnh cả hai cỡ. `git diff --check` đạt. `./scripts/gate.sh` trên bản sao chỉ chứa hai file task đạt: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Chưa review độc lập; scope giữ tới khi chủ repo commit.
+
+<a id="t-350"></a>
+### T-350 — Ngày nhập và số ngày còn dùng trong bản HTML Khoản chi
+
+Chủ repo yêu cầu 2026-11-19 và nhắc tiếp tục 2026-11-20. Chỉ sửa bản HTML minh hoạ, không đổi trang chạy thật, API hoặc dữ kiện kho. Codex thực hiện trên nhánh `P4A-01`; chưa review độc lập.
+
+Acceptance viết trước: từng nguyên liệu hiện ngày nhập gần nhất riêng với ngày chi; có thể nhập số hàng còn và mức dùng mỗi ngày theo cùng đơn vị; bản xem thử tính số ngày còn = số còn / mức dùng mỗi ngày, nói rõ nguồn số minh hoạ và trường hợp thiếu dữ liệu hoặc mức dùng bằng 0; cập nhật, đổi tên, xoá, lọc và sửa khoản chi vẫn hoạt động. Chủ repo bổ sung 2026-11-20: sắp nội dung danh mục theo hàng/cột có tiêu đề tiếng Việt, đọc được trên màn hình hẹp mà không mất thông tin hay nút thao tác. Kiểm JavaScript và tương tác trên bản HTML; chạy `./scripts/gate.sh`.
+
+Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
+
+**Bàn giao 2026-11-20:** Bản HTML hiện ngày nhập riêng trên dòng khoản chi và ngày nhập gần nhất theo từng nguyên liệu. Có hộp nhập số còn, mức tiêu thụ mỗi ngày và đơn vị; phép chia hiện số ngày ước tính, thiếu số hoặc mức bằng 0 thì nói chưa thể tính. Dữ liệu mẫu và các số dự tính chỉ dùng để thử giao diện, không lấy từ Kho. Kiểm tương tác bằng jsdom: 17 phép đạt, gồm sửa mức dùng, nhập ngày khác ngày chi, lọc tiền, thêm nguyên liệu và đổi tên. Ảnh xem thử Chrome ở 1440px và 500px không thấy tràn hoặc lỗi bố cục ở vùng mới. `git diff --check` đạt. `./scripts/gate.sh` trên bản sao chỉ chứa hai file của T-350 đạt: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Gate trên cây chung đỏ do `docs/private/anh/banh-cuon/1-banh-dep-trung-chin.png` ngoài scope và `db/tests/yt03_customer_favourite.sql` chờ bảng chưa tạo của YT-03; cả hai ngoài scope T-350. Chưa review độc lập; giữ scope tới khi chủ repo commit.
+
+**Bổ sung kiểm bảng 2026-11-20:** Danh mục nay xếp mỗi mục thành bảng có tiêu đề tiếng Việt; riêng nguyên liệu có bảy cột, khoản con có bốn cột. Trên màn hình hẹp, mỗi hàng chuyển thành các ô có nhãn và giữ bốn nút thao tác. jsdom kiểm thêm 16 điều kiện đạt, gồm số cột, nhãn, phép tính, ngày nhập và đổi tên. Chrome DevTools đặt đúng viewport 390px: `innerWidth=390`, `scrollWidth=390`; bảng nguyên liệu rộng 322px trong khung 322px và cả bảy nhãn hiển thị. Ảnh Chrome 1440px và 390px đã xem; không có tràn ngang ở vùng mới. `./scripts/gate.sh` chạy lại trên bản sao chỉ chứa hai file T-350: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi; `PASS gate`.
+
+<a id="t-307"></a>
+### T-307 — Chủ quán chưa đổi được ảnh món lẻ ở `/chu-quan/san-pham`
+
+Chủ repo yêu cầu 2026-11-06 (lần đầu) và lại 2026-11-19 trên `http://localhost:3000/chu-quan/san-pham`: *"cập nhật cho món lẻ tôi cần cập nhật ảnh sản phẩm"*, *"yêu cầu codex làm bạn kiểm tra"*. Hiện `AnhSanPham` chọn ảnh theo tên món chuẩn hoá trong bảng viết cứng (`fe/src/app/chu-quan/_components/anh-san-pham.tsx`), database không có chỗ giữ ảnh. Thiết kế đã chốt ở ADR-142 điểm 4: cột `menu_item.image_code`, tệp ngẫu nhiên trong `BANHCUON_FILE_DIR`, `PUT /menu-items/{menu_item_id}/image` (multipart `file` + `reason`, lớp `chu_quan`, JPEG · PNG · WebP ≤ 5 MiB kiểm theo nội dung, có vết) và `GET /menu-items/{menu_item_id}/image` công khai `no-store`.
+
+Lịch sử: Codex làm xong 2026-11-07 trên nhánh `codex/T-307`, worktree `../lean_wt/T-307`, nền `145af80`, chưa commit, chưa duyệt, entry chỉ nằm ở worktree ấy; T-315 lấy bản này làm nền (A1, A4) nhưng chưa xong. Claude quyết 2026-11-19 (suy ra của phiên): tách ảnh món lẻ ra khỏi T-315, đưa lên nền hiện tại trước; T-315 sau này dựng trên T-307 đã commit thay vì trên worktree cũ. Ảnh combo vẫn thuộc T-315.
+
+Acceptance viết trước sửa:
+- A1 — Migration mới (mốc sau `20261117120000`) thêm `menu_item.image_code` kèm ràng buộc dạng `images/menu-items/<32 hex>.<jpg|png|webp>`; down từ chối khi còn món đã gắn ảnh. `docs/product/2-db/03-luoc-do-menu-gia.md` và `07-thu-tu-migration.md` khớp; `db-check` xanh (Claude chạy).
+- A2 — `PUT /menu-items/{menu_item_id}/image`: tải hợp lệ thì lưu tệp, ghi khoá trong giao dịch có lý do và vết; `GET …/image` trả đúng byte với `Cache-Control: no-store`. Từ chối và ảnh cũ đứng nguyên khi: không phải chủ quán, sai loại theo nội dung, quá 5 MiB, thiếu lý do, món không có. Chưa có ảnh ⇒ `menu_item_image_missing`. Có test BE cho từng ca; `be-check` xanh (Claude chạy).
+- A3 — Hợp đồng `docs/product/3-be/openapi.yaml` có hai cửa, mã lỗi mới, `image_url` (null được) trên món ở `/menu-items` và thực đơn khách, phiên bản tăng từ `0.72.0`; `02-vai-va-quyen.md` có dòng của cửa ghi; Gate 1g xanh.
+- A4 — FE: ngăn *Cập nhật <món>* ở `/chu-quan/san-pham` có phần *Ảnh sản phẩm* (chọn tệp, xem trước, lý do, nút lưu); lưu xong ảnh mới hiện ở bảng, ngăn và thực đơn khách sau tải lại, kể cả khi đổi tên món. Món chưa tải ảnh vẫn dùng ảnh trình bày sẵn như cũ. Lỗi từ chối hiện thành lời.
+- A5 — Test FE phủ A4 (multipart gửi đúng món và lý do; ảnh tải lên được ưu tiên hơn ảnh sẵn); test cũ của trang sản phẩm và thực đơn khách vẫn xanh; `./scripts/gate.sh` xanh.
+- A6 — Ghép vào cây chính giữ nguyên các thay đổi chưa commit của việc khác ở `anh-san-pham.tsx`, `san-pham.tsx`, `san-pham.test.tsx`, `thuc-don-khach.tsx` (thu gọn giá, ảnh combo `anhMenu`); `docs/product/4-fe/01-khung-fe.md` Claude sửa khi tích hợp.
+
+Phạm vi (`work/scope/T-307.txt`): `db/migrations/*_anh_san_pham.*`, `db/tests/`, `be/`, `fe/src/app/chu-quan/`, `fe/src/app/ban/`, `fe/src/app/thuc-don/`, `fe/src/lib/api/schema.ts`, `docs/product/2-db/03-luoc-do-menu-gia.md`, `docs/product/2-db/07-thu-tu-migration.md`, `docs/product/2-db/09-doi-chieu-bat-bien.md`, `docs/product/3-be/`, `docs/product/4-fe/01-khung-fe.md`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-307-port`, nhánh `codex/T-307-port`, nền `e69d481`. Duyệt: Claude.
+
+Bàn giao 2026-11-20 (thực hiện: Codex, duyệt và tích hợp: Claude). Codex chuyển bản vá cũ lên `e69d481`: migration `20261119100000_anh_san_pham` (cột `menu_item.image_code`, ràng buộc dạng, down từ chối khi còn ảnh); `be/internal/menu/anh_mon.go` (lưu tệp ngẫu nhiên trong `BANHCUON_FILE_DIR`, ghi khoá trong `authz.Run` có lý do, xoá tệp khi giao dịch lỗi; đọc công khai `no-store`, `nosniff`); cửa `menu/cap_nhat_anh` trong `vet_cua_test.go`; `image_url` nullable trên `/menu-categories` và `/menu`; hợp đồng `0.73.0`; `FormAnhSanPham` và prop `imageUrl` · `anhVersion` của `AnhSanPham` (ảnh tải lên `unoptimized`, `?v=` sau lưu). Khác bản cũ: mốc migration mới, `models.go` sinh lại, thêm `image_url` cho `/menu-categories`. Claude đọc diff, không trả lỗi nào. Lượt ghép hai file FE của Codex dừng vì hết hạn mức nên Claude ghép ba chiều `anh-san-pham.tsx` · `san-pham.tsx` với thay đổi chưa commit của việc khác (thu gọn giá, `anhMenu`), ưu tiên `anhMenu` → ảnh tải lên → ảnh sẵn; sửa dòng `/chu-quan/san-pham` và thêm `FormAnhSanPham` ở `docs/product/4-fe/01-khung-fe.md` (A6). Bằng chứng: `./scripts/gate.sh` trong worktree exit 0 — `be-check` 32/32 gói, `db-check` 46 bước xuôi · lùi · xuôi lại, 60 file test, Gate 1g hợp đồng `0.73.0`, FE 795 test và build (log `../lean_wt/_claude_logs/T-307/gate-wt.log`); ở cây chính sau ghép: `npm run typecheck` sạch, `vitest` 7 file / 114 test (`chu-quan/san-pham`, `chu-quan/combo`, `ban`, `thuc-don`) đạt. Chưa thử tay trên trình duyệt với backend thật. Trang chi tiết món `/thuc-don/mon/[id]` vẫn chưa hiện ảnh nào (như trước). T-315 sau này dựng trên T-307 đã commit; worktree `../lean_wt/T-307`, `../lean_wt/T-307-port` và nhánh `codex/T-307`, `codex/T-307-port` để chủ repo xoá.
 
 <a id="t-349"></a>
 ### T-349 — Next.js 16.4.2 dính hai khuyến cáo bảo mật mới, `next build` lại dừng cách lượt
@@ -669,113 +984,52 @@ của gói khác (`undici`, `zod`, `shadcn`, `hono`, `body-parser`, `systeminfor
 hai lần liền exit 0, 0 dòng `SecurityFatalError` (`../lean_wt/_claude_logs/T-349/build-{1,2}-2026-11-22.log`); `fe-check: PASS`. A4: hai
 chỗ `QC-18` đổi sang `16.4.6`. A5: ba file, `./scripts/gate.sh` ở cây chính xanh 2026-11-22. A6: đoạn *Sửa 2026-11-20* ở F-076.
 
-<a id="t-332"></a>
-### T-332 — Gate 7b báo động giả khi chủ repo commit khối trước lúc hook chấm: file scope vừa bị hook dọn nên mọi file của khối bị coi là ngoài scope
+<a id="t-348"></a>
+### T-348 — Trang Yêu thích chưa có lộ trình dựng thật từ database, backend tới giao diện
 
-Hai lần trong phiên của Claude (F-081): 2026-11-12 với bốn khối T-319 · T-320 · T-321 · T-322, và 2026-11-16 với khối T-330. Thứ tự sự việc: Claude giao khối commit ở cuối lượt → chủ repo dán khối, commit ngay → hook `post-commit` (T-320) xoá `work/scope/<MÃ>.txt` vì việc đã tick → Stop hook chạy `scripts/check-commit-block.sh`, đọc lại khối trong transcript, không còn file scope của mã ấy, lùi về hợp các scope đang làm, và báo mọi file của khối là *ngoài scope đã khai*. Khối ấy đã nằm trong lịch sử rồi; lời báo sai và bắt phiên trả lời thêm một lượt.
+Chủ repo yêu cầu 2026-11-18 (nguyên văn ở bảng lời chốt đầu file, *Vế 2026-11-18*): đưa các bước dựng trang `favourite.html` từ database, backend tới FE, backlog riêng, dữ liệu theo database quán đang chạy, Codex làm và Claude kiểm. Mức L1: chỉ thêm tài liệu kế hoạch và một câu hỏi mở, không đổi code, hợp đồng hay dữ liệu.
 
-Thiết kế của Claude 2026-11-16, chưa được chủ repo xác nhận: một khối mà subject của nó **trùng từng chữ** subject của một commit tới được từ `HEAD` là khối đã commit (Gate 8 cấm hai commit trùng subject, nên subject định danh được commit); Gate 7b không chấm file của khối ấy. Khối chưa commit vẫn chấm như cũ. Không đổi Gate 7 (câu hỏi *lượt này có giao khối không*).
+Acceptance: A1 — `work/backlog_YT.md` có bảy bước DB → BE → FE kèm mức, ai làm, đứng trên và chặn bởi; cách Claude đọc lời chủ repo ghi riêng, có nhãn *suy ra*. A2 — `CLAUDE.md` §2 có dòng owner cho sổ mới. A3 — `docs/product/99-unknowns.md` có U-119 đúng khuôn một gạch dưới `### Đang mở`, brief đọc ra. A4 — `./scripts/gate.sh` xanh.
 
-Acceptance viết trước sửa:
-- [x] A1 — Khối có subject trùng một commit tới được từ `HEAD`, file scope của mã ấy không còn ⇒ Gate 7b không nêu file nào của khối là ngoài scope.
-- [x] A2 — Khối chưa commit ⇒ chấm như hiện nay: file ngoài scope vẫn bị nêu tên, `git add -A` và file scope trong khối vẫn bị bắt.
-- [x] A3 — Lượt có một khối đã commit và một khối chưa commit ⇒ chỉ file của khối chưa commit được chấm; mỗi dòng `git add` thuộc về lệnh `git commit` đứng ngay sau nó trong văn bản.
-- [x] A4 — Subject chỉ giống một phần (tiền tố, khác hoa thường) không được coi là đã commit.
-- [x] A5 — `scripts/check-commit-block.test.sh` có ca cho A1–A4, mọi khẳng định cũ giữ nguyên; `./scripts/gate.sh` xanh.
+Phạm vi (`work/scope/T-348.txt`): `work/backlog_YT.md`, `CLAUDE.md`, `docs/product/99-unknowns.md`, `work/backlog.md`. Claude làm.
 
-Phạm vi (`work/scope/T-332.txt`): `scripts/check-commit-block.sh`, `scripts/check-commit-block.test.sh`; phần của Claude: `work/findings.md` (F-081), `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-332`, nhánh `codex/T-332`, nền `1212913`. Duyệt: Claude, chưa duyệt.
+[↑ đầu file](#top)
 
-**Duyệt 2026-11-22** (Claude, cây chính `1fc16ae` cộng bản Codex đã áp). Đọc diff `scripts/check-commit-block.sh`: subject là đối số
-`-m` đầu tiên, so khớp nguyên chuỗi với `git log --format=%s`; mỗi `git add` thuộc lệnh `git commit` đứng sau nó; khối đã commit
-không đưa mã vào `--task`; `git add` sau commit cuối và index thật vẫn chấm; `git log` lỗi ⇒ `skip` như nhánh sẵn có. `bash
-scripts/check-commit-block.test.sh` → *tất cả ca đều qua* (A1–A4 mỗi ca có tên `T-332 …`, ca cũ giữ nguyên); `./scripts/gate.sh` cây
-chính xanh 2026-11-22. Thiết kế 2026-11-16 chưa có lời chủ repo; Claude đóng theo vai dẫn việc L1 (ADR-054), chủ repo phản đối thì mở lại.
+<a id="t-346"></a>
+### T-346 — Bản thiết kế thứ hai cho trang Yêu thích: Mâm quen và món đã thả tim theo nhân, menu thật
 
-<a id="t-329"></a>
-### T-329 — `db-check` mất hơn 700 giây mỗi lượt mà không ai biết thời gian nằm ở khối nào, và còn in một dòng `Broken pipe`
+Chủ repo yêu cầu 2026-11-18: đưa ý tưởng thiết kế trang Yêu thích cho quán, giao Codex làm thành **một tệp HTML khác** (không sửa `favourite.html`). Mức L1: thêm một bản thiết kế tĩnh, không đổi code app, hợp đồng hay dữ liệu.
 
-Chủ repo 2026-11-16 dặn tiếp tục giao Codex làm, Claude kiểm. Số đo 2026-11-12 ở cây chính (T-321 · T-323): một lượt gate có đổi `be/` và phía database mất khoảng 1 060 giây, trong đó `db-check` **711–718 giây**, `be-check` 199–203 giây; hạn Stop hook là 180 giây. T-321 đã cho gate in thời gian từng cổng và từng bước của Gate 1, nhưng `db-check` vẫn là một khối đen. Bản đánh giá Bước 6 nói *đo rồi mới cắt*: task này chỉ đo. Ngoài ra mỗi lượt `db-check` in `./scripts/db-check.sh: line 6xx: printf: write error: Broken pipe` dù vẫn đạt (đo 2026-11-12, ba lượt) — một dòng lỗi trong output của một cổng đạt là thứ dạy người đọc bỏ qua dòng lỗi.
+Ý tưởng (Claude, 2026-11-18): trang xoay quanh *Mâm quen* (bộ món khách tự đặt tên, thêm cả mâm vào giỏ một lần) và *Món đã thả tim* chia nhóm Món lẻ → Combo theo §4.9, mỗi món yêu thích là món + nhân, đổi nhân ngay trên thẻ; giá đọc từ danh mục, không lưu trong dữ liệu yêu thích; canh ghi theo bát, 0đ; chân trang cuộn theo nội dung như T-337. Không dựng gọi lại đơn trước (U-106 còn mở) hay đồng bộ theo tài khoản (U-107, U-108 còn mở).
 
-Acceptance viết trước sửa:
-- [x] A1 — `scripts/db-check.sh` in một dòng `[time] db-check:<khối> <giây>s` cho mỗi khối lớn nó thật sự chạy (các khối theo đúng tiêu đề `# --- …` sẵn có của script: migration xuôi · lùi · xuôi lại, khối kiểm trong tài liệu, `db/tests`, dữ liệu mồi, dữ liệu thử máy dev, khoá chặn, bộ đối chiếu, ba scenario…), cùng khuôn với dòng `[time]` của `scripts/verify.sh`; không đổi dòng `PASS` · `FAIL` · `NOTE` nào, không đổi mã thoát.
-- [x] A2 — Gate hiện các số ấy trong dòng `Gate 1: …` mà không sinh dòng nhãn mới ở cột 0; `scripts/gate.test.sh` có ca chứng minh.
-- [x] A3 — Tìm ra lệnh gây `printf: write error: Broken pipe` và gỡ nó mà không đổi điều gì khối ấy kiểm (nêu vì sao kết quả kiểm không đổi); lượt `db-check` thật không còn dòng ấy.
-- [x] A4 — Claude chạy `./scripts/db-check.sh` bằng Docker: đạt, tổng các khối xấp xỉ tổng thời gian, số đo từng khối được ghi vào mục này; `./scripts/gate.sh` xanh.
+Acceptance: A1–A6 trong phiếu `docs/product/4-fe/thiet_ke/khach_hang/favourite/prompt/t-346.md` — danh mục 13 dòng khớp §4.9 và giá khớp §4.3; dữ liệu yêu thích không chứa giá; thao tác chạy thử bằng trình duyệt headless; không cuộn ngang ở 360px và 430px; không `sticky`/`fixed` ngoài toast, không chữ bịa; `node --check`, `git diff --check`, `./scripts/gate.sh` xanh.
 
-Phạm vi (`work/scope/T-329.txt`): `scripts/db-check.sh`, `scripts/db-check.test.sh`, `scripts/gate.sh`, `scripts/gate.test.sh`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-329`, nhánh `codex/T-329`, nền `4817376`. Duyệt: Claude, chưa duyệt.
+Phạm vi (`work/scope/T-346.txt`): tệp mới `docs/product/4-fe/thiet_ke/khach_hang/favourite/mon-quen.html`, phiếu trên và `work/backlog.md`. Codex làm trong worktree `../lean_wt/T-346`, nhánh `codex/T-346`, tạo từ `0a1a193`.
 
-**Duyệt 2026-11-22** (Claude, cây chính `1fc16ae` cộng bản Codex đã áp). A1: `scripts/db-check.sh` in `[time] db-check:<khối>` cho
-mười hai khối. A2: dòng `Gate 1:` của `./scripts/gate.sh` mang số đo, ca `10b` ở `scripts/gate.test.sh` chứng minh, không thêm nhãn cột 0.
-A3: dòng nhiễu đến từ `printf … | grep -m1` — `grep` thoát ở dòng khớp đầu, `printf` ghi vào ống đã đóng; bản sửa đọc bằng here-string
-rồi lấy dòng khớp đầu, cùng dòng NOTICE như trước nên kết quả kiểm không đổi; lượt thật không còn dòng ấy. A4: gate cây chính xanh,
-`db-check` 809 giây: setup 4 · migration-up 57 · migration-down 54 · migration-up-again 2 · params 0 · qc-docs 2 · sql-tests 10 · seed 1 ·
-dev-fixture 0 · down-guard 30 · **reconcile 643** · scenarios 5 (cộng 808). Khối đối chiếu chiếm 79% — đúng chỗ T-336 nhắm.
+Kết quả 2026-11-18: Codex tạo `docs/product/4-fe/thiet_ke/khach_hang/favourite/mon-quen.html` (605 dòng, tự chứa). A1 — `node` trích danh mục: 13/13 tên và nhóm khớp §4.9, 39/39 ô giá khớp §4.3, giò bán rời và canh không có chọn nhân. A2 — dữ liệu mẫu và hàm lưu chỉ giữ `id, filling, qty`. A5 — `grep` chỉ thấy `position: fixed` ở toast `.notice`; không có `Bánh Chay`, `Đầy Đặn`, `phụ thu`; không combo nào nhắc canh. A6 — `node --check`, `git diff --check` sạch; gate trong worktree `PASS gate không cổng nào đỏ`. A3 · A4 — sandbox của Codex chặn Chromium, nên Claude tự chạy kịch bản Playwright của Codex trên máy: mọi bước PASS (đổi nhân 94.000đ → 84.000đ; bỏ tim, Hoàn tác 5 → 4 → 5; giỏ 0 → 5 → 11 → 22; soạn, sửa, huỷ xoá, xoá mâm; Khách mới hiện EmptyState; `scrollWidth <= clientWidth` ở 360px và 430px kể cả hộp thoại; không lỗi JS). Claude xem ảnh chụp ở hai bề rộng, sáng/tối và hộp thoại. Ảnh và kịch bản lưu ở `../lean_wt/_claude_logs/T-346/`. Tệp được chép từ worktree về cây chính; `favourite.html` không bị sửa.
 
-<a id="t-364"></a>
-### T-364 — Ghi lời chủ repo cho U-120…U-125 và sửa sổ KC
+[↑ đầu file](#top)
 
-Chủ repo yêu cầu 2026-11-22 sau T-363: *"hãy hỏi tôi các câu trong unknown tôi trả lời luôn"*. Claude hỏi ba lượt bằng câu hỏi có sẵn phương án; chủ repo trả lời, có hai câu bằng lời tự do. Mức L1: chỉ ghi lời đã nói vào owner, không đổi code, hợp đồng hay dữ liệu.
+<a id="t-344"></a>
+### T-344 — `next build` tự dừng một lần mỗi khi Next.js có khuyến cáo bảo mật mới, làm gate lúc đỏ lúc xanh — lần hai (F-076)
 
-Acceptance viết trước: A1 — lời vào `master_plan/shop-facts.md` §8.10 kèm nguyên văn, phần suy ra tách riêng có nhãn; §8.4 có con trỏ. A2 — U-120…U-125 rời `### Đang mở`, dời xuống *Đã có lời giải*; brief không còn in chúng. A3 — ADR-103 có *Sửa đổi* cho vế *không có dự kiến hết*. A4 — `work/backlog_KC.md` đọc theo lời: bảng lời đầu sổ, bước bỏ/thêm/đổi mức. A5 — `./scripts/gate.sh` xanh.
+Claude đo 2026-11-17 (Stop hook của phiên, cây chính): `fe-check` đỏ ở `npm run build` với `Error [SecurityFatalError]: Your version of Next.js is affected by a known security vulnerability` và *"Retry the same command to continue"*, sau khi lint, typecheck, 794 test và chính lượt build đều xong. Đây là lần hai của F-076: lần đầu 2026-10-23 với `next` 16.4.0, chữa bằng cách nâng lên 16.4.2 (T-235); nay 16.4.2 lại nằm trong một khuyến cáo mới. `npm audit` 2026-11-17: `next` 16.3.0–16.4.4, mức *moderate*, GHSA-mfr8-8qww-v76h (lộ thông tin giữa các root params khi hàm `use cache` được gọi qua `unstable_cache()`); bản vá 16.4.6. Ghim một bản vá chỉ mua thời gian tới khuyến cáo kế tiếp, và mỗi lần như vậy gate của mọi phiên có đổi `fe/` đỏ cách lượt.
 
-Phạm vi (`work/scope/T-364.txt`): `master_plan/shop-facts.md`, `docs/decisions.md`, `docs/product/99-unknowns.md`, `work/backlog_KC.md`, `CLAUDE.md`, `work/backlog.md`. Claude làm.
-
-**Lời chủ repo 2026-11-22, cùng phiên** (Claude hỏi ba lượt, phần lớn chọn trong phương án có sẵn): nguyên liệu ở Khoản chi và sổ nguyên liệu là một thứ, trang Khoản chi thay cả Kho lẫn Nguyên liệu; ngày nhập ghi riêng; số còn là hiệu số; máy hiện ước tính còn dùng (TB 7 ngày có ghi dùng, chỉ để xem); xoá nguyên liệu đã dùng là ngừng dùng; thêm kèm tiền một lần bấm. Lời vào `master_plan/shop-facts.md` §8.10 *Lượt 2026-11-22* (con trỏ ở §8.4), **ADR-103** *Sửa đổi 2026-11-22*, U-120…U-125 dời xuống *Đã có lời giải*. Sổ KC: bảng lời ở đầu, KC-04 bỏ, KC-01 nâng L3, KC-12 hạ L1, thêm KC-14 gỡ hai trang cũ. Bước kế: KC-01.
-
-
-<a id="t-363"></a>
-### T-363 — Lộ trình dựng trang Khoản chi từ database, backend tới FE
-
-Chủ repo yêu cầu 2026-11-22, khi đang mở `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`: *"hãy yêu cầu codex làm backlog cho task trên và bạn kiểm tra từ db, be và fe"*. Claude đọc (suy ra, theo tiền lệ *Vế 2026-11-18* và T-348): "task trên" là trang Khoản chi theo bản HTML đã sửa qua T-350…T-362; việc cần là một sổ backlog riêng đi từ database → backend → FE, Codex viết, Claude đối chiếu với thứ đang có. Mức L1: chỉ tài liệu kế hoạch, không đổi code, hợp đồng hay dữ liệu.
-
-Acceptance viết trước: A1 — `work/backlog_KC.md` liệt kê từng tính năng của bản HTML với trạng thái hiện có ở database (`db/migrations/`), backend (`docs/product/3-be/openapi.yaml`, `be/internal/khoanchi`, `be/internal/nguyenlieu`) và FE (`fe/src/app/chu-quan/`), mỗi dòng có đường dẫn làm bằng chứng. A2 — các bước `KC-XX` theo thứ tự DB → BE → FE, mỗi bước một mức, ai làm, đứng trên, chặn bởi, Acceptance và phạm vi; không gộp DB · BE · FE trong một bước. A3 — chỗ bản HTML cần dữ liệu mà luật quán chưa nói được ghi là câu hỏi mở cho Claude chuyển vào `docs/product/99-unknowns.md`, không tự quyết. A4 — `CLAUDE.md` §2 có dòng owner cho sổ mới. A5 — `./scripts/gate.sh` xanh.
-
-Phạm vi (`work/scope/T-363.txt`): `work/backlog_KC.md`, `CLAUDE.md`, `docs/product/99-unknowns.md`, `work/backlog.md`. Codex viết `work/backlog_KC.md` trong `../lean_wt/T-363` (nhánh `codex/T-363`), phiếu và báo cáo ở `../lean_wt/_claude_logs/T-363/`; Claude duyệt và làm phần còn lại.
-
-**Bàn giao 2026-11-22** (thực hiện: Codex, duyệt: Claude; worktree `../lean_wt/T-363`, nhánh `codex/T-363` từ `1693c48`). Codex viết `work/backlog_KC.md`: bảng đối chiếu 22 tính năng × DB · API · FE kèm bằng chứng, mười ba bước KC-01…KC-13, sáu câu Q-KC. Codex hết hạn mức trước khi gửi báo cáo, nên Claude duyệt thẳng trên tệp và đối chiếu với bản kiểm riêng (`../lean_wt/_claude_logs/T-363/claude-doi-chieu.md`): khớp ở mọi điểm chính. Claude sửa bốn chỗ: hai link tuyệt đối ra ngoài repo; Q-KC-04 thiếu chỗ va với `U-045` đã đóng và ADR-103 điểm 4 (trang kho *không có dự kiến hết*); KC-13 ghi đúng người chạy; nối Q-KC-01…06 với U-120…U-125 mới mở ở `docs/product/99-unknowns.md`. Thêm dòng §2 ở `CLAUDE.md` và vế 2026-11-22 ở bảng lời chốt. Chưa bước KC nào *Ready*.
-
-<a id="t-354"></a>
-### T-354 — Ba cột nguyên liệu cùng một hàng ở màn hình hẹp
-
-Chủ repo yêu cầu 2026-11-21: tên nguyên liệu, ước tính còn dùng và lượng còn lại nằm trên cùng một hàng. Chỉ sửa bản HTML Khoản chi để thử giao diện, không đổi dữ liệu hay giao diện chạy thật. Codex thực hiện trực tiếp trên nhánh `P4A-01`.
-
-Acceptance viết trước: ở màn hình 390 px, ba cột của mỗi nguyên liệu nằm trên cùng một hàng, đọc được số và đơn vị, trang không tràn ngang. Bấm Thịt heo vẫn mở chi tiết giữa Thịt heo và Bột gạo; các thao tác và lịch sử còn hoạt động. Bố cục rộng giữ ba cột. Kiểm bằng Chrome và `./scripts/gate.sh`.
-
-Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
-
-**Bàn giao 2026-11-21:** Codex sửa trên nhánh `P4A-01`, chưa review độc lập. Tệp đổi của việc này là bản HTML và mục T-354 trong backlog. Ở màn hẹp, bảng nguyên liệu vẫn là bảng ba cột với tiêu đề và một hàng cho mỗi thứ; câu thiếu số được rút gọn thành *Chưa tính* ở ô nhưng tên truy cập vẫn giải thích đầy đủ. Số ngày ước tính ở ô điện thoại hiện ngắn, số đầy đủ giữ trên màn rộng. Chrome ở 320 px và 390 px: ba ô của mỗi hàng có cùng tọa độ y, chín hàng mẫu đều cao 55 px, `scrollWidth` bằng `innerWidth`; bấm Thịt heo thì chi tiết nằm trước Bột gạo và lịch sử lọc theo Thịt heo. Ở 1440 px, ba ô vẫn cùng hàng và lời ước tính đầy đủ hiện ra. jsdom kiểm cú pháp, ba cột, số rút gọn, mở chi tiết và đổi lựa chọn đều đạt; `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm tách riêng chỉ chứa hai tệp T-354 đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Scope giữ tới khi chủ repo commit.
-
-<a id="t-353"></a>
-### T-353 — Bảng nguyên liệu gọn và chi tiết mở trượt
-
-Chủ repo yêu cầu 2026-11-20 cho phần *Mua nguyên liệu* trong bản HTML Khoản chi. Codex làm trực tiếp; chỉ sửa bản xem thử, không đổi dữ liệu Kho, API hoặc giao diện chạy thật. Số còn và số ngày dự tính tiếp tục lấy từ ô nhập minh hoạ đã có.
-
-Acceptance viết trước: bảng nguyên liệu chính có tên, ước tính còn dùng và lượng còn lại; tên là nút mở phần chi tiết bằng hiệu ứng trượt ngay dưới dòng nguyên liệu được chọn, trước dòng nguyên liệu kế tiếp (chủ repo làm rõ 2026-11-20 bằng ví dụ Thịt heo nằm trước Bột gạo). Chi tiết giữ ngày nhập gần nhất, mức dùng mỗi ngày, tổng chi trong kỳ và bốn thao tác đang có. Bảng lịch sử sử dụng ở dưới hiện đúng nguyên liệu được chọn, có thể xem tất cả và vẫn báo khi chưa có lần dùng. Đổi tên, xoá, nhập lại số dự tính, lọc ngày và lịch sử mua hàng tiếp tục hoạt động; màn hẹp không tràn. Kiểm tương tác trên HTML và chạy `./scripts/gate.sh`.
-
-Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
-
-**Bàn giao lượt đầu 2026-11-20:** Codex sửa trên nhánh `P4A-01`, chưa review độc lập; tệp đổi của việc này là bản HTML và mục T-353 trong backlog. Bảng nguyên liệu hiện ba cột; nút tên mở ngăn chi tiết trượt với ngày nhập, mức dùng, tổng chi và bốn thao tác. Bảng lịch sử sử dụng dưới ngăn tự lọc theo nguyên liệu đang chọn, chọn *Tất cả nguyên liệu* trả lại đủ dòng; lịch sử mua hàng giữ riêng. Kiểm JavaScript bằng Node: cú pháp đạt; jsdom đạt các ca mở/đóng, đổi tên, xoá, sửa dự tính, lọc ngày, lịch sử rỗng và lịch sử mua độc lập. Chrome ở 390 px: `innerWidth=390`, `scrollWidth=390`, bảng ba cột và ngăn chi tiết mở từ 0 lên 229 px; ảnh hai cỡ 390 px và 1440 px đã xem. `git diff --check` đạt. `./scripts/gate.sh` trên bản kiểm tách riêng chỉ chứa hai tệp của T-353 đạt Gate 3, 1b, 1c, 1e–1h; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Lượt gate ở cây chung được dừng vì kéo theo backend/database đang được việc khác sửa và có gate khác chạy đồng thời. Scope giữ đến khi chủ repo commit.
-
-**Sửa theo lời chủ repo 2026-11-20:** Chủ repo muốn bấm *Thịt heo* thì chi tiết nằm trước *Bột gạo*. Codex chuyển ngăn chi tiết thành hàng ngay sau từng nguyên liệu, giữ hiệu ứng trượt và việc lọc lịch sử. jsdom kiểm thứ tự Thịt heo → chi tiết → Bột gạo, chuyển lựa chọn thì ngăn cũ đóng, đóng/mở lại, đổi tên và lịch sử mua vẫn đúng. Chrome ở 390 px đo `scrollWidth=390`, ngăn Thịt heo cao 275 px; ở 1440 px không tràn ngang, ảnh hai cỡ đã xem. `./scripts/gate.sh` trên bản kiểm tách riêng chỉ chứa hai tệp T-353 đạt: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Scope giữ đến khi chủ repo commit.
-
-<a id="t-307"></a>
-### T-307 — Chủ quán chưa đổi được ảnh món lẻ ở `/chu-quan/san-pham`
-
-Chủ repo yêu cầu 2026-11-06 (lần đầu) và lại 2026-11-19 trên `http://localhost:3000/chu-quan/san-pham`: *"cập nhật cho món lẻ tôi cần cập nhật ảnh sản phẩm"*, *"yêu cầu codex làm bạn kiểm tra"*. Hiện `AnhSanPham` chọn ảnh theo tên món chuẩn hoá trong bảng viết cứng (`fe/src/app/chu-quan/_components/anh-san-pham.tsx`), database không có chỗ giữ ảnh. Thiết kế đã chốt ở ADR-142 điểm 4: cột `menu_item.image_code`, tệp ngẫu nhiên trong `BANHCUON_FILE_DIR`, `PUT /menu-items/{menu_item_id}/image` (multipart `file` + `reason`, lớp `chu_quan`, JPEG · PNG · WebP ≤ 5 MiB kiểm theo nội dung, có vết) và `GET /menu-items/{menu_item_id}/image` công khai `no-store`.
-
-Lịch sử: Codex làm xong 2026-11-07 trên nhánh `codex/T-307`, worktree `../lean_wt/T-307`, nền `145af80`, chưa commit, chưa duyệt, entry chỉ nằm ở worktree ấy; T-315 lấy bản này làm nền (A1, A4) nhưng chưa xong. Claude quyết 2026-11-19 (suy ra của phiên): tách ảnh món lẻ ra khỏi T-315, đưa lên nền hiện tại trước; T-315 sau này dựng trên T-307 đã commit thay vì trên worktree cũ. Ảnh combo vẫn thuộc T-315.
+Quyết định của Claude 2026-11-17, chưa được chủ repo xác nhận: tách hai việc. (1) Task này làm cho gate **không chập chờn**: `fe-check` nhận ra đúng lời dừng ấy, chạy lại `next build` đúng một lần, và in một dòng `NOTE` mỗi lượt cho tới khi `next` được nâng — lời nhắc vẫn hiện, cổng không còn đỏ sai lý do. (2) Nâng `next` (đổi `fe/package.json`, lockfile và bảng `QC-18`) là việc đổi phụ thuộc, chờ chủ repo quyết như lần trước; không nằm trong task này.
 
 Acceptance viết trước sửa:
-- A1 — Migration mới (mốc sau `20261117120000`) thêm `menu_item.image_code` kèm ràng buộc dạng `images/menu-items/<32 hex>.<jpg|png|webp>`; down từ chối khi còn món đã gắn ảnh. `docs/product/2-db/03-luoc-do-menu-gia.md` và `07-thu-tu-migration.md` khớp; `db-check` xanh (Claude chạy).
-- A2 — `PUT /menu-items/{menu_item_id}/image`: tải hợp lệ thì lưu tệp, ghi khoá trong giao dịch có lý do và vết; `GET …/image` trả đúng byte với `Cache-Control: no-store`. Từ chối và ảnh cũ đứng nguyên khi: không phải chủ quán, sai loại theo nội dung, quá 5 MiB, thiếu lý do, món không có. Chưa có ảnh ⇒ `menu_item_image_missing`. Có test BE cho từng ca; `be-check` xanh (Claude chạy).
-- A3 — Hợp đồng `docs/product/3-be/openapi.yaml` có hai cửa, mã lỗi mới, `image_url` (null được) trên món ở `/menu-items` và thực đơn khách, phiên bản tăng từ `0.72.0`; `02-vai-va-quyen.md` có dòng của cửa ghi; Gate 1g xanh.
-- A4 — FE: ngăn *Cập nhật <món>* ở `/chu-quan/san-pham` có phần *Ảnh sản phẩm* (chọn tệp, xem trước, lý do, nút lưu); lưu xong ảnh mới hiện ở bảng, ngăn và thực đơn khách sau tải lại, kể cả khi đổi tên món. Món chưa tải ảnh vẫn dùng ảnh trình bày sẵn như cũ. Lỗi từ chối hiện thành lời.
-- A5 — Test FE phủ A4 (multipart gửi đúng món và lý do; ảnh tải lên được ưu tiên hơn ảnh sẵn); test cũ của trang sản phẩm và thực đơn khách vẫn xanh; `./scripts/gate.sh` xanh.
-- A6 — Ghép vào cây chính giữ nguyên các thay đổi chưa commit của việc khác ở `anh-san-pham.tsx`, `san-pham.tsx`, `san-pham.test.tsx`, `thuc-don-khach.tsx` (thu gọn giá, ảnh combo `anhMenu`); `docs/product/4-fe/01-khung-fe.md` Claude sửa khi tích hợp.
+- A1 — `npm run build` thoát khác 0 **và** output có `SecurityFatalError` cùng lời *Retry the same command* ⇒ `fe-check` in `NOTE fe-check — …` nêu bản `next` đang ghim và việc cần làm, rồi chạy lại build đúng một lần; lần hai đạt thì `fe-check` đạt.
+- A2 — Lần hai vẫn lỗi ⇒ `fe-check: FAIL`; lỗi build khác (không có lời dừng ấy) ⇒ không chạy lại, đỏ như hiện nay; lint, typecheck, test không bao giờ được chạy lại.
+- A3 — Dòng `NOTE` lên gate thành một dòng nhãn `NOTE`; build đạt ngay lần đầu thì không có dòng ấy.
+- A4 — `scripts/fe-check.test.sh` có ca cho A1–A3 bằng `npm` giả; mọi khẳng định cũ giữ nguyên; `./scripts/gate.sh` xanh.
 
-Phạm vi (`work/scope/T-307.txt`): `db/migrations/*_anh_san_pham.*`, `db/tests/`, `be/`, `fe/src/app/chu-quan/`, `fe/src/app/ban/`, `fe/src/app/thuc-don/`, `fe/src/lib/api/schema.ts`, `docs/product/2-db/03-luoc-do-menu-gia.md`, `docs/product/2-db/07-thu-tu-migration.md`, `docs/product/2-db/09-doi-chieu-bat-bien.md`, `docs/product/3-be/`, `docs/product/4-fe/01-khung-fe.md`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-307-port`, nhánh `codex/T-307-port`, nền `e69d481`. Duyệt: Claude.
+Phạm vi (`work/scope/T-344.txt`): `scripts/fe-check.sh`, `scripts/fe-check.test.sh`; phần của Claude: `work/findings.md` (F-076), `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-344`, nhánh `codex/T-344`, nền `94eafe5`. Duyệt: Claude.
 
-Bàn giao 2026-11-20 (thực hiện: Codex, duyệt và tích hợp: Claude). Codex chuyển bản vá cũ lên `e69d481`: migration `20261119100000_anh_san_pham` (cột `menu_item.image_code`, ràng buộc dạng, down từ chối khi còn ảnh); `be/internal/menu/anh_mon.go` (lưu tệp ngẫu nhiên trong `BANHCUON_FILE_DIR`, ghi khoá trong `authz.Run` có lý do, xoá tệp khi giao dịch lỗi; đọc công khai `no-store`, `nosniff`); cửa `menu/cap_nhat_anh` trong `vet_cua_test.go`; `image_url` nullable trên `/menu-categories` và `/menu`; hợp đồng `0.73.0`; `FormAnhSanPham` và prop `imageUrl` · `anhVersion` của `AnhSanPham` (ảnh tải lên `unoptimized`, `?v=` sau lưu). Khác bản cũ: mốc migration mới, `models.go` sinh lại, thêm `image_url` cho `/menu-categories`. Claude đọc diff, không trả lỗi nào. Lượt ghép hai file FE của Codex dừng vì hết hạn mức nên Claude ghép ba chiều `anh-san-pham.tsx` · `san-pham.tsx` với thay đổi chưa commit của việc khác (thu gọn giá, `anhMenu`), ưu tiên `anhMenu` → ảnh tải lên → ảnh sẵn; sửa dòng `/chu-quan/san-pham` và thêm `FormAnhSanPham` ở `docs/product/4-fe/01-khung-fe.md` (A6). Bằng chứng: `./scripts/gate.sh` trong worktree exit 0 — `be-check` 32/32 gói, `db-check` 46 bước xuôi · lùi · xuôi lại, 60 file test, Gate 1g hợp đồng `0.73.0`, FE 795 test và build (log `../lean_wt/_claude_logs/T-307/gate-wt.log`); ở cây chính sau ghép: `npm run typecheck` sạch, `vitest` 7 file / 114 test (`chu-quan/san-pham`, `chu-quan/combo`, `ban`, `thuc-don`) đạt. Chưa thử tay trên trình duyệt với backend thật. Trang chi tiết món `/thuc-don/mon/[id]` vẫn chưa hiện ảnh nào (như trước). T-315 sau này dựng trên T-307 đã commit; worktree `../lean_wt/T-307`, `../lean_wt/T-307-port` và nhánh `codex/T-307`, `codex/T-307-port` để chủ repo xoá.
+Duyệt và bàn giao 2026-11-18 (thực hiện: Codex một vòng, duyệt: Claude). `scripts/fe-check.sh`: lint · typecheck · test chạy một lần như cũ (script có `set -euo pipefail`, lỗi thì dừng); `npm run build` chạy qua `tee` vào file tạm; thoát khác 0 mà output có **cả** `SecurityFatalError` lẫn `Retry the same command` ⇒ in `NOTE fe-check — next build dừng một lần … (đang ghim next <bản>) …` rồi chạy lại build đúng một lần, lần hai vẫn lỗi ⇒ `fe-check: FAIL — next build vẫn lỗi sau một lần chạy lại`; lỗi build khác ⇒ đỏ ngay, không chạy lại. Script không làm theo đoạn hướng dẫn cho agent trong lời dừng của Next. `scripts/fe-check.test.sh` thêm bảy ca bằng `npm` giả (dừng một lần rồi đạt, thiếu bản `next`, dừng cả hai lần, lỗi khác, chỉ một trong hai chuỗi — mỗi chiều một ca, đạt ngay), đếm số lần build và số lần lint/typecheck/test; mọi ca cũ giữ nguyên.
+
+Bằng chứng ở cây chính (Claude): `./scripts/fe-check.sh` thật — lần build đầu dừng với `Error [SecurityFatalError]`, script in dòng `NOTE … (đang ghim next 16.4.2); đã chạy lại …`, lần hai đạt, `fe-check: PASS`; 21 file `scripts/*.test.sh` đều đạt; tám cổng chỉ đọc file đều đạt. **Chưa chạy được trọn `./scripts/gate.sh`:** Docker Desktop dừng ở hộp thoại xin quyền quản trị, và cây chính đang có `scripts/db-check.sh` đổi (T-329, T-336) nên Gate 1 đòi `db-check`; phần ấy không liên quan T-344.
+
+Còn lại: nâng `next` lên 16.4.6 (GHSA-mfr8-8qww-v76h, `npm audit` 2026-11-17) — chờ chủ repo quyết; khi nâng xong dòng `NOTE` tự hết. Trong worktree của Codex, lượt gate có thể đã tự chạy `npm ci` qua nhánh tự cài của T-330 — chỉ trong `../lean_wt/T-344/fe/node_modules`, không đụng file nào được git theo dõi. Worktree `../lean_wt/T-344` và nhánh `codex/T-344` chờ chủ repo gỡ.
 
 <a id="t-339"></a>
 ### T-339 — Bộ đối chiếu vết kêu oan với vết không người của mã xác nhận Gmail và sổ gọi model
@@ -868,22 +1122,26 @@ Bàn giao 2026-11-20 (thực hiện: Codex, duyệt: Claude). Lượt đầu (`g
 
 Nguồn: bản đánh giá database 2026-11-16, mục 6. `cash_day_reconciled_guard` (thân cuối ở `db/migrations/20261012120000_mo_lai_so_dem.up.sql`) đọc `reconciled_day` mà không lấy khoá; dưới READ COMMITTED một lần sửa số đếm và một lần ký ngày chạy song song đều qua. Backend đã khoá ngày ở `be/internal/ket/service.go` (`ngayban.Khoa`), nên chỉ đường vượt backend mới lọt — nhưng ADR-080 điểm 1 đặt khoá ở tầng database chính vì các tầng trên có đường vòng. Mức L3: đổi một trigger giữ tiền và phải khớp giao thức khoá của backend (thứ tự khoá, khoá chung/riêng) để không sinh deadlock; cần thiết kế và *Sửa đổi* ADR-080 trước khi viết code. Làm sau cùng trong năm việc.
 
-Acceptance (viết khi mở việc, sau thiết kế).
+**Thiết kế** (Claude Code, chủ repo duyệt 2026-11-23): `docs/decisions.md` ADR-080, *Sửa đổi 2026-11-23* — trigger ghi lấy khoá tư
+vấn chung `(309, ngày − 2000-01-01)` cho từng ngày của bản trước/sau theo thứ tự tăng dần, trigger ký `reconciled_day_nonempty_guard`
+lấy khoá riêng cùng khoá, cả hai **trước** khi đọc; giống từng ký tự khoá của `be/internal/ngayban`. Giới hạn REPEATABLE READ ghi rõ, không
+chặn. Chẻ lát: (1) Claude viết ADR và test hồi quy trước — lát này; (2) Codex viết migration cho test xanh; (3) Claude chạy `db-check`,
+`be-check`, phép cài lỗi.
 
-<a id="t-350"></a>
-### T-350 — Ngày nhập và số ngày còn dùng trong bản HTML Khoản chi
+Acceptance viết trước sửa:
+- A1 — `db/tests/t343_reconciled_day_lock.sql` (Claude viết, Codex không sửa) đỏ trên lược đồ `3cf3962`, xanh sau migration: phần A thấy
+  khoá chung khi ghi, khoá riêng khi ký, cả hai ngày khi dời số đếm; phần B (hai kết nối `dblink`) thấy lần ghi chờ lần ký đang dở, lần ký
+  chờ lần ghi đang dở, và lần ghi chờ rồi bị từ chối khi dấu COMMIT, số đếm đứng yên.
+- A2 — một migration mới sau `20261122120000` thay thân hai hàm trigger; đường lùi trả đúng thân cũ (lược đồ sau lùi giống hệt trước khi
+  xuôi); không đổi mã lỗi, tên ràng buộc, nhánh `TRUNCATE`, luật mở lại (ADR-096). `07-thu-tu-migration.md` và
+  `04-luoc-do-duong-tien.md` §7 có dòng của bước.
+- A3 — mọi test cũ của `db-check` xanh, gồm `i021_*`; `be-check` xanh (cửa ký, sửa số đếm, ghi tiền của `ket` vẫn chạy, không deadlock).
+- A4 — phép cài lỗi của Claude: bỏ riêng dòng lấy khoá ở trigger ký ⇒ B2 đỏ; bỏ riêng ở trigger ghi ⇒ phần A và B1 đỏ.
+- A5 — `./scripts/gate.sh` xanh.
 
-Chủ repo yêu cầu 2026-11-19 và nhắc tiếp tục 2026-11-20. Chỉ sửa bản HTML minh hoạ, không đổi trang chạy thật, API hoặc dữ kiện kho. Codex thực hiện trên nhánh `P4A-01`; chưa review độc lập.
-
-Acceptance viết trước: từng nguyên liệu hiện ngày nhập gần nhất riêng với ngày chi; có thể nhập số hàng còn và mức dùng mỗi ngày theo cùng đơn vị; bản xem thử tính số ngày còn = số còn / mức dùng mỗi ngày, nói rõ nguồn số minh hoạ và trường hợp thiếu dữ liệu hoặc mức dùng bằng 0; cập nhật, đổi tên, xoá, lọc và sửa khoản chi vẫn hoạt động. Chủ repo bổ sung 2026-11-20: sắp nội dung danh mục theo hàng/cột có tiêu đề tiếng Việt, đọc được trên màn hình hẹp mà không mất thông tin hay nút thao tác. Kiểm JavaScript và tương tác trên bản HTML; chạy `./scripts/gate.sh`.
-
-Scope: `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html`, `work/backlog.md`.
-
-**Bàn giao 2026-11-20:** Bản HTML hiện ngày nhập riêng trên dòng khoản chi và ngày nhập gần nhất theo từng nguyên liệu. Có hộp nhập số còn, mức tiêu thụ mỗi ngày và đơn vị; phép chia hiện số ngày ước tính, thiếu số hoặc mức bằng 0 thì nói chưa thể tính. Dữ liệu mẫu và các số dự tính chỉ dùng để thử giao diện, không lấy từ Kho. Kiểm tương tác bằng jsdom: 17 phép đạt, gồm sửa mức dùng, nhập ngày khác ngày chi, lọc tiền, thêm nguyên liệu và đổi tên. Ảnh xem thử Chrome ở 1440px và 500px không thấy tràn hoặc lỗi bố cục ở vùng mới. `git diff --check` đạt. `./scripts/gate.sh` trên bản sao chỉ chứa hai file của T-350 đạt: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi. Gate trên cây chung đỏ do `docs/private/anh/banh-cuon/1-banh-dep-trung-chin.png` ngoài scope và `db/tests/yt03_customer_favourite.sql` chờ bảng chưa tạo của YT-03; cả hai ngoài scope T-350. Chưa review độc lập; giữ scope tới khi chủ repo commit.
-
-**Bổ sung kiểm bảng 2026-11-20:** Danh mục nay xếp mỗi mục thành bảng có tiêu đề tiếng Việt; riêng nguyên liệu có bảy cột, khoản con có bốn cột. Trên màn hình hẹp, mỗi hàng chuyển thành các ô có nhãn và giữ bốn nút thao tác. jsdom kiểm thêm 16 điều kiện đạt, gồm số cột, nhãn, phép tính, ngày nhập và đổi tên. Chrome DevTools đặt đúng viewport 390px: `innerWidth=390`, `scrollWidth=390`; bảng nguyên liệu rộng 322px trong khung 322px và cả bảy nhãn hiển thị. Ảnh Chrome 1440px và 390px đã xem; không có tràn ngang ở vùng mới. `./scripts/gate.sh` chạy lại trên bản sao chỉ chứa hai file T-350: Gate 3, 1b, 1c, 1e–1h PASS; Gate 1d và Gate 1 SKIP vì chỉ tài liệu đổi; `PASS gate`.
-
-**Bổ sung bố cục 2026-11-20:** Theo yêu cầu mới của chủ repo, danh sách trong từng mục chi đã thành bảng có tiêu đề tiếng Việt; trên màn hình hẹp mỗi hàng hiện thành thẻ hai cột có nhãn cho ngày, lượng hàng, mức dùng, ước tính, tổng chi và thao tác. Kiểm bằng jsdom: ba bảng được tạo với 7/4 cột, ngày nhập và ước tính đúng; thao tác ẩn/hiện, sửa dự tính, lọc ngày, đổi tên, xoá mục chưa có chi, ghi mua và sửa khoản chi có lý do đều đạt. Đã xem ảnh Chrome 1440px và 500px; `node --check` và `git diff --check` đạt. Gate cây chung đang được chạy lại sau thay đổi này.
+Phạm vi (`work/scope/T-343.txt`): `db/migrations/` (bước mới), `db/tests/t343_reconciled_day_lock.sql`,
+`docs/product/2-db/07-thu-tu-migration.md`, `docs/product/2-db/04-luoc-do-duong-tien.md`, `docs/decisions.md`, `work/backlog.md`. Thi công:
+Codex trong `../lean_wt/T-343`, nhánh `codex/T-343`, nền `3cf3962`; log `../lean_wt/_claude_logs/T-343/`. Duyệt: Claude, chưa duyệt.
 
 <a id="t-338"></a>
 ### T-338 — Ngăn Cập nhật món trên trang Sản phẩm báo lỗi hai phần tử trùng key
@@ -898,26 +1156,43 @@ Phạm vi (`work/scope/T-338.txt`): `work/backlog.md`, `fe/src/app/chu-quan/_com
 
 [↑ đầu file](#top)
 
-<a id="t-344"></a>
-### T-344 — `next build` tự dừng một lần mỗi khi Next.js có khuyến cáo bảo mật mới, làm gate lúc đỏ lúc xanh — lần hai (F-076)
+<a id="t-337"></a>
+### T-337 — Nút Thêm tất cả vào giỏ trên trang Yêu thích không nổi theo màn hình
 
-Claude đo 2026-11-17 (Stop hook của phiên, cây chính): `fe-check` đỏ ở `npm run build` với `Error [SecurityFatalError]: Your version of Next.js is affected by a known security vulnerability` và *"Retry the same command to continue"*, sau khi lint, typecheck, 794 test và chính lượt build đều xong. Đây là lần hai của F-076: lần đầu 2026-10-23 với `next` 16.4.0, chữa bằng cách nâng lên 16.4.2 (T-235); nay 16.4.2 lại nằm trong một khuyến cáo mới. `npm audit` 2026-11-17: `next` 16.3.0–16.4.4, mức *moderate*, GHSA-mfr8-8qww-v76h (lộ thông tin giữa các root params khi hàm `use cache` được gọi qua `unstable_cache()`); bản vá 16.4.6. Ghim một bản vá chỉ mua thời gian tới khuyến cáo kế tiếp, và mỗi lần như vậy gate của mọi phiên có đổi `fe/` đỏ cách lượt.
+Chủ repo yêu cầu 2026-11-16 để nút **Thêm tất cả vào giỏ** trên bản mẫu `docs/product/4-fe/thiet_ke/khach_hang/favourite/favourite.html` cuộn theo nội dung, không nổi ở mép màn hình. Mức L1 vì thay đổi cách hiển thị khi cuộn; không đổi hành vi thêm món vào giỏ.
 
-Quyết định của Claude 2026-11-17, chưa được chủ repo xác nhận: tách hai việc. (1) Task này làm cho gate **không chập chờn**: `fe-check` nhận ra đúng lời dừng ấy, chạy lại `next build` đúng một lần, và in một dòng `NOTE` mỗi lượt cho tới khi `next` được nâng — lời nhắc vẫn hiện, cổng không còn đỏ sai lý do. (2) Nâng `next` (đổi `fe/package.json`, lockfile và bảng `QC-18`) là việc đổi phụ thuộc, chờ chủ repo quyết như lần trước; không nằm trong task này.
+Acceptance: (A1) chân trang chứa tổng tiền và nút nằm sau danh sách món trong luồng tài liệu, không dùng `position: sticky` hay `fixed`; (A2) nút vẫn gọi thao tác thêm tất cả, các hộp thoại và điều hướng vẫn mở được; (A3) đọc diff, kiểm cú pháp và chạy `./scripts/gate.sh`.
+
+Phạm vi (`work/scope/T-337.txt`): tệp HTML trên và `work/backlog.md`. Codex làm trên nhánh `P4A-01`; chưa duyệt độc lập. Tệp HTML đang chứa thay đổi Việt hoá chưa commit từ lượt trước; backlog cũng chứa thay đổi của các việc khác. Khi bàn giao commit, cần tách đúng phần của T-337.
+
+Kết quả 2026-11-16: bỏ `position: sticky` và `bottom: 0` khỏi `.footer`, nên nút và tổng tiền nằm sau danh sách món, cuộn theo trang. A1 — kiểm cấu trúc bằng Python đạt, ảnh Chrome headless ở `/tmp/t337-favourite-mobile.png` cho thấy đầu trang không có nút nổi. A2 — cùng phép kiểm xác nhận `#add-all` vẫn gọi `add(state.items)`; cú pháp JavaScript qua `node --check`, không sửa trình xử lý hay hộp thoại. A3 — `git diff --check` đạt; `./scripts/gate.sh` thoát 0, dòng cuối `PASS gate không cổng nào đỏ`, 21 file kiểm script đều qua, thời gian 1238 giây. Chưa duyệt độc lập. Tệp HTML còn phần Việt hoá của lượt trước; commit T-337 chỉ nhận hunk CSS và hồ sơ việc này.
+
+[↑ đầu file](#top)
+
+<a id="t-336"></a>
+### T-336 — Khối chứng minh bộ đối chiếu của `db-check` chạy 165 file cài lỗi nối tiếp trong một phiên, mất 567 trên 726 giây
+
+Chủ repo 2026-11-16 dặn tiếp tục giao Codex làm, Claude kiểm. Số đo của T-329 (Claude chạy bằng Docker, 2026-11-16): `./scripts/db-check.sh` 726 giây, trong đó khối *bộ đối chiếu* 567 giây; migration xuôi 60, lùi 57, khoá chặn 20, còn lại dưới 10. Trong khối ấy, phần *biết kêu* chạy cả 163 câu đối chiếu cho từng file trong 165 file cài lỗi — khoảng 27 000 lượt chạy câu — trong **một** phiên `psql`, và sẽ chậm theo bình phương khi thêm bất biến. Một lượt gate có đổi phía database vì thế mất khoảng 1 060 giây, hạn Stop hook là 180 giây.
+
+Thiết kế của Claude 2026-11-16, chưa được chủ repo xác nhận: giữ nguyên điều được kiểm (mỗi file cài lỗi vẫn chạy đủ mọi câu trên ngày mẫu, tập câu kêu vẫn phải bằng đúng tập khai), chỉ chia các file cài lỗi cho vài phiên chạy **song song**. Các phiên không thể chung một database: ngày mẫu chèn cùng các khoá duy nhất, nên giao dịch thứ hai sẽ chờ giao dịch thứ nhất. Vì vậy mỗi phiên thêm chạy trên một bản sao của database (`CREATE DATABASE … TEMPLATE banhcuon`, cùng cách với ADR-144). `DB_CHECK_PROOF_JOBS=1` chạy đúng đường cũ.
 
 Acceptance viết trước sửa:
-- A1 — `npm run build` thoát khác 0 **và** output có `SecurityFatalError` cùng lời *Retry the same command* ⇒ `fe-check` in `NOTE fe-check — …` nêu bản `next` đang ghim và việc cần làm, rồi chạy lại build đúng một lần; lần hai đạt thì `fe-check` đạt.
-- A2 — Lần hai vẫn lỗi ⇒ `fe-check: FAIL`; lỗi build khác (không có lời dừng ấy) ⇒ không chạy lại, đỏ như hiện nay; lint, typecheck, test không bao giờ được chạy lại.
-- A3 — Dòng `NOTE` lên gate thành một dòng nhãn `NOTE`; build đạt ngay lần đầu thì không có dòng ấy.
-- A4 — `scripts/fe-check.test.sh` có ca cho A1–A3 bằng `npm` giả; mọi khẳng định cũ giữ nguyên; `./scripts/gate.sh` xanh.
+- A1 — `DB_CHECK_PROOF_JOBS` (mặc định 4, tối thiểu 1) chia các file cài lỗi cho ngần ấy phiên; mỗi file thuộc đúng một phiên; phiên một chạy thêm *ngày mẫu* và các file *từ chối* như hiện nay. Giá trị 1 không tạo database nào thêm và chạy như trước T-336.
+- A2 — Tập dòng `PASS` · `FAIL` · `NOTE` của `db-check` với 1 phiên và với 4 phiên giống hệt nhau (so bằng `diff` sau khi bỏ các dòng `[time]` và dòng mang tên compose project).
+- A3 — Một phiên không chạy được, hay một file cài lỗi không có kết quả ⇒ `db-check` đỏ, nêu tên; không có đường nào để một file bị bỏ sót mà vẫn đạt.
+- A4 — Phép cài lỗi của Claude: sửa tạm dòng `-- kêu:` của một file cài lỗi thuộc phiên thứ ba ⇒ `db-check` đỏ đúng ở file ấy; gỡ thì đạt lại.
+- A5 — Phép chia file có test không cần Docker trong `scripts/db-check.test.sh`; Claude đo thời gian khối đối chiếu với 1 · 2 · 4 phiên và ghi vào mục này; `./scripts/gate.sh` xanh.
 
-Phạm vi (`work/scope/T-344.txt`): `scripts/fe-check.sh`, `scripts/fe-check.test.sh`; phần của Claude: `work/findings.md` (F-076), `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-344`, nhánh `codex/T-344`, nền `94eafe5`. Duyệt: Claude.
+Phạm vi (`work/scope/T-336.txt`): `scripts/db-check.sh`, `scripts/db-check.test.sh`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-336`, nhánh `codex/T-336`, nền `9bbd3d3` cộng bản chưa commit của `scripts/db-check.sh` và `scripts/gate.test.sh` ở cây chính (T-329). Lượt Codex đầu bị ngắt trước khi báo cáo.
 
-Duyệt và bàn giao 2026-11-18 (thực hiện: Codex một vòng, duyệt: Claude). `scripts/fe-check.sh`: lint · typecheck · test chạy một lần như cũ (script có `set -euo pipefail`, lỗi thì dừng); `npm run build` chạy qua `tee` vào file tạm; thoát khác 0 mà output có **cả** `SecurityFatalError` lẫn `Retry the same command` ⇒ in `NOTE fe-check — next build dừng một lần … (đang ghim next <bản>) …` rồi chạy lại build đúng một lần, lần hai vẫn lỗi ⇒ `fe-check: FAIL — next build vẫn lỗi sau một lần chạy lại`; lỗi build khác ⇒ đỏ ngay, không chạy lại. Script không làm theo đoạn hướng dẫn cho agent trong lời dừng của Next. `scripts/fe-check.test.sh` thêm bảy ca bằng `npm` giả (dừng một lần rồi đạt, thiếu bản `next`, dừng cả hai lần, lỗi khác, chỉ một trong hai chuỗi — mỗi chiều một ca, đạt ngay), đếm số lần build và số lần lint/typecheck/test; mọi ca cũ giữ nguyên.
-
-Bằng chứng ở cây chính (Claude): `./scripts/fe-check.sh` thật — lần build đầu dừng với `Error [SecurityFatalError]`, script in dòng `NOTE … (đang ghim next 16.4.2); đã chạy lại …`, lần hai đạt, `fe-check: PASS`; 21 file `scripts/*.test.sh` đều đạt; tám cổng chỉ đọc file đều đạt. **Chưa chạy được trọn `./scripts/gate.sh`:** Docker Desktop dừng ở hộp thoại xin quyền quản trị, và cây chính đang có `scripts/db-check.sh` đổi (T-329, T-336) nên Gate 1 đòi `db-check`; phần ấy không liên quan T-344.
-
-Còn lại: nâng `next` lên 16.4.6 (GHSA-mfr8-8qww-v76h, `npm audit` 2026-11-17) — chờ chủ repo quyết; khi nâng xong dòng `NOTE` tự hết. Trong worktree của Codex, lượt gate có thể đã tự chạy `npm ci` qua nhánh tự cài của T-330 — chỉ trong `../lean_wt/T-344/fe/node_modules`, không đụng file nào được git theo dõi. Worktree `../lean_wt/T-344` và nhánh `codex/T-344` chờ chủ repo gỡ.
+**Kết quả 2026-11-23** (thực hiện: Codex, duyệt: Claude). Chủ repo xác nhận thiết kế bằng lời giao *"hãy yêu cầu codex làm"*. Làm lại
+trong `../lean_wt/T-336-v2` (nhánh `codex/T-336-v2`, nền `3cf3962`, đã có T-329) từ bản dở của lượt đầu: hàm `db_check_proof_assign`
+chia vòng tròn, phiên 2…N chạy trên `CREATE DATABASE banhcuon_proof_N TEMPLATE banhcuon`, `wait` từng phiên, `trap` giữ mã thoát gốc,
+giá trị `DB_CHECK_PROOF_JOBS` sai in `NOTE` và chạy 1 phiên. A1 — Codex so luồng SQL `N=1` với bản cũ: cùng SHA-256; 166 file chia
+42/42/41/41. A2 — Claude chạy `db-check` với 1 và 4 phiên, cả hai exit 0; 399 dòng `PASS`/`FAIL`/`NOTE` giống hệt (`diff` rỗng). A3 —
+phiên thoát khác 0 ⇒ `FAIL phiên N`; file không có đoạn kết quả ⇒ `ran != n_q` ⇒ `FAIL kêu <file>`. A4 — `i003_2` (phiên 3) khai thêm
+`I-999` ⇒ exit 1, `FAIL kêu i003_2 — khai: I-003/2 I-999 · kêu: I-003/2`; trả file lại. A5 — `scripts/db-check.test.sh` xanh ở clone
+chính; khối chứng minh 596 s (1 phiên) → 160 s (4 phiên). Log `../lean_wt/_claude_logs/T-336/`.
 
 <a id="t-335"></a>
 ### T-335 — Thu gọn điều hướng 14 trang chủ quán
@@ -966,6 +1241,28 @@ Phạm vi (`work/scope/T-333.txt`): `work/backlog.md`, `docs/product/4-fe/thiet_
 
 [↑ đầu file](#top)
 
+<a id="t-332"></a>
+### T-332 — Gate 7b báo động giả khi chủ repo commit khối trước lúc hook chấm: file scope vừa bị hook dọn nên mọi file của khối bị coi là ngoài scope
+
+Hai lần trong phiên của Claude (F-081): 2026-11-12 với bốn khối T-319 · T-320 · T-321 · T-322, và 2026-11-16 với khối T-330. Thứ tự sự việc: Claude giao khối commit ở cuối lượt → chủ repo dán khối, commit ngay → hook `post-commit` (T-320) xoá `work/scope/<MÃ>.txt` vì việc đã tick → Stop hook chạy `scripts/check-commit-block.sh`, đọc lại khối trong transcript, không còn file scope của mã ấy, lùi về hợp các scope đang làm, và báo mọi file của khối là *ngoài scope đã khai*. Khối ấy đã nằm trong lịch sử rồi; lời báo sai và bắt phiên trả lời thêm một lượt.
+
+Thiết kế của Claude 2026-11-16, chưa được chủ repo xác nhận: một khối mà subject của nó **trùng từng chữ** subject của một commit tới được từ `HEAD` là khối đã commit (Gate 8 cấm hai commit trùng subject, nên subject định danh được commit); Gate 7b không chấm file của khối ấy. Khối chưa commit vẫn chấm như cũ. Không đổi Gate 7 (câu hỏi *lượt này có giao khối không*).
+
+Acceptance viết trước sửa:
+- [x] A1 — Khối có subject trùng một commit tới được từ `HEAD`, file scope của mã ấy không còn ⇒ Gate 7b không nêu file nào của khối là ngoài scope.
+- [x] A2 — Khối chưa commit ⇒ chấm như hiện nay: file ngoài scope vẫn bị nêu tên, `git add -A` và file scope trong khối vẫn bị bắt.
+- [x] A3 — Lượt có một khối đã commit và một khối chưa commit ⇒ chỉ file của khối chưa commit được chấm; mỗi dòng `git add` thuộc về lệnh `git commit` đứng ngay sau nó trong văn bản.
+- [x] A4 — Subject chỉ giống một phần (tiền tố, khác hoa thường) không được coi là đã commit.
+- [x] A5 — `scripts/check-commit-block.test.sh` có ca cho A1–A4, mọi khẳng định cũ giữ nguyên; `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-332.txt`): `scripts/check-commit-block.sh`, `scripts/check-commit-block.test.sh`; phần của Claude: `work/findings.md` (F-081), `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-332`, nhánh `codex/T-332`, nền `1212913`. Duyệt: Claude, chưa duyệt.
+
+**Duyệt 2026-11-22** (Claude, cây chính `1fc16ae` cộng bản Codex đã áp). Đọc diff `scripts/check-commit-block.sh`: subject là đối số
+`-m` đầu tiên, so khớp nguyên chuỗi với `git log --format=%s`; mỗi `git add` thuộc lệnh `git commit` đứng sau nó; khối đã commit
+không đưa mã vào `--task`; `git add` sau commit cuối và index thật vẫn chấm; `git log` lỗi ⇒ `skip` như nhánh sẵn có. `bash
+scripts/check-commit-block.test.sh` → *tất cả ca đều qua* (A1–A4 mỗi ca có tên `T-332 …`, ca cũ giữ nguyên); `./scripts/gate.sh` cây
+chính xanh 2026-11-22. Thiết kế 2026-11-16 chưa có lời chủ repo; Claude đóng theo vai dẫn việc L1 (ADR-054), chủ repo phản đối thì mở lại.
+
 <a id="t-331"></a>
 ### T-331 — `make dev-iphone` chỉ có trong worktree Codex, gõ ở repo chính thì báo không có lệnh
 
@@ -999,6 +1296,45 @@ Phạm vi (`work/scope/T-330.txt`): `scripts/fe-check.sh`, `scripts/fe-check.tes
 Duyệt và bàn giao 2026-11-16 (thực hiện: Codex một vòng, duyệt: Claude). `scripts/fe-check.sh`: danh sách công cụ gọi trực tiếp nằm ở `REQUIRED_FE_BINS` (hiện một mục, `openapi-typescript`); "đã cài" = có thư mục, có file chạy được và `--version` thoát 0; chưa thì chạy `npm ci` một lần rồi kiểm lại; vẫn thiếu hoặc `npm ci` lỗi ⇒ `fe-check: FAIL — thiếu … hãy chạy: cd fe && npm ci` kèm mã thoát. `scripts/fe-check.test.sh` thêm năm ca bằng `npm` giả (thư mục rỗng, thiếu riêng công cụ, cài đủ, `npm ci` thoát 0 mà vẫn thiếu, `npm ci` thoát 1), output không còn `ENOENT`; hai khẳng định cũ giữ nguyên. Claude kiểm ở cây chính: công cụ thật trả `v7.13.0` cho `--version`; `./scripts/fe-check.test.sh` đạt với gói đã cài thật; `./scripts/gate.sh` không cổng nào đỏ, `fe-check` 30 giây, 21 file test qua.
 
 Còn lại: không rõ ai làm rỗng `fe/node_modules` ngày 2026-11-13; worktree `../lean_wt/T-330` và nhánh `codex/T-330` chờ chủ repo gỡ.
+
+<a id="t-329"></a>
+### T-329 — `db-check` mất hơn 700 giây mỗi lượt mà không ai biết thời gian nằm ở khối nào, và còn in một dòng `Broken pipe`
+
+Chủ repo 2026-11-16 dặn tiếp tục giao Codex làm, Claude kiểm. Số đo 2026-11-12 ở cây chính (T-321 · T-323): một lượt gate có đổi `be/` và phía database mất khoảng 1 060 giây, trong đó `db-check` **711–718 giây**, `be-check` 199–203 giây; hạn Stop hook là 180 giây. T-321 đã cho gate in thời gian từng cổng và từng bước của Gate 1, nhưng `db-check` vẫn là một khối đen. Bản đánh giá Bước 6 nói *đo rồi mới cắt*: task này chỉ đo. Ngoài ra mỗi lượt `db-check` in `./scripts/db-check.sh: line 6xx: printf: write error: Broken pipe` dù vẫn đạt (đo 2026-11-12, ba lượt) — một dòng lỗi trong output của một cổng đạt là thứ dạy người đọc bỏ qua dòng lỗi.
+
+Acceptance viết trước sửa:
+- [x] A1 — `scripts/db-check.sh` in một dòng `[time] db-check:<khối> <giây>s` cho mỗi khối lớn nó thật sự chạy (các khối theo đúng tiêu đề `# --- …` sẵn có của script: migration xuôi · lùi · xuôi lại, khối kiểm trong tài liệu, `db/tests`, dữ liệu mồi, dữ liệu thử máy dev, khoá chặn, bộ đối chiếu, ba scenario…), cùng khuôn với dòng `[time]` của `scripts/verify.sh`; không đổi dòng `PASS` · `FAIL` · `NOTE` nào, không đổi mã thoát.
+- [x] A2 — Gate hiện các số ấy trong dòng `Gate 1: …` mà không sinh dòng nhãn mới ở cột 0; `scripts/gate.test.sh` có ca chứng minh.
+- [x] A3 — Tìm ra lệnh gây `printf: write error: Broken pipe` và gỡ nó mà không đổi điều gì khối ấy kiểm (nêu vì sao kết quả kiểm không đổi); lượt `db-check` thật không còn dòng ấy.
+- [x] A4 — Claude chạy `./scripts/db-check.sh` bằng Docker: đạt, tổng các khối xấp xỉ tổng thời gian, số đo từng khối được ghi vào mục này; `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-329.txt`): `scripts/db-check.sh`, `scripts/db-check.test.sh`, `scripts/gate.sh`, `scripts/gate.test.sh`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-329`, nhánh `codex/T-329`, nền `4817376`. Duyệt: Claude, chưa duyệt.
+
+**Duyệt 2026-11-22** (Claude, cây chính `1fc16ae` cộng bản Codex đã áp). A1: `scripts/db-check.sh` in `[time] db-check:<khối>` cho
+mười hai khối. A2: dòng `Gate 1:` của `./scripts/gate.sh` mang số đo, ca `10b` ở `scripts/gate.test.sh` chứng minh, không thêm nhãn cột 0.
+A3: dòng nhiễu đến từ `printf … | grep -m1` — `grep` thoát ở dòng khớp đầu, `printf` ghi vào ống đã đóng; bản sửa đọc bằng here-string
+rồi lấy dòng khớp đầu, cùng dòng NOTICE như trước nên kết quả kiểm không đổi; lượt thật không còn dòng ấy. A4: gate cây chính xanh,
+`db-check` 809 giây: setup 4 · migration-up 57 · migration-down 54 · migration-up-again 2 · params 0 · qc-docs 2 · sql-tests 10 · seed 1 ·
+dev-fixture 0 · down-guard 30 · **reconcile 643** · scenarios 5 (cộng 808). Khối đối chiếu chiếm 79% — đúng chỗ T-336 nhắm.
+
+<a id="t-327"></a>
+### T-327 — Hai ca `--amend` của test Gate 8 đỏ ở nơi `ps` bị chặn, làm gate của Codex đỏ không do diff
+
+Chủ repo 2026-11-12 dặn tiếp tục giao Codex làm, Claude kiểm. F-079: `scripts/hooks/commit-msg` nhận biết `--amend` bằng `ps`; sandbox của Codex chặn `ps`, nên hai ca `--amend` của `scripts/commit-msg.test.sh` đỏ ở đó và làm đỏ gate của mọi phiếu việc có đổi `scripts/` (T-321, T-324). Codex khảo sát 2026-11-12 bằng thí nghiệm trên git 2.44.0: **không có tín hiệu nào** ngoài dòng lệnh của tiến trình cha phân biệt được `--amend --no-edit` với `git commit -C HEAD` — tham số hook, message, `HEAD`, mọi biến `GIT_*` và các file trạng thái trong `.git/` đều giống nhau; so mốc tác giả thì nhầm `-C HEAD`, nhầm commit cùng giây và sót `--amend --reset-author`.
+
+Quyết định của Claude 2026-11-12, chưa được chủ repo xác nhận: **không nới Gate 8**. Bỏ `HEAD` khỏi phép so khi `ps` lỗi chính là phương án ADR-062 đã bỏ (nó thả đúng bốn trên năm nhóm commit trùng subject). Thứ cần chữa là cổng đỏ sai lý do ở sandbox, và Codex không bao giờ commit, nên chữa ở phía test và lời báo: test tự dò xem môi trường có đọc được dòng lệnh tiến trình không, không đọc được thì hai ca `--amend` được nêu tên là *không kiểm được ở đây* thay vì đỏ; hook khi từ chối vì trùng `HEAD` mà không đọc được tiến trình thì nói thêm điều đó và đường đi đúng.
+
+Acceptance viết trước sửa:
+- A1 — `scripts/commit-msg.test.sh` dò khả năng đọc dòng lệnh tiến trình bằng đúng lệnh `ps` mà hook dùng; đọc được ⇒ hai ca `--amend` giữ subject chạy và chấm như hiện nay; không đọc được ⇒ hai ca ấy không tính là đỏ, in một dòng nêu tên từng ca, lý do và F-079; mọi ca khác vẫn chạy và chấm ở cả hai môi trường.
+- A2 — Có ca chứng minh A1 bằng một `ps` giả luôn lỗi đặt trước trong `PATH`: file test thoát 0 và in dòng *không kiểm được*; với `ps` thật thì hai ca chạy và đạt.
+- A3 — `scripts/hooks/commit-msg`: luật trùng subject không đổi một ca nào; khi từ chối vì trùng chính `HEAD` **và** không đọc được dòng lệnh tiến trình, lời từ chối có thêm một đoạn nói hook không nhận ra được `--amend` ở môi trường này và nếu đang amend thì dùng `git commit --amend --no-verify`.
+- A4 — `./scripts/gate.sh` xanh ngoài sandbox (Claude chạy); trong sandbox của Codex file test này không còn làm gate đỏ.
+
+Phạm vi (`work/scope/T-327.txt`): `scripts/commit-msg.test.sh`, `scripts/hooks/commit-msg`; phần của Claude: `work/findings.md` (F-079), `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-327`, nhánh `codex/T-327`, nền `9d75279`. Duyệt: Claude.
+
+Duyệt và bàn giao 2026-11-12 (thực hiện: Codex một vòng, duyệt: Claude). `scripts/commit-msg.test.sh`: dò bằng đúng lệnh `ps -o args=` của hook; đọc được thì hai ca `--amend` giữ subject chạy và chấm như cũ, không đọc được thì mỗi ca in một dòng `NOTE … không kiểm được ở môi trường này … F-079` và dòng tổng kết nói rõ; thêm ca `ps giả luôn lỗi: hai NOTE, không tính ca hỏng` và bốn ca cho lời từ chối. `scripts/hooks/commit-msg`: ghi nhận khi một trong hai lệnh `ps` của vòng dò thất bại; khi từ chối vì trùng **chính `HEAD`** mà `ps` đã thất bại thì thêm đoạn giải thích và đường `git commit --amend --no-verify`; điều kiện chọn lịch sử để so, tìm subject trùng và từ chối không đổi (Claude đọc từng hunk). Bằng chứng: trong sandbox của Codex (`ps` trả `operation not permitted`) file test thoát 0 với hai dòng NOTE và gate của Codex xanh; Claude chạy ngoài sandbox — hai ca `--amend` chạy thật và đạt, ca `ps` giả đạt, `./scripts/gate.sh` ở worktree và ở cây chính đều không cổng nào đỏ, 21 file test qua.
+
+Còn lại: ở môi trường chặn `ps`, `git commit --amend` giữ nguyên subject vẫn bị hook từ chối (nay có lời giải thích) — giới hạn đã chấp nhận, vì không có tín hiệu nào khác để nhận ra amend; worktree `../lean_wt/T-327` và nhánh `codex/T-327` chờ chủ repo gỡ.
 
 <a id="t-325"></a>
 ### T-325 — `db-check` đỏ ngay ở bản đã commit: I-043 và I-044 không có câu đối chiếu và không có dòng lý do ở bộ đối chiếu
@@ -1071,7 +1407,22 @@ Claude kiểm bằng Docker trong worktree: `./scripts/be-check.sh` đạt (208 
 
 Chưa kiểm bằng lượt chạy thật: nhánh *giữ database* của `be-check` cùng nhánh *bỏ qua project có dấu* của `db-check` trên Docker thật — phép ấy để lại một project và một file dấu mà phiên không được phép xoá; hai nhánh mới chỉ được chứng minh bằng test không Docker và đọc code.
 
-Lát 2 — tách database theo gói test: chưa khai phạm vi. Người nhận: Claude chốt phương án bằng ADR và viết test hồi quy trước, Codex làm cho test xanh (`docs/prompt-guideline.md` §6.1, mức L2).
+Lát 2 — mở 2026-11-12, mức L2, **ADR-144**: mỗi gói test Go một database riêng, sao từ database đã migrate của chính lượt `be-check` ấy. Claude chốt phương án và viết test hồi quy trước (cả hai đỏ với bản hiện tại); Codex làm cho test xanh; Claude chạy `be-check` thật và lặp lại phép cài lỗi của lát 1.
+
+Acceptance lát 2, viết trước sửa:
+- B1 — `TestQC16_GoiTestChayTrenDatabaseRiengKhongPhaiDatabaseMau` (`be/internal/testhelper/rieng_test.go`, Claude viết) đạt trong `./scripts/be-check.sh`: gói test không chạy trên database mẫu `banhcuon`, hai chuỗi kết nối cùng trỏ một database.
+- B2 — Các ca *mỗi gói một database* của `scripts/be-check.test.sh` (Claude viết, `docker` và `go` giả) đạt: mỗi gói một lệnh `go test` riêng, tên database khác nhau và khác `banhcuon`, mỗi database có lệnh `CREATE DATABASE … TEMPLATE banhcuon`, không còn `go test ./...`; một gói đỏ không làm gói sau bị bỏ chạy và `be-check` đỏ nêu tên gói.
+- B3 — Vai và quyền giữ nguyên trên database của gói: mọi test hiện có đạt, trong đó các test chứng minh `shop_app` không xoá được và múi giờ kết nối.
+- B4 — Phép cài lỗi của lát 1 (một ca quầy mở ở tương lai dựng trong `combo`) chỉ còn làm đỏ gói `combo`.
+- B5 — `./scripts/gate.sh` xanh ở cây chính; thời gian `be-check` trước và sau được ghi lại; `QC-16` đổi lời cho khớp (Claude sửa lúc tích hợp).
+
+Phạm vi lát 2 (`work/scope/T-323.txt`): `scripts/be-check.sh`, `scripts/be-check.test.sh`, `be/internal/testhelper/`; phần của Claude: `docs/decisions.md` (ADR-144), `docs/product/2-db/10-quy-uoc-code.md` (QC-16), `work/findings.md`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-323-lat-2`, nhánh `codex/T-323-lat-2`, nền `9d75279`. Duyệt: Claude.
+
+Duyệt và bàn giao lát 2, 2026-11-12 (test hồi quy: Claude; thực hiện: Codex hai vòng; duyệt: Claude). **Đỏ trước khi sửa:** `./scripts/be-check.sh` thật trên bản cũ — `TestQC16_GoiTestChayTrenDatabaseRiengKhongPhaiDatabaseMau` đỏ với *gói test đang chạy thẳng trên database mẫu "banhcuon"*; các ca *mỗi gói một database* của `scripts/be-check.test.sh` đỏ 5 khẳng định. **Vòng một** làm test ở mức script xanh, nhưng Claude chạy `be-check` thật thì chỉ **1/32 gói** chạy mà script báo PASS sau 16 giây: vòng `while read … <<< "$packages"` bị `docker compose exec` trong thân vòng lặp đọc mất phần còn lại của danh sách. Test của Claude không bắt được vì `docker` và `go` giả không đọc đầu vào chuẩn — Claude sửa hai bản giả cho đọc như bản thật (test đỏ lại đúng chỗ). **Vòng hai:** vòng lặp đọc danh sách qua mô tả file 3, `compose exec` và `go test` nhận `</dev/null`, thêm phép tự kiểm *số gói đã xử lý khác số gói `go list` in ra ⇒ FAIL*.
+
+Claude kiểm bằng Docker trong worktree: `be-check: PASS — … (32/32 gói, 32 database)`, 32 lệnh `CREATE DATABASE`, 420 test đạt (419 trước đó cộng test hồi quy mới), 207 giây — không chậm hơn bản cũ (188–208 giây). **Phép cài lỗi của lát 1 lặp lại** (một ca quầy mở sau một giờ dựng trong `dung` của `combo`, gỡ ngay sau lượt chạy): `be-check: FAIL — 1/32 gói đỏ: banhcuon/be/internal/combo (banhcuon_g005)`, 31 gói còn lại đạt; ở lát 1 cùng phép ấy làm đỏ thêm ít nhất tám gói. Quyền trên database của gói: `REVOKE ALL … FROM PUBLIC` và `GRANT CONNECT … TO shop_app` như `db/init/001-vai-va-schema.sql`; mọi test về vai và múi giờ vẫn đạt. Tài liệu: ADR-144; `QC-16` đổi lời và thêm một dòng phép kiểm (`docs/product/2-db/10-quy-uoc-code.md`) — bản đầu của câu ấy làm Gate 1d đỏ vì một chuỗi có dấu ngoặc nhọn, Claude viết lại. `./scripts/gate.sh` ở cây chính: `be-check` 32/32 gói, `db-check` đạt, 21 file test của script đạt.
+
+Không chữa trong task này, vẫn mở: **F-078** chưa rõ nguyên nhân — lần tái diễn kế tiếp sẽ nằm gọn trong gói `combo` và có lời chẩn đoán của lát 1; dữ liệu lan giữa các test **trong cùng một gói**; F-051 chưa có phép chạy `db-check` dưới một giờ giả ngoài giờ bán; nhánh *giữ database* và *bỏ qua project có dấu* chưa kiểm bằng Docker thật. Worktree `../lean_wt/T-323`, `../lean_wt/T-323-lat-2` và hai nhánh `codex/T-323`, `codex/T-323-lat-2` chờ chủ repo gỡ.
 
 <a id="t-319"></a>
 ### T-319 — Scope của việc đã xong làm Gate 3 cho qua gần mọi file và làm brief phình tới mức không tới được phiên Claude
@@ -1151,6 +1502,35 @@ Phạm vi (`work/scope/T-322.txt`): `README.md`, `work/findings.md`, `work/backl
 
 Duyệt và bàn giao 2026-11-11 (thực hiện: Codex, duyệt: Claude): `README.md` chỉ đổi khối cây thư mục (42 đường dẫn, Codex kiểm 42/42 tồn tại; phần ngoài khối giống `HEAD` từng byte), Claude căn lại hai dòng chú thích lệch cột. `work/findings.md` bỏ mục *Mục lục* (câu đếm, ghi chú dựng bảng, bảng 59 hàng), thay bằng mục *Xem finding đang mở*; từ `### F-001` tới hết file giống `HEAD` từng byte. Không script nào đọc bảng ấy (`scripts/brief.sh` đọc tiêu đề `### F-` và dòng `**Status:**`); mục *OPEN FINDINGS* của brief trước và sau như nhau. Claude chạy lại `./scripts/gate.sh` trong worktree: không cổng nào đỏ (Gate 1 bỏ qua vì chỉ tài liệu đổi). Còn lại: worktree `../lean_wt/T-322` và nhánh `codex/T-322` chờ chủ repo gỡ.
 
+<a id="t-328"></a>
+### T-328 — Trang Combo cần cùng cách bày với trang Sản phẩm
+
+Chủ repo yêu cầu 2026-11-13: làm `/chu-quan/combo` hiển thị giống `/chu-quan/san-pham`. Mức L1 vì chỉ đổi cách bày và cách mở chi tiết; dữ liệu, giá combo riêng và cửa ghi giữ theo hợp đồng. Codex làm trên nhánh `P4A-01` từ cây hiện tại; chưa có người duyệt độc lập. Trang Sản phẩm và nhiều file khác đang có thay đổi chưa commit của việc khác, không đưa phần ấy vào việc này.
+
+Acceptance viết trước sửa: A1 — trang Combo dùng cùng chiều rộng, cỡ tiêu đề, huy hiệu số lượng, nền bảng và ngăn chi tiết bên phải như trang Sản phẩm; không dựng thanh điều hướng thứ hai. A2 — bảng hiện ảnh, tên, trạng thái, giá riêng từ API và các món với số suất, phụ thu; đọc đúng thứ tự backend. A3 — tìm theo tên, lọc hiện/ẩn, lập combo, đổi giá, ẩn và đặt phụ thu vẫn hoạt động; combo ẩn không có thao tác sửa. A4 — test combo kiểm giao diện mới và giữ các khẳng định dữ liệu, cửa ghi; `./scripts/gate.sh` được chạy và đọc kết quả. Việc T-315 thêm nút Sửa combo sau này cần đặt nút ấy vào bảng và ngăn mới khi tích hợp.
+
+Phạm vi (`work/scope/T-328.txt`): `work/backlog.md`, `fe/src/app/chu-quan/_components/combo.tsx`, `fe/src/app/chu-quan/_components/combo.css`, `fe/src/app/chu-quan/combo/combo.test.tsx`.
+
+Bàn giao 2026-11-13: Codex thay thẻ và khung chi tiết cố định bằng bảng cùng kiểu Sản phẩm và ngăn bên phải; bỏ thanh điều hướng thứ hai vì `chu-quan/layout.tsx` đã có thanh chung. Tìm, lọc, lập combo, đổi giá, ẩn và đặt phụ thu vẫn dùng các cửa cũ; combo ẩn chỉ xem chi tiết. `npx vitest run src/app/chu-quan/combo/combo.test.tsx --reporter=dot` đạt 22/22; `npm run typecheck` đạt; `git diff --check` đạt. Gate cây chung xanh hai lượt; sau sửa nhãn combo ẩn, lượt mới FAIL Gate 3 vì `docs/command/ket-boi-iphone.md` vừa đổi ngoài mọi scope, còn các cổng khác PASS hoặc SKIP đúng điều kiện. Worktree kiểm chứng `/tmp/T-328-verify-20261113` lấy HEAD `a00bdb2` và chỉ patch T-328: `./scripts/gate.sh` exit 0, FE 789/789 và build đạt. Chưa xem bằng trình duyệt có phiên đăng nhập; test và build là bằng chứng hiện có. Cây chung còn nhiều thay đổi chưa commit của việc khác, đặc biệt `work/backlog.md`; chỉ tách các dòng T-328 vào commit của việc này. T-315 về nút Sửa combo chưa được tích hợp; khi làm cần đổi chỗ đặt nút theo bảng và ngăn mới.
+
+<a id="t-315"></a>
+### T-315 — Combo chưa có nút Sửa nên chủ quán không đổi được tên, món, ảnh của combo
+
+Chủ repo yêu cầu 2026-11-10: mỗi suất ăn (combo) ở `/chu-quan/combo` có nút Sửa, sửa được ảnh, giá và các món trong đó; Codex làm, Claude kiểm. Chủ repo chọn trong câu hỏi có sẵn phương án: làm đủ, chia lát; đổi món chỉ ngoài giờ bán; ảnh tải lên từ máy; giá là giá combo + phụ thu (`master_plan/shop-facts.md` §8.9 lượt chín); và dùng bản cũ làm nền. Bản cũ: `T-309` commit `8156aa4` trên nhánh `codex/T-309` (entry chỉ còn trên nhánh ấy) và `T-307` chưa commit ở `../lean_wt/T-307`; bản ghép chưa duyệt ở `../lean_wt/combo_image`. L3 vì đổi luật ADR-108 điểm 5, thêm migration, ba cửa API và đường đọc giá tại mốc. Thiết kế: ADR-142.
+
+Acceptance viết trước sửa:
+- A1 — Nền: thay đổi của `8156aa4` và của `../lean_wt/T-307` đưa lên `97163aa`, xung đột giải xong; `work/backlog.md` của hai nhánh cũ không mang theo.
+- A2 — `PUT /menu-combos/{menu_combo_id}` sửa tên · giá · món + số suất có lý do; trong giờ bán trả 409 `menu_combo_update_in_sales_hours` (mã mới, có trong hợp đồng và bảng tên từ chối); ẩn ⇒ `menu_combo_hidden`; món rút giữ bằng `retired_at`. Test BE: sửa ngoài giờ đạt; trong giờ bị từ chối và không đổi gì; rút món rồi đọc combo không còn món đó; báo giá tại mốc trước lần sửa vẫn ra thành phần cũ.
+- A3 — Ảnh combo: migration thêm `menu_combo.image_code` (kiểm dạng `images/menu-combos/…`); `PUT /menu-combos/{menu_combo_id}/image` (multipart, `chu_quan`, JPEG/PNG/WebP ≤ 5 MiB kiểm nội dung, có lý do, vết) và `GET /menu-combos/{menu_combo_id}/image` công khai `no-store`; `MenuCombo` và combo của thực đơn khách có `image_url` null được. Test BE: tải hợp lệ rồi đọc ra đúng byte; sai loại, quá cỡ, không phải chủ quán, combo ẩn đều bị từ chối và ảnh cũ đứng nguyên.
+- A4 — Ảnh món của T-307 giữ nguyên hành vi và test của nó.
+- A5 — FE `/chu-quan/combo`: mỗi thẻ combo chưa ẩn có nút "Sửa" (tên truy cập `Sửa <tên combo>`, anh em với nút chọn thẻ, không lồng); khung chi tiết có "Sửa combo" thay *Đổi giá* và *Đặt phụ thu*; *Ẩn combo* giữ. Hộp thoại *Sửa combo* có ba phần, mỗi phần một nút lưu và lý do riêng: tên · giá · món; ảnh (chọn tệp, xem trước, lưu); phụ thu theo món (form có sẵn). Lời từ chối giờ bán hiện "Chỉ sửa món và giá combo ngoài giờ bán."; FE không đoán giờ bán từ đồng hồ máy.
+- A6 — Ảnh tải lên hiện ở thẻ combo của chủ quán và ở thực đơn khách; chưa có thì về ảnh trình bày sẵn như cũ.
+- A7 — Test FE phủ A5 · A6; test combo cũ chỉ đổi đường bấm, không bỏ khẳng định hành vi nào.
+- A8 — Tài liệu: `docs/product/2-db/18-luoc-do-danh-muc-combo.md` · `07-thu-tu-migration.md` · `09-doi-chieu-bat-bien.md`, `docs/product/3-be/openapi.yaml` (tăng phiên bản) · `02-vai-va-quyen.md`, `docs/product/4-fe/01-khung-fe.md` (Claude sửa khi tích hợp vì T-314 cũng đang sửa file này) khớp code.
+- A9 — `db-check`, `be-check` (Claude chạy), `fe-check` và `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-315.txt`): `db/`, `be/`, `fe/src/app/chu-quan/`, `fe/src/app/ban/`, `fe/src/app/thuc-don/`, `fe/src/lib/api/schema.ts`, `docs/product/2-db/`, `docs/product/3-be/`, `docs/product/4-fe/01-khung-fe.md`, `docs/decisions.md`, `quality/invariants.md`, `master_plan/shop-facts.md`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-315`, nhánh `codex/T-315`, nền `97163aa`. Duyệt: Claude, chưa duyệt.
+
 <a id="t-326"></a>
 ### T-326 — Tổng thiếu theo bàn có cột Canh nhưng giò không có chỗ hiện để đem ra
 
@@ -1203,17 +1583,6 @@ Phạm vi (`work/scope/T-317.txt`): `fe/src/app/chu-quan/_components/van-hanh.ts
 
 Duyệt và bàn giao 2026-11-11 (Claude): Codex đổi nút chuyển trong `HangThieu` thành `Button` `size="icon"` với `LayoutGrid` / `ClipboardList` (`aria-hidden`), giữ `aria-label` và `aria-pressed`, thêm `title`; đổi câu hướng dẫn; ở `van-hanh.test.tsx` thay hai khẳng định chữ nút bằng hàm `kiemIcon` (kích thước, kiểu, `title`, chữ rỗng, đúng một `svg` có `aria-hidden`) ở cả hai trạng thái và khi chuyển về, ở `dem-ra.test.tsx` và `van-hanh.test.tsx` đổi câu hướng dẫn; không bỏ khẳng định nào (A1–A4). Gate của Codex đỏ ở `next build` vì sandbox cấm mở cổng, không do mã. Claude đọc diff thật, đưa patch về cây chính: `./scripts/fe-check.sh` exit 0, 784/784, build qua; `./scripts/gate.sh` exit 0 (A5). Worktree `../lean_wt/T-317` và nhánh `codex/T-317` để chủ repo xoá.
 
-<a id="t-328"></a>
-### T-328 — Trang Combo cần cùng cách bày với trang Sản phẩm
-
-Chủ repo yêu cầu 2026-11-13: làm `/chu-quan/combo` hiển thị giống `/chu-quan/san-pham`. Mức L1 vì chỉ đổi cách bày và cách mở chi tiết; dữ liệu, giá combo riêng và cửa ghi giữ theo hợp đồng. Codex làm trên nhánh `P4A-01` từ cây hiện tại; chưa có người duyệt độc lập. Trang Sản phẩm và nhiều file khác đang có thay đổi chưa commit của việc khác, không đưa phần ấy vào việc này.
-
-Acceptance viết trước sửa: A1 — trang Combo dùng cùng chiều rộng, cỡ tiêu đề, huy hiệu số lượng, nền bảng và ngăn chi tiết bên phải như trang Sản phẩm; không dựng thanh điều hướng thứ hai. A2 — bảng hiện ảnh, tên, trạng thái, giá riêng từ API và các món với số suất, phụ thu; đọc đúng thứ tự backend. A3 — tìm theo tên, lọc hiện/ẩn, lập combo, đổi giá, ẩn và đặt phụ thu vẫn hoạt động; combo ẩn không có thao tác sửa. A4 — test combo kiểm giao diện mới và giữ các khẳng định dữ liệu, cửa ghi; `./scripts/gate.sh` được chạy và đọc kết quả. Việc T-315 thêm nút Sửa combo sau này cần đặt nút ấy vào bảng và ngăn mới khi tích hợp.
-
-Phạm vi (`work/scope/T-328.txt`): `work/backlog.md`, `fe/src/app/chu-quan/_components/combo.tsx`, `fe/src/app/chu-quan/_components/combo.css`, `fe/src/app/chu-quan/combo/combo.test.tsx`.
-
-Bàn giao 2026-11-13: Codex thay thẻ và khung chi tiết cố định bằng bảng cùng kiểu Sản phẩm và ngăn bên phải; bỏ thanh điều hướng thứ hai vì `chu-quan/layout.tsx` đã có thanh chung. Tìm, lọc, lập combo, đổi giá, ẩn và đặt phụ thu vẫn dùng các cửa cũ; combo ẩn chỉ xem chi tiết. `npx vitest run src/app/chu-quan/combo/combo.test.tsx --reporter=dot` đạt 22/22; `npm run typecheck` đạt; `git diff --check` đạt. Gate cây chung xanh hai lượt; sau sửa nhãn combo ẩn, lượt mới FAIL Gate 3 vì `docs/command/ket-boi-iphone.md` vừa đổi ngoài mọi scope, còn các cổng khác PASS hoặc SKIP đúng điều kiện. Worktree kiểm chứng `/tmp/T-328-verify-20261113` lấy HEAD `a00bdb2` và chỉ patch T-328: `./scripts/gate.sh` exit 0, FE 789/789 và build đạt. Chưa xem bằng trình duyệt có phiên đăng nhập; test và build là bằng chứng hiện có. Cây chung còn nhiều thay đổi chưa commit của việc khác, đặc biệt `work/backlog.md`; chỉ tách các dòng T-328 vào commit của việc này. T-315 về nút Sửa combo chưa được tích hợp; khi làm cần đổi chỗ đặt nút theo bảng và ngăn mới.
-
 <a id="t-316"></a>
 ### T-316 — Dòng món ở Tổng thiếu theo bàn và Cộng thử ghép đơn dài như hoá đơn nên nhân viên khó đọc nhanh
 
@@ -1230,6 +1599,24 @@ Acceptance viết trước sửa:
 
 Phạm vi (`work/scope/T-316.txt`): `fe/src/app/chu-quan/_components/van-hanh.tsx`, `fe/src/app/chu-quan/van-hanh/`, `docs/product/4-fe/01-khung-fe.md`, `work/backlog.md`. Thi công: Claude, cây chính, nhánh `P4A-01`.
 
+<a id="t-314"></a>
+### T-314 — Tổng thiếu theo bàn chỉ hiện số theo cột nên lúc đầu khó đọc bàn đã đặt gì
+
+Chủ repo báo 2026-11-10: trên `/chu-quan/van-hanh`, hàng của một bàn ở *Tổng thiếu theo bàn* chỉ hiện số theo cột (ví dụ 9 · 0 · 3 chín · 0 · 5 · 4 Giò 2 nước chấm), tiện lúc mang bánh ra nhưng lúc đầu khó hiểu bàn đã đặt gì. Chủ repo muốn nhìn trước tiên đơn như khách đặt (ví dụ 3 suất Đầy đủ, 2 suất giò), và mỗi bàn có nút chuyển sang chi tiết. Dữ liệu đã có từ T-313 (`lines`, `lines_total_vnd` của `GET /service-board`), nên chỉ đổi giao diện.
+
+Suy luận của Claude, chưa được chủ repo xác nhận: chế độ mặc định hiện cho mọi hàng, cả hàng bàn ghép thử; trạng thái chuyển của từng bàn giữ qua các lần đọc lại bảng nhưng không lưu khi tải lại trang; dòng *Tổng* cuối bảng vẫn theo cột.
+
+Acceptance viết trước sửa:
+- A1 — Mỗi hàng bàn (đang phục vụ và ghép thử) mặc định hiện chế độ *đơn đã đặt*: ô bàn giữ nhãn bàn (vẫn mở chi tiết như cũ), một ô trải qua các cột thành phần hiện `DongMonDaGhi` với `lines` và `lines_total_vnd` của phiên, ô *Tiền bánh đã ra* giữ nguyên. Ở chế độ này không có nút `Đem ra …`.
+- A2 — Mỗi hàng có nút chuyển riêng trong ô bàn: chữ "Chi tiết đem ra" khi đang xem đơn, "Xem đơn đã đặt" khi đang xem chi tiết; tên truy cập kèm nhãn bàn, có `aria-pressed`. Bấm ⇒ riêng hàng đó hiện đúng các ô cột như trước T-314 (số thiếu, ô đem ra bấm được, `*`, `+N` của bàn ghép thử); hàng khác không đổi; đọc lại bảng không làm hàng quay về.
+- A3 — Tiêu đề cột, dòng *Tổng*, chú thích `* nhiều nhân`, câu bàn ghép không đổi; câu hướng dẫn đem ra nói thêm phải bấm "Chi tiết đem ra" trước.
+- A4 — Test FE mới phủ A1 và A2; test đem ra cũ (`dem-ra.test.tsx`) chỉ thêm bước bấm "Chi tiết đem ra", không bỏ khẳng định nào.
+- A5 — FE không tự cộng tiền (ADR-102 điểm 3); `./scripts/check-fe-rules.sh` và `./scripts/fe-check.sh` đạt; `./scripts/gate.sh` xanh.
+- A6 — Dòng `/chu-quan/van-hanh` ở bảng nguồn dữ liệu của `docs/product/4-fe/01-khung-fe.md` thêm một câu về chế độ mặc định và nút chuyển (T-314), thêm `T-314` vào cột task của dòng route.
+
+Phạm vi (`work/scope/T-314.txt`): `fe/src/app/chu-quan/`, `docs/product/4-fe/01-khung-fe.md`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-314`, nhánh `codex/T-314`, nền `97163aa`. Duyệt: Claude, chưa duyệt.
+
+Duyệt và bàn giao 2026-11-10 (Claude): Codex sửa `HangThieu` (state `chiTiet` riêng mỗi hàng, ô `colSpan` hiện `DongMonDaGhi` khi chưa chuyển), câu hướng dẫn, hai dòng `01-khung-fe.md`, thêm hai nhóm test T-314 ở `van-hanh.test.tsx` (mặc định hiện đơn và không nút đem ra, chuyển riêng từng hàng cả đang phục vụ lẫn ghép thử, dòng Tổng và tiêu đề cột không đổi, đọc lại bằng nút và tín hiệu `changed` giữ chế độ) và chèn bước bấm *Chi tiết đem ra* vào test cũ, không bỏ khẳng định nào (A1–A4, A6). Gate của Codex đỏ ở `next build` vì sandbox cấm mở cổng, không do mã. Claude đưa patch về cây chính, thêm `T-314` vào cột task dòng nguồn dữ liệu; chạy cả bộ thì `dem-ra.test.tsx` có lúc đỏ vì hàm `chon` tìm nút số trước khi đọc xong bảng sản xuất ⇒ đổi sang `findByRole`, chạy riêng 5/5 lần xanh. Bằng chứng ở cây chính: `./scripts/check-fe-rules.sh` PASS, `./scripts/fe-check.sh` apigen PASS, 766/766, build qua; `./scripts/gate.sh` exit 0 (A5, A7). Worktree `../lean_wt/T-314` và nhánh `codex/T-314` để chủ repo xoá.
 
 <a id="t-313"></a>
 ### T-313 — Vận hành chỉ đếm theo thành phần nên chủ quán không thấy dòng món của bàn như ở Đơn chờ
@@ -1253,6 +1640,8 @@ Duyệt lần 1 2026-11-09 (Claude, trên diff chưa commit của worktree, 11 f
 
 Duyệt lần 2 và bàn giao 2026-11-09 (Claude, một phiên khác với phiên duyệt lần 1 — hai phiên cùng làm T-313 mà không biết nhau): vòng sửa của Codex viết xong ca combo `TestI009_BangVanHanhLinesComboBaPhanVaMonLe` và sửa đơn QR trong `…AnhChupLocDonVaThuTu` (dùng `qr_code_issue`), rồi Codex hết hạn mức tới 02:48 ngày 2026-11-10 trước khi báo cáo. Claude làm nốt điểm (2): thay vì FE cộng, backend trả `lines_total_vnd` (tổng `line_total_vnd` mọi dòng các đơn đã duyệt chưa huỷ, kể cả suất — như `total_vnd` của hàng chờ; không phải số phải thu, số đó vẫn là `order_total_vnd`, ADR-125), thêm vào `required` của `ServiceBoardSession` cùng bản 0.71.0, nhật ký ở `01-hop-dong-api.md`; FE chỉ hiện. Test BE khẳng định 15100 (đơn chờ 77.777đ và đơn huỷ không vào) và 26600 (gồm dòng suất); fixture FE theo dữ liệu thật (dòng combo 40.000đ + suất 2.000đ ⇒ 63.000đ, khác 61.000đ nếu chỉ cộng dòng gốc). Lệnh đã chạy trong worktree: `./scripts/gate.sh` exit 0 (be-check PostgreSQL thật PASS gồm ba test `TestI009_BangVanHanhLines…`; db SKIP vì không đổi), `./scripts/fe-check.sh` exit 0 (apigen PASS, 745/745). A8 lặp lại trên bản sao `banhcuon_thu`, server cổng 8090: năm dòng đúng thứ tự như lần 1, `lines_total_vnd` 99000. Đưa về cây chính bằng patch (HEAD lúc đó `47bd12b`, chỉ thêm CHAT-16 FE, không đụng hợp đồng), `./scripts/gate.sh` ở cây chính exit 0. Server `make dev` đang chạy phải khởi động lại mới có trường mới. Bản sao `banhcuon_thu` cũng còn trong `banhcuon-db-1`; xoá do chủ repo.
 
+Duyệt độc lập 2026-11-10 (Claude, phiên duyệt lần 1, chủ repo cho toàn quyền): phiên này chưa biết phiên kia đã bàn giao nên gửi Codex một vòng sửa theo A3 bản một (FE tự cộng); Codex làm trong worktree `tongTienDong` ở FE, `check-fe-rules` đỏ `cong-tien` — **không đưa về**, cây chính giữ bản `lines_total_vnd` của backend. Lấy duy nhất nhãn `T-313` ở cột task hai dòng `/chu-quan/van-hanh` của `docs/product/4-fe/01-khung-fe.md` (A6). Đọc lại diff ở cây chính: `lines_total_vnd` cộng mọi `order_line` (gồm suất) cùng lọc với `lines`; hợp đồng nói rõ không phải số phải thu. Bằng chứng ở cây chính: `./scripts/gate.sh` exit 0, be-check PostgreSQL thật PASS gồm `TestI009_BangVanHanhLinesPhienChuaCoDon` · `…AnhChupLocDonVaThuTu` · `…ComboBaPhanVaMonLe`; `./scripts/check-fe-rules.sh` PASS; `./scripts/fe-check.sh` PASS (apigen, 762/762). Diff vòng Codex còn nằm ở worktree `../lean_wt/T-313`, bỏ cùng worktree; bản sao `banhcuon_t313` còn trong `banhcuon-db-1`, xoá do chủ repo.
+
 [↑ đầu file](#top)
 
 <a id="t-312"></a>
@@ -1271,6 +1660,25 @@ Acceptance viết trước sửa:
 Phạm vi (`work/scope/T-312.txt`): `be/internal/don/`, `be/cmd/server/`, `Makefile`, `docs/decisions.md`, `quality/invariants.md`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-312`, nhánh `codex/T-312`, nền `e8b0670`, vì cây chính đang có thay đổi chưa commit của nhóm CHAT. Duyệt: Claude, chưa duyệt.
 
 Bàn giao 2026-11-09 (thực hiện: Codex, duyệt: Claude): `docBoGioBan` ở `be/cmd/server/main.go` (Fatal khi lỗi, cảnh báo khi bật), `newRouterWithBoGioBan` ở `router.go` (giữ chữ ký `newRouter` cũ cho test, mặc định tắt), `don.Service.WithBoGioBan` bọc riêng bước `ngayban.NgoaiGio` trong `xetNhanDon`; `Makefile` thêm cờ vào `BE_ENV` kèm chú thích cách tắt. Hai file test của Claude giữ nguyên SHA-256. Claude đọc diff, chạy `./scripts/gate.sh` trong worktree: exit 0, be-check PostgreSQL thật PASS gồm năm test `TestI008_CoBoGioBanChiBatTrenMayDev`, `TestI008_MayDevBoGioBanThiNhanDonNgoaiGio`, `TestI008_MacDinhVanChanNgoaiGio`, `TestI008_MayDevBoGioBanVanTheoTamDung`, `TestI008_MayDevBoGioBanVanTheoQuanMu`; fe, db SKIP vì không đổi. A5 Claude tự thử trên database dev, server phụ cổng 8090 bật cờ: 13:20 lượt QR bàn 3 khi chưa ai mở luồng ⇒ `shop_not_seeing_orders` và mở khoảng quán mù số 2 (đúng I-008); chủ quán mở `GET /counter/events`, bấm `POST /shop-blind/reopening` ⇒ 200; 13:21 lượt QR bàn 3 ⇒ 201, `GET /counter/queue` của chủ quán có đơn 4 (`qr_table`, bàn 3, Giò bán rời 9.000đ), luồng nhận `changed`. Đơn thử số 4 để lại ở *Chờ xác nhận* cho chủ repo xem trên trang Vận hành. Không lỗi phải gửi lại Codex. Đưa về cây chính bằng patch rồi chạy lại gate ở cây chính. Server `make dev` đang chạy phải khởi động lại mới có cờ.
+
+[↑ đầu file](#top)
+
+<a id="t-311"></a>
+### T-311 — Khách đặt món bị từ chối mà không thấy lời báo
+
+Chủ repo báo 2026-11-08: đặt món ở `/ban/3` nhưng `/chu-quan/van-hanh` không hiện đơn. Claude đo cùng ngày: database dev chỉ có một đơn, đặt 06:34 rồi huỷ; gửi thử một lượt QR bàn 3 lúc 17:07 qua Next ⇒ HTTP 409 `outside_selling_hours` (`be/internal/ngayban/sql/ngoai_gio.sql`, giờ bán 06:00–11:00, `master_plan/shop-facts.md` §6 quy tắc 8), nên không đơn nào được tạo. Trang Vận hành không hỏng. Cái hỏng là `PhieuKhach` đặt lời báo (`loi`, `bao`) ngay dưới tiêu đề, trên đầu một trang menu dài, trong khi khách bấm *Đồng ý đặt món* ở cuối trang, nên lời từ chối không lọt vào mắt; câu ngoài giờ cũ cũng không nói đơn chưa gửi. Chủ repo chọn *"Sửa chỗ hiện lỗi"* và *"Nói rõ đơn chưa gửi"*; câu mới ghi ở shop-facts §6 quy tắc 8. Mức **L1**: chỉ đổi chỗ hiện và chữ của lời báo; không đổi API, giá, dữ liệu, luật giờ bán.
+
+Ngoài phạm vi, ghi để không mất: shop-facts §6 quy tắc 8 nói web **khoá nút đặt** ngoài giờ bán, nhưng hợp đồng chưa có trường nào cho khách biết giờ bán trước khi gửi, nên nút hiện chỉ bị từ chối sau khi bấm. Làm phần khoá nút cần đổi hợp đồng API (một task riêng, L2); FE không tự tính giờ bán bằng đồng hồ máy khách.
+
+Acceptance viết trước sửa:
+
+- A1 — Ở cả `/ban/<mã>` và `/dat-mon` (cùng `PhieuKhach`), lời từ chối hay chưa rõ kết quả (`role="alert"`) và lời đã gửi (`role="status"`) hiện ngay trên nút đặt (`CartBottomBar`), không còn dưới tiêu đề. Lời lỗi đọc menu giữ chỗ cũ.
+- A2 — `outside_selling_hours` hiện đúng *"Đơn chưa được gửi. Quán mở cửa 6h–11h sáng"*; các câu tạm dừng, mất kết nối, quét lại mã giữ nguyên văn. Phiếu giữ nguyên sau từ chối như cũ.
+- A3 — Test `khach-qr.test.tsx` và `dat-mon.test.tsx` kiểm câu mới và kiểm lời báo nằm cùng khối với nút đặt; `./scripts/gate.sh` đạt.
+
+Phạm vi (`work/scope/T-311.txt`): `fe/src/app/ban/_components/phieu-khach.tsx`, `fe/src/app/ban/_components/loi-khach.ts`, `fe/src/app/ban/mau-khach.ts`, `fe/src/app/ban/khach-qr.test.tsx`, `fe/src/app/dat-mon/dat-mon.test.tsx`, `work/backlog.md`, `master_plan/shop-facts.md`. Thi công: Codex trên cây chính, nhánh `P4A-01`, vì `phieu-khach.tsx` đang có hunk chưa commit của việc khác (hộp xác nhận mới) mà worktree từ `HEAD` không thấy; Claude dừng sửa trong lúc Codex làm. Duyệt: Claude, chưa duyệt. Lúc commit phải tách hunk T-311 khỏi hunk hộp xác nhận trong `phieu-khach.tsx`.
+
+Bàn giao 2026-11-08 (thực hiện: Codex, duyệt: Claude): `PhieuKhach` đặt `bao` (`role="status"`) và `loi` (`role="alert"`) trong `<form>`, ngay trước `CartBottomBar`; lời lỗi đọc menu và lỗi tính tổng giữ chỗ cũ. `CAU_NGOAI_GIO` ở `loi-khach.ts` và `mau-khach.ts` là câu mới; hai file test ghi nguyên văn câu ấy và kiểm `nextElementSibling` của lời báo là nút đặt (hoặc *Gửi lại*) cho ca đã gửi, chưa rõ kết quả và từng lời từ chối. Codex chạy test mới trên code cũ: đỏ (`2 failed`, `6 failed | 13 passed`). Claude đọc diff thật (hunk hộp xác nhận của việc khác giữ nguyên), tự chạy `npx vitest run src/app/ban src/app/dat-mon` ⇒ 42/42, và `./scripts/gate.sh` exit 0: Gate 3, 1b–1h, be-check PostgreSQL thật, verify PASS; db SKIP vì không đổi database. Không lỗi phải gửi lại Codex. Chưa thử bằng tay trên trình duyệt.
 
 [↑ đầu file](#top)
 
@@ -1311,26 +1719,6 @@ Duyệt và tích hợp 2026-11-08 (Claude): chủ repo báo đặt món ở `/b
 
 [↑ đầu file](#top)
 
-<a id="t-308"></a>
-### T-308 — Chủ quán nhận và xử lý đơn mới trên trang Vận hành
-
-Chủ repo yêu cầu 2026-11-06: `/chu-quan/van-hanh` cũng nhận được đơn mới và chủ quán có quyền điều hành. Chủ repo cho phép Codex làm cả phần vượt L1. Phạm vi diễn giải theo ngữ cảnh đơn QR tại bàn: khi chủ quán giữ trang Vận hành mở, quán được xem là còn nhìn thấy đơn; trang hiện hàng chờ và cho chủ quán duyệt, từ chối đơn, mở lại nhận đơn nếu đang mù, ghi đem ra cho bàn. Những cửa tiền và quản trị quầy khác giữ quyền riêng đã chốt. Mức L2 vì đổi điều kiện I-008, quyền cửa ghi và hợp đồng API. Nhánh thi công `codex/T-308`, nền `9eb7d73`, worktree riêng để không chạm thay đổi chưa commit ở cây chính; chưa có người duyệt độc lập.
-
-Acceptance viết trước sửa: A1 — chủ quán không đứng quầy mở trang Vận hành được tính là một người đang nhìn thấy đơn, nhận `changed` và đọc lại hàng chờ cùng bảng bàn; nếu không có luồng quầy hoặc chủ quán thì đơn khách vẫn bị chặn theo I-008. A2 — hàng chờ hiện rõ đơn QR, bàn, món và tổng từ backend; chủ quán duyệt/từ chối bằng cửa hiện có, kết quả đọc lại; người không có quyền vẫn bị từ chối. A3 — chủ quán thấy trạng thái mù và có thể bấm mở lại, không tự mở; có thể ghi đem ra tại màn như người đứng quầy. A4 — hợp đồng, ma trận quyền và quyết định về tín hiệu khớp code; test backend, FE và `./scripts/gate.sh` đạt.
-
-Phạm vi: `work/scope/T-308.txt`. Bàn giao thi công 2026-11-07 (Codex):
-
-- A1: `GET /counter/events` và `GET /counter/queue` nhận chủ quán không đứng quầy. Trang Vận hành giữ luồng nhận đơn và đọc lại hàng chờ cùng bảng bàn khi có `hello`/`changed`. `TestI008_LuongChuQuanVanHanhDuocTinhLaNhinThayDon` và `TestI008_NhieuLuongQuayChuQuanVaTuChoiSaiLop` kiểm PostgreSQL thật: chủ quán một mình vẫn được tính là nhìn thấy, người sai lớp bị từ chối, đóng hết luồng thì đơn QR lại bị chặn.
-- A2: hàng chờ hiện bàn, dòng món và tổng tiền từ backend; chủ quán duyệt/từ chối bằng cửa có vết, đọc lại sau ghi. `TestI012_ChuQuanVanHanhDuyetTuChoiVaGhiDemRa` kiểm đúng người trong `record_revision`, người ngoài quầy bị từ chối; test FE kiểm thao tác duyệt và hộp xác nhận từ chối.
-- A3: trang hiện `blind_since` và nút mở lại qua cửa `nhandon/mo_lai`; không tự mở. Chủ quán bấm ghi đã đem ra bằng cửa `sanxuat/ra_ban`; test backend kiểm quyền và vết, test FE kiểm chủ quán không đứng quầy có nút, người không có quyền chỉ được xem.
-- A4: OpenAPI lên `0.67.0`, ma trận quyền, ADR-097, I-008/I-012 và tài liệu màn đã khớp. `npm test -- --run` đạt 679/679, `npm run build` đạt. `./scripts/gate.sh` exit 0: Gate 3, 1b–1h, Gate 1 backend trên PostgreSQL thật và verify PASS; Gate 1 db SKIP vì không đổi database. Gate 7/7b kiểm thủ công khi bàn giao commit.
-
-Kiểm trực tiếp 2026-11-08 (Codex, máy phát triển): chạy `make dev` từ worktree T-308; hai URL `/ban/3` và `/chu-quan/van-hanh` trả HTTP 200. Tài khoản chủ quán **không đứng quầy** mở `GET /counter/events` qua Next và nhận `hello`/`changed`; bấm mở lại khoảng mù cũ bằng `POST /shop-blind/reopening`. Gửi một lượt QR bàn 3, món Bánh cuốn ×1 giá 4.000đ qua chính tầng Next ⇒ HTTP 201, `pending_confirmation`; `GET /counter/queue` của chủ quán đọc đúng bàn, món, tiền và `blind_since: null`; luồng nhận thêm `changed`. Chủ quán duyệt ⇒ HTTP 200, hàng chờ rỗng và `GET /service-board` có hai phần việc của bàn 3. Dùng cửa quầy huỷ đơn **thử** số 3, đóng phiên 0đ và dọn bàn; bàn 3 trở lại trống, không còn phiên mở. `./scripts/gate.sh` chạy lại với Docker 2026-11-08, exit 0: Gate 3, 1b–1h, backend PostgreSQL thật và verify PASS; DB SKIP vì không đổi lược đồ. Worktree này đang phục vụ localhost; chưa tích hợp vào cây chính, chưa commit, chưa có người duyệt độc lập.
-
-Duyệt và tích hợp 2026-11-08 (Claude): chủ repo báo đặt món ở `/ban/3` rồi đồng ý mà `/chu-quan/van-hanh` không hiện món. Nguyên nhân: đơn QR vào ở *Chờ xác nhận*, chưa sinh việc ở trạm (shop-facts §6 quy tắc 2) nên bảng Vận hành không có món; bản sửa T-308 nằm ở worktree riêng, chưa về cây chính, app chạy từ cây chính không có nó. Chủ repo chọn *"Duyệt và tích hợp T-308"*, xác nhận luật Codex viết ở `master_plan/shop-facts.md` (dòng sổ thay đổi 2026-11-08) và ADR-097 *Sửa đổi*. Claude đọc diff: bốn cửa nới sang `quay_hoac_chu_quan` (hàng chờ, luồng nhận đơn, duyệt, từ chối, ra bàn), cửa huỷ sau xác nhận giữ `quay`; một broker chung nên đổi trang sang `/counter/events` không mất tín hiệu tiến độ bếp. Claude tự chạy `./scripts/gate.sh` trong worktree, exit 0, be-check PostgreSQL thật PASS gồm `TestI008_LuongChuQuanVanHanhDuocTinhLaNhinThayDon`, `TestI008_NhieuLuongQuayChuQuanVaTuChoiSaiLop`, `TestI012_ChuQuanVanHanhDuyetTuChoiVaGhiDemRa`; `npx vitest run src/app/chu-quan` 342/342. Không lỗi phải gửi lại Codex. Đưa về cây chính bằng patch, chạy lại gate ở cây chính.
-
-[↑ đầu file](#top)
-
 <a id="t-306"></a>
 ### T-306 — Đơn QR mới hiện ngay trên trang Vận hành đang mở
 
@@ -1344,6 +1732,18 @@ Bàn giao 2026-11-06: `TrangVanHanh` dùng `TinHieuProvider` trên `GET /product
 
 [↑ đầu file](#top)
 
+<a id="t-303"></a>
+### T-303 — Thu gọn giá trong bảng Sản phẩm
+
+Chủ repo yêu cầu 2026-11-05 tại `/chu-quan/san-pham`: giữ mọi thông tin nhưng thu gọn nhiều giá của một món; mặc định bày “Thịt · Thường 4.000đ”, có thể mở và thu các giá khác. Mức L1 vì chỉ đổi cách hiển thị, không đổi giá, API hoặc dữ liệu.
+
+Acceptance trước sửa: A1 — với món có tổ hợp Thịt · Thường, ô Giá mặc định chỉ hiện tổ hợp ấy và nút xem số giá còn lại; A2 — mở xem đủ các tổ hợp và thu lại được, không mất thông tin; A3 — món chỉ có một giá, món ngừng bán, thiếu giá hoặc lỗi đọc giữ trạng thái rõ ràng; A4 — số tiền lấy nguyên từ GET /menu, không tính lại ở FE; A5 — chạy `./scripts/gate.sh` và đọc kết quả.
+
+Phạm vi (`work/scope/T-303.txt`): `work/backlog.md`, `fe/src/app/chu-quan/_components/san-pham.tsx`, `fe/src/app/chu-quan/san-pham/san-pham.test.tsx`. Codex làm trên nhánh `P4A-01`; chưa có người duyệt độc lập. Cây chung và `work/backlog.md` đang có thay đổi chưa commit của các việc khác; không đưa chúng vào phần việc này.
+
+Bàn giao 2026-11-05: ô Giá dùng thẻ `details` mặc định thu; khi có tổ hợp Thịt · Thường thì đặt nó trên dòng luôn thấy, giá khác mở/thu tại chỗ. Món một giá không có nút, món ngừng/thiếu/lỗi giữ lời báo. Không đổi API và không tính giá. `npx vitest run src/app/chu-quan/san-pham/san-pham.test.tsx` đạt 40/40; `git diff --check` đạt. Gate trực tiếp lần đầu exit 0, Gate 3/1b/1c/1e/1f/1g/1h/verify đạt, 1d và db SKIP theo điều kiện, backend qua PostgreSQL thật. Chưa commit; khi bàn giao commit phải tách phần T-303 trong `work/backlog.md` khỏi các task khác đã có sẵn.
+
+[↑ đầu file](#top)
 
 <a id="t-300"></a>
 ### T-300 — Nút chat của khách là chữ nhỏ, khó thấy và đè nút món
@@ -1383,6 +1783,66 @@ Acceptance ghi trước khi sửa: A1 — bảng tài khoản nêu đúng email 
 Phạm vi (`work/scope/T-296.txt`): `work/backlog.md`, `db/seed/tai-khoan-dev.sh`, `docs/command/tai-khoan-dev.md`, `docs/command/make.md`. Không sửa hợp đồng, backend, migration hay dữ liệu mồi.
 
 Kết quả: database làm việc đã có `chu` và bốn tài khoản nhân viên `quay`, `trang`, `gap`, `canh` ở trạng thái hoạt động. `make tai-khoan-dev` chạy lại thành công, cả năm dòng báo đã có và bỏ qua. Năm cặp email/mật khẩu trong bảng mới gọi `POST /sessions` đều nhận HTTP 201. Script tạo mới nay gửi `identifier: chu@quan.test` khi đăng nhập chủ quán; `bash -n` và `git diff --check` đạt. `./scripts/gate.sh` chạy trực tiếp: Gate 3, 1b…1h và Gate 1 đều PASS, cuối cùng `PASS gate`; Gate 3 có NOTE về file chưa theo dõi của việc khác. Người làm: Codex trên nhánh `P4A-01`; chưa có người duyệt độc lập. Scope giữ đến lúc chủ repo commit.
+
+[↑ đầu file](#top)
+
+<a id="t-295"></a>
+### T-295 — Canh bánh cuốn hiện ba nút chọn mức rau
+
+Chủ repo yêu cầu 2026-11-05: “xáo component canh ... Canh bánh cuốn ... 1 nút cho canh không rau, 1 nút cho canh vừa rau, 1 nút cho canh nhiều rau”. Hiểu đây là bỏ thẻ *canh* trùng và thay cách chọn trên thẻ *Canh bánh cuốn* của menu khách. Dữ liệu quán đã chốt ba tên *Không rau*, *Ít rau*, *Nhiều rau* và mặc định *Ít rau* (T-255); chữ “vừa rau” trong yêu cầu được thể hiện bằng lựa chọn *Ít rau* có sẵn, không tạo lựa chọn dữ liệu mới. Database dev hiện có cả *canh* cũ lẫn *Canh bánh cuốn*; seed menu thật chỉ định nghĩa món sau. Mức L1 vì chỉ đổi giao diện, không đổi dữ liệu hay giá.
+
+Acceptance ghi trước khi sửa: A1 — khi menu có *Canh bánh cuốn*, thẻ *canh* cũ không xuất hiện; thẻ *Canh bánh cuốn* hiện đồng thời ba nút *Không rau*, *Ít rau*, *Nhiều rau*, chọn một mức tại một thời điểm và mặc định *Ít rau*. A2 — nút Thêm gửi đúng `option_ids` của mức đã chọn; các món khác giữ cách chọn hiện tại. A3 — `./scripts/gate.sh` được chạy và đọc kết quả.
+
+Phạm vi (`work/scope/T-295.txt`): `work/backlog.md`, `fe/src/app/ban/_components/thuc-don-khach.tsx`, `fe/src/app/ban/_components/thuc-don-khach.css`, `fe/src/app/ban/thuc-don-khach.test.tsx`.
+
+Người làm: Codex trên nhánh `P4A-01`; chưa có người duyệt độc lập. Cây đang có các thay đổi chưa commit của việc khác; giữ nguyên các đoạn không liên quan trong file FE dùng chung.
+
+Kết quả: khi menu có *Canh bánh cuốn*, thẻ *canh* cũ được ẩn; thẻ món chuẩn hiển thị đồng thời ba nút từ nhóm Rau, mặc định *Ít rau*; chọn mức nào thì thêm món mang đúng `option_ids` mức đó. Test `thuc-don-khach.test.tsx` đạt 16/16 sau khi thêm ca ẩn món trùng. Gate lần đầu đạt tất cả cổng, có NOTE về các file chưa theo dõi của việc khác; kết quả lượt kiểm tra sau cùng được báo trong phần bàn giao.
+
+[↑ đầu file](#top)
+
+<a id="t-294"></a>
+### T-294 — Dùng ảnh mới cho mọi thẻ combo trên menu khách
+
+Chủ repo yêu cầu 2026-11-04 tại `/ban/3`: “thay ảnh trong combos bằng ảnh `docs/private/anh/final/Gemini_Generated_Image_mke3grmke3grmke3.png`”. Hiểu “combos” là mọi thẻ trong mục Combo trên menu khách. Mức L1 vì thay đổi ảnh hiển thị, không đổi dữ liệu món hay giá.
+
+Acceptance ghi trước khi sửa: A1 — mọi thẻ combo trên `/ban/3` dùng bản sao nguyên byte của ảnh chỉ định. A2 — ảnh món lẻ và trang quản trị giữ nguyên. A3 — `./scripts/gate.sh` được chạy và đọc kết quả.
+
+Phạm vi (`work/scope/T-294.txt`): `work/backlog.md`, `work/backlog_archive.md`, `fe/src/app/ban/_components/thuc-don-khach.tsx`, `fe/src/app/chu-quan/_components/anh-san-pham.tsx`, `fe/public/images/san-pham/combo-menu.png`.
+
+Người làm: Codex trên nhánh `P4A-01`; chưa có người duyệt độc lập. Cây đang có thay đổi chưa commit của các việc khác, kể cả T-293 ở cùng component ảnh. Yêu cầu mới áp cho mọi thẻ combo trên menu khách nên ghi đè ảnh riêng của combo trên chính menu này; ánh xạ ảnh riêng vẫn phục vụ trang quản trị.
+
+**Kết quả:** Codex kiểm ngày 2026-11-05 trên `P4A-01`, base `7de43b2`; chưa được duyệt độc lập, lượt này chỉ bổ sung kết quả trong entry, không sửa FE. A1: `shasum -a 256` nguồn đã chỉ định và `fe/public/images/san-pham/combo-menu.png` đều là `bf225adc29d4d4aa80d45d54c9e776b113389f42a26bbca36ec88b132703777b`; `rg -n 'anhMenu|AnhSanPham' fe/src --glob '*.tsx'` cho thấy vòng lặp combo tại `thuc-don-khach.tsx:188` luôn truyền ảnh này, component ưu tiên `anhMenu` tại `anh-san-pham.tsx:33`. A2: ảnh món lẻ tại dòng 206 và các lời gọi quản trị không truyền `anhMenu`; Node `assert.deepEqual` xác nhận bảng ảnh món lẻ bằng HEAD; `git diff HEAD` trang quản trị combo/sản phẩm và trang/ảnh giới thiệu không có output. Ánh xạ quản trị đổi sẵn do T-289/T-293 được giữ, không quy cho T-294. Bằng chứng là kiểm code và test, chưa kiểm giao diện trong trình duyệt thật. Test `cd fe && npx vitest run src/app/ban/thuc-don-khach.test.tsx`: `Test Files 1 passed (1)`, `Tests 16 passed (16)`; không thêm test vì ngoài scope. A3: đã chạy và đọc `./scripts/gate.sh`: Gate 1 FAIL ở build Turbopack với `binding to a port` / `Operation not permitted (os error 1)` trong môi trường hạn chế; lint, typecheck và toàn bộ 639/639 test FE qua. Một lượt gate chồng nhau còn báo build đang chạy; đã chờ kết thúc để chạy lại tuần tự sau cập nhật entry. Output cuối được bàn giao trong báo cáo. Bảng hunk bàn giao tách T-289/T-293/T-294 trong component ảnh và T-294/T-295 trong menu; Claude duyệt, tách commit và quyết trạng thái tiếp theo.
+
+[↑ đầu file](#top)
+
+<a id="t-293"></a>
+### T-293 — Dùng ảnh mới cho combo Đầy đủ trứng chín trên menu khách
+
+Chủ repo yêu cầu 2026-11-04 dùng `docs/private/anh/anh-kick-co4-3/Gemini_Generated_Image_44haga44haga44ha.png` cho ảnh combo Đầy đủ trứng chín ở `/ban/3`. Mức L1 vì thay đổi hình hiển thị cho khách, không đổi món hay giá.
+
+Acceptance ghi trước khi sửa: A1 — combo tên “Đầy đủ trứng chín” và “Suất Đầy Đủ Trứng Chín” trên `/ban/3` dùng đúng bản sao ảnh được chỉ định. A2 — ảnh các combo khác giữ ánh xạ cũ. A3 — `./scripts/gate.sh` được chạy và đọc kết quả.
+
+Phạm vi (`work/scope/T-293.txt`): `work/backlog.md`, `work/backlog_archive.md`, `fe/src/app/chu-quan/_components/anh-san-pham.tsx`, `fe/public/images/san-pham/suat-day-du-trung-chin.png`.
+
+Người làm: Codex trên nhánh `P4A-01`; chưa có người duyệt độc lập. Cây có thay đổi chưa commit của các việc khác, kể cả ánh xạ ảnh Suất giò trong cùng component; giữ riêng phần thay ảnh combo này.
+
+**Kết quả:** Codex kiểm ngày 2026-11-05 trên `P4A-01`, base `7de43b2`; chưa được duyệt độc lập, lượt này chỉ bổ sung kết quả trong entry, không sửa FE. A1: `shasum -a 256` nguồn đã chỉ định và `fe/public/images/san-pham/suat-day-du-trung-chin.png` đều là `bcf2992ecc57630731a22d43022333f5ca51535f282aeee617df72380631cd81`; chạy Node chuẩn hoá hai tên “Đầy đủ trứng chín” và “Suất Đầy Đủ Trứng Chín” rồi kiểm ánh xạ đều PASS tới file này. **Không chứng minh được A1 trên `/ban/3` hiện tại** vì T-294 truyền `anhMenu` ghi đè mọi ảnh combo; ánh xạ riêng vẫn dùng cho quản trị đúng như entry T-294 đã nêu. A2: đối chiếu bảng `anhCombo` với HEAD bằng Node: các khoá khác giữ nguyên, ngoại trừ `suat gio` đổi bởi T-289; bảng ảnh món lẻ bằng HEAD, trang/ảnh giới thiệu quán không có diff. Ảnh chung trên menu là thay đổi của T-294, không coi là bằng chứng A2 toàn cây bằng HEAD. Test `cd fe && npx vitest run src/app/ban/thuc-don-khach.test.tsx`: `Test Files 1 passed (1)`, `Tests 16 passed (16)`; không thêm test vì ngoài scope. A3: đã chạy và đọc `./scripts/gate.sh`: Gate 1 FAIL ở build Turbopack với `binding to a port` / `Operation not permitted (os error 1)` trong môi trường hạn chế; lint, typecheck và toàn bộ 639/639 test FE qua. Một lượt gate chồng nhau còn báo build đang chạy; đã chờ kết thúc để chạy lại tuần tự sau cập nhật entry. Output cuối được bàn giao trong báo cáo. Còn chờ Claude duyệt bằng chứng và xử lý Acceptance cũ bị T-294 thay thế; không đổi trạng thái.
+
+[↑ đầu file](#top)
+
+<a id="t-292"></a>
+### T-292 — Xoay ảnh Suất giò 180 độ trên menu khách
+
+Chủ repo yêu cầu 2026-11-04 sau khi chỉnh khung ảnh của menu khách: *"xoay ảnh 180 độ"*. Theo ngữ cảnh ảnh Suất giò đang được nói tới, chỉ xoay ảnh Suất giò trong thẻ menu khách; không xoay ảnh khác hay sửa file gốc. Mức L1 vì thay đổi cách trình bày ảnh.
+
+Acceptance ghi trước khi sửa: A1 — ảnh Suất giò trên `/ban/[ma]` và `/dat-mon` được xoay 180 độ trong khung 220 px, vẫn hiện trọn ảnh. A2 — ảnh món/combo khác, ảnh giới thiệu quán và ảnh ở trang quản trị giữ nguyên chiều. A3 — `./scripts/gate.sh` được chạy và đọc kết quả.
+
+Phạm vi (`work/scope/T-292.txt`): `work/backlog.md`, `work/backlog_archive.md`, `fe/src/app/ban/_components/thuc-don-khach.css`.
+
+Người làm: Codex trên nhánh `P4A-01`; chưa có người duyệt độc lập. Cây có thay đổi chưa commit của T-290, T-291 và các việc khác; giữ riêng thay đổi này.
+
+**Kết quả:** Codex kiểm ngày 2026-11-05 trên `P4A-01`, base `7de43b2`; chưa được duyệt độc lập, lượt này chỉ bổ sung kết quả trong entry, không sửa FE. A1: kiểm tĩnh `thuc-don-khach.css:82–85` có khung 220 px, `object-fit: contain` và xoay 180 độ riêng `alt="Suất giò"`; `/ban/[ma]` và `/dat-mon` cùng dùng `PhieuKhach` → `ThucDonKhach`. Tuy nhiên **không chứng minh được A1 trên cây hiện tại**: T-294 dùng ảnh chung và đổi alt thành `Ảnh combo Suất giò`, không còn khớp selector xoay; không tự xoay ảnh mới vì sẽ tự quyết cách kết hợp hai yêu cầu. A2: selector xoay giới hạn trong `.khach-menu .menu-image` và đúng alt; `git diff HEAD` của trang quản trị combo/sản phẩm và trang/ảnh giới thiệu quán không có output; đối chiếu ánh xạ món lẻ với HEAD bằng Node `assert.deepEqual` PASS. `shasum -a 256` ảnh Suất giò nguồn `docs/private/anh/anh-ngang/suat-gio-anh-ngang.png` và bản công khai cùng `6a06ba00932f61e32cfc27323cd462096e1a8a6ff5f1b4581c984c58564e9fa1` (ảnh thuộc T-289; T-292 không sửa ảnh). Test `cd fe && npx vitest run src/app/ban/thuc-don-khach.test.tsx`: `Test Files 1 passed (1)`, `Tests 16 passed (16)`; không thêm test vì ngoài scope. A3: đã chạy và đọc `./scripts/gate.sh`: Gate 1 FAIL ở build Turbopack với `binding to a port` / `Operation not permitted (os error 1)` trong môi trường hạn chế; lint, typecheck và toàn bộ 639/639 test FE qua. Một lượt gate chồng nhau còn báo build đang chạy; đã chờ kết thúc để chạy lại tuần tự sau cập nhật entry. Output cuối được bàn giao trong báo cáo, không lấy test PASS thay cho gate. Còn chờ Claude xử lý Acceptance cũ bị T-294 thay thế và duyệt trước khi chuyển trạng thái.
 
 [↑ đầu file](#top)
 
