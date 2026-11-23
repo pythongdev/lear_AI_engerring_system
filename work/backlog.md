@@ -100,6 +100,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] KC-07 **Backend chưa trả ước tính còn dùng của từng nguyên liệu: mức dùng 7 ngày có ghi, số ngày còn, Hết theo sổ** — L2 (hợp đồng đọc lượng, I-025), chủ repo yêu cầu 2026-11-23 (*"tiếp tục yêu cầu codex làm bạn kiểm tra"*); Claude viết test trước, Codex làm trong `../lean_wt/KC-07`, Claude duyệt và sửa phép chia, chủ repo xác nhận ba điểm suy ra · [chi tiết](backlog_KC.md#kc-07)
 - [x] YT-07 **Trang Yêu thích chưa được nghiệm thu trên app chạy so với bản thiết kế** — L1, sau YT-06; Codex viết kịch bản Playwright trong `../lean_wt/YT-07`, Claude chạy trên app thật và duyệt (nhận 2026-11-22) · [mô tả](backlog_YT.md#yt-07); **xong 2026-11-22**: kịch bản trên app thật `TONG pass=65 fail=0`; lệch so với bản thiết kế ghi thành T-367
 - [x] T-349 **Next.js 16.4.2 dính hai khuyến cáo bảo mật mới, `next build` lại dừng cách lượt** — L1 (đổi phụ thuộc `fe/`), chủ repo yêu cầu 2026-11-19; nâng `next` · `eslint-config-next` lên 16.4.6; Codex làm, Claude duyệt · [chi tiết](#t-349); **xong 2026-11-22**: `npm ls` 16.4.6, audit không còn `next`, `next build` hai lần exit 0
 - [x] T-332 **Gate 7b báo động giả khi chủ repo commit khối trước lúc hook chấm: file scope vừa bị hook dọn nên mọi file của khối bị coi là ngoài scope** — L1, mở 2026-11-16, F-081 (lần hai); Codex làm, Claude duyệt · [chi tiết](#t-332); **xong 2026-11-22**: Claude duyệt, test 7b đủ ca A1–A4, gate xanh

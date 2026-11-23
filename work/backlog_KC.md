@@ -325,6 +325,26 @@ thập phân chính xác và không lẫn với cờ nhắc POS hiện có.
 
 **Nhận việc.**
 
+Claude Code, 2026-11-23 (chủ repo: *"tiếp tục yêu cầu codex làm bạn kiểm tra"*). Thực hiện: Codex trong worktree
+`../lean_wt/KC-07`, nhánh `codex/KC-07` từ `1fc16ae` + nền KC-01/KC-02/KC-06/KC-08 chưa commit chỉ stage; duyệt: Claude. Phiếu:
+`../lean_wt/_claude_logs/KC-07/phieu.md`. Test viết trước: `be/internal/nguyenlieu/kc07_test.go` (sáu test, tháng 6/2033).
+Hình hợp đồng Claude chốt (0.80.0): mỗi `SupplyItem` thêm khối bắt buộc `usage_estimate` {`status` · `usage_days` ·
+`used_in_window` · `days_left`}; cửa sổ là tối đa 7 ngày gần nhất có con số *đã dùng* tới ngày bán hôm nay; `days_left` làm
+tròn xuống một chữ số, chỉ có khi `ready`; không cửa ghi, không mã lỗi mới, nhắc POS không đổi. A2 (cửa ghi đầu vào) không áp
+vì ADR-147 điểm 8 tính từ sổ. Ba điểm phiên chọn — hiệu số ≤ 0 đứng trước mọi trạng thái, nên thứ chưa có con số nào trả `out_by_ledger` (FE ghép với
+`reminder_status = no_purchase` để hiện *Chưa nhập*); cửa sổ chỉ gồm con số mang ngày tới hôm nay, còn hiệu số vẫn cộng mọi
+ngày (I-026); thứ đã ngừng vẫn được tính — **chủ repo xác nhận 2026-11-23** (*"không có điểm nào muốn thêm hãy tích hợp vào
+cây chung"*).
+
+**Kết quả 2026-11-23** (thực hiện: Codex, duyệt và tích hợp: Claude). Codex thêm khối vào phép đọc chung `sql/doc.sql`
+(một `LATERAL` lấy tối đa bảy con số *đã dùng* tới ngày bán hôm nay, mốc từ `ngayban.DongHo` quy ngày như `QuyNgay`), struct
+`UocTinh` ở `service.go`, mọi đường gọi `doc` truyền mốc; hợp đồng 0.80.0 với schema `SupplyUsageEstimate`; sinh lại
+`schema.ts`; dữ liệu mẫu `SupplyItem` của ba test FE và danh sách khoá ở `tongquan/handler_test.go` thêm trường mới. Không sửa
+`kc07_test.go`. Claude sửa một chỗ khi duyệt: `floor(a / b)` qua phép chia `numeric` có làm tròn đổi thành `div(a, b)` (thương
+nguyên chính xác), sinh lại sqlc. Gate trong worktree (2026-11-23): `./scripts/gate.sh` PASS — `be-check` 33/33 gói, sáu test `KC07` PASS,
+`db-check` 50 bước, hợp đồng 0.80.0. Báo cáo Codex, phiếu, log gate: `../lean_wt/_claude_logs/KC-07/`. Bước kế: KC-09 (FE bảng
+theo ngày) hoặc KC-12 sau KC-11.
+
 <a id="kc-08"></a>
 ## KC-08 — FE: khung trang và các điều khiển trình bày
 
