@@ -29,12 +29,15 @@ export function useKhoanChi(from: string | undefined, to: string | undefined, lo
   });
 }
 export function useLichSuKhoanCon(expenseItemId: number, from: string, to: string, opened: boolean) {
+  return useLichSuSuaTien({ expense_item_id: expenseItemId }, from, to, opened);
+}
+export function useLichSuSuaTien(target: { expense_item_id: number } | { expense_category_id: number }, from: string, to: string, opened: boolean) {
   const api = useApi();
   return useQuery<KieuKhoanChi["Expenses"], ApiFailure>({
-    queryKey: ["expenses", { from, to, expense_item_id: expenseItemId }],
+    queryKey: ["expenses", { from, to, ...target }],
     enabled: opened && !!from && !!to && from <= to,
     queryFn: async () => {
-      const r = await call(api.GET("/expenses", { params: { query: { from, to, expense_item_id: expenseItemId } } }));
+      const r = await call(api.GET("/expenses", { params: { query: { from, to, ...target } } }));
       if (!r.ok) throw r.failure;
       return r.data;
     },
@@ -68,6 +71,10 @@ export function useThemKhoanCon() {
   const api = useApi();
   return useGhi((body: KieuKhoanChi["CreateExpenseItem"]) => call(api.POST("/expense-items", { body })), "expense-categories");
 }
+export function useThemKhoanConCoLuong() {
+  const api = useApi();
+  return useGhi((body: KieuKhoanChi["CreateSupplyExpenseItem"]) => call(api.POST("/supply-expense-items", { body })), "expense-categories");
+}
 export function useDoiTenLoai(id: number) {
   const api = useApi();
   return useGhi((body: KieuKhoanChi["RenameExpense"]) => call(api.PUT("/expense-categories/{expense_category_id}", { params: { path: { expense_category_id: id } }, body })), "expense-categories");
@@ -95,6 +102,7 @@ export function loiKhoanChi(f: ApiFailure) {
     case "expense_item_in_use": return "Khoản con còn khoản chi, kể cả ngoài khoảng ngày đang lọc. Hãy chuyển hoặc xoá khoản chi trước.";
     case "expense_item_not_found": return "Không tìm thấy khoản con này. Đã yêu cầu đọc lại danh mục.";
     case "expense_item_name_taken": return "Tên khoản con bị trùng trong mục. Hãy chọn tên khác.";
+    case "supply_item_name_taken": return "Tên này đã có trong sổ nguyên liệu. Hãy chọn tên khác.";
     case "expense_category_name_taken": return "Tên loại chi bị trùng. Hãy chọn tên khác.";
     case "expense_category_not_found": return "Không tìm thấy loại chi này. Đã yêu cầu đọc lại loại chi.";
     case "expense_not_found": return "Không tìm thấy khoản chi này. Đã yêu cầu đọc lại khoản chi.";
@@ -108,5 +116,5 @@ export function loiKhoanChi(f: ApiFailure) {
 export function oLoiKhoanChi(f: ApiFailure) {
   if (f.kind !== "rejected") return undefined;
   if (f.code === "sale_day_reconciled") return "paid_date";
-  return f.field ?? (f.code === "expense_category_name_taken" || f.code === "expense_item_name_taken" ? "name" : f.code === "expense_category_not_found" ? "expense_category_id" : undefined);
+  return f.field ?? (f.code === "expense_category_name_taken" || f.code === "expense_item_name_taken" || f.code === "supply_item_name_taken" ? "name" : f.code === "expense_category_not_found" ? "expense_category_id" : undefined);
 }

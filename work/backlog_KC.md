@@ -478,6 +478,27 @@ ngày nhập/thêm khoản con kèm tiền theo mẫu. Không viết lại cửa
 
 **Nhận việc.**
 
+Claude Code, 2026-11-23 (chủ repo: *"tiếp tục yêu cầu codex làm bạn kiểm tra"*). Thực hiện: Codex trong worktree
+`../lean_wt/KC-10`, nhánh `codex/KC-10` từ `ec8e12f` + cây cuối của bốn khối commit KC-01/02/08/09 (chỉ stage); duyệt: Claude.
+Phiếu: `../lean_wt/_claude_logs/KC-10/phieu.md`. Test viết trước: `fe/src/app/chu-quan/khoan-chi/kc10.test.tsx` (mười bốn ca, đỏ
+mười ba trước khi có code; ca còn lại giữ hành vi đang có). Hình Claude chốt: thêm mục bắt buộc chọn *Theo dõi lượng* (không mặc
+định) và hộp liệt kê các mục hiện có; ô *Ngày nhập hàng* chỉ ở mục theo dõi lượng, trống thì không gửi `received_date`; thêm khoản
+con kèm tiền — mục theo dõi qua `POST /supply-expense-items` một lần, mục thường hai lời gọi, bước hai hỏng thì giữ mã khoản con đã
+tạo và lần sau chỉ ghi khoản chi, mất phản hồi thì khoá nút gửi; *Sửa tiền đã ghi* đọc `listExpenses` theo `expense_item_id` hay
+`expense_category_id`, bảy ngày tới `last_paid_date`; xoá khoản con nối sổ là hộp *Ngừng dùng*. A2 ô *Lượng mua vào* không nằm
+trong bản HTML nên để KC-11; nút *Dùng lại* và xếp mục thứ *Chưa xếp mục* cũng ở KC-11.
+
+**Kết quả 2026-11-23** (thực hiện: Codex, duyệt và tích hợp: Claude). Codex làm đủ phiếu: `ThemLoai` có ô *Theo dõi lượng* bắt buộc
+và danh sách *Các mục chi hiện có*; `FormKhoan` có ô *Ngày nhập hàng* chỉ ở mục theo dõi; `ThemCon` thành form riêng — mục theo dõi
+gọi `POST /supply-expense-items` một lần, mục thường hai lời gọi, giữ mã khoản con khi bước hai bị từ chối (ô tên chỉ đọc, lần sau
+chỉ ghi khoản chi), khoá nút khi mất phản hồi; `DoiTen` đọc *Sửa tiền đã ghi* bằng `useLichSuSuaTien` (khuôn khoá `["expenses", …]`
+chung với lịch sử KC-09); hộp *Ngừng dùng* cho khoản con nối sổ; `loiKhoanChi` thêm `supply_item_name_taken`. Ba ca cũ chỉ đổi
+thao tác hoặc thêm `last_paid_date` vào dữ liệu mẫu; không sửa `kc10.test.tsx`, không chữ ẩn. Claude duyệt diff, thử đổi màu viền
+danh sách sang biến `--kc-line` rồi hoàn lại vì hộp thoại nằm ngoài `.kc-page` (portal) nên không có biến ấy — giữ `#303030` như
+`.kc-dialog`. Bằng chứng: `./scripts/gate.sh` trong worktree PASS (`be-check` 33/33, `db-check` 50 bước, `fe-check`); test
+`chu-quan` 401/401 sau sửa cuối. Trang thật (FE worktree cổng 3001, backend `make dev`, dữ liệu mẫu, mọi lời gọi ghi bị chặn):
+ba hộp Thêm mục chi · Thêm khoản con · Ghi khoản chi ở 390/1440 px không tràn, 0 lỗi JS. Ảnh: `../lean_wt/_claude_logs/KC-10/anh/`.
+
 <a id="kc-11"></a>
 ## KC-11 — FE: nguyên liệu và hai lịch sử thật
 

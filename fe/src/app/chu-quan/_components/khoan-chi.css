@@ -35,3 +35,6 @@
 .kc-item-history>button{margin:10px 0}
 .kc-item-history p{margin:8px 0}
 @media(max-width:520px){.kc-item-detail dl{grid-template-columns:1fr}.kc-page .kc-item-table,.kc-page .kc-history-table{min-width:0}.kc-item-history .kc-two{grid-template-columns:1fr}.kc-page .kc-item-table td:first-child,.kc-page .kc-item-table th{white-space:normal}}
+.kc-existing-categories{list-style:none;margin:14px 0;padding:0;border:1px solid #303030;border-radius:10px;max-height:180px;overflow:auto}
+.kc-existing-categories li{padding:8px 12px;border-bottom:1px solid #303030;font-size:12px;overflow-wrap:anywhere}
+.kc-existing-categories li:last-child{border-bottom:0}

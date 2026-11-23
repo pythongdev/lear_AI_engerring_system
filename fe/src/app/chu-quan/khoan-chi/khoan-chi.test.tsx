@@ -74,12 +74,12 @@ describe("Khoản chi", () => {
     expect((within(f).getByLabelText("Nguồn tiền") as HTMLSelectElement).value).toBe("");
     gui(f); await waitFor(() => expect(sai(f, "Tên loại chi")).toBe("true"));
     go(f, "Tên loại chi", "  Quảng cáo  "); gui(f); await waitFor(() => expect(sai(f, "Nguồn tiền")).toBe("true")); expect(ghi(g)).toHaveLength(0);
-    go(f, "Nguồn tiền", "rieng"); gui(f); await screen.findByText("Đã thêm loại chi.");
+    go(f, "Nguồn tiền", "rieng"); go(f, "Theo dõi lượng", "khong"); gui(f); await screen.findByText("Đã thêm loại chi.");
     expect(ghi(g)).toEqual([{ method: "POST", path: "/expense-categories", body: { name: "Quảng cáo", paid_from_till: false, tracks_supply: false } }]); expect(doc(g, "/expense-categories")).toHaveLength(2);
   });
   it("tên loại trùng gắn ô tên", async () => {
     mo({ ghi: () => ({ status: 409, body: { code: "expense_category_name_taken" } }) });
-    fireEvent.click(await screen.findByRole("button", { name: "＋ Thêm mục chi" })); const f = screen.getByRole("form", { name: "Thêm loại chi" }); go(f, "Tên loại chi", "Điện"); go(f, "Nguồn tiền", "ket"); gui(f);
+    fireEvent.click(await screen.findByRole("button", { name: "＋ Thêm mục chi" })); const f = screen.getByRole("form", { name: "Thêm loại chi" }); go(f, "Tên loại chi", "Điện"); go(f, "Nguồn tiền", "ket"); go(f, "Theo dõi lượng", "khong"); gui(f);
     await screen.findByText(/Tên loại chi bị trùng/); expect(sai(f, "Tên loại chi")).toBe("true");
   });
   it.each(["", "tu=2026-10-01", "den=2026-10-30"])("thiếu ngày dùng sale_date, không gửi loại hoặc nguồn: %s", async (search) => {
@@ -153,7 +153,7 @@ describe("Khoản chi", () => {
   });
 });
 
-const con: K["ExpenseItem"] = { expense_item_id: 7, expense_category_id: 2, name: "Bột gạo", supply_item_id: null };
+const con: K["ExpenseItem"] = { expense_item_id: 7, expense_category_id: 2, name: "Bột gạo", supply_item_id: null, last_paid_date: "2026-10-18" };
 const categoriesWithItems = () => ({ status: 200, body: { expense_categories: [{ ...loai[0], items: [con] }, { ...loai[1], items: [] }] } });
 const dsWithItems: K["Expenses"] = { ...ds, expenses: [{ ...khoan, expense_item_id: 7, item_name: "Bột gạo" }], category_totals: [{ expense_category_id: 2, total_vnd: 555555 }], item_totals: [{ expense_item_id: 7, total_vnd: 333333, last_paid_date: "2026-10-18" }] };
 const docWithItems = () => ({ status: 200, body: dsWithItems });
@@ -203,7 +203,7 @@ describe("Khoản chi theo thiết kế", () => {
     const g = mo({ loai: categoriesWithItems, doc: docWithItems }); await screen.findByText("333.333 đ"); fireEvent.click(within(muc()).getByRole("button", { name: "Sửa mục" })); const f = screen.getByRole("form", { name: "Đổi tên" }); go(f, "Tên mới", "  Nguyên liệu  "); gui(f); await waitFor(() => expect(sai(f, "Lý do")).toBe("true")); expect(ghi(g)).toHaveLength(0); go(f, "Lý do", "Đổi tên mục"); gui(f); await screen.findByText(/Đã đổi tên/); expect(ghi(g)[0]).toEqual({ method: "PUT", path: "/expense-categories/2", body: { name: "Nguyên liệu", reason: "Đổi tên mục" } });
   });
   it("sửa tiền từ khoản con chọn đúng lần ghi và bảo vệ tên chưa lưu", async () => {
-    mo({ loai: categoriesWithItems, doc: docWithItems }); await screen.findByText("333.333 đ"); fireEvent.click(within(moChiTiet()).getByRole("button", { name: "Sửa tên" })); const f = screen.getByRole("form", { name: "Đổi tên" }); go(f, "Tên mới", "Tên chưa lưu"); fireEvent.click(screen.getByRole("button", { name: "Sửa tiền" })); await screen.findByText("Hãy lưu tên trước khi chọn sửa tiền."); go(f, "Tên mới", "Bột gạo"); fireEvent.click(screen.getByRole("button", { name: "Sửa tiền" })); const edit = screen.getByRole("form", { name: "Sửa khoản chi" }); expect((within(edit).getByLabelText("Số tiền (đồng)") as HTMLInputElement).value).toBe("125000"); expect((within(edit).getByLabelText("Ngày chi") as HTMLInputElement).value).toBe("2026-10-18");
+    mo({ loai: categoriesWithItems, doc: docWithItems }); await screen.findByText("333.333 đ"); fireEvent.click(within(moChiTiet()).getByRole("button", { name: "Sửa tên" })); const f = screen.getByRole("form", { name: "Đổi tên" }); go(f, "Tên mới", "Tên chưa lưu"); fireEvent.click(await screen.findByRole("button", { name: "Sửa tiền" })); await screen.findByText("Hãy lưu tên trước khi chọn sửa tiền."); go(f, "Tên mới", "Bột gạo"); fireEvent.click(screen.getByRole("button", { name: "Sửa tiền" })); const edit = screen.getByRole("form", { name: "Sửa khoản chi" }); expect((within(edit).getByLabelText("Số tiền (đồng)") as HTMLInputElement).value).toBe("125000"); expect((within(edit).getByLabelText("Ngày chi") as HTMLInputElement).value).toBe("2026-10-18");
   });
   it("không đóng hộp thoại bằng Escape khi đang gửi tiền", async () => {
     let finish!: (r: Tra) => void; const pending = new Promise<Tra>((resolve) => { finish = resolve; }); const g = mo({ ghi: () => pending }); const f = await formGhi(); gui(f); await waitFor(() => expect(ghi(g)).toHaveLength(1)); fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" }); expect(screen.getByRole("dialog")).toBeTruthy(); expect(within(f).getByRole("button", { name: "Đang lưu…" }).hasAttribute("disabled")).toBe(true); finish({ status: 201, body: khoan }); await screen.findByText("Đã ghi khoản chi.");

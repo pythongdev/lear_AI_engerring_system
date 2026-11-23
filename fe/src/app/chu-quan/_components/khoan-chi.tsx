@@ -2,7 +2,7 @@
 
 import { useIsMutating } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useId, useRef, useState, type ReactNode } from "react";
+import { useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
@@ -13,13 +13,13 @@ import { Input } from "@/components/ui/input";
 import { FormMenu, OMenu, chuMenu, soMenu } from "./form-menu";
 import { useTongQuan } from "./du-lieu-tong-quan";
 import { useLoaiChi, useKhoanChi, useLichSuKhoanCon, useThemLoaiChi, useGhiKhoanChi, useSuaKhoanChi,
-  useThemKhoanCon, useDoiTenLoai, useDoiTenKhoanCon, useXoaLoai, useXoaKhoanCon, useXoaKhoanChi,
+  useThemKhoanCon, useThemKhoanConCoLuong, useLichSuSuaTien, useDoiTenLoai, useDoiTenKhoanCon, useXoaLoai, useXoaKhoanCon, useXoaKhoanChi,
   loiKhoanChi, oLoiKhoanChi, type KieuKhoanChi } from "./du-lieu-khoan-chi";
 import "./khoan-chi.css";
 
 const loi = { loi: loiKhoanChi, oLoi: oLoiKhoanChi };
-const them = z.object({ name: chuMenu, paid_from_till: z.enum(["ket", "rieng"], { error: "Chọn nguồn tiền." }) });
-const ghi = z.object({ expense_category_id: soMenu, expense_item_id: z.string(), amount_vnd: soMenu, paid_date: chuMenu, reason: z.string() });
+const them = z.object({ name: chuMenu, paid_from_till: z.enum(["ket", "rieng"], { error: "Chọn nguồn tiền." }), tracks_supply: z.enum(["co", "khong"], { error: "Chọn có theo dõi lượng hay không." }) });
+const ghi = z.object({ expense_category_id: soMenu, expense_item_id: z.string(), amount_vnd: soMenu, paid_date: chuMenu, received_date: z.string(), reason: z.string() });
 const sua = ghi.extend({ reason: chuMenu });
 const doiTen = z.object({ name: chuMenu, reason: chuMenu });
 const lyDo = z.object({ reason: chuMenu });
@@ -49,15 +49,17 @@ function bayNgayCuoi(s: string) {
   date.setUTCDate(date.getUTCDate() - 6);
   return date.toISOString().slice(0, 10);
 }
-const title = (m: Mo) => ({ tao: "Ghi khoản chi", sua: "Sửa khoản chi", "them-loai": "Thêm mục chi", "them-con": "Thêm khoản con", "ten-loai": "Sửa mục chi", "ten-con": "Sửa khoản con", "xoa-loai": "Xoá mục chi", "xoa-con": "Xoá khoản con", "xoa-chi": "Xoá khoản chi" })[m.kind];
+const title = (m: Mo) => m.kind === "xoa-con" && m.item.supply_item_id ? "Ngừng dùng" : ({ tao: "Ghi khoản chi", sua: "Sửa khoản chi", "them-loai": "Thêm mục chi", "them-con": "Thêm khoản con", "ten-loai": "Sửa mục chi", "ten-con": "Sửa khoản con", "xoa-loai": "Xoá mục chi", "xoa-con": "Xoá khoản con", "xoa-chi": "Xoá khoản chi" })[m.kind];
 
-function ThemLoai({ bao, dong }: { bao: (s: string) => void; dong: () => void }) {
+function ThemLoai({ loai, bao, dong }: { loai: Loai[]; bao: (s: string) => void; dong: () => void }) {
   const luu = useThemLoaiChi();
   const id = useId();
   const form = useForm<z.infer<typeof them>>({ resolver: zodResolver(them), defaultValues: { name: "" } });
   const error = form.formState.errors.paid_from_till?.message;
-  return <FormMenu {...loi} form={form} ten="Thêm loại chi" nut="Thêm loại chi" cacO={["name", "paid_from_till"]} dong={dong}
-    gui={({ name, paid_from_till }) => luu.mutateAsync({ name, paid_from_till: paid_from_till === "ket", tracks_supply: false })}
+  const trackError = form.formState.errors.tracks_supply?.message;
+  return <><ul aria-label="Các mục chi hiện có" className="kc-existing-categories">{loai.map((l) => <li key={l.expense_category_id}>{l.name} · {nguonTien(l.paid_from_till)}{l.tracks_supply && " · Theo dõi lượng"}</li>)}</ul>
+  <FormMenu {...loi} form={form} ten="Thêm loại chi" nut="Thêm loại chi" cacO={["name", "paid_from_till", "tracks_supply"]} dong={dong}
+    gui={({ name, paid_from_till, tracks_supply }) => luu.mutateAsync({ name, paid_from_till: paid_from_till === "ket", tracks_supply: tracks_supply === "co" })}
     daLuu={() => { bao("Đã thêm loại chi."); dong(); }}>
     <OMenu form={form} o="name" nhan="Tên loại chi" />
     <Field data-invalid={!!error}><FieldLabel htmlFor={id}>Nguồn tiền</FieldLabel>
@@ -65,7 +67,12 @@ function ThemLoai({ bao, dong }: { bao: (s: string) => void; dong: () => void })
         <option value="">Chọn nguồn tiền</option><option value="ket">Trả từ két</option><option value="rieng">Tiền riêng</option>
       </select>{error && <FieldError id={`${id}-loi`}>{error}</FieldError>}
     </Field>
-  </FormMenu>;
+    <Field data-invalid={!!trackError}><FieldLabel htmlFor={`${id}-track`}>Theo dõi lượng</FieldLabel>
+      <select id={`${id}-track`} defaultValue="" {...form.register("tracks_supply")} aria-invalid={!!trackError} aria-describedby={trackError ? `${id}-track-loi` : undefined}>
+        <option value="">Chọn có hay không</option><option value="co">Có — nguyên liệu, theo dõi lượng</option><option value="khong">Không</option>
+      </select>{trackError && <FieldError id={`${id}-track-loi`}>{trackError}</FieldError>}
+    </Field>
+  </FormMenu></>;
 }
 function FormKhoan({ khoan, category, item, loai, dong, bao }: { khoan?: Khoan; category?: number; item?: number; loai: Loai[]; dong: () => void; bao: (s: string) => void }) {
   const tao = useGhiKhoanChi();
@@ -76,7 +83,7 @@ function FormKhoan({ khoan, category, item, loai, dong, bao }: { khoan?: Khoan; 
       ctx.addIssue({ code: "custom", path: ["expense_item_id"], message: "Chọn nguyên liệu / sản phẩm." });
     }
   })), defaultValues: {
-    expense_category_id: khoan?.expense_category_id ?? category, expense_item_id: String(khoan?.expense_item_id ?? item ?? ""), amount_vnd: khoan?.amount_vnd, paid_date: khoan?.paid_date ?? "", reason: "",
+    expense_category_id: khoan?.expense_category_id ?? category, expense_item_id: String(khoan?.expense_item_id ?? item ?? ""), amount_vnd: khoan?.amount_vnd, paid_date: khoan?.paid_date ?? "", received_date: khoan?.received_date ?? "", reason: "",
   } });
   // The selected category controls the item menu; changing it clears the old association.
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -85,9 +92,9 @@ function FormKhoan({ khoan, category, item, loai, dong, bao }: { khoan?: Khoan; 
   const items = selectedLoai?.items ?? [];
   const dateError = form.formState.errors.paid_date?.message;
   return <FormMenu {...loi} form={form} ten={khoan ? "Sửa khoản chi" : "Ghi khoản chi"} nut="Lưu khoản chi"
-    cacO={["expense_category_id", "expense_item_id", "amount_vnd", "paid_date", "reason"]} dong={dong}
-    gui={async ({ reason, expense_item_id, ...body }) => {
-      const data = { ...body, ...(expense_item_id ? { expense_item_id: Number(expense_item_id) } : khoan ? { expense_item_id: null } : {}) };
+    cacO={["expense_category_id", "expense_item_id", "amount_vnd", "paid_date", "received_date", "reason"]} dong={dong}
+    gui={async ({ reason, expense_item_id, received_date, ...body }) => {
+      const data = { ...body, ...(expense_item_id ? { expense_item_id: Number(expense_item_id) } : khoan ? { expense_item_id: null } : {}), ...(selectedLoai?.tracks_supply && received_date ? { received_date } : {}) };
       const r = await (khoan ? doi.mutateAsync({ ...data, reason }) : tao.mutateAsync(data));
       return r;
     }} daLuu={() => { bao(khoan ? "Đã sửa khoản chi." : "Đã ghi khoản chi."); dong(); }}>
@@ -101,21 +108,86 @@ function FormKhoan({ khoan, category, item, loai, dong, bao }: { khoan?: Khoan; 
     </select>{form.formState.errors.expense_item_id && <FieldError id={`${id}-con-error`}>{form.formState.errors.expense_item_id.message}</FieldError>}</Field>}
     <OMenu form={form} o="amount_vnd" nhan="Số tiền (đồng)" so />
     <Field data-invalid={!!dateError}><FieldLabel htmlFor={`${id}-ngay`}>Ngày chi</FieldLabel><Input id={`${id}-ngay`} type="date" {...form.register("paid_date")} aria-invalid={!!dateError} aria-describedby={dateError ? `${id}-ngay-error` : undefined} />{dateError && <FieldError id={`${id}-ngay-error`}>{dateError}</FieldError>}</Field>
+    {selectedLoai?.tracks_supply && <Field><FieldLabel htmlFor={`${id}-nhap`}>Ngày nhập hàng</FieldLabel><Input id={`${id}-nhap`} type="date" {...form.register("received_date")} /><small className="kc-muted">Ngày hàng về; có thể khác ngày chi tiền.</small></Field>}
     {selectedLoai && <p className="kc-muted">Nguồn tiền: {nguonTien(selectedLoai.paid_from_till)}</p>}
     {khoan && <OMenu form={form} o="reason" nhan="Lý do" />}
   </FormMenu>;
 }
 function ThemCon({ category, dong, bao }: { category: Loai; dong: () => void; bao: (s: string) => void }) {
   const luu = useThemKhoanCon();
-  const schema = z.object({ name: chuMenu });
-  const form = useForm<z.infer<typeof schema>>({ resolver: zodResolver(schema), defaultValues: { name: "" } });
-  return <FormMenu {...loi} form={form} ten="Thêm khoản con" nut="Thêm vào mục" dong={dong} cacO={["name"]}
-    gui={(p) => luu.mutateAsync({ ...p, expense_category_id: category.expense_category_id })}
-    daLuu={() => { bao("Đã thêm khoản con. Chọn Ghi chi để nhập tiền và ngày mua."); dong(); }}>
-    <p className="kc-muted">Mục chi: {category.name}</p><OMenu form={form} o="name" nhan="Tên nguyên liệu / sản phẩm" />
-  </FormMenu>;
+  const luuCoLuong = useThemKhoanConCoLuong();
+  const luuTien = useGhiKhoanChi();
+  const [createdId, setCreatedId] = useState<number | null>(null);
+  const [createdName, setCreatedName] = useState("");
+  const schema = z.object({ name: chuMenu, amount_vnd: z.string().refine((s) => !s || (Number.isSafeInteger(Number(s)) && Number(s) > 0), "Nhập số nguyên dương."), paid_date: z.string(), received_date: z.string() })
+    .superRefine((value, ctx) => {
+      if (createdId !== null && !value.amount_vnd) ctx.addIssue({ code: "custom", path: ["amount_vnd"], message: "Nhập số tiền để hoàn tất khoản chi của khoản con đã thêm." });
+      if (value.amount_vnd && !value.paid_date) ctx.addIssue({ code: "custom", path: ["paid_date"], message: "Chọn ngày chi khi ghi tiền." });
+    });
+  const form = useForm<z.infer<typeof schema>>({ resolver: zodResolver(schema), defaultValues: { name: "", amount_vnd: "", paid_date: "", received_date: "" } });
+  const [uncertain, setUncertain] = useState(false);
+  const [message, setMessage] = useState("");
+  const lock = useRef(false);
+  const id = useId();
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (lock.current || uncertain) return;
+    lock.current = true;
+    try {
+      await form.handleSubmit(async ({ name, amount_vnd, paid_date, received_date }) => {
+        setMessage("");
+        const expense = amount_vnd ? { amount_vnd: Number(amount_vnd), paid_date, ...(category.tracks_supply && received_date ? { received_date } : {}) } : undefined;
+        if (category.tracks_supply) {
+          const r = await luuCoLuong.mutateAsync({ expense_category_id: category.expense_category_id, name, ...(expense ? { expense } : {}) });
+          if (!r.ok) {
+            if (oLoiKhoanChi(r.failure) === "name") form.setError("name", { type: "server", message: loiKhoanChi(r.failure) });
+            else setMessage(loiKhoanChi(r.failure));
+            if (r.failure.kind !== "rejected") setUncertain(true);
+            return;
+          }
+          bao(expense ? `Đã thêm khoản con ${name} và đã ghi khoản chi.` : `Đã thêm khoản con ${name}.`);
+          dong();
+          return;
+        }
+        let itemId = createdId;
+        if (itemId === null) {
+          const r = await luu.mutateAsync({ expense_category_id: category.expense_category_id, name });
+          if (!r.ok) {
+            if (oLoiKhoanChi(r.failure) === "name") form.setError("name", { type: "server", message: loiKhoanChi(r.failure) });
+            else setMessage(loiKhoanChi(r.failure));
+            if (r.failure.kind !== "rejected") setUncertain(true);
+            return;
+          }
+          itemId = r.data.expense_item_id;
+          setCreatedId(itemId);
+          setCreatedName(name);
+        }
+        if (!expense) { bao(`Đã thêm khoản con ${name}.`); dong(); return; }
+        const r = await luuTien.mutateAsync({ expense_category_id: category.expense_category_id, expense_item_id: itemId, amount_vnd: expense.amount_vnd, paid_date: expense.paid_date });
+        if (!r.ok) {
+          if (r.failure.kind === "rejected") setMessage(`Đã thêm khoản con ${createdName || name}, nhưng chưa ghi được khoản chi: ${loiKhoanChi(r.failure).replace(/[.!?]$/, "")}. Sửa rồi bấm lại để chỉ ghi khoản chi.`);
+          else { setMessage(`Đã thêm khoản con ${createdName || name}. Chưa xác nhận được khoản chi — hãy đóng hộp, đọc lại khoản chi rồi ghi lại nếu chưa có.`); setUncertain(true); }
+          return;
+        }
+        bao(`Đã ghi khoản chi cho khoản con ${createdName || name}.`);
+        dong();
+      })(event);
+    } finally { lock.current = false; }
+  }
+  const busy = form.formState.isSubmitting;
+  const dateError = form.formState.errors.paid_date?.message;
+  return <form aria-label="Thêm khoản con" onSubmit={submit} noValidate className="space-y-4">
+    <fieldset disabled={busy} className="space-y-4">
+      <p className="kc-muted">Mục chi: {category.name}</p><Field data-invalid={!!form.formState.errors.name}><FieldLabel htmlFor={`${id}-name`}>Tên nguyên liệu / sản phẩm</FieldLabel><Input id={`${id}-name`} readOnly={createdId !== null} {...form.register("name")} aria-invalid={!!form.formState.errors.name} aria-describedby={form.formState.errors.name ? `${id}-name-error` : undefined} />{form.formState.errors.name && <FieldError id={`${id}-name-error`}>{form.formState.errors.name.message}</FieldError>}</Field>
+      <Field data-invalid={!!form.formState.errors.amount_vnd}><FieldLabel htmlFor={`${id}-amount`}>Tiền mua sản phẩm (đồng, không bắt buộc)</FieldLabel><Input id={`${id}-amount`} type="number" min="1" step="1" {...form.register("amount_vnd")} aria-invalid={!!form.formState.errors.amount_vnd} />{form.formState.errors.amount_vnd && <FieldError>{form.formState.errors.amount_vnd.message}</FieldError>}</Field>
+      <Field data-invalid={!!dateError}><FieldLabel htmlFor={`${id}-date`}>Ngày chi</FieldLabel><Input id={`${id}-date`} type="date" {...form.register("paid_date")} aria-invalid={!!dateError} aria-describedby={dateError ? `${id}-date-error` : undefined} />{dateError && <FieldError id={`${id}-date-error`}>{dateError}</FieldError>}</Field>
+      {category.tracks_supply && <Field><FieldLabel htmlFor={`${id}-received`}>Ngày nhập hàng</FieldLabel><Input id={`${id}-received`} type="date" {...form.register("received_date")} /><small className="kc-muted">Ngày hàng về; chỉ cần khi ghi tiền mua nguyên liệu.</small></Field>}
+    </fieldset>
+    {message && <p role="status">{message}</p>}
+    <div className="flex gap-2"><Button type="submit" disabled={busy || uncertain}>{busy ? "Đang lưu…" : "Thêm vào mục"}</Button><Button type="button" variant="outline" disabled={busy} onClick={dong}>Huỷ</Button></div>
+  </form>;
 }
-function DoiTen({ target, data, dong, bao, suaTien }: { target: Extract<Mo, { kind: "ten-loai" | "ten-con" }>; data?: DuLieu; dong: () => void; bao: (s: string) => void; suaTien: (k: Khoan) => void }) {
+function DoiTen({ target, dong, bao, suaTien }: { target: Extract<Mo, { kind: "ten-loai" | "ten-con" }>; dong: () => void; bao: (s: string) => void; suaTien: (k: Khoan) => void }) {
   const busy = useIsMutating({ mutationKey: ["expense-write"] }) > 0;
   const category = target.kind === "ten-loai" ? target.category : undefined;
   const item = target.kind === "ten-con" ? target.item : undefined;
@@ -123,16 +195,18 @@ function DoiTen({ target, data, dong, bao, suaTien }: { target: Extract<Mo, { ki
   const doiCon = useDoiTenKhoanCon(item?.expense_item_id ?? 0);
   const name = category?.name ?? item!.name;
   const form = useForm<z.infer<typeof doiTen>>({ resolver: zodResolver(doiTen), defaultValues: { name, reason: "" } });
-  const records = data?.expenses.filter((k) => category ? k.expense_category_id === category.expense_category_id : k.expense_item_id === item!.expense_item_id) ?? [];
-  records.sort((a, b) => b.paid_date.localeCompare(a.paid_date) || b.expense_id - a.expense_id);
+  const id = useId();
+  const lastDate = category?.last_paid_date ?? item?.last_paid_date;
+  const history = useLichSuSuaTien(category ? { expense_category_id: category.expense_category_id } : { expense_item_id: item!.expense_item_id }, lastDate ? bayNgayCuoi(lastDate) : "", lastDate ?? "", !!lastDate);
+  const records = history.data?.expenses.slice().sort((a, b) => b.paid_date.localeCompare(a.paid_date) || b.expense_id - a.expense_id) ?? [];
   return <><FormMenu<z.infer<typeof doiTen>, Loai | Con> {...loi} form={form} ten="Đổi tên" nut="Lưu tên" dong={dong} cacO={["name", "reason"]}
     gui={(p) => category ? doiLoai.mutateAsync(p) : doiCon.mutateAsync(p)} daLuu={() => { bao("Đã đổi tên; giữ nguyên các khoản chi và số tiền."); dong(); }}>
     <OMenu form={form} o="name" nhan="Tên mới" /><OMenu form={form} o="reason" nhan="Lý do" />
-  </FormMenu><section className="kc-history"><h3>Sửa tiền đã ghi</h3><p className="kc-muted">Các khoản trong khoảng ngày và bộ lọc đang chọn. Lưu tên trước khi chọn sửa tiền.</p>
-    {records.length ? records.map((k) => <div className="kc-history-row" key={k.expense_id}><div><strong>{k.item_name || k.category_name}</strong><small>{ngay(k.paid_date)} · {k.person_name}</small></div><strong className="kc-money">{money(k.amount_vnd)}</strong><Button variant="outline" disabled={busy} onClick={() => {
+  </FormMenu><section className="kc-history" aria-labelledby={id}><h3 id={id}>Sửa tiền đã ghi</h3><p className="kc-muted">Các khoản trong bảy ngày tới lần chi gần nhất, trên mọi bộ lọc. Lưu tên trước khi chọn sửa tiền.</p>
+    {!lastDate ? <p className="kc-muted">{category ? "Mục này chưa có lần chi nào." : "Khoản con này chưa có lần chi nào."}</p> : history.isError ? <p role="alert">Chưa đọc được lịch sử chi. Hãy thử đọc lại.</p> : history.isPending ? <p role="status">Đang đọc lịch sử chi…</p> : records.length ? records.map((k) => <div className="kc-history-row" key={k.expense_id}><div><strong>{k.item_name || k.category_name}</strong><small>{ngay(k.paid_date)} · {k.person_name}</small></div><strong className="kc-money">{money(k.amount_vnd)}</strong><Button variant="outline" disabled={busy} onClick={() => {
       if (form.getValues("name").trim() !== name) { form.setError("name", { message: "Hãy lưu tên trước khi chọn sửa tiền." }); return; }
       suaTien(k);
-    }}>Sửa tiền</Button></div>) : <p className="kc-muted">Chưa có khoản chi nào trong khoảng này.</p>}
+    }}>Sửa tiền</Button></div>) : <p className="kc-muted">Chưa có khoản chi nào trong bảy ngày này.</p>}
   </section></>;
 }
 function Xoa({ target, dong, bao }: { target: Extract<Mo, { kind: "xoa-loai" | "xoa-con" | "xoa-chi" }>; dong: () => void; bao: (s: string) => void }) {
@@ -141,11 +215,12 @@ function Xoa({ target, dong, bao }: { target: Extract<Mo, { kind: "xoa-loai" | "
   const xoaChi = useXoaKhoanChi(target.kind === "xoa-chi" ? target.entry.expense_id : 0);
   const form = useForm<z.infer<typeof lyDo>>({ resolver: zodResolver(lyDo), defaultValues: { reason: "" } });
   const name = target.kind === "xoa-loai" ? target.category.name : target.kind === "xoa-con" ? target.item.name : `${target.entry.item_name || target.entry.category_name} · ${money(target.entry.amount_vnd)} · ${ngay(target.entry.paid_date)}`;
-  return <FormMenu {...loi} form={form} ten="Xác nhận xoá" nut="Xác nhận xoá" dong={dong} cacO={["reason"]}
+  const stopping = target.kind === "xoa-con" && !!target.item.supply_item_id;
+  return <FormMenu {...loi} form={form} ten={stopping ? "Ngừng dùng" : "Xác nhận xoá"} nut={stopping ? "Ngừng dùng" : "Xác nhận xoá"} dong={dong} cacO={["reason"]}
     gui={(p) => target.kind === "xoa-loai" ? xoaLoai.mutateAsync(p) : target.kind === "xoa-con" ? xoaCon.mutateAsync(p) : xoaChi.mutateAsync(p)}
-    daLuu={() => { bao("Đã xoá và cập nhật danh sách."); dong(); }}>
-    <p>Xoá {name}?</p><p className="kc-muted">Thao tác giữ lại lịch sử. Mục và khoản con còn khoản chi sẽ bị chặn, kể cả khoản ngoài bộ lọc. Khoản chi của ngày đã đối soát không thể xoá.</p>
-    <OMenu form={form} o="reason" nhan="Lý do xoá" />
+    daLuu={() => { bao(stopping ? `Đã ngừng dùng ${name}.` : "Đã xoá và cập nhật danh sách."); dong(); }}>
+    {stopping ? <p>Ngừng dùng {name}? Lịch sử tiền và lượng được giữ; có thể dùng lại sau.</p> : <><p>Xoá {name}?</p><p className="kc-muted">Thao tác giữ lại lịch sử. Mục và khoản con còn khoản chi sẽ bị chặn, kể cả khoản ngoài bộ lọc. Khoản chi của ngày đã đối soát không thể xoá.</p></>}
+    <OMenu form={form} o="reason" nhan={stopping ? "Lý do" : "Lý do xoá"} />
   </FormMenu>;
 }
 function TrangThai({ query, ten, daGhi = false }: { query: { isPending: boolean; isError: boolean; isFetching: boolean; fetchStatus: string; dataUpdatedAt: number }; ten: string; daGhi?: boolean }) {
@@ -277,17 +352,17 @@ export function TrangKhoanChi() {
       {query.data && (query.data.expenses.length === 0 ? <p className="kc-empty">Không có khoản chi nào trong khoảng này.</p> : <div className="kc-table-wrap"><table className="kc-data-table kc-day-table" aria-label="Các khoản chi theo ngày"><thead><tr><th>Ngày chi</th><th>Các khoản chi trong ngày</th></tr></thead><tbody>{Array.from(grouped, ([date, entries]) => <tr key={date}><td>{ngay(date)}</td><td><ul className="kc-day-list">{entries.map((k) => <li key={k.expense_id}><strong>{k.category_name}: {k.item_name || "Chưa chọn khoản con"}</strong> <span className={`kc-badge${k.paid_from_till ? "" : " kc-personal"}`}>{nguonTien(k.paid_from_till)}</span> <span>{money(k.amount_vnd)}</span> <span>· </span><span>{k.person_name}</span><span className="kc-actions"><Button variant="outline" aria-label={`Sửa ${k.item_name || k.category_name} ngày ${ngay(k.paid_date)}`} onClick={() => open({ kind: "sua", entry: k })}>Sửa</Button><Button variant="outline" className="kc-danger" aria-label={`Xoá ${k.item_name || k.category_name} ngày ${ngay(k.paid_date)}`} onClick={() => open({ kind: "xoa-chi", entry: k })}>Xoá</Button></span></li>)}</ul></td></tr>)}</tbody></table></div>)}
     </div></section><p role="status" aria-live="polite" className="kc-feedback">{bao}</p>
     <Dialog open={opened !== null} onOpenChange={(v) => { if (!v && !busy) close(); }}><DialogContent showCloseButton={false} className="kc-dialog" aria-describedby={undefined} onCloseAutoFocus={(e) => { e.preventDefault(); (focus.current?.isConnected ? focus.current : heading.current)?.focus(); }} onInteractOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => { if (busy) e.preventDefault(); }}>
-      {opened && <><div className="kc-row"><DialogTitle>{title(opened)}</DialogTitle><Button variant="ghost" aria-label="Đóng" disabled={busy} onClick={close}>×</Button></div><DialogDescription className="sr-only">Nhập thông tin và lưu thay đổi.</DialogDescription><NoiDungHopThoai key={JSON.stringify(opened)} opened={opened} categories={categories} data={query.data} bao={setBao} dong={close} suaTien={(entry) => setOpened({ kind: "sua", entry })} /></>}
+      {opened && <><div className="kc-row"><DialogTitle>{title(opened)}</DialogTitle><Button variant="ghost" aria-label="Đóng" disabled={busy} onClick={close}>×</Button></div><DialogDescription className="sr-only">Nhập thông tin và lưu thay đổi.</DialogDescription><NoiDungHopThoai key={JSON.stringify(opened)} opened={opened} categories={categories} bao={setBao} dong={close} suaTien={(entry) => setOpened({ kind: "sua", entry })} /></>}
     </DialogContent></Dialog>
   </div>;
 }
-function NoiDungHopThoai({ opened, categories, data, bao, dong, suaTien }: { opened: Mo; categories: Loai[]; data?: DuLieu; bao: (s: string) => void; dong: () => void; suaTien: (k: Khoan) => void }): ReactNode {
+function NoiDungHopThoai({ opened, categories, bao, dong, suaTien }: { opened: Mo; categories: Loai[]; bao: (s: string) => void; dong: () => void; suaTien: (k: Khoan) => void }): ReactNode {
   switch (opened.kind) {
     case "tao": return <FormKhoan category={opened.category} item={opened.item} loai={categories} dong={dong} bao={bao} />;
     case "sua": return <FormKhoan khoan={opened.entry} loai={categories} dong={dong} bao={bao} />;
-    case "them-loai": return <ThemLoai dong={dong} bao={bao} />;
+    case "them-loai": return <ThemLoai loai={categories} dong={dong} bao={bao} />;
     case "them-con": return <ThemCon category={opened.category} dong={dong} bao={bao} />;
-    case "ten-loai": case "ten-con": return <DoiTen target={opened} data={data} dong={dong} bao={bao} suaTien={suaTien} />;
+    case "ten-loai": case "ten-con": return <DoiTen target={opened} dong={dong} bao={bao} suaTien={suaTien} />;
     default: return <Xoa target={opened} dong={dong} bao={bao} />;
   }
 }
