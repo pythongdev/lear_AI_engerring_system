@@ -1,10 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { AnhSanPham } from "@/app/chu-quan/_components/anh-san-pham";
 import { tien } from "@/components/shared/dong-mon-da-ghi";
 import { call } from "@/lib/api/client";
 import { useApi } from "@/lib/api/provider";
 import { doiSoLuong, guiDong, useGhiYeuThich, type Bo, type Dong, type DongGui, type GiaNhom, type Menu } from "./du-lieu";
+import { LuaChonDanhSach } from "./lua-chon";
 
 export function tenDong(d: DongGui, menu: Menu) {
   return (d.menu_combo_id !== undefined ? menu.combos.find((m) => m.menu_combo_id === d.menu_combo_id)?.name
@@ -24,29 +26,32 @@ export function MoTaDong({ dong: d, menu }: { dong: DongGui; menu: Menu }) {
 
 export function Gia({ query, index }: { query: GiaNhom; index?: number }) {
   const value = index === undefined ? query.data?.total_vnd : query.data?.lines[index]?.line_total_vnd;
-  return <p className="font-semibold text-[var(--primary)]">{query.error ? query.error.message : query.isFetching || query.isPending ? "Đang tính giá…" : value !== undefined ? tien(value) : "Chưa tính được giá."}</p>;
+  return <div className="min-w-0"><p className="break-words font-semibold text-[var(--primary)]">{query.error ? query.error.message : query.isFetching || query.isPending ? "Đang tính giá…" : value !== undefined ? tien(value) : "Chưa tính được giá."}</p>
+    {query.error && <Button type="button" variant="outline" className="mt-1 min-h-11" onClick={() => void query.refetch()}>Thử lại giá</Button>}</div>;
 }
 
 type ThaoTac = { menu: Menu; moiDangNhap: () => void; them: (lines: Dong[], ten: string) => void };
 export function TheDong({ dong, query, index, menu, moiDangNhap, them }: ThaoTac & { dong: Dong; query: GiaNhom; index: number }) {
   const api = useApi(); const ghi = useGhiYeuThich(moiDangNhap);
   const d = guiDong(dong); const ten = tenDong(d, menu);
+  const mon = menu.items.find((m) => m.menu_item_id === dong.menu_item_id);
   const params = { path: { favourite_line_id: dong.favourite_line_id } };
   const sua = (quantity: number) => ghi.gui(() => call(api.PUT("/customer-accounts/current/favourites/{favourite_line_id}", { params, body: doiSoLuong(d, quantity, menu) })));
   return <article aria-label={ten} className="space-y-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
-    <div className="flex items-start justify-between gap-2"><div className="min-w-0 space-y-1">
+    <div className="flex min-w-0 items-start gap-3"><AnhSanPham ten={ten} combo={dong.menu_combo_id !== null} imageUrl={mon?.image_url} className="size-20" /><div className="min-w-0 flex-1 space-y-1">
       <span className="text-xs text-[var(--muted-foreground)]">{dong.menu_combo_id === null ? "Món lẻ" : "Combo"}</span>
       <h3 className="font-semibold break-words">{ten}</h3><MoTaDong dong={d} menu={menu} />
     </div><Button variant="ghost" className="min-h-11 text-[var(--destructive)]" aria-label={`Bỏ yêu thích ${ten}`} disabled={ghi.busy}
       onClick={() => void ghi.gui(() => call(api.POST("/customer-accounts/current/favourites/{favourite_line_id}/removal", { params })))}>♥</Button></div>
     {dong.available ? <Gia query={query} index={index} /> : <p className="text-[var(--muted-foreground)]">Hết bán</p>}
+    {dong.available && mon && mon.option_groups.length > 0 && <LuaChonDanhSach groups={mon.option_groups} ids={d.option_ids ?? []} name={ten} disabled={ghi.busy} onChange={(option_ids) => void ghi.gui(() => call(api.PUT("/customer-accounts/current/favourites/{favourite_line_id}", { params, body: { ...d, option_ids } })))} />}
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div className="flex items-center rounded-lg border border-[var(--border)]">
         <Button variant="ghost" className="min-h-11" aria-label={`Giảm ${ten}`} disabled={ghi.busy || !dong.available || dong.quantity <= 1} onClick={() => void sua(dong.quantity - 1)}>−</Button>
         <output aria-label={`Số lượng ${ten}`} className="min-w-6 text-center">{dong.quantity}</output>
         <Button variant="ghost" className="min-h-11" aria-label={`Tăng ${ten}`} disabled={ghi.busy || !dong.available || dong.quantity >= 99} onClick={() => void sua(dong.quantity + 1)}>＋</Button>
       </div>
-      {dong.available && <Button className="min-h-11" onClick={() => them([dong], ten)}>Thêm vào giỏ</Button>}
+      {dong.available && <Button variant="outline" className="min-h-11" aria-label={`Thêm ${ten} vào giỏ`} onClick={() => them([dong], ten)}>＋ Giỏ</Button>}
     </div>
     {ghi.busy && <p role="status">Đang lưu…</p>}{ghi.loi && <p role="alert">{ghi.loi}</p>}{ghi.bao && <p role="status">{ghi.bao}</p>}
   </article>;
@@ -61,7 +66,7 @@ export function TheBo({ bo, query, menu, moiDangNhap, them, sua }: ThaoTac & { b
     <ul className="space-y-2">{bo.lines.map((d) => <li key={d.favourite_line_id}>
       <p>{d.quantity} × {tenDong(guiDong(d), menu)}{!d.available && <span> · Hết bán</span>}</p><MoTaDong dong={guiDong(d)} menu={menu} />
     </li>)}</ul>
-    {coMon && <Gia query={query} />}
+    {bo.kind === "rieng" ? <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-sm text-[var(--muted-foreground)]">{bo.lines.reduce((n, d) => n + d.quantity, 0)} phần</span>{coMon && <Gia query={query} />}</div> : coMon && <Gia query={query} />}
     <div className="flex flex-wrap gap-2">
       {bo.kind === "rieng" && <Button variant="outline" className="min-h-11" disabled={ghi.busy} onClick={sua}>Sửa</Button>}
       <Button variant="outline" className="min-h-11" disabled={ghi.busy} onClick={() => void ghi.gui(() => call(api.POST("/customer-accounts/current/favourite-sets/{favourite_set_id}/removal", { params: { path: { favourite_set_id: bo.favourite_set_id } } })))}>Xoá</Button>

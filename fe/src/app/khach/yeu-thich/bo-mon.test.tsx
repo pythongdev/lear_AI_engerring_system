@@ -54,13 +54,22 @@ async function tao() {
 }
 
 describe("YT-05 bộ món riêng", () => {
+  it("checkbox trống không cho lưu; chọn một hàng lấy tổng đúng từ price-quotes", async () => {
+    const r = mo(); const hop = await tao();
+    expect(within(hop).getByText("Chưa chọn món")).toBeTruthy();
+    expect(within(hop).getByRole("button", { name: "Lưu bộ món" }).hasAttribute("disabled")).toBe(true);
+    fireEvent.click(within(hop).getByRole("checkbox", { name: "Canh" }));
+    expect(within(hop).getByText("1 món · 1 phần")).toBeTruthy();
+    await within(hop).findByText("98.765đ");
+    expect(r.calls.filter((g) => g.path === "/price-quotes").map((g) => g.body)).toContainEqual({ lines: [{ menu_item_id: 2, option_ids: [], quantity: 1 }] });
+  });
   it("tạo gửi kind rieng, tên, lựa chọn theo LuaChon và suất combo mặc định; đọc lại sau ghi", async () => {
     const r = mo(); const hop = await tao();
     fireEvent.change(within(hop).getByLabelText("Tên bộ món"), { target: { value: "  Bữa trưa  " } });
-    fireEvent.click(within(hop).getByRole("button", { name: "Thêm Bánh cuốn" }));
-    fireEvent.click(within(hop).getByLabelText("Chay"));
-    expect(within(hop).queryByLabelText("Nhiều")).toBeNull();
-    fireEvent.click(within(hop).getByRole("button", { name: "Thêm combo Bữa sáng" }));
+    fireEvent.click(within(hop).getAllByRole("checkbox", { name: "Bánh cuốn" })[0]);
+    fireEvent.change(within(hop).getAllByRole("combobox", { name: "Nhân — Bánh cuốn" })[0], { target: { value: "12" } });
+    expect(within(within(hop).getAllByRole("region", { name: "Lựa chọn Bánh cuốn" })[0]).queryByRole("combobox", { name: "Lượng nhân — Bánh cuốn" })).toBeNull();
+    fireEvent.click(within(hop).getAllByRole("checkbox", { name: "Bữa sáng" })[0]);
     fireEvent.click(within(hop).getByRole("button", { name: "Lưu bộ món" }));
     await waitFor(() => expect(r.doc()).toHaveLength(2));
     expect(r.ghi()).toEqual([{ method: "POST", path: "/customer-accounts/current/favourite-sets", body: {
@@ -76,7 +85,7 @@ describe("YT-05 bộ món riêng", () => {
   it.each(["", "   ", "a".repeat(61)])("tên không hợp lệ (%s) không gửi", async (name) => {
     const r = mo(); const hop = await tao();
     fireEvent.change(within(hop).getByLabelText("Tên bộ món"), { target: { value: name } });
-    fireEvent.click(within(hop).getByRole("button", { name: "Thêm Canh" }));
+    fireEvent.click(within(hop).getByRole("checkbox", { name: "Canh" }));
     fireEvent.click(within(hop).getByRole("button", { name: "Lưu bộ món" }));
     expect(within(hop).getByRole("alert").textContent).toContain("1 đến 60");
     expect(r.ghi()).toHaveLength(0);
@@ -87,7 +96,9 @@ describe("YT-05 bộ món riêng", () => {
     fireEvent.click(within(await screen.findByRole("article", { name: "Bộ của mình" })).getByRole("button", { name: "Sửa" }));
     const hop = await screen.findByRole("dialog", { name: "Sửa bộ món riêng" });
     fireEvent.change(within(hop).getByLabelText("Tên bộ món"), { target: { value: "Bộ mới" } });
-    fireEvent.change(within(hop).getByLabelText("Số lượng"), { target: { value: "3" } });
+    expect(within(hop).getAllByRole("checkbox", { name: "Bánh cuốn" })[0].getAttribute("checked")).not.toBeNull();
+    expect(within(hop).getAllByRole("status", { name: "Số lượng Bánh cuốn" })[0].textContent).toBe("2");
+    fireEvent.click(within(hop).getAllByRole("button", { name: "Tăng số lượng Bánh cuốn" })[0]);
     fireEvent.click(within(hop).getByRole("button", { name: "Lưu bộ món" }));
     await waitFor(() => expect(r.doc()).toHaveLength(2));
     expect(r.ghi()).toEqual([{ method: "PUT", path: "/customer-accounts/current/favourite-sets/7", body: { name: "Bộ mới", lines: [{ menu_item_id: 1, option_ids: [11, 22], quantity: 3 }] } }]);
@@ -107,7 +118,7 @@ describe("YT-05 bộ món riêng", () => {
   it("tên bộ rỗng sau khi bỏ khoảng trắng hoặc quá 60 ký tự không gửi; đúng 60 ký tự thì gửi tên đã bỏ khoảng trắng", async () => {
     const r = mo();
     const hop = await tao();
-    fireEvent.click(within(hop).getByRole("button", { name: "Thêm Canh" }));
+    fireEvent.click(within(hop).getByRole("checkbox", { name: "Canh" }));
     for (const ten of ["   ", "a".repeat(61)]) {
       fireEvent.change(within(hop).getByLabelText("Tên bộ món"), { target: { value: ten } });
       fireEvent.click(within(hop).getByRole("button", { name: "Lưu bộ món" }));
@@ -124,7 +135,7 @@ describe("YT-05 bộ món riêng", () => {
     const r = mo({ ghi: () => ({ status: 422, body: { code: "favourite_limit_reached" } }) });
     const hop = await tao();
     fireEvent.change(within(hop).getByLabelText("Tên bộ món"), { target: { value: "Bộ sáng" } });
-    fireEvent.click(within(hop).getByRole("button", { name: "Thêm Canh" }));
+    fireEvent.click(within(hop).getByRole("checkbox", { name: "Canh" }));
     fireEvent.click(within(hop).getByRole("button", { name: "Lưu bộ món" }));
     expect((await within(hop).findByRole("alert")).textContent).toBe("Đã chạm giới hạn món yêu thích hoặc bộ món. Hãy bớt món hoặc xoá bớt bộ rồi thử lại.");
     expect(r.ghi()).toHaveLength(1); expect(r.doc()).toHaveLength(1);
@@ -132,16 +143,27 @@ describe("YT-05 bộ món riêng", () => {
 });
 
 describe("YT-05 lọc, giá và phiên", () => {
+  it("ba tab đếm dòng tim; thẻ bộ và chân trang đếm phần, không hiện nút đọc lại thường trực", async () => {
+    mo({ doc: () => ok({ ...data, lines: [...data.lines, dong(9, 4, false)] }) });
+    await screen.findAllByRole("article", { name: "Bánh cuốn" });
+    const tabs = screen.getByRole("navigation", { name: "Lọc món yêu thích" });
+    expect(within(tabs).getByRole("button", { name: "Tất cả (3)" })).toBeTruthy();
+    expect(within(tabs).getByRole("button", { name: "Món lẻ (2)" })).toBeTruthy();
+    expect(within(tabs).getByRole("button", { name: "Combo (1)" })).toBeTruthy();
+    expect(within(await screen.findByRole("article", { name: "Bộ của mình" })).getByText("2 phần")).toBeTruthy();
+    expect(screen.getByText("2 phần đã chọn")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Đọc lại danh sách" })).toBeNull();
+  });
   it("tab Món lẻ chỉ còn món, Combo chỉ còn combo; tổng không đổi theo lọc", async () => {
     mo(); await screen.findByRole("article", { name: "Bánh cuốn" });
     const list = screen.getByRole("region", { name: "Món yêu thích" });
-    fireEvent.click(screen.getByRole("button", { name: "Món lẻ" }));
+    fireEvent.click(screen.getByRole("button", { name: "Món lẻ (1)" }));
     expect(within(list).getAllByRole("article")).toHaveLength(1);
     expect(within(list).getByRole("article", { name: "Bánh cuốn" })).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Combo" }));
+    fireEvent.click(screen.getByRole("button", { name: "Combo (1)" }));
     expect(within(list).getAllByRole("article")).toHaveLength(1);
     expect(within(list).getByRole("article", { name: "Bữa sáng" })).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Tất cả" }));
+    fireEvent.click(screen.getByRole("button", { name: "Tất cả (2)" }));
     expect(within(list).getAllByRole("article")).toHaveLength(2);
     await screen.findAllByText("98.765đ");
   });
@@ -150,8 +172,9 @@ describe("YT-05 lọc, giá và phiên", () => {
     let loi = false;
     mo({ quote: () => loi ? { status: 503, body: { code: "internal" } } : ok({ total_vnd: 98765, lines: [{ line_total_vnd: 12345 }, { line_total_vnd: 22222 }] }), doc: () => ok({ ...data, sets: [] }) });
     await screen.findByText("98.765đ"); loi = true;
-    fireEvent.click(screen.getByRole("button", { name: "Đọc lại danh sách" }));
-    await screen.findAllByText("Chưa tính được giá. Hãy đọc lại danh sách.");
+    fireEvent.click(within(screen.getByRole("article", { name: "Bánh cuốn" })).getByRole("button", { name: "Tăng Bánh cuốn" }));
+    await screen.findAllByText("Chưa tính được giá. Hãy thử lại.");
+    expect(screen.getAllByRole("button", { name: "Thử lại giá" }).length).toBeGreaterThan(0);
     expect(screen.queryByText("98.765đ")).toBeNull();
     expect(screen.queryByText("12.345đ")).toBeNull();
   });
@@ -160,7 +183,7 @@ describe("YT-05 lọc, giá và phiên", () => {
     let loi = false;
     mo({ doc: () => loi ? { status: 503, body: { code: "internal" } } : ok(data) });
     await screen.findByRole("article", { name: "Bánh cuốn" }); loi = true;
-    fireEvent.click(screen.getByRole("button", { name: "Đọc lại danh sách" }));
+    fireEvent.click(within(screen.getByRole("article", { name: "Bánh cuốn" })).getByRole("button", { name: "Tăng Bánh cuốn" }));
     expect((await screen.findByRole("alert")).textContent).toContain("Đang hiện bản đọc lúc");
     expect(screen.getByRole("button", { name: "Đọc lại" })).toBeTruthy();
     expect(screen.getByRole("article", { name: "Bánh cuốn" })).toBeTruthy();
@@ -198,7 +221,7 @@ describe("YT-05 lọc, giá và phiên", () => {
 
   it("thêm một dòng combo trải suất đúng hình giỏ, báo và dẫn tới giỏ", async () => {
     mo(); const card = await screen.findByRole("article", { name: "Bữa sáng" });
-    fireEvent.click(within(card).getByRole("button", { name: "Thêm vào giỏ" }));
+    fireEvent.click(within(card).getByRole("button", { name: "Thêm Bữa sáng vào giỏ" }));
     expect(useNhapKhach.getState().gio.web).toEqual([{ menu_combo_id: 5, quantity: 1, portions: [
       { menu_item_id: 1, option_ids: [12] }, { menu_item_id: 1, option_ids: [11, 22] }, { menu_item_id: 2, option_ids: [] },
     ] }]);
@@ -210,10 +233,10 @@ describe("YT-05 lọc, giá và phiên", () => {
     const r = mo({ doc: () => ok({ ...data, sets: [{ ...data.sets[0], lines: [dong(3, 1, false)] }] }) });
     fireEvent.click(within(await screen.findByRole("article", { name: "Bộ của mình" })).getByRole("button", { name: "Sửa" }));
     const hop = await screen.findByRole("dialog", { name: "Sửa bộ món riêng" });
-    fireEvent.click(within(hop).getByRole("button", { name: "Thêm Canh" }));
+    fireEvent.click(within(hop).getByRole("checkbox", { name: "Canh" }));
     fireEvent.click(within(hop).getByRole("button", { name: "Lưu bộ món" }));
     expect(within(hop).getByRole("alert").textContent).toContain("Có món hết bán"); expect(r.ghi()).toHaveLength(0);
-    fireEvent.click(within(hop).getByRole("button", { name: "Bỏ dòng 1" }));
+    fireEvent.click(within(hop).getAllByRole("checkbox", { name: "Bánh cuốn" })[0]);
     fireEvent.click(within(hop).getByRole("button", { name: "Lưu bộ món" }));
     await waitFor(() => expect(r.ghi()).toHaveLength(1));
     expect(r.ghi()[0].body.lines).toEqual([{ menu_item_id: 2, option_ids: [], quantity: 1 }]);

@@ -39,19 +39,21 @@ export function YeuThichKhach() {
       {loiMenu && <LoiDocKhach error={loiMenu} docLai={docLai} readAt={menu.dataUpdatedAt} />}
       {(doc.data && menu.data) && <>
         {(doc.isFetching || menu.isFetching) && <p role="status">Đang cập nhật…</p>}
-        <NoiDung data={doc.data} menu={menu.data} readAt={doc.dataUpdatedAt} menuReadAt={menu.dataUpdatedAt} moiDangNhap={() => setMatPhien(true)} docLai={docLai} />
+        <NoiDung data={doc.data} menu={menu.data} readAt={doc.dataUpdatedAt} menuReadAt={menu.dataUpdatedAt} moiDangNhap={() => setMatPhien(true)} />
       </>}
     </>}
   </KhungKhach>;
 }
 
-function NoiDung({ data, menu, readAt, menuReadAt, moiDangNhap, docLai }: {
-  data: components["schemas"]["Favourites"]; menu: Menu; readAt: number; menuReadAt: number; moiDangNhap: () => void; docLai: () => void;
+function NoiDung({ data, menu, readAt, menuReadAt, moiDangNhap }: {
+  data: components["schemas"]["Favourites"]; menu: Menu; readAt: number; menuReadAt: number; moiDangNhap: () => void;
 }) {
   const [tab, setTab] = useState("all"); const [moBo, setMoBo] = useState(false);
   const [hop, setHop] = useState<HopBo | null>(null); const [bao, setBao] = useState("");
   const queries = useGiaCacNhom([{ id: "tim", lines: data.lines }, ...data.sets.map((b) => ({ id: b.favourite_set_id, lines: b.lines }))], readAt, menuReadAt);
   const conBan = data.lines.filter((d) => d.available);
+  const soMonLe = data.lines.filter((d) => d.menu_combo_id === null).length;
+  const soCombo = data.lines.length - soMonLe;
   const boRieng = data.sets.filter((b) => b.kind === "rieng"); const boLuu = data.sets.filter((b) => b.kind === "da_luu");
   function them(lines: Dong[], ten: string) { themVaoGio(lines, menu); setBao(`Đã thêm ${ten} vào giỏ hàng.`); }
   const theBo = (bo: components["schemas"]["FavouriteSet"]) => <TheBo key={bo.favourite_set_id} bo={bo} menu={menu}
@@ -66,21 +68,20 @@ function NoiDung({ data, menu, readAt, menuReadAt, moiDangNhap, docLai }: {
       {boRieng.length ? boRieng.map(theBo) : <p className="rounded-xl border border-dashed border-[var(--border)] p-4 text-[var(--muted-foreground)]">Chưa có bộ món riêng. Tạo bộ món đầu tiên để lần sau chọn món nhanh hơn.</p>}
     </section>
     <div className="flex flex-wrap items-center justify-between gap-2"><span>{data.lines.length} món yêu thích</span><Button variant="outline" className="min-h-11" onClick={() => setMoBo(true)}>Bộ đã lưu ({boLuu.length})</Button></div>
-    <nav aria-label="Lọc món yêu thích" className="flex gap-2">{[["all", "Tất cả"], ["mon", "Món lẻ"], ["combo", "Combo"]].map(([value, label]) =>
-      <Button key={value} variant={tab === value ? "secondary" : "outline"} className="min-h-11 flex-1" aria-pressed={tab === value} onClick={() => setTab(value)}>{label}</Button>)}</nav>
+    <nav aria-label="Lọc món yêu thích" className="flex flex-wrap gap-2">{([["all", "Tất cả", data.lines.length], ["mon", "Món lẻ", soMonLe], ["combo", "Combo", soCombo]] as const).map(([value, label, count]) =>
+      <Button key={value} variant={tab === value ? "secondary" : "outline"} className="min-h-11 min-w-0 flex-1 whitespace-nowrap" aria-pressed={tab === value} onClick={() => setTab(value)}>{label} ({count})</Button>)}</nav>
     <section aria-label="Món yêu thích" className="space-y-3">
       {data.lines.filter((d) => tab === "all" || (tab === "mon" ? d.menu_combo_id === null : d.menu_combo_id !== null)).map((d) =>
         <TheDong key={d.favourite_line_id} dong={d} query={queries[0]} index={conBan.indexOf(d)} menu={menu} moiDangNhap={moiDangNhap} them={them} />)}
       {!data.lines.length && <p>Bạn chưa lưu món yêu thích. <Link className="underline" href="/dat-mon">Xem thực đơn</Link></p>}
     </section>
     <footer className="space-y-3 border-t border-[var(--border)] pt-4">
-      <div className="flex flex-wrap justify-between gap-2"><span>Tổng {conBan.length} dòng còn bán</span>{conBan.length > 0 ? <Gia query={queries[0]} /> : <span>Chưa có món còn bán</span>}</div>
+      <div className="flex flex-wrap justify-between gap-2"><span>{conBan.reduce((n, d) => n + d.quantity, 0)} phần đã chọn</span>{conBan.length > 0 ? <Gia query={queries[0]} /> : <span>Chưa có món còn bán</span>}</div>
       <Button className="min-h-12 w-full" disabled={!conBan.length} onClick={() => them(conBan, "các món yêu thích")}>Thêm tất cả vào giỏ</Button>
       <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-sm text-[var(--muted-foreground)]">Giữ lại lựa chọn cho lần sau</span><Button variant="outline" className="min-h-11" disabled={!conBan.length} onClick={() => setHop({ kind: "da_luu", lines: data.lines })}>Lưu thành bộ</Button></div>
-      <Button variant="ghost" className="min-h-11" onClick={docLai}>Đọc lại danh sách</Button>
     </footer>
     {bao && <p role="status">{bao} <Link className="underline" href="/dat-mon">Xem giỏ hàng</Link></p>}
-    {hop && <HopSuaBo hop={hop} menu={menu} moiDangNhap={moiDangNhap} dong={() => setHop(null)} />}
+    {hop && <HopSuaBo hop={hop} menu={menu} yeuThich={data.lines} moiDangNhap={moiDangNhap} dong={() => setHop(null)} />}
     <Dialog open={moBo} onOpenChange={setMoBo}><DialogContent showCloseButton={false} className="max-h-[calc(100dvh-2rem)] overflow-y-auto">
       <DialogTitle>Bộ đã lưu</DialogTitle><DialogDescription>Các bộ món đã lưu từ danh sách yêu thích.</DialogDescription>
       {boLuu.length ? boLuu.map(theBo) : <p>Bạn chưa lưu bộ nào.</p>}

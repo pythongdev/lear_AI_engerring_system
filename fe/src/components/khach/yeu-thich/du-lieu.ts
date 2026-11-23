@@ -98,9 +98,9 @@ export function useGiaCacNhom(groups: { id: string | number; lines: Dong[] }[], 
       retry: false,
       queryFn: async () => {
         const r = await call(api.POST("/price-quotes", { body: { lines } }));
-        if (!r.ok) throw new Error("Chưa tính được giá. Hãy đọc lại danh sách.");
+        if (!r.ok) throw new Error("Chưa tính được giá. Hãy thử lại.");
         if (r.data.lines.length !== lines.length || !Number.isFinite(r.data.total_vnd) || r.data.lines.some((d) => !Number.isFinite(d.line_total_vnd))) {
-          throw new Error("Chưa tính được giá. Hãy đọc lại danh sách.");
+          throw new Error("Chưa tính được giá. Hãy thử lại.");
         }
         return r.data;
       },

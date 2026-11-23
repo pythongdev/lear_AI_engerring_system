@@ -1,5 +1,5 @@
 // Test hồi quy YT-05 (trang Yêu thích của khách, ADR-145, I-045) — Claude viết TRƯỚC khi có code (L2, 2026-11-20). Người thi
-// công làm cho xanh, KHÔNG sửa file này; thấy test sai thì dừng và ghi vào báo cáo.
+// công làm cho xanh. T-367 bổ sung ca ảnh và PUT lựa chọn theo phiếu chủ repo; các ca YT-05 giữ nguyên.
 //
 // Hợp đồng màn Claude chốt:
 //   - Component `YeuThichKhach` ở `@/components/khach/yeu-thich`; trang `/khach/yeu-thich` chỉ bọc nó (như /khach/don).
@@ -41,7 +41,7 @@ const luong = { option_group_id: 6, option_group_name: "Lượng nhân", prerequ
 const menu = {
   categories: [{ menu_category_id: 1, name: "Món lẻ" }],
   items: [
-    { menu_item_id: 1, item_name: "Bánh cuốn", menu_category_id: 1, option_groups: [nhan, luong],
+    { menu_item_id: 1, item_name: "Bánh cuốn", image_url: "/menu-items/1/image", menu_category_id: 1, option_groups: [nhan, luong],
       prices: [{ option_ids: [11, 21], unit_price_vnd: 35000 }, { option_ids: [11, 22], unit_price_vnd: 40000 }, { option_ids: [12], unit_price_vnd: 30000 }] },
     { menu_item_id: 2, item_name: "Canh", menu_category_id: 1, option_groups: [], prices: [{ option_ids: [], unit_price_vnd: 10000 }] },
   ],
@@ -176,6 +176,18 @@ describe("YT-05 trang Yêu thích — bộ món", () => {
 });
 
 describe("YT-05 trang Yêu thích — ghi", () => {
+  it("thẻ món có ảnh, đổi lựa chọn phụ thuộc gửi PUT hình mới rồi đọc lại", async () => {
+    const { calls } = mo((g) => g.method === "PUT" ? { status: 200, body: dongMon(101, 1, [12], 2) } : { status: 599 });
+    const banh = await the("Bánh cuốn");
+    const anh = within(banh).getByRole("img", { name: "Bánh cuốn" });
+    expect(anh.getAttribute("src")).toContain("/api/menu-items/1/image");
+    expect(within(await the("Suất giò")).getByRole("img", { name: "Suất giò" })).toBeTruthy();
+    expect(within(banh).getByRole("button", { name: "Thêm Bánh cuốn vào giỏ" }).textContent).toBe("＋ Giỏ");
+    expect(within(banh).getByRole("combobox", { name: "Lượng nhân — Bánh cuốn" })).toBeTruthy();
+    fireEvent.change(within(banh).getByRole("combobox", { name: "Nhân — Bánh cuốn" }), { target: { value: "12" } });
+    await waitFor(() => expect(docTim(calls)).toHaveLength(2));
+    expect(calls.filter((g) => g.method === "PUT")).toEqual([{ method: "PUT", path: "/customer-accounts/current/favourites/101", body: { menu_item_id: 1, option_ids: [12], quantity: 2 } }]);
+  });
   it("Tăng gửi PUT dòng với đúng hình và số lượng mới, rồi đọc lại", async () => {
     const { calls } = mo((g) => g.method === "PUT" ? { status: 200, body: { ...dongMon(101, 1, [11, 22], 3) } } : { status: 599 });
     fireEvent.click(within(await the("Bánh cuốn")).getByRole("button", { name: "Tăng Bánh cuốn" }));
