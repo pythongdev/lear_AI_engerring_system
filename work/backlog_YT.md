@@ -258,4 +258,23 @@ Claude chạy `make dev`, đăng nhập tài khoản khách thử, đi hết lu�
 430px, sáng/tối, chụp ảnh đặt cạnh bản thiết kế; đổi giá một món ở trang chủ quán rồi xem trang Yêu thích hiện giá mới.
 Lệch so với bản thiết kế thì ghi thành việc riêng, không sửa trong bước này.
 
+**Nhận việc 2026-11-22** (Claude; chủ repo: *"tiếp tục yêu cầu codex làm bạn kiểm tra"*). Chia việc: Codex viết kịch bản Playwright
+`.dev/yt07/nghiem-thu.cjs` trong worktree `../lean_wt/YT-07` (nhánh `codex/YT-07` từ `1693c48`, không sửa file git theo dõi), Claude chạy nó
+trên app thật vì Codex không tới được Docker. Phiếu, báo cáo, bản sao kịch bản và ảnh: `../lean_wt/_claude_logs/YT-07/`. Kịch bản đi chín
+bước: chuẩn bị qua API · chưa đăng nhập · đăng nhập · thả tim từ thực đơn và trang chi tiết · giá mỗi dòng so `price-quotes` · bộ món riêng ·
+tăng giá gốc một thành phần 1.000đ rồi trả lại trong `finally` · ảnh và tràn ngang ở 360/430 sáng/tối · lỗi trình duyệt. Claude chạy phần
+bản thiết kế (`--thiet-ke`): `TONG pass=15 fail=0`, 12 ảnh `tk-*.png`, không tràn ngang. Codex báo trước từ việc đọc code (chưa xác nhận
+bằng ảnh): thẻ món trên app thiếu hình và bộ chọn lựa chọn ngay trên thẻ; tab lọc thiếu số đếm; hộp tạo/sửa bộ dùng nút thêm cùng ô số lượng
+thay cho checkbox và chưa có tổng tiền/số phần. Chưa chạy: phần app (chờ Docker).
+
+**Kết quả 2026-11-22** (kịch bản: Codex hai vòng; chạy và duyệt: Claude). Lượt đầu trên app thật `TONG pass=42 fail=26` (`chay-1.log`);
+mọi FAIL là của kịch bản (đọc giỏ bằng tải lại trang làm mất giỏ nháp trong bộ nhớ, hai kiểm theo câu sai của phiếu, khung dev của Next
+che nút đổi giao diện, đếm 401 đúng hợp đồng lúc chưa đăng nhập là lỗi) — Codex sửa năm điểm theo `phieu-2.md`; Claude sửa thêm một dòng
+(chờ hộp *Bộ đã lưu* đóng hẳn trước bước xoá). App chạy từ worktree YT-07 (`make dev-iphone-serve`, không migrate) để database dev giữ
+bước `20261121090000`, không nhận migration KC-02 chưa commit của cây chính. Lượt cuối `chay-4.log`: **`TONG pass=65 fail=0`** — chưa
+đăng nhập thì mời đăng nhập và không ghi gì trên máy; thả tim từ thực đơn và trang chi tiết; giá mỗi dòng khớp `price-quotes`; tăng giá
+gốc một thành phần 3.000→4.000đ thì trang hiện dòng 5.000đ, trả lại 3.000đ; không tràn ngang ở 360/430 sáng/tối; bỏ qua 5 dòng 401 lúc
+chưa đăng nhập, 0 lỗi khác. 28 ảnh ở `anh-4/`; ảnh app chụp lúc giá còn đang tăng thử nên dòng *Bánh cuốn Thịt · Thường* hiện 5.000đ.
+Lệch so với bản thiết kế, xác nhận bằng ảnh và code, ghi thành **T-367** (`work/backlog.md`), không sửa ở bước này.
+
 [↑ đầu file](#top)

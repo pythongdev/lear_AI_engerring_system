@@ -93,12 +93,14 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 - [ ] T-109 **ĐANG CHỜ mở pha 5 — không nhặt theo thứ tự trên xuống** (chủ repo chọn chờ, 2026-09-28). **Pha 5 — triển khai và nghiệm thu bảo toàn, khôi phục dữ liệu** — L2, giao 2026-09-27 theo ADR-057. Yêu cầu và tiêu chí: `docs/product/1-system-design/04-yeu-cau-du-lieu.md` §8 (YC-21). Thực hiện khi mở pha vận hành; phải xong trước bán thật. Ba tiêu chí nghiệm thu **đã chốt 2026-09-28** (chủ repo, ghi ở YC-21 §8: mất tối đa 1 giờ bán · phục hồi trước ca bán kế tiếp · giữ bản sao lưu 1 năm); cùng ngày chủ repo chọn **chờ mở pha 5** mới làm phần cơ chế, không dựng thử trên database máy phát triển. Pha vận hành chỉ định người phụ trách, mở owner đúng quy tắc pha, thiết kế sao lưu/phục hồi, chạy phục hồi thử và lưu bằng chứng đối chiếu. RR-9 còn chưa được chặn cho tới khi nghiệm thu đạt; không mở lại quyết định chọn owner của F-034.
 - [ ] T-343 **Trigger giữ số đếm của ngày đã ký không lấy khoá ngày, nên lệnh SQL thẳng chạy cùng lúc với lần ký vẫn lọt** — L3 (ADR-080, I-021), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database · [chi tiết](#t-343)
+- [ ] T-367 **Trang Yêu thích trên app lệch bản thiết kế `favourite.html` ở màu, thẻ món, tab lọc và hộp tạo bộ** — L1 (chỉ FE), mở 2026-11-22 từ nghiệm thu YT-07; chủ repo chọn lệch nào sửa trước khi làm · [chi tiết](#t-367)
 
 [↑ đầu file](#top)
 
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] YT-07 **Trang Yêu thích chưa được nghiệm thu trên app chạy so với bản thiết kế** — L1, sau YT-06; Codex viết kịch bản Playwright trong `../lean_wt/YT-07`, Claude chạy trên app thật và duyệt (nhận 2026-11-22) · [mô tả](backlog_YT.md#yt-07); **xong 2026-11-22**: kịch bản trên app thật `TONG pass=65 fail=0`; lệch so với bản thiết kế ghi thành T-367
 - [x] KC-05 **Backend chưa trả tổng tiền theo ngày, chưa đọc được lịch sử một khoản con và ngày chi gần nhất ngoài bộ lọc** — L2 (hợp đồng đọc tiền), chủ repo yêu cầu 2026-11-22; Claude viết test trước rồi tự làm vì Codex hết hạn mức, chưa ai duyệt độc lập · [chi tiết](backlog_KC.md#kc-05)
 - [x] KC-02 **Database chưa nối mục chi với sổ nguyên liệu: chưa có cờ theo dõi lượng, nối một thứ một khoản con, ngừng dùng, ngày nhập** — L2, chủ repo yêu cầu 2026-11-22; Claude viết test trước, Codex làm migration, Claude làm nốt khi Codex hết hạn mức · [chi tiết](backlog_KC.md#kc-02)
 - [x] KC-08 **Trang Khoản chi thật chưa có bố cục gọn của bản HTML: khối chọn ngày, mục xếp dọc, đầu khối có Hiện/Ẩn** — L1 (chỉ FE, dùng API đang có), chủ repo yêu cầu 2026-11-22; Codex làm trong `../lean_wt/KC-08`, Claude duyệt · [chi tiết](backlog_KC.md#kc-08)
@@ -613,6 +615,23 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-367"></a>
+### T-367 — Trang Yêu thích trên app lệch bản thiết kế
+
+Mở 2026-11-22 (Claude) từ nghiệm thu YT-07: so ảnh app với ảnh `favourite.html` ở 360/430px sáng/tối
+(`../lean_wt/_claude_logs/YT-07/anh-4/`, `app-*` cạnh `tk-*`), đối chiếu code `fe/src/components/khach/yeu-thich/`. Hành vi
+đã đạt (YT-07); chỉ còn lệch nhìn và thao tác:
+
+1. Màu nhấn: bản thiết kế dùng cam cho nút chính, giá, nhãn và nền khối *Tạo bộ món riêng*; app dùng nút đen, khối xám.
+2. Đầu trang: bản thiết kế có *← Thực đơn* và nút đổi giao diện trên đầu, thanh tab dưới đáy; app dùng thanh điều hướng chung của khách.
+3. Thẻ món: bản thiết kế có hình món, bộ chọn nhân/lượng nhân/rau ngay trên thẻ và nút nhỏ *+ Giỏ*; app không có hình, không có bộ chọn, nút *Thêm vào giỏ* lớn.
+4. Tab lọc: bản thiết kế ghi số đếm (*Tất cả (4)*); app không có.
+5. Thẻ bộ và chân trang: bản thiết kế ghi *2 phần*, *4 phần đã chọn*; app ghi *Tổng 4 dòng còn bán*, có thêm nút *Đọc lại danh sách*.
+6. Hộp tạo/sửa bộ (`hop-bo.tsx`): bản thiết kế là danh sách món có checkbox, ô số lượng và tổng tiền/số phần ở chân; app là dãy nút *Thêm combo …*, nút radio, ô số và *Bỏ dòng N*, không có tổng.
+
+Bản thiết kế là đề xuất, không phải hợp đồng (CLAUDE.md §2), và điểm 1–2 chạm khuôn chung của mọi trang khách; nên **chủ repo chọn
+điểm nào sửa** trước khi viết Acceptance. Ghi chú phụ: kịch bản chụp ảnh app trước lúc trả giá thử, ảnh dòng *Bánh cuốn Thịt · Thường* hiện 5.000đ.
 
 <a id="t-364"></a>
 ### T-364 — Ghi lời chủ repo cho U-120…U-125 và sửa sổ KC
