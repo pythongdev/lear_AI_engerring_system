@@ -289,6 +289,12 @@ xấp; ngày chưa từng ký giữ hành vi đếm ban đầu. Test tầng data
 `db/tests/i021_reopened_day.sql`. Phép đối chiếu `db/reconcile/i014.sql` tập 5 chỉ xét dấu
 đang đứng, tránh đọc lịch sử mở lại như ngày đã xong hoặc đếm trùng khi ký lại.
 
+**T-343, 2026-11-23 (ADR-080 Sửa đổi 2026-11-23):** bước 51 cho
+`cash_day_reconciled_guard()` lấy khoá ngày chung và `reconciled_day_nonempty_guard()` lấy khoá ngày
+riêng trong namespace `309`, cùng công thức và thứ tự ngày tăng dần với khoá backend
+`be/internal/ngayban`. Hai trigger lấy khoá trước khi đọc dấu ký hoặc dòng mệnh giá, nên lần ghi
+số đếm và lần ký cùng ngày chạy nối tiếp dưới READ COMMITTED.
+
 ## Giảm giá cả đơn — bước 23 (T-175, ADR-098)
 
 `bill_discount_not_negative_check` giữ giảm không âm; `bill_discount_customer_name_check` bắt tên khách không trắng khi giảm dương và chỉ nhận NULL khi không giảm. `bill_parts_equal_due_check` cộng phần giảm vào tổng các phần thanh toán. Giảm bằng tổng dòng cho phép trả 0đ; hoá đơn cũ nhận giảm 0. Không có cửa sửa giảm sau khi ghi; sai đi cửa hoàn. Test ràng buộc: `db/tests/i015_bill_discount.sql`.

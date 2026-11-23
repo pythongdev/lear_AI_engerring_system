@@ -99,10 +99,10 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-343 **Trigger giữ số đếm của ngày đã ký không lấy khoá ngày, nên lệnh SQL thẳng chạy cùng lúc với lần ký vẫn lọt** — L3 (ADR-080, I-021), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; thiết kế được duyệt 2026-11-23 (Sửa đổi ADR-080), Claude viết test, Codex viết migration · [chi tiết](#t-343)
 - [x] T-367 **Trang Yêu thích trên app lệch bản thiết kế `favourite.html` ở màu, thẻ món, tab lọc và hộp tạo bộ** — L1 (chỉ FE), mở 2026-11-22 từ nghiệm thu YT-07; chủ repo chọn 2026-11-23 sửa điểm 3–6, không sửa màu nhấn và đầu trang; Codex làm, Claude duyệt · [chi tiết](#t-367)
 - [ ] KC-09 **Trang Khoản chi chưa có bảng tổng theo ngày, các khoản chi gom theo ngày, bảng khoản con ba cột và lịch sử chi riêng của từng khoản con** — L2 (hiện tiền từ backend), chủ repo yêu cầu 2026-11-23 (*"ok hãy tiếp tục giao cho codex làm bạn kiểm tra"*); Claude viết test trước, Codex làm trong `../lean_wt/KC-09`, Claude duyệt · [chi tiết](backlog_KC.md#kc-09)
 - [x] T-369 **Khách ngồi bàn chưa có trang theo dõi món: không biết còn bao nhiêu lượt gọi trước mình, đã ra bao nhiêu món, còn thiếu món gì** — L1 (bước 1 chỉ là bản thiết kế HTML tĩnh, không phải hợp đồng), chủ repo yêu cầu 2026-11-23; Codex làm trong `../lean_wt/T-369`, Claude duyệt · [chi tiết](#t-369); **bước 1 xong 2026-11-23**: `theo-doi-mon.html` năm trạng thái, 10/10 ảnh tràn 0px; API · backend · FE mở task mới khi chủ repo duyệt bản HTML
-- [ ] T-343 **Trigger giữ số đếm của ngày đã ký không lấy khoá ngày, nên lệnh SQL thẳng chạy cùng lúc với lần ký vẫn lọt** — L3 (ADR-080, I-021), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; thiết kế được duyệt 2026-11-23 (Sửa đổi ADR-080), Claude viết test, Codex viết migration · [chi tiết](#t-343)
 - [x] T-368 **Tạo tài khoản khách thử để đăng nhập trang Yêu thích trên máy dev** — L1, chủ repo yêu cầu và xong 2026-11-23; tài khoản khách trong database làm việc đăng nhập và đọc Yêu thích đạt, thông tin ở `docs/command/tai-khoan-dev.md` · [chi tiết](#t-368)
 - [x] KC-07 **Backend chưa trả ước tính còn dùng của từng nguyên liệu: mức dùng 7 ngày có ghi, số ngày còn, Hết theo sổ** — L2 (hợp đồng đọc lượng, I-025), chủ repo yêu cầu 2026-11-23 (*"tiếp tục yêu cầu codex làm bạn kiểm tra"*); Claude viết test trước, Codex làm trong `../lean_wt/KC-07`, Claude duyệt và sửa phép chia, chủ repo xác nhận ba điểm suy ra · [chi tiết](backlog_KC.md#kc-07)
 - [x] T-366 **Các khối dưới Mua nguyên liệu còn nhiều viền bao** — L1 (chỉ bản HTML xem thử), chủ repo yêu cầu và xong 2026-11-22; bỏ viền khung và căn hai lịch sử sát mép nội dung như Mua nguyên liệu · [chi tiết](#t-366)
@@ -1192,7 +1192,19 @@ Acceptance viết trước sửa:
 
 Phạm vi (`work/scope/T-343.txt`): `db/migrations/` (bước mới), `db/tests/t343_reconciled_day_lock.sql`,
 `docs/product/2-db/07-thu-tu-migration.md`, `docs/product/2-db/04-luoc-do-duong-tien.md`, `docs/decisions.md`, `work/backlog.md`. Thi công:
-Codex trong `../lean_wt/T-343`, nhánh `codex/T-343`, nền `3cf3962`; log `../lean_wt/_claude_logs/T-343/`. Duyệt: Claude, chưa duyệt.
+Codex trong `../lean_wt/T-343`, nhánh `codex/T-343`, nền `3cf3962`; log `../lean_wt/_claude_logs/T-343/`.
+
+**Kết quả 2026-11-23** (test: Claude; migration: Codex; duyệt: Claude). Migration `20261123120000_khoa_ngay_so_dem` (bước **51**, sau
+bước 50 của KC-02 còn chưa commit — Codex đánh số 50 trên nền `3cf3962`, Claude đổi lúc đưa về): hai thân hàm chỉ thêm vòng
+`FOR x IN SELECT DISTINCT … ORDER BY` lấy khoá trước khi đọc; file lùi chép nguyên văn thân cũ (Codex so `cmp`). Claude sửa hai chỗ
+khi duyệt: chú thích đầu file lùi thêm câu *"đường lùi từ chối"* theo cách bước 18 (QC-05 đỏ), và một câu sai trong chính test
+(`dblink_exec` không nhận `SELECT set_config`, đổi sang `SET`). A1 — `db-check` trên `3cf3962` không migration: đỏ đúng file này
+(phần A, không có khoá chung); có migration: xanh, NOTICE phần A, B1, B2, B3 (lần ghi bị từ chối sau khi dấu COMMIT, số đếm 1 dòng
+100.000đ). A2 — `db-check` xuôi · lùi · xuôi lại và khoá chặn xanh; `07-thu-tu-migration.md` dòng 51 và mục *Bước 51 không có khoá
+chặn*, `04-luoc-do-duong-tien.md` §7. A3 — `db-check` worktree exit 0; `be-check` ở clone chính 33/33 gói, gồm `ket`. A4 — bỏ riêng
+khoá ký ⇒ đỏ *"ký ngày … không lấy khoá riêng"*; bỏ riêng khoá ghi ⇒ đỏ *"ghi tiền đầu két … không lấy khoá chung"*; bỏ cả hai và
+chạy riêng phần B ⇒ đỏ *"B1: lần ghi số đếm KHÔNG chờ lần ký đang dở"* — phần B tự bắt được chỗ hở. Dữ liệu test để lại (ngày
+2001-01-02 đã ký, cân 100.000đ) không làm bộ đối chiếu kêu. Log `../lean_wt/_claude_logs/T-343/`.
 
 <a id="t-338"></a>
 ### T-338 — Ngăn Cập nhật món trên trang Sản phẩm báo lỗi hai phần tử trùng key

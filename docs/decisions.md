@@ -5407,6 +5407,35 @@ số đếm. Chặn cả đường ấy là chọn hộ U-074 (gỡ dấu có ph
 khi ký) · `db/reconcile/proof/` · `docs/product/2-db/04-luoc-do-duong-tien.md` §7 · `07-thu-tu-migration.md`
 (bước 16) · F-056 · F-057 · U-073 · U-074 · task `T-134`.
 
+**Sửa đổi 2026-11-23 (T-343; chủ repo duyệt thiết kế của Claude Code: *"Duyệt, giao Codex"*):** điểm 1 và 3 thêm **khoá ngày**.
+Bản đánh giá database 2026-11-16 mục 6: `cash_day_reconciled_guard` đọc `reconciled_day` không lấy khoá, nên dưới READ COMMITTED một
+lần ghi số đếm và một lần ký cùng ngày chạy song song đều qua — lần ghi không thấy dấu chưa commit, lần ký không thấy xấp chưa commit.
+Backend đã khoá ngày (`be/internal/ngayban/service.go` `Khoa`: khoá tư vấn namespace `309`, khoá chung cho cửa ghi tiền, khoá riêng
+cho cửa ký và sửa số đếm), nên chỉ đường vượt backend lọt — đúng đường điểm 1 đặt khoá ở tầng 1 để chặn.
+1. **Trigger ghi lấy khoá chung.** `cash_day_reconciled_guard`, ở nhánh dòng, lấy `pg_advisory_xact_lock_shared(309, ngày − DATE
+   '2000-01-01')` cho từng ngày khác rỗng, khác nhau của bản trước/sau, **theo thứ tự ngày tăng dần**, **trước** khi đọc
+   `reconciled_day`. Khoá và công thức khoá **giống từng ký tự** khoá của backend: namespace `309` từ nay là hợp đồng của database,
+   không còn chỉ là quy ước của `ngayban`.
+2. **Trigger ký lấy khoá riêng.** `reconciled_day_nonempty_guard` (`BEFORE INSERT OR UPDATE OF sale_date` trên `reconciled_day`) lấy
+   `pg_advisory_xact_lock(309, …)` cho ngày mới (và ngày cũ khi `UPDATE`, cùng thứ tự tăng dần) **trước** khi đọc dòng mệnh giá.
+3. **Vì sao không sinh deadlock với backend.** Cửa ghi tiền đã giữ khoá chung của ngày, cửa ký và `SuaSoDem` đã giữ khoá riêng; khoá
+   tư vấn trong cùng giao dịch không chặn chính nó, nên trigger lấy lại được ngay. Không đường nào nâng khoá chung lên khoá riêng
+   trong một giao dịch: cửa ký lấy khoá riêng **đầu tiên**.
+4. **Kết quả.** Lần ghi và lần ký của cùng một ngày chạy nối tiếp. Ghi trước ⇒ lần ký chờ, rồi thấy xấp đã commit. Ký trước ⇒ lần ghi
+   chờ, rồi câu đọc dấu (ảnh chụp mới của câu lệnh, READ COMMITTED) thấy dấu và từ chối như điểm 1.
+5. **Không đổi:** mã lỗi, tên ràng buộc, luật mở lại số đếm (ADR-096), nhánh `TRUNCATE` — `TRUNCATE` lấy `ACCESS EXCLUSIVE` trên bảng,
+   xung đột với khoá bảng mà lần ký lấy khi đọc dòng đầu và dòng mệnh giá, nên đã nối tiếp sẵn. Lần mở lại ngày
+   (`reconciled_day_reopening`) chỉ nới khoá; một lần ghi chạy cùng lúc thì đọc *chưa mở* và bị từ chối — sai về phía an toàn,
+   không cần khoá.
+6. **Giới hạn, ghi rõ không chặn:** khoá chỉ đủ ở READ COMMITTED (mức backend dùng, mặc định của PostgreSQL). Một giao dịch
+   REPEATABLE READ chụp ảnh từ câu lệnh đầu, nên lần ghi của nó vẫn có thể không thấy dấu commit sau ảnh ấy. Chặn mọi lần ghi bốn bảng
+   ngoài READ COMMITTED bị bác: đổi hành vi của mọi công cụ nhập tay để bịt một đường hẹp hơn chỗ hở đang sửa.
+
+*Bác:* khoá dòng `reconciled_day` (`SELECT … FOR SHARE`) — không khoá được dòng **chưa có**, mà chỗ hở chính là dấu đang được chèn;
+khoá bảng `reconciled_day` — chặn ký mọi ngày khi một ngày đang ghi; `SERIALIZABLE` trong trigger — không đổi được mức cô lập giữa
+giao dịch. Áp dụng: migration `T-343` sau `20261122120000`, `db/tests/t343_reconciled_day_lock.sql` (Claude viết trước migration),
+`docs/product/2-db/07-thu-tu-migration.md`, `docs/product/2-db/04-luoc-do-duong-tien.md` §7.
+
 ### ADR-081 — Thêm một dòng con vào một bản ghi đã có để lại vết trên bản ghi cha, cùng chế độ mềm với vết sửa
 
 **Trạng thái:** **Đã chốt** 2026-10-05. **Làm ngay ở tầng database**, không chờ `P3-11`, là lời chủ repo

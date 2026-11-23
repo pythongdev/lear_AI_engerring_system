@@ -75,6 +75,7 @@ ngược từ dưới lên, **từng bước một**.
 | 47 | `20261120100000_khoa_sua_dong_don` | `T-341` | thu quyền UPDATE của `shop_app` trên `order_line` · `order_line_option` vì hai luật I-034 chỉ xét lúc INSERT; lùi cấp lại đúng quyền UPDATE trên hai bảng, không gỡ dữ liệu | 1 · 2 · 29 |
 | 48 | `20261120110000_ngay_ban_khop_moc` | `T-342` | bốn ràng buộc kiểm buộc ngày bán khớp mốc tính tiền theo múi giờ quán trên `bill` · `debt_collection` · `prepayment` · `refund` (QD-31, ADR-146); lùi gỡ bốn ràng buộc theo thứ tự ngược | 6 |
 | 49 | `20261121090000_yeu_thich` | `YT-03` | `customer_favourite_set` · `customer_favourite_line` · `customer_favourite_line_option`: bộ, dòng món/combo hai tầng và lựa chọn của khách; giới hạn đếm dưới khoá khách, gỡ một lần, quyền sửa theo cột và vết người sửa rỗng (ADR-145). Lùi khoá cả ba bảng, từ chối khi có dòng kể cả đã gỡ; rỗng thì trả miền người sửa vết, gỡ trigger/hàm và bảng con trước cha | 2 · 8 · 26 · 38 · 44 · 45 |
+| 51 | `20261123120000_khoa_ngay_so_dem` | `T-343` | hai trigger giữ số đếm và ký ngày lấy khoá tư vấn chung/riêng `(309, ngày − 2000-01-01)` theo thứ tự ngày tăng dần trước khi đọc dữ liệu (ADR-080, Sửa đổi 2026-11-23); lùi trả đúng hai thân hàm cũ, không gỡ dữ liệu | 16 · 18 · 22 |
 
 **Bước 8 gắn trigger vết lên mọi bảng của các bước 1…8** đang có lúc nó chạy. Một bước sau
 thêm bảng mới thì chính bước ấy gắn trigger cho bảng của nó — phép kiểm `QD-52`
@@ -181,6 +182,11 @@ chỉ thêm bốn ràng buộc kiểm trên `bill` · `debt_collection` · `prep
 chỗ cất dữ liệu nên luật 2 không có gì để chặn. File lùi gỡ theo thứ tự `refund` · `prepayment` ·
 `debt_collection` · `bill`, giữ nguyên dữ liệu đã ghi. Sau khi lùi, ngày bán lệch mốc tính tiền
 không còn bị bốn ràng buộc này từ chối lúc ghi; câu `QD-31/b` của bộ đối chiếu vẫn giữ lớp kiểm sau.
+
+**Bước 51 không có khoá chặn** (2026-11-23, `T-343`, **ADR-080 Sửa đổi 2026-11-23**):
+chỉ thay thân hai hàm trigger, không thêm chỗ cất dữ liệu. File lùi trả nguyên văn hai thân trước
+bước 51; sau khi lùi, lệnh SQL thẳng ghi số đếm chạy đồng thời với lần ký không còn được khoá ngày
+ở tầng database. Quyền hàm và trigger giữ nguyên qua `CREATE OR REPLACE FUNCTION`.
 
 ## 3. Khi một lệnh migration hỏng giữa chừng
 
