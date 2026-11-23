@@ -101,6 +101,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## In Progress
 
 - [x] YT-07 **Trang Yêu thích chưa được nghiệm thu trên app chạy so với bản thiết kế** — L1, sau YT-06; Codex viết kịch bản Playwright trong `../lean_wt/YT-07`, Claude chạy trên app thật và duyệt (nhận 2026-11-22) · [mô tả](backlog_YT.md#yt-07); **xong 2026-11-22**: kịch bản trên app thật `TONG pass=65 fail=0`; lệch so với bản thiết kế ghi thành T-367
+- [x] T-349 **Next.js 16.4.2 dính hai khuyến cáo bảo mật mới, `next build` lại dừng cách lượt** — L1 (đổi phụ thuộc `fe/`), chủ repo yêu cầu 2026-11-19; nâng `next` · `eslint-config-next` lên 16.4.6; Codex làm, Claude duyệt · [chi tiết](#t-349); **xong 2026-11-22**: `npm ls` 16.4.6, audit không còn `next`, `next build` hai lần exit 0
 - [x] KC-05 **Backend chưa trả tổng tiền theo ngày, chưa đọc được lịch sử một khoản con và ngày chi gần nhất ngoài bộ lọc** — L2 (hợp đồng đọc tiền), chủ repo yêu cầu 2026-11-22; Claude viết test trước rồi tự làm vì Codex hết hạn mức, chưa ai duyệt độc lập · [chi tiết](backlog_KC.md#kc-05)
 - [x] KC-02 **Database chưa nối mục chi với sổ nguyên liệu: chưa có cờ theo dõi lượng, nối một thứ một khoản con, ngừng dùng, ngày nhập** — L2, chủ repo yêu cầu 2026-11-22; Claude viết test trước, Codex làm migration, Claude làm nốt khi Codex hết hạn mức · [chi tiết](backlog_KC.md#kc-02)
 - [x] KC-08 **Trang Khoản chi thật chưa có bố cục gọn của bản HTML: khối chọn ngày, mục xếp dọc, đầu khối có Hiện/Ẩn** — L1 (chỉ FE, dùng API đang có), chủ repo yêu cầu 2026-11-22; Codex làm trong `../lean_wt/KC-08`, Claude duyệt · [chi tiết](backlog_KC.md#kc-08)
@@ -632,6 +633,38 @@ Mở 2026-11-22 (Claude) từ nghiệm thu YT-07: so ảnh app với ảnh `favo
 
 Bản thiết kế là đề xuất, không phải hợp đồng (CLAUDE.md §2), và điểm 1–2 chạm khuôn chung của mọi trang khách; nên **chủ repo chọn
 điểm nào sửa** trước khi viết Acceptance. Ghi chú phụ: kịch bản chụp ảnh app trước lúc trả giá thử, ảnh dòng *Bánh cuốn Thịt · Thường* hiện 5.000đ.
+
+<a id="t-349"></a>
+### T-349 — Next.js 16.4.2 dính hai khuyến cáo bảo mật mới, `next build` lại dừng cách lượt
+
+**Yêu cầu:** chủ repo 2026-11-19 dán cảnh báo *"Next.js 16.4.2 is affected by a known security vulnerability … Run `next upgrade
+--agent=security`"* và nói: *"hãy yêu cầu codex làm bạn kiểm tra"*. Đây là quyết định nâng `next` mà T-344 và F-076 để chờ chủ repo.
+**Mức:** L1 — đổi phụ thuộc của `fe/`, không chạm dữ liệu, hợp đồng, tiền. Tiền lệ: T-235 (`work/backlog_archive.md`).
+
+`npm audit` 2026-11-19 (Claude, `fe/`): `next` 16.2.0–16.4.4, *moderate*, GHSA-mfr8-8qww-v76h và GHSA-vc7v-qv4w-wrv8 (rò cache giữa các
+root params với `use cache`); bản vá 16.4.6, đã có trên npm. Cùng lượt audit còn `fast-uri` 3.0.0–3.1.8 (gói gián tiếp) — ngoài task này.
+
+**Claude quyết 2026-11-19:** như T-235 — nâng lên bản vá nhỏ nhất vá được cả hai khuyến cáo, ghim chính xác; không nhảy minor/major, không
+nâng gói khác ngoài những gói lockfile bắt buộc kéo theo; không thêm `experimental.agentUpgrade` hay cờ nào vào `next.config.ts`; không sửa
+code hay test để chiều bản mới — vỡ thì dừng và báo. Lần này đưa bảng ghim và phép kiểm `QC-18` vào scope ngay (T-235 sót, gate cây chính
+mới bắt).
+
+**Acceptance** (viết 2026-11-19, trước khi giao):
+- [x] A1 — `fe/package.json`: `next` và `eslint-config-next` cùng bản 16.4.6 (hoặc bản vá nhỏ nhất ≥ 16.4.5 mà `npm audit` coi là sạch), ghim chính xác; `fe/package-lock.json` khớp (`npm ls next eslint-config-next`).
+- [x] A2 — `npm audit` trong `fe/` không còn dòng nào cho `next`.
+- [x] A3 — `next build` chạy hai lần liền trong `fe/` đều exit 0, không `SecurityFatalError`; `fe-check` in `PASS` và không còn dòng `NOTE … đang ghim next`.
+- [x] A4 — `QC-18` ở `docs/product/2-db/10-quy-uoc-code.md` (bảng ghim và vòng `for pv in …`) đổi theo bản mới.
+- [x] A5 — Chỉ đổi `fe/package.json`, `fe/package-lock.json`, `docs/product/2-db/10-quy-uoc-code.md`; `./scripts/gate.sh` xanh (Claude chạy lại ở clone chính).
+- [x] A6 — F-076 ghi lần nâng này — Claude ghi sau khi duyệt.
+
+Phạm vi (`work/scope/T-349.txt`): ba file của A5; phần của Claude: `work/backlog.md`, `work/findings.md`. Thi công: Codex trong worktree
+`../lean_wt/T-349`, nhánh `codex/T-349`, nền `e69d481`. Duyệt: Claude.
+
+**Duyệt 2026-11-22** (Claude, cây chính `1fc16ae` cộng bản nâng đã áp 2026-11-20). A1: `npm ls next eslint-config-next` → cả hai `16.4.6`;
+lockfile chỉ đổi họ gói `next` (`@next/env`, `eslint-plugin-next`, mười gói `swc-*`). A2: `npm audit --json` không có mục `next`; còn mục
+của gói khác (`undici`, `zod`, `shadcn`, `hono`, `body-parser`, `systeminformation`, `fast-uri`…) — ngoài task này. A3: `npx next build`
+hai lần liền exit 0, 0 dòng `SecurityFatalError` (`../lean_wt/_claude_logs/T-349/build-{1,2}-2026-11-22.log`); `fe-check: PASS`. A4: hai
+chỗ `QC-18` đổi sang `16.4.6`. A5: ba file, `./scripts/gate.sh` ở cây chính xanh 2026-11-22. A6: đoạn *Sửa 2026-11-20* ở F-076.
 
 <a id="t-364"></a>
 ### T-364 — Ghi lời chủ repo cho U-120…U-125 và sửa sổ KC

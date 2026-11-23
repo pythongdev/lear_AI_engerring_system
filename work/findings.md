@@ -5114,12 +5114,16 @@ Next.js trong một task riêng (đổi dependency `fe/`, chạy lại `fe-check
 để chữa lần đầu. `npm audit` cùng ngày: `next` 16.3.0–16.4.4, mức *moderate*, GHSA-mfr8-8qww-v76h; bản vá 16.4.6. Bài học: ghim
 một bản vá chỉ chữa tới khuyến cáo kế tiếp. Hướng chữa gốc (T-344): `fe-check` nhận ra lời dừng, chạy lại build đúng một lần và in
 `NOTE` mỗi lượt cho tới khi `next` được nâng; việc nâng `next` vẫn là quyết định của chủ repo.
+*Sửa 2026-11-20 (T-349, chủ repo quyết 2026-11-19, Codex làm, Claude duyệt):* nâng `next` và `eslint-config-next` lên **16.4.6**
+(vá GHSA-mfr8-8qww-v76h và GHSA-vc7v-qv4w-wrv8); `npm audit` không còn mục `next`; `next build` hai lần liền đều exit 0, không
+`SecurityFatalError`; bảng và phép kiểm `QC-18` đổi theo. Khuyến cáo kế tiếp sẽ lại làm build dừng một lần — T-344 lo cho gate không đỏ
+sai, dòng `NOTE` của `fe-check` là tín hiệu mở task nâng mới.
 
 **Related task:**
-`T-235`
+`T-235` · `T-344` · `T-349`
 
 **Status:**
-Open
+Resolved
 
 ### F-077 — Khuôn §2.1 của bộ đối chiếu chỉ nhận *chưa có lát*, không có trạng thái cho bất biến thuần hành vi (lý do D)
 
