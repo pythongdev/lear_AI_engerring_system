@@ -53,6 +53,22 @@ with open(path, "w", encoding="utf-8") as fh:
 PY
 }
 
+# transcript_blocks <file> <nội dung khối bash> — giữ nhiều khối trong một lượt.
+transcript_blocks() {
+  python3 - "$1" "$2" <<'PY'
+import json, sys
+path, commands = sys.argv[1], sys.argv[2]
+rows = [
+    {"type": "user", "message": {"role": "user", "content": "làm đi"}},
+    {"type": "assistant", "message": {"role": "assistant", "content": [
+        {"type": "text", "text": "Xong.\n```bash\n" + commands + "\n```"}]}}
+]
+with open(path, "w", encoding="utf-8") as fh:
+    for row in rows:
+        fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+PY
+}
+
 # setscope <repo> <pattern>...  — ghi file scope của T-999 (mã mặc định của
 # transcript_add) trong repo tạm; SCOPE_ID=<mã> để ghi cho task khác
 setscope() {
@@ -70,6 +86,13 @@ run() {
 run_err() {
   ( cd "$1" && printf '{"transcript_path":"%s","stop_hook_active":false}' "$2" \
       | "$SCRIPT" --hook 2>&1 >/dev/null )
+}
+
+# run_capture <repo> <transcript> <stderr-file> → exit code của lần chạy ấy.
+# Dùng cho ca cần kiểm cả exit lẫn tên file khi dấu nhắc chỉ cho kêu một lần.
+run_capture() {
+  ( cd "$1" && printf '{"transcript_path":"%s","stop_hook_active":false}' "$2" \
+      | "$SCRIPT" --hook >/dev/null 2>"$3"; echo $? )
 }
 
 newrepo() {
@@ -152,6 +175,13 @@ contains() { # contains <tên ca> <chuỗi mong đợi> <văn bản>
   case "$3" in
     *"$2"*) echo "  ok   $1" ;;
     *) echo "  FAIL $1 — không thấy '$2' trong stderr"; fails=$((fails + 1)) ;;
+  esac
+}
+
+omits() { # omits <tên ca> <chuỗi không được thấy> <văn bản>
+  case "$3" in
+    *"$2"*) echo "  FAIL $1 — còn thấy '$2' trong stderr"; fails=$((fails + 1)) ;;
+    *) echo "  ok   $1" ;;
   esac
 }
 
@@ -284,6 +314,97 @@ r="$(newrepo a11b)"; t="$r/tr.jsonl"; setscope "$r" "a.txt"
 transcript_add "$t" "git add a.txt docs/x.md" T-404
 echo two > "$r/a.txt"
 check "A11 mã không có file scope, file ngoài hợp → kêu" 2 "$(run "$r" "$t")"
+
+# T-332 A1: subject đã ở HEAD, post-commit đã xoá scope của mã ấy. Cây còn
+# thay đổi tracked khác nên Gate 7b vẫn chạy; file của khối cũ không được nêu.
+r="$(newrepo t332a1)"; t="$r/tr.jsonl"
+mkdir -p "$r/a"; echo one > "$r/a/x.txt"
+git -C "$r" add a/x.txt && git -C "$r" commit -qm "T-900: việc đã commit"
+SCOPE_ID=T-888 setscope "$r" "a.txt"
+transcript_blocks "$t" $'git add a/x.txt\ngit commit -m "T-900: việc đã commit"'
+echo two > "$r/a.txt"
+check "T-332 A1 khối đã commit, scope đã xoá → im" 0 "$(run_capture "$r" "$t" "$r/err")"
+omits "T-332 A1 không nêu a/x.txt" "a/x.txt" "$(cat "$r/err")"
+
+# T-332 A2: cùng cây và scope, nhưng subject trong khối chưa ở lịch sử.
+r="$(newrepo t332a2)"; t="$r/tr.jsonl"
+mkdir -p "$r/a"; echo one > "$r/a/x.txt"
+git -C "$r" add a/x.txt && git -C "$r" commit -qm "T-900: việc khác"
+SCOPE_ID=T-888 setscope "$r" "a.txt"
+transcript_blocks "$t" $'git add a/x.txt\ngit commit -m "T-900: việc đã commit"'
+echo two > "$r/a.txt"
+check "T-332 A2 subject chưa commit → kêu" 2 "$(run_capture "$r" "$t" "$r/err")"
+contains "T-332 A2 nêu a/x.txt" "a/x.txt" "$(cat "$r/err")"
+
+# T-332 A3: hai khối cùng lượt; chỉ khối thứ hai chưa ở lịch sử.
+r="$(newrepo t332a3)"; t="$r/tr.jsonl"
+mkdir -p "$r/a"; echo one > "$r/a/x.txt"
+git -C "$r" add a/x.txt && git -C "$r" commit -qm "T-900: việc đã commit"
+SCOPE_ID=T-888 setscope "$r" "a.txt"
+transcript_blocks "$t" $'git add a/x.txt\ngit commit -m "T-900: việc đã commit"\ngit add docs/y.md\ngit commit -m "T-901: việc chưa commit"'
+echo two > "$r/a.txt"
+check "T-332 A3 chỉ khối thứ hai bị chấm" 2 "$(run_capture "$r" "$t" "$r/err")"
+contains "T-332 A3 nêu docs/y.md" "docs/y.md" "$(cat "$r/err")"
+omits "T-332 A3 không nêu a/x.txt" "a/x.txt" "$(cat "$r/err")"
+
+# Mã của khối đã commit cũng phải rời --task: nếu còn T-900 trong danh sách,
+# scope của nó sẽ che file ngoài scope của khối T-901.
+r="$(newrepo t332_tasks)"; t="$r/tr.jsonl"
+mkdir -p "$r/a"; echo one > "$r/a/x.txt"
+git -C "$r" add a/x.txt && git -C "$r" commit -qm "T-900: việc đã commit"
+SCOPE_ID=T-900 setscope "$r" "docs/y.md"
+SCOPE_ID=T-901 setscope "$r" "a.txt"
+transcript_blocks "$t" $'git add a/x.txt\ngit commit -m "T-900: việc đã commit"\ngit add docs/y.md\ngit commit -m "T-901: việc chưa commit"'
+echo two > "$r/a.txt"
+check "T-332 mã khối đã commit không vào --task" 2 "$(run_capture "$r" "$t" "$r/err")"
+contains "T-332 chỉ scope T-901 chấm docs/y.md" "docs/y.md" "$(cat "$r/err")"
+
+# T-332 A4: subject là tiền tố hoặc khác hoa thường không phải khớp chính xác.
+for variant in prefix case; do
+  r="$(newrepo "t332a4_$variant")"; t="$r/tr.jsonl"
+  mkdir -p "$r/a"; echo one > "$r/a/x.txt"
+  if [ "$variant" = prefix ]; then
+    history="T-900: việc đã commit xong"
+  else
+    history="T-900: Việc đã commit"
+  fi
+  git -C "$r" add a/x.txt && git -C "$r" commit -qm "$history"
+  SCOPE_ID=T-888 setscope "$r" "a.txt"
+  transcript_blocks "$t" $'git add a/x.txt\ngit commit -m "T-900: việc đã commit"'
+  echo two > "$r/a.txt"
+  check "T-332 A4 $variant vẫn chấm" 2 "$(run_capture "$r" "$t" "$r/err")"
+  contains "T-332 A4 $variant nêu a/x.txt" "a/x.txt" "$(cat "$r/err")"
+done
+
+# Nháy đơn và -m thứ hai: subject là đối số -m đầu tiên, thân không định danh.
+r="$(newrepo t332_quote)"; t="$r/tr.jsonl"
+mkdir -p "$r/a"; echo one > "$r/a/x.txt"
+git -C "$r" add a/x.txt && git -C "$r" commit -qm "T-900: việc đã commit"
+SCOPE_ID=T-888 setscope "$r" "a.txt"
+transcript_blocks "$t" "git add a/x.txt
+git commit -m 'T-900: việc đã commit' -m 'T-901: thân khác'"
+echo two > "$r/a.txt"
+check "T-332 nháy đơn, chỉ subject đầu → im" 0 "$(run_capture "$r" "$t" "$r/err")"
+
+# ADD sau commit cuối chưa có commit theo sau vẫn phải chấm; index thật cũng vậy.
+r="$(newrepo t332_tail)"; t="$r/tr.jsonl"
+mkdir -p "$r/a"; echo one > "$r/a/x.txt"
+git -C "$r" add a/x.txt && git -C "$r" commit -qm "T-900: việc đã commit"
+SCOPE_ID=T-888 setscope "$r" "a.txt"
+transcript_blocks "$t" $'git add a/x.txt\ngit commit -m "T-900: việc đã commit"\ngit add docs/tail.md'
+echo two > "$r/a.txt"
+check "T-332 ADD sau commit cuối vẫn chấm" 2 "$(run_capture "$r" "$t" "$r/err")"
+contains "T-332 ADD cuối nêu docs/tail.md" "docs/tail.md" "$(cat "$r/err")"
+
+r="$(newrepo t332_index)"; t="$r/tr.jsonl"
+mkdir -p "$r/a" "$r/docs"; echo one > "$r/a/x.txt"
+git -C "$r" add a/x.txt && git -C "$r" commit -qm "T-900: việc đã commit"
+SCOPE_ID=T-888 setscope "$r" "a.txt"
+transcript_blocks "$t" $'git add a/x.txt\ngit commit -m "T-900: việc đã commit"'
+echo two > "$r/a.txt"; echo one > "$r/docs/staged.md"; git -C "$r" add docs/staged.md
+check "T-332 index thật vẫn chấm" 2 "$(run_capture "$r" "$t" "$r/err")"
+contains "T-332 index nêu docs/staged.md" "docs/staged.md" "$(cat "$r/err")"
+omits "T-332 index không nêu a/x.txt" "a/x.txt" "$(cat "$r/err")"
 
 if [ "$fails" -ne 0 ]; then
   echo "check-commit-block: $fails ca FAIL"; exit 1

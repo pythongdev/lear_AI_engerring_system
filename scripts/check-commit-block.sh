@@ -37,6 +37,11 @@
 # Nó chấm **danh sách file người ta vừa cố ý chọn**, không chấm cây làm việc, nên
 # ADR-003 không bị lật: trạng thái track không tham gia vào kết luận.
 # Scope chưa khai ⇒ im lặng: không có gì để đối chiếu, và đoán thì tệ hơn im.
+# T-332, F-081, 2026-11-16: post-commit xoá scope sau khi việc đã tick được
+# commit, có thể trước Stop hook. Gate 7b bỏ qua từng khối có subject của lệnh
+# `git commit -m` đầu tiên khớp chính xác subject một commit từ HEAD; file và mã
+# của khối ấy không đi vào phép chấm. `git add` chưa có commit theo sau vẫn chấm.
+# Index thật luôn chấm. Gate 7 và dấu nhắc theo trạng thái cây giữ nguyên.
 
 set -uo pipefail
 
@@ -118,7 +123,7 @@ joined = "\n".join(text)
 if "git commit -m" not in joined:
     out("no")
 
-# Khối có rồi — trả thêm mọi dòng `git add …` để Gate 7b chấm nội dung khối.
+# Khối có rồi — trả dòng `git add …` của các khối chưa commit để Gate 7b chấm.
 # CLAUDE.md §6.1 đòi liệt kê TỪNG file, nên một khối thật gần như luôn phải nối
 # dòng bằng `\`. Gộp các dòng nối lại TRƯỚC khi tìm `git add`, nếu không thì
 # (1) `\` bị đọc thành một path tên `\` và cổng kêu một file không tồn tại, và
@@ -132,16 +137,37 @@ for line in joined.splitlines():
     else:
         lines.append(line)
 
+import re, subprocess
+try:
+    subjects = set(subprocess.run(
+        ["git", "log", "--format=%s"], check=True, capture_output=True,
+        text=True).stdout.splitlines())
+except Exception:
+    out("skip")
+
 print("yes")
-# Mã task ở đầu subject của mọi `git commit -m "<MÃ>: …"` — Gate 7b dùng nó để
-# chọn file scope work/scope/<MÃ>.txt (T-085, ADR-063).
-import re
-for m in re.finditer(r"git commit -m [\"\x27]([A-Z][A-Z0-9]*-[0-9]+):", joined):
-    print("TASK " + m.group(1))
+# Mỗi commit kết thúc một khối: các ADD từ commit trước tới ngay trước nó.
+# Lấy đúng đối số -m đầu tiên, nháy đơn hoặc kép; -m thứ hai là thân.
+commit = re.compile(r"git commit -m ([\"\x27])([^\n]*?)\1")
+task = re.compile(r"^([A-Z][A-Z0-9]*-[0-9]+):")
+pending = []
 for line in lines:
     t = line.strip().lstrip("$").strip()
     if t.startswith("git add "):
-        print("ADD " + t[8:].strip())
+        pending.append(t[8:].strip())
+    m = commit.search(t)
+    if m:
+        subject = m.group(2)
+        if subject not in subjects:
+            match = task.match(subject)
+            if match:
+                print("TASK " + match.group(1))
+            for add in pending:
+                print("ADD " + add)
+        pending = []
+# Các ADD sau commit cuối là khối chưa commit, không mang mã task.
+for add in pending:
+    print("ADD " + add)
 sys.exit(0)
 ' 2>/dev/null)"
 

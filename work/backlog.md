@@ -102,6 +102,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 - [x] YT-07 **Trang Yêu thích chưa được nghiệm thu trên app chạy so với bản thiết kế** — L1, sau YT-06; Codex viết kịch bản Playwright trong `../lean_wt/YT-07`, Claude chạy trên app thật và duyệt (nhận 2026-11-22) · [mô tả](backlog_YT.md#yt-07); **xong 2026-11-22**: kịch bản trên app thật `TONG pass=65 fail=0`; lệch so với bản thiết kế ghi thành T-367
 - [x] T-349 **Next.js 16.4.2 dính hai khuyến cáo bảo mật mới, `next build` lại dừng cách lượt** — L1 (đổi phụ thuộc `fe/`), chủ repo yêu cầu 2026-11-19; nâng `next` · `eslint-config-next` lên 16.4.6; Codex làm, Claude duyệt · [chi tiết](#t-349); **xong 2026-11-22**: `npm ls` 16.4.6, audit không còn `next`, `next build` hai lần exit 0
+- [x] T-332 **Gate 7b báo động giả khi chủ repo commit khối trước lúc hook chấm: file scope vừa bị hook dọn nên mọi file của khối bị coi là ngoài scope** — L1, mở 2026-11-16, F-081 (lần hai); Codex làm, Claude duyệt · [chi tiết](#t-332); **xong 2026-11-22**: Claude duyệt, test 7b đủ ca A1–A4, gate xanh
 - [x] KC-05 **Backend chưa trả tổng tiền theo ngày, chưa đọc được lịch sử một khoản con và ngày chi gần nhất ngoài bộ lọc** — L2 (hợp đồng đọc tiền), chủ repo yêu cầu 2026-11-22; Claude viết test trước rồi tự làm vì Codex hết hạn mức, chưa ai duyệt độc lập · [chi tiết](backlog_KC.md#kc-05)
 - [x] KC-02 **Database chưa nối mục chi với sổ nguyên liệu: chưa có cờ theo dõi lượng, nối một thứ một khoản con, ngừng dùng, ngày nhập** — L2, chủ repo yêu cầu 2026-11-22; Claude viết test trước, Codex làm migration, Claude làm nốt khi Codex hết hạn mức · [chi tiết](backlog_KC.md#kc-02)
 - [x] KC-08 **Trang Khoản chi thật chưa có bố cục gọn của bản HTML: khối chọn ngày, mục xếp dọc, đầu khối có Hiện/Ẩn** — L1 (chỉ FE, dùng API đang có), chủ repo yêu cầu 2026-11-22; Codex làm trong `../lean_wt/KC-08`, Claude duyệt · [chi tiết](backlog_KC.md#kc-08)
@@ -665,6 +666,28 @@ lockfile chỉ đổi họ gói `next` (`@next/env`, `eslint-plugin-next`, mư�
 của gói khác (`undici`, `zod`, `shadcn`, `hono`, `body-parser`, `systeminformation`, `fast-uri`…) — ngoài task này. A3: `npx next build`
 hai lần liền exit 0, 0 dòng `SecurityFatalError` (`../lean_wt/_claude_logs/T-349/build-{1,2}-2026-11-22.log`); `fe-check: PASS`. A4: hai
 chỗ `QC-18` đổi sang `16.4.6`. A5: ba file, `./scripts/gate.sh` ở cây chính xanh 2026-11-22. A6: đoạn *Sửa 2026-11-20* ở F-076.
+
+<a id="t-332"></a>
+### T-332 — Gate 7b báo động giả khi chủ repo commit khối trước lúc hook chấm: file scope vừa bị hook dọn nên mọi file của khối bị coi là ngoài scope
+
+Hai lần trong phiên của Claude (F-081): 2026-11-12 với bốn khối T-319 · T-320 · T-321 · T-322, và 2026-11-16 với khối T-330. Thứ tự sự việc: Claude giao khối commit ở cuối lượt → chủ repo dán khối, commit ngay → hook `post-commit` (T-320) xoá `work/scope/<MÃ>.txt` vì việc đã tick → Stop hook chạy `scripts/check-commit-block.sh`, đọc lại khối trong transcript, không còn file scope của mã ấy, lùi về hợp các scope đang làm, và báo mọi file của khối là *ngoài scope đã khai*. Khối ấy đã nằm trong lịch sử rồi; lời báo sai và bắt phiên trả lời thêm một lượt.
+
+Thiết kế của Claude 2026-11-16, chưa được chủ repo xác nhận: một khối mà subject của nó **trùng từng chữ** subject của một commit tới được từ `HEAD` là khối đã commit (Gate 8 cấm hai commit trùng subject, nên subject định danh được commit); Gate 7b không chấm file của khối ấy. Khối chưa commit vẫn chấm như cũ. Không đổi Gate 7 (câu hỏi *lượt này có giao khối không*).
+
+Acceptance viết trước sửa:
+- [x] A1 — Khối có subject trùng một commit tới được từ `HEAD`, file scope của mã ấy không còn ⇒ Gate 7b không nêu file nào của khối là ngoài scope.
+- [x] A2 — Khối chưa commit ⇒ chấm như hiện nay: file ngoài scope vẫn bị nêu tên, `git add -A` và file scope trong khối vẫn bị bắt.
+- [x] A3 — Lượt có một khối đã commit và một khối chưa commit ⇒ chỉ file của khối chưa commit được chấm; mỗi dòng `git add` thuộc về lệnh `git commit` đứng ngay sau nó trong văn bản.
+- [x] A4 — Subject chỉ giống một phần (tiền tố, khác hoa thường) không được coi là đã commit.
+- [x] A5 — `scripts/check-commit-block.test.sh` có ca cho A1–A4, mọi khẳng định cũ giữ nguyên; `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-332.txt`): `scripts/check-commit-block.sh`, `scripts/check-commit-block.test.sh`; phần của Claude: `work/findings.md` (F-081), `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-332`, nhánh `codex/T-332`, nền `1212913`. Duyệt: Claude, chưa duyệt.
+
+**Duyệt 2026-11-22** (Claude, cây chính `1fc16ae` cộng bản Codex đã áp). Đọc diff `scripts/check-commit-block.sh`: subject là đối số
+`-m` đầu tiên, so khớp nguyên chuỗi với `git log --format=%s`; mỗi `git add` thuộc lệnh `git commit` đứng sau nó; khối đã commit
+không đưa mã vào `--task`; `git add` sau commit cuối và index thật vẫn chấm; `git log` lỗi ⇒ `skip` như nhánh sẵn có. `bash
+scripts/check-commit-block.test.sh` → *tất cả ca đều qua* (A1–A4 mỗi ca có tên `T-332 …`, ca cũ giữ nguyên); `./scripts/gate.sh` cây
+chính xanh 2026-11-22. Thiết kế 2026-11-16 chưa có lời chủ repo; Claude đóng theo vai dẫn việc L1 (ADR-054), chủ repo phản đối thì mở lại.
 
 <a id="t-364"></a>
 ### T-364 — Ghi lời chủ repo cho U-120…U-125 và sửa sổ KC

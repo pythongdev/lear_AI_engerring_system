@@ -5238,6 +5238,30 @@ cổng tĩnh chạy mọi lượt (cùng kiểu Gate 1e). Đây là lần đầu
 **Status:**
 Open
 
+### F-081 — Gate 7b báo động giả khi khối commit được commit trước lúc Stop hook chấm nó
+
+**Problem:**
+Hai lần (Claude Code): 2026-11-12, bốn khối T-319 · T-320 · T-321 · T-322; 2026-11-16, khối T-330. Claude giao khối ở cuối lượt, chủ
+repo commit ngay, hook `post-commit` (T-320) xoá `work/scope/<MÃ>.txt` của việc đã tick, rồi Stop hook mới chạy
+`scripts/check-commit-block.sh`: nó đọc lại khối trong transcript, không còn file scope của mã ấy nên lùi về hợp các scope đang
+làm (ADR-143 điểm 4), và báo mọi file riêng của khối là *ngoài scope đã khai*.
+
+**Impact:**
+Một lời `FAIL Gate 7` về một khối đã nằm trong lịch sử; phiên phải dừng lại tra và trả lời thêm một lượt. Lời báo sai lặp lại là
+thứ dạy người và máy bỏ qua Gate 7b — cổng canh đúng loại lỗi đã nuốt 1 096 dòng vào `0b3a337` (F-009). Chỉ xảy ra từ khi có hook
+`post-commit`: trước đó file scope còn nằm lại nên phép chấm vẫn tìm thấy nó.
+
+**Decision / Fix:**
+T-332: khối có subject trùng từng chữ một commit tới được từ `HEAD` là khối đã commit, Gate 7b không chấm file của nó; khối chưa
+commit chấm như cũ. *Sửa 2026-11-22 (T-332, Codex làm, Claude duyệt):* `check-commit-block.test.sh` có ca cho
+khối đã commit, khối chưa commit, hai khối cùng lượt và subject chỉ giống một phần; gate xanh.
+
+**Related task:**
+`T-332` · `T-320`
+
+**Status:**
+Resolved
+
 ### F-082 — Dấu xanh của bảy bước kiểm migration trong `db-check` có thể bị chen vào giữa một dòng NOTICE, làm bước ấy đỏ oan
 
 **Problem:**
