@@ -100,6 +100,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## In Progress
 
 - [ ] KC-09 **Trang Khoản chi chưa có bảng tổng theo ngày, các khoản chi gom theo ngày, bảng khoản con ba cột và lịch sử chi riêng của từng khoản con** — L2 (hiện tiền từ backend), chủ repo yêu cầu 2026-11-23 (*"ok hãy tiếp tục giao cho codex làm bạn kiểm tra"*); Claude viết test trước, Codex làm trong `../lean_wt/KC-09`, Claude duyệt · [chi tiết](backlog_KC.md#kc-09)
+- [x] T-369 **Khách ngồi bàn chưa có trang theo dõi món: không biết còn bao nhiêu lượt gọi trước mình, đã ra bao nhiêu món, còn thiếu món gì** — L1 (bước 1 chỉ là bản thiết kế HTML tĩnh, không phải hợp đồng), chủ repo yêu cầu 2026-11-23; Codex làm trong `../lean_wt/T-369`, Claude duyệt · [chi tiết](#t-369); **bước 1 xong 2026-11-23**: `theo-doi-mon.html` năm trạng thái, 10/10 ảnh tràn 0px; API · backend · FE mở task mới khi chủ repo duyệt bản HTML
 - [ ] T-367 **Trang Yêu thích trên app lệch bản thiết kế `favourite.html` ở màu, thẻ món, tab lọc và hộp tạo bộ** — L1 (chỉ FE), mở 2026-11-22 từ nghiệm thu YT-07; chủ repo chọn 2026-11-23 sửa điểm 3–6, không sửa màu nhấn và đầu trang; Codex làm, Claude duyệt · [chi tiết](#t-367)
 - [ ] T-343 **Trigger giữ số đếm của ngày đã ký không lấy khoá ngày, nên lệnh SQL thẳng chạy cùng lúc với lần ký vẫn lọt** — L3 (ADR-080, I-021), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; thiết kế được duyệt 2026-11-23 (Sửa đổi ADR-080), Claude viết test, Codex viết migration · [chi tiết](#t-343)
 - [x] T-368 **Tạo tài khoản khách thử để đăng nhập trang Yêu thích trên máy dev** — L1, chủ repo yêu cầu và xong 2026-11-23; tài khoản khách trong database làm việc đăng nhập và đọc Yêu thích đạt, thông tin ở `docs/command/tai-khoan-dev.md` · [chi tiết](#t-368)
@@ -674,6 +675,56 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-369"></a>
+### T-369 — Trang theo dõi món cho khách ngồi bàn
+
+Chủ repo yêu cầu 2026-11-23: khách quét QR trên bàn thấy *thứ tự* của mình để quyết chờ tiếp hay thôi; sau khi đặt thấy
+tổng số món; khi quán đem món ra thấy đã được phục vụ bao nhiêu món và còn thiếu món gì. Tham khảo khối *Tóm tắt đơn hàng*
+(`fe/src/app/ban/_components/thuc-don-khach.tsx`, `data-component="OrderSummary"`) và *Tổng thiếu theo bàn*
+(`fe/src/app/chu-quan/_components/van-hanh.tsx`). Chủ repo yêu cầu tiếp cùng ngày: **làm bản HTML trước**.
+
+**Chủ repo chọn 2026-11-23** (câu hỏi có sẵn phương án; đây là lời chủ repo, chưa phải lời chủ quán):
+1. *Thứ tự* = **số lượt gọi trước bạn còn đang chờ món**, kèm câu *chỉ để tham khảo, quán có thể ưu tiên khách vội* — không
+   hiện số thứ tự cố định, vì `master_plan/shop-facts.md` §6.24 chốt máy không xếp thứ tự bưng.
+2. Đếm **mọi kênh** đang làm (ăn tại bàn, mang đi, giao hàng, đặt qua điện thoại), vì dùng chung bếp.
+3. Món khách gửi mà quầy chưa duyệt **vẫn hiện**, ghi *chờ quán xác nhận*.
+4. **Hiện tổng tiền đơn**.
+
+*Suy ra của Claude, chưa hỏi:* dữ liệu thật sẽ lấy theo phiên bàn (gồm bàn ghép) của mã QR hiện hành; *còn thiếu* cùng nghĩa
+với *Tổng thiếu theo bàn* (theo thành phần và nhân); tiền chưa ra thì quầy chưa thu (ADR-125). Hai vế này thuộc bước sau
+(hợp đồng API, backend, FE — L2, cần ADR), mở khi bản HTML được duyệt.
+
+**Bước 1 — bản thiết kế HTML.** Acceptance viết trước khi làm:
+- A1 — file mới `docs/product/4-fe/thiet_ke/khach_hang/theo-doi-mon.html`, một file tự chạy, cùng khuôn và màu với các trang
+  khách cạnh nó (`da-gui-luot.html`), mỗi khối có `data-component`; `index.html` cùng thư mục có link tới nó ở luồng *Tại bàn*.
+- A2 — có đủ khối: đầu trang (bàn, bàn ghép), *Lượt gọi trước bạn* theo điểm 1, *Tiến độ món* (bảng Món · Đặt · Đã ra · Còn
+  thiếu, hàng tổng, thanh tiến độ), *Món chờ quán xác nhận* theo điểm 3, *Tóm tắt đơn hàng* có tiền theo điểm 4, mốc cập nhật,
+  nút gọi thêm món.
+- A3 — có cách xem năm trạng thái: đang chờ món · mới gửi chưa xác nhận · đã đủ món · bàn chưa gọi món · mã QR đã đổi.
+- A4 — số minh hoạ khớp nhau: Đặt = Đã ra + Còn thiếu từng dòng, hàng tổng cộng đúng, tổng tiền cộng đúng các dòng; tên món
+  và nhân lấy từ thực đơn thật.
+- A5 — không có thứ chưa chốt: khách huỷ món, giờ chờ ước tính, mã đơn, danh sách bàn khác, lịch sử đơn, tên người.
+- A6 — không tràn ngang ở 360px và 430px (Claude mở và chụp); `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-369.txt`): `docs/product/4-fe/thiet_ke/khach_hang/theo-doi-mon.html`,
+`docs/product/4-fe/thiet_ke/khach_hang/index.html`, `work/backlog.md`. Thi công: Codex trong `../lean_wt/T-369`, nhánh
+`codex/T-369`, nền `36e061a`; phiếu và log `../lean_wt/_claude_logs/T-369/`.
+
+**Kết quả 2026-11-23** (thực hiện: Codex, duyệt: Claude; một lượt, không vòng sửa). File mới `theo-doi-mon.html` với các khối
+`TrackingPreview` · `TrackingHeader` · `QueueAhead` · `ServeProgress` · `PendingLines` · `OrderSummary` · `TrackingActions` ·
+`TrackingEmptyState`; `index.html` thêm *Theo dõi món* sau *Đã gửi lượt* và đổi *9* thành *10 trang thiết kế*. A1–A3, A5 —
+Claude đọc diff: đủ khối, bốn lựa chọn của chủ repo, năm trạng thái; `grep` từ cấm (huỷ, phút, BC-, lịch sử, ẩn bàn, ước
+tính…) rỗng. A4 — Claude đối chiếu `master_plan/shop-facts.md` §4.2–§4.5: combo *Đầy đủ* thịt thường 3×4.000 + 9.000 + 9.000 =
+30.000đ, gồm 3 bánh + 1 trứng + 1 giò, không canh; bảng 18 = 12 + 6 từng dòng khớp; tổng 2×30.000 + 2×4.000 + 2×3.000 + 9.000 +
+3×0 = 83.000đ. A6 — Claude chụp bằng Playwright 360/430 × năm trạng thái (`../lean_wt/_claude_logs/T-369/anh/`, `chup.cjs`):
+`scrollWidth − clientWidth` = 0 cả 10 ảnh. Gate ở clone chính sau `git apply`: Gate 3, 1c–1h, be-check 33/33, db-check,
+verify PASS; Gate 1b đỏ một lần giữa lượt chạy dài, chạy lại riêng `check-links.sh` OK (cây chung có phiên khác đang sửa).
+Gate trong worktree đỏ 1f/1g ở `be/internal/khoanchi/` của nền `36e061a`, không thuộc việc này. Ghi nhận, không sửa: trạng
+thái *đã đủ món* minh hoạ thêm bàn ghép *Bàn 4 + 5* — hai ý độc lập gộp vào một trạng thái cho gọn.
+
+**Bước sau (chưa mở):** endpoint công khai theo mã QR cho phiên bàn, số lượt chờ mọi kênh, dòng chờ duyệt, tiền theo ADR-125;
+L2, cần ADR và test trước.
 
 <a id="t-368"></a>
 ### T-368 — Tạo tài khoản khách thử cho trang Yêu thích

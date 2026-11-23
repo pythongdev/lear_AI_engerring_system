@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Theo dõi món · Bánh cuốn Bà Thanh Cao Bằng</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --paper: #F6F5F1;
+  --ink: #1C1B19;
+  --muted: #5F5B53;
+  --line: #E4E1DA;
+  --accent: #1E6B50;
+  --selected: #E8F1EC;
+  --selected-ink: #14432F;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.6 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif; }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: 24px; line-height: 1.3; letter-spacing: -.025em; }
+h2 { font-size: 16px; font-weight: 600; line-height: 1.5; }
+h3 { font-size: 12px; font-weight: 600; }
+a { color: var(--accent); text-underline-offset: 3px; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+[hidden] { display: none !important; }
+[data-component] { position: relative; min-width: 0; }
+.nhan-component { display: table; max-width: 100%; overflow-wrap: anywhere; padding: 2px 6px; margin: 0 0 9px; border-radius: 4px; background: var(--ink); color: white; font: 10px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; }
+body:has(#hien-ten:not(:checked)) .nhan-component { display: none; }
+.design-toggle { max-width: 480px; margin: auto; padding: 10px 14px; background: white; border-bottom: 1px solid var(--line); font-size: 12px; }
+.design-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.design-tools label, .design-tools a { display: inline-flex; align-items: center; min-height: 44px; }
+.design-tools a { margin-left: auto; }
+input[type="checkbox"] { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
+.preview-picker { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; margin-top: 6px; }
+select { width: 100%; min-width: 0; min-height: 44px; padding: 8px; border: 1px solid var(--line); border-radius: 9px; background: white; font-size: 13px; }
+.design-note { margin-top: 8px; color: var(--muted); font-size: 11px; }
+.shell { max-width: 480px; margin: auto; padding: 20px 14px 24px; }
+.shell > * + * { margin-top: 18px; }
+.page-header { padding: 8px 0 12px; }
+.page-header h1 { margin: 16px 0 8px; }
+.brand { font-weight: 600; }
+.context { display: inline-block; color: var(--selected-ink); background: var(--selected); padding: 5px 9px; border-radius: 8px; margin-top: 8px; }
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+.card { background: white; border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.card h2 { margin-bottom: 12px; }
+.queue { background: var(--selected); border-color: #C7DACF; }
+.queue h2 { color: var(--selected-ink); font-size: 21px; line-height: 1.5; }
+.queue-number { font-size: 34px; font-weight: 700; line-height: 1; }
+.queue p + p { margin-top: 8px; }
+.progress-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.progress-heading h2 { margin-bottom: 0; }
+.progress-label { display: block; margin-top: 14px; font-size: 13px; font-weight: 600; color: var(--accent); }
+progress { display: block; appearance: none; width: 100%; height: 8px; margin-top: 8px; border: 0; border-radius: 99px; overflow: hidden; background: var(--line); accent-color: var(--accent); }
+progress::-webkit-progress-bar { background: var(--line); }
+progress::-webkit-progress-value { background: var(--accent); border-radius: 99px; }
+progress::-moz-progress-bar { background: var(--accent); border-radius: 99px; }
+.progress-note { margin-top: 10px; font-size: 11px; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; text-align: left; margin-top: 14px; }
+col.dish-column { width: 49%; }
+col.number-column { width: 17%; }
+th, td { padding: 10px 5px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+thead th { background: #FAF9F6; color: var(--muted); font-size: 11px; font-weight: 500; }
+tbody th { font-size: 12px; font-weight: 500; }
+th:not(:first-child), td { text-align: right; font-variant-numeric: tabular-nums; }
+.dish-option { display: block; font-size: 11px; color: var(--muted); font-weight: 400; }
+.missing-row { background: #FFF6E8; }
+.missing { color: #7A4100; font-weight: 700; }
+.complete { color: var(--accent); white-space: nowrap; }
+tfoot th, tfoot td { border-bottom: 0; border-top: 2px solid var(--line); padding-top: 12px; font-weight: 700; }
+.pending { background: #FFF6E8; border-color: #E9D8BD; }
+.pending h2 { color: #7A4100; }
+.pending-list { list-style: none; margin: 12px 0 0; padding: 0; }
+.pending-list li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; border-top: 1px solid #E9D8BD; padding-top: 12px; }
+.quantity { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.summary-group { margin-top: 16px; }
+.summary-row { display: grid; grid-template-columns: minmax(0, 1fr) 40px 42px 26px 65px; gap: 5px; align-items: start; font-size: 11px; }
+.summary-row > * { min-width: 0; overflow-wrap: anywhere; }
+.summary-columns { color: var(--muted); font-size: 10px; align-items: end; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.summary-line { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.summary-line:last-child { border-bottom: 0; }
+.dish-name { font-size: 12px; font-weight: 500; }
+.summary-row .quantity, .price { text-align: right; }
+.price { color: var(--accent); font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+summary { min-height: 44px; padding: 10px 0; width: fit-content; cursor: pointer; color: var(--accent); font-size: 12px; }
+.ingredients { margin: 0; padding: 10px 12px; list-style: none; border-radius: 8px; background: var(--paper); color: var(--muted); font-size: 12px; }
+.ingredients li + li { margin-top: 6px; }
+.total { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; padding-top: 14px; margin-top: 8px; border-top: 1px solid var(--line); font-weight: 600; }
+.total .price { font-size: 24px; }
+.payment-note { margin-top: 8px; }
+.link-button { display: flex; min-height: 48px; align-items: center; justify-content: center; padding: 12px; border: 1px solid var(--accent); background: var(--accent); color: white; border-radius: 10px; text-decoration: none; font-weight: 600; }
+.link-button:hover { background: var(--selected-ink); }
+.state-message { padding: 24px 16px; }
+.state-message .link-button { margin-top: 18px; }
+</style>
+</head>
+<body>
+<aside class="design-toggle" data-component="TrackingPreview" aria-label="Điều khiển bản xem thử">
+  <span class="nhan-component">TrackingPreview</span>
+  <div class="design-tools"><input type="checkbox" id="hien-ten" checked><label for="hien-ten">Hiện tên component</label><a href="index.html">Mục lục thiết kế</a></div>
+  <div class="preview-picker"><label for="preview-state">Bản xem thử</label><select id="preview-state" aria-controls="tracking-page">
+    <option value="waiting">Đang chờ món</option>
+    <option value="pending">Mới gửi chưa xác nhận</option>
+    <option value="complete">Đã đủ món</option>
+    <option value="empty">Bàn chưa gọi món</option>
+    <option value="changed-qr">Mã QR đã đổi</option>
+  </select></div>
+  <p class="design-note">Bản thiết kế tĩnh · số liệu và mốc cập nhật minh hoạ · chưa kết nối quán.</p>
+</aside>
+<main id="tracking-page" class="shell" aria-label="Theo dõi món">
+  <header data-component="TrackingHeader" class="page-header">
+    <span class="nhan-component">TrackingHeader</span>
+    <p class="brand">Bánh cuốn Bà Thanh Cao Bằng</p>
+    <p class="context" id="table-label">Bàn 4</p>
+    <h1>Theo dõi món</h1>
+    <p class="muted small">Cập nhật lúc 09:42 · tự làm mới</p>
+  </header>
+  <section data-component="QueueAhead" class="card queue" aria-labelledby="queue-title">
+    <span class="nhan-component">QueueAhead</span>
+    <h2 id="queue-title" aria-live="polite"></h2>
+    <div id="queue-notes">
+      <p class="small muted">Chỉ để tham khảo — quán phục vụ theo ai tới trước ăn trước, đôi khi ưu tiên khách vội.</p>
+      <p class="small muted">Tính chung lượt tại bàn, mang đi, giao hàng và đặt qua điện thoại.</p>
+    </div>
+  </section>
+  <section data-component="ServeProgress" class="card" aria-labelledby="progress-title">
+    <span class="nhan-component">ServeProgress</span>
+    <div class="progress-heading"><h2 id="progress-title">Món quán đã nhận</h2><span id="accepted-count" class="muted small"></span></div>
+    <label for="serve-progress" class="progress-label" id="progress-label"></label>
+    <progress id="serve-progress" max="18" value="12"></progress>
+    <table aria-label="Tiến độ món quán đã nhận" aria-describedby="progress-note">
+      <colgroup><col class="dish-column"><col class="number-column"><col class="number-column"><col class="number-column"></colgroup>
+      <thead><tr><th scope="col">Món</th><th scope="col">Đặt</th><th scope="col">Đã ra</th><th scope="col">Còn thiếu</th></tr></thead>
+      <tbody id="progress-rows"></tbody>
+      <tfoot><tr><th scope="row">Tổng</th><td id="total-ordered"></td><td id="total-served"></td><td id="total-missing"></td></tr></tfoot>
+    </table>
+    <p id="progress-note" class="progress-note muted">Mỗi phần là một cái bánh, quả trứng, chiếc giò hoặc bát canh. ✓ là món đã đủ.</p>
+  </section>
+  <section data-component="PendingLines" class="card pending" aria-labelledby="pending-title">
+    <span class="nhan-component">PendingLines</span>
+    <h2 id="pending-title">Chờ quán xác nhận</h2>
+    <p class="small muted">Món vừa gửi đang chờ quán nhận, chưa nằm trong tiến độ và tổng tiền bên dưới.</p>
+    <ul class="pending-list"><li><div><strong>Suất bánh cuốn</strong><span class="dish-option">Nhân thịt · Nhiều nhân</span></div><span class="quantity">×2</span></li></ul>
+  </section>
+  <section data-component="OrderSummary" class="card" aria-labelledby="summary-title">
+    <span class="nhan-component">OrderSummary</span>
+    <h2 id="summary-title">Tóm tắt đơn hàng</h2>
+    <p class="small muted">Các món quán đã nhận.</p>
+    <div id="summary-lines"></div>
+    <p class="total"><span>Tổng tiền đơn</span><strong id="order-total" class="price"></strong></p>
+    <p class="payment-note small muted">Món chưa ra thì quầy chưa tính tiền.</p>
+  </section>
+  <nav data-component="TrackingActions" aria-label="Gọi món tại bàn">
+    <span class="nhan-component">TrackingActions</span>
+    <a class="link-button" href="thuc-don.html">Gọi thêm món</a>
+  </nav>
+  <section data-component="TrackingEmptyState" class="card state-message" hidden>
+    <span class="nhan-component">TrackingEmptyState</span>
+    <p id="state-message" role="status"></p>
+    <a id="state-action" class="link-button" href="thuc-don.html">Xem thực đơn</a>
+  </section>
+</main>
+<script>
+// Dữ liệu minh hoạ theo shop-facts §4.2–4.5; không đọc hoặc gửi dữ liệu app.
+const parts = {
+  meat: { name: 'Bánh cuốn', option: 'Nhân thịt · Thường' },
+  mushroom: { name: 'Bánh cuốn', option: 'Nhân mộc nhĩ · Thường' },
+  plain: { name: 'Bánh cuốn', option: 'Chay' },
+  egg: { name: 'Trứng chín', option: 'Nhân thịt · Thường' },
+  sausage: { name: 'Giò', option: '' },
+  soup: { name: 'Canh', option: 'Ít rau' }
+};
+const acceptedLines = [
+  { group: 'COMBO', name: 'Combo Đầy đủ trứng chín', filling: 'Thịt', amount: 'Thường', quantity: 2, unitPrice: 30000, parts: { meat: 3, egg: 1, sausage: 1 } },
+  { group: 'MÓN LẺ', name: 'Suất bánh cuốn', filling: 'Mộc nhĩ', amount: 'Thường', quantity: 2, unitPrice: 4000, parts: { mushroom: 1 } },
+  { group: 'MÓN LẺ', name: 'Suất bánh cuốn', filling: 'Chay', amount: '', quantity: 2, unitPrice: 3000, parts: { plain: 1 } },
+  { group: 'MÓN LẺ', name: 'Giò bán rời', filling: '', amount: '', quantity: 1, unitPrice: 9000, parts: { sausage: 1 } },
+  { group: 'MÓN LẺ', name: 'Canh bánh cuốn', filling: '', amount: '', note: 'Rau: Ít rau', quantity: 3, unitPrice: 0, parts: { soup: 1 } }
+];
+const servedExample = { meat: 4, mushroom: 0, plain: 2, egg: 1, sausage: 3, soup: 2 };
+const money = value => value.toLocaleString('vi-VN') + 'đ';
+const byId = id => document.getElementById(id);
+const component = name => document.querySelector(`[data-component="${name}"]`);
+
+function renderSummary() {
+  byId('summary-lines').innerHTML = ['COMBO', 'MÓN LẺ'].map(group => `
+    <div class="summary-group" role="group" aria-label="${group}">
+      <div class="summary-row summary-columns"><h3>${group}</h3><span>Nhân</span><span>Lượng nhân</span><span>SL</span><span class="price">Giá</span></div>
+      ${acceptedLines.filter(line => line.group === group).map(line => `
+        <div class="summary-line">
+          <div class="summary-row">
+            <div><span class="dish-name">${line.name}</span>${line.note ? `<span class="dish-option">${line.note}</span>` : ''}</div>
+            <span aria-label="Nhân: ${line.filling || 'không áp dụng'}">${line.filling || '—'}</span>
+            <span aria-label="Lượng nhân: ${line.amount || 'không áp dụng'}">${line.amount || '—'}</span>
+            <span class="quantity" aria-label="Số lượng: ${line.quantity}">×${line.quantity}</span>
+            <span class="price" aria-label="Giá dòng">${money(line.quantity * line.unitPrice)}</span>
+          </div>
+          ${group === 'COMBO' ? `<details><summary>Chi tiết</summary><ul class="ingredients" aria-label="Thành phần mỗi combo">
+            <li><strong>Mỗi combo gồm:</strong></li>
+            ${Object.entries(line.parts).map(([key, quantity]) => `<li>×${quantity} ${parts[key].name}${parts[key].option ? ` · ${parts[key].option}` : ''}</li>`).join('')}
+          </ul></details>` : ''}
+        </div>`).join('')}
+    </div>`).join('');
+  byId('order-total').textContent = money(acceptedLines.reduce((sum, line) => sum + line.quantity * line.unitPrice, 0));
+}
+
+function renderProgress(complete) {
+  let totalOrdered = 0;
+  let totalServed = 0;
+  byId('progress-rows').innerHTML = Object.entries(parts).map(([key, part]) => {
+    const ordered = acceptedLines.reduce((sum, line) => sum + (line.parts[key] || 0) * line.quantity, 0);
+    const served = complete ? ordered : servedExample[key];
+    const missing = ordered - served;
+    totalOrdered += ordered;
+    totalServed += served;
+    return `<tr class="${missing ? 'missing-row' : ''}">
+      <th scope="row">${part.name}${part.option ? `<span class="dish-option">${part.option}</span>` : ''}</th>
+      <td>${ordered}</td><td>${served}</td>
+      <td class="${missing ? 'missing' : 'complete'}">${missing}${missing ? '' : ' <span aria-label="đã đủ">✓</span>'}</td>
+    </tr>`;
+  }).join('');
+  byId('accepted-count').textContent = `Tổng ${totalOrdered} phần`;
+  byId('progress-label').textContent = `${totalServed} / ${totalOrdered} phần đã ra`;
+  byId('serve-progress').max = totalOrdered;
+  byId('serve-progress').value = totalServed;
+  byId('total-ordered').textContent = totalOrdered;
+  byId('total-served').textContent = totalServed;
+  byId('total-missing').textContent = totalOrdered - totalServed;
+}
+
+function showState(state) {
+  const simple = state === 'empty' || state === 'changed-qr';
+  const pendingOnly = state === 'pending';
+  const complete = state === 'complete';
+  for (const name of ['TrackingHeader', 'QueueAhead', 'TrackingActions']) component(name).hidden = simple;
+  for (const name of ['ServeProgress', 'OrderSummary']) component(name).hidden = simple || pendingOnly;
+  component('PendingLines').hidden = simple || complete;
+  component('TrackingEmptyState').hidden = !simple;
+  byId('table-label').textContent = complete ? 'Bàn 4 + 5' : 'Bàn 4';
+  byId('queue-title').innerHTML = pendingOnly ? 'Quán chưa xác nhận món của bạn' : complete
+    ? 'Bàn bạn đã nhận đủ món' : 'Còn <span class="queue-number">3</span> lượt gọi trước bạn đang chờ món';
+  byId('queue-notes').hidden = simple || pendingOnly || complete;
+  component('PendingLines').querySelector('p').textContent = pendingOnly
+    ? 'Món vừa gửi đang chờ quán nhận. Tiến độ và tổng tiền sẽ hiện sau khi quán xác nhận.'
+    : 'Món vừa gửi đang chờ quán nhận, chưa nằm trong tiến độ và tổng tiền bên dưới.';
+  if (simple) {
+    byId('state-message').textContent = state === 'empty' ? 'Bàn bạn chưa gọi món.' : 'Bạn vui lòng quét lại mã trên bàn.';
+    byId('state-action').textContent = state === 'empty' ? 'Xem thực đơn' : 'Về trang chủ';
+    byId('state-action').href = state === 'empty' ? 'thuc-don.html' : 'trang-chu.html';
+  }
+  renderProgress(complete);
+}
+renderSummary();
+showState(byId('preview-state').value);
+byId('preview-state').addEventListener('change', event => showState(event.target.value));
+</script>
+</body>
+</html>
