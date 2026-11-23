@@ -116,7 +116,9 @@ export function PhieuKhach({ ma, nhan, initialMenu, initialDelivery }: {
     <h1 className="flex items-center gap-2 text-[20px] font-semibold">
       {!web && <QrCode aria-hidden="true" />}
       {web ? "Đặt món" : /^\d+$/.test(nhan?.trim() ?? "") ? `Bàn ${nhan!.trim()}` : nhan}
-    </h1></div></header>
+    </h1>
+    {!web && <Link href={`/ban/${encodeURIComponent(ma!)}/theo-doi`} className="inline-flex min-h-11 items-center text-[var(--accent)] underline">Theo dõi món</Link>}
+    </div></header>
     {menu.isError && <p role="alert">Chưa đọc được menu. Đang hiện bản đọc lúc {new Date(menu.dataUpdatedAt).toLocaleTimeString("vi-VN")}. <Button onClick={() => void menu.refetch()}>Đọc lại menu</Button></p>}
     <form onSubmit={(e) => { e.preventDefault(); if (choGuiLai || web) void gui(); else if (hopLe) setXacNhan(true); }}>
       <fieldset disabled={dangGui || choGuiLai}>
@@ -138,7 +140,7 @@ export function PhieuKhach({ ma, nhan, initialMenu, initialDelivery }: {
         ? <p role="alert">{tong.error.message} <Button type="button" onClick={() => void tong.refetch()}>Tính lại</Button></p>
         : tong.isSuccess && <p className="text-[var(--accent)]">Tổng tạm tính {tien(tong.data.total_vnd)}</p>)} />
       </fieldset>
-      {bao && <p role="status">{bao}</p>}
+      {bao && <p role="status">{bao}{!web && <Link href={`/ban/${encodeURIComponent(ma!)}/theo-doi`} className="mt-2 flex min-h-11 items-center justify-center rounded-xl border border-[var(--accent)] px-3 text-[var(--accent)]">Theo dõi món</Link>}</p>}
       {loi && <p role="alert">{loi}</p>}
       <button data-component="CartBottomBar" className="mt-3 flex h-[52px] w-full items-center justify-between gap-2 rounded-xl border-0 bg-[var(--accent)] px-3 text-[15px] text-[#fff]" type="submit" disabled={dangGui || (!choGuiLai && !hopLe)}>
         <span aria-hidden="true" className="rounded-md bg-[#ff9a4d] px-[9px] py-[3px] text-[12px]">{lines.reduce((n, d) => n + (Number.isFinite(d.quantity) ? d.quantity : 0), 0)}</span>

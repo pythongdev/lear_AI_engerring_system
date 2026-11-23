@@ -1511,6 +1511,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/qr-codes/{code}/progress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Theo dõi món của bàn qua mã QR hiện hành
+         * @description Trả phiên chưa đóng chứa bàn của mã, gồm nhãn các bàn ghép. Số lượng, dòng đã duyệt và tiền lấy từ cùng nguồn service-board; không trả người, lịch sử đem ra hay bàn khác. Không có phiên trả session null. Không ghi dữ liệu và không cần phiên đăng nhập.
+         */
+        get: operations["getTableProgress"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/dining-tables/{dining_table_id}/qr-code": {
         parameters: {
             query?: never;
@@ -2932,6 +2952,27 @@ export interface components {
              */
             person_id: number;
             created_at: components["schemas"]["Instant"];
+        };
+        TableProgress: {
+            table_label: string;
+            read_at: components["schemas"]["Instant"];
+            session: components["schemas"]["TableProgressSession"] | null;
+        };
+        TableProgressSession: {
+            /** @description Nhãn các bàn của phiên, cùng thứ tự service-board. */
+            tables: string[];
+            items: components["schemas"]["ServiceBoardItem"][];
+            /** @description Dòng gốc của đơn đã duyệt chưa huỷ, theo đơn rồi id dòng; suất combo lồng trong portions. */
+            lines: components["schemas"]["PriceLine"][];
+            lines_total_vnd: components["schemas"]["MoneyVnd"];
+            served_amount_vnd: components["schemas"]["MoneyVnd"];
+            /** @description Dòng gốc của đơn chưa duyệt chưa huỷ trong phiên, theo đơn rồi id dòng; combo có portions. Rỗng là []. */
+            pending_lines: components["schemas"]["PriceLine"][];
+            /**
+             * Format: int64
+             * @description Mốc là created_at sớm nhất của đơn đã duyệt chưa huỷ trong phiên còn việc pending hoặc made; không có mốc thì null. Đếm đơn khác phiên, mọi kênh, đã duyệt, không cancelled/delivering/completed, còn việc pending hoặc made, created_at trước hẳn mốc và thuộc ngày bán hiện tại của service-board (quy created_at bằng múi giờ giao dịch).
+             */
+            orders_ahead: number | null;
         };
         ServiceBoard: {
             sale_date: components["schemas"]["SaleDate"];
@@ -7838,6 +7879,37 @@ export interface operations {
                 };
             };
             /** @description Mã đã bị thay hoặc không tồn tại — cùng một mã lỗi (qr_code_not_current). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getTableProgress: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tiến độ hiện tại của bàn. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TableProgress"];
+                };
+            };
+            /** @description Mã đã thay hoặc không tồn tại (qr_code_not_current). */
             404: {
                 headers: {
                     [name: string]: unknown;

@@ -1,0 +1,52 @@
+.theo-doi-mon { --td-paper: #f6f5f1; --td-ink: #1c1b19; --td-muted: #5f5b53; --td-line: #e4e1da; --td-accent: #1e6b50; background: var(--td-paper); color: var(--td-ink); min-height: 100dvh; font-size: 14px; line-height: 1.6; }
+.theo-doi-mon * { box-sizing: border-box; }
+.theo-doi-mon .td-shell { max-width: 480px; margin: auto; padding: 20px 14px 24px; overflow-wrap: anywhere; }
+.theo-doi-mon .td-shell > * + * { margin-top: 18px; }
+.theo-doi-mon h1 { font-size: 24px; line-height: 1.3; font-weight: 700; margin: 16px 0 8px; }
+.theo-doi-mon h2 { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+.theo-doi-mon .td-header { padding: 8px 0 12px; }
+.theo-doi-mon .td-brand { font-weight: 600; }
+.theo-doi-mon .td-context { display: inline-block; color: #14432f; background: #e8f1ec; padding: 5px 9px; border-radius: 8px; margin-top: 8px; }
+.theo-doi-mon .td-muted { color: var(--td-muted); }
+.theo-doi-mon .td-small { font-size: 12px; }
+.theo-doi-mon .td-card { min-width: 0; border: 1px solid var(--td-line); border-radius: 14px; padding: 16px; background: white; }
+.theo-doi-mon .td-queue { background: #e8f1ec; border-color: #c7dacf; }
+.theo-doi-mon .td-queue h2 { color: #14432f; font-size: 21px; line-height: 1.5; }
+.theo-doi-mon .td-queue p + p { margin-top: 8px; }
+.theo-doi-mon .td-progress-label { display: block; margin-top: 14px; font-size: 13px; font-weight: 600; color: var(--td-accent); }
+.theo-doi-mon progress { display: block; appearance: none; width: 100%; height: 8px; margin-top: 8px; border: 0; border-radius: 99px; overflow: hidden; background: var(--td-line); accent-color: var(--td-accent); }
+.theo-doi-mon progress::-webkit-progress-bar { background: var(--td-line); }
+.theo-doi-mon progress::-webkit-progress-value { background: var(--td-accent); border-radius: 99px; }
+.theo-doi-mon progress::-moz-progress-bar { background: var(--td-accent); border-radius: 99px; }
+.theo-doi-mon table { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 14px; font-size: 13px; text-align: left; }
+.theo-doi-mon col { width: 10%; }
+.theo-doi-mon .td-status-col { width: 14%; }
+.theo-doi-mon .td-egg-col { width: 20%; }
+.theo-doi-mon .td-money-col { width: 26%; }
+.theo-doi-mon th, .theo-doi-mon td { padding: 8px 2px; border-bottom: 1px solid var(--td-line); vertical-align: middle; }
+.theo-doi-mon thead th { background: #faf9f6; color: var(--td-muted); font-size: 11px; font-weight: 500; }
+.theo-doi-mon tbody th { font-size: 12px; font-weight: 500; }
+.theo-doi-mon th:not(:first-child), .theo-doi-mon td { text-align: right; font-variant-numeric: tabular-nums; }
+.theo-doi-mon td div { font-size: 11px; }
+.theo-doi-mon .td-khong { color: var(--td-muted); opacity: .45; }
+.theo-doi-mon .td-missing { background: #fff6e8; color: #7a4100; font-weight: 700; }
+.theo-doi-mon .td-money { color: var(--td-accent); font-weight: 600; }
+.theo-doi-mon .td-money-summary { display: none; margin-top: 10px; font-size: 13px; }
+.theo-doi-mon .td-note { margin-top: 10px; font-size: 11px; }
+.theo-doi-mon .td-pending { background: #fff6e8; border-color: #e9d8bd; }
+.theo-doi-mon .td-pending h2 { color: #7a4100; }
+.theo-doi-mon .td-pending ul { list-style: none; padding: 0; margin: 12px 0 0; }
+.theo-doi-mon .td-pending li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; border-top: 1px solid #e9d8bd; padding-top: 12px; }
+.theo-doi-mon .td-pending li > span { white-space: nowrap; }
+.theo-doi-mon .td-button { display: block; width: 100%; min-height: 44px; margin-top: 12px; padding: 10px 12px; border: 1px solid var(--td-accent); border-radius: 9px; background: white; color: var(--td-accent); text-align: left; cursor: pointer; font-weight: 600; }
+.theo-doi-mon .td-button:hover { background: #e8f1ec; }
+.theo-doi-mon :focus-visible { outline: 3px solid var(--td-accent); outline-offset: 3px; }
+.theo-doi-mon .td-lines { margin-top: 12px; font-size: 12px; }
+.theo-doi-mon .td-total { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; border-top: 1px solid var(--td-line); padding-top: 12px; margin-top: 14px; font-weight: 600; }
+@media (max-width: 479px) {
+  .theo-doi-mon col { width: 13%; }
+  .theo-doi-mon .td-status-col { width: 20%; }
+  .theo-doi-mon .td-egg-col { width: 28%; }
+  .theo-doi-mon .td-money-col { display: none; }
+  .theo-doi-mon .td-money-summary { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 10px; }
+}

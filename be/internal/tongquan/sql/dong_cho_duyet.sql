@@ -1,0 +1,30 @@
+-- ADR-148: ảnh dòng chờ duyệt của đúng phiên, cùng hình PriceLine.
+-- name: DongChoDuyet :one
+WITH dong AS (
+ SELECT l.id, l.sales_order_id, l.parent_order_line_id, l.menu_combo_id, l.menu_item_id,
+   l.item_name, l.quantity, l.unit_price_vnd, l.line_total_vnd
+ FROM order_line l JOIN sales_order o ON o.id = l.sales_order_id
+ WHERE o.table_session_id = $1 AND o.id_if_approved IS NULL AND o.status <> 'cancelled'
+), anh AS (
+ -- Ảnh PriceLine của từng dòng chờ, chưa tính lại giá hay gom việc trạm.
+ SELECT l.id, l.sales_order_id, l.parent_order_line_id, l.menu_combo_id,
+   jsonb_strip_nulls(jsonb_build_object(
+     'menu_item_id', l.menu_item_id, 'menu_combo_id', l.menu_combo_id,
+     'item_name', l.item_name, 'quantity', l.quantity,
+     'unit_price_vnd', l.unit_price_vnd, 'line_total_vnd', l.line_total_vnd,
+     'components', coalesce((SELECT jsonb_agg(to_jsonb(c) - 'position' ORDER BY c.position) FROM (
+       SELECT menu_component_id, component_name, quantity, takes_filling, base_price_vnd, position
+       FROM order_line_component WHERE order_line_id = l.id
+     ) c), '[]'::jsonb),
+     'options', coalesce((SELECT jsonb_agg(to_jsonb(p) ORDER BY p.menu_option_id) FROM (
+       SELECT menu_option_id, option_group_name, option_name, surcharge_vnd
+       FROM order_line_option WHERE order_line_id = l.id
+     ) p), '[]'::jsonb)
+   )) AS body
+ FROM dong l
+)
+SELECT coalesce(jsonb_agg(
+ a.body || CASE WHEN a.menu_combo_id IS NULL THEN '{}'::jsonb ELSE jsonb_build_object(
+   'portions', coalesce((SELECT jsonb_agg(k.body ORDER BY k.id) FROM anh k WHERE k.parent_order_line_id = a.id), '[]'::jsonb)
+ ) END ORDER BY a.sales_order_id, a.id
+), '[]'::jsonb)::jsonb AS result FROM anh a WHERE a.parent_order_line_id IS NULL;

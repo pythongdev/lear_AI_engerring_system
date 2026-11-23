@@ -52,3 +52,15 @@ func (r repository) bang(ctx context.Context, ngay string) (out BangVanHanh, err
 	err = json.Unmarshal(raw, &out)
 	return
 }
+
+func (r repository) dongChoDuyet(ctx context.Context, sessionID int64) (json.RawMessage, error) {
+	return r.q.DongChoDuyet(ctx, pgtype.Int8{Int64: sessionID, Valid: true})
+}
+
+func (r repository) luotTruoc(ctx context.Context, sessionID int64, ngay string) (*int64, error) {
+	row, err := r.q.LuotTruoc(ctx, sqlcgen.LuotTruocParams{Column1: sessionID, Column2: ngay})
+	if err != nil || !row.HasAnchor {
+		return nil, err
+	}
+	return &row.OrdersAhead, nil
+}

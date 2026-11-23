@@ -11,12 +11,22 @@ func Routes(r *gin.Engine, svc *Service) {
 	h := handler{svc: svc}
 	r.GET("/owner-overview", h.doc)
 	r.GET("/service-board", h.docBang)
+	r.GET("/qr-codes/:code/progress", h.theoDoi)
 	r.PUT("/daily-minimums/:sale_date", h.dat)
 	r.POST("/workers-present-declarations", h.khai)
 	r.GET("/workers-present", h.docNguoi)
 }
 
 type handler struct{ svc *Service }
+
+func (h handler) theoDoi(c *gin.Context) {
+	out, err := h.svc.TheoDoi(c.Request.Context(), c.Param("code"))
+	if err != nil {
+		apierr.WriteError(c.Writer, err)
+		return
+	}
+	apierr.JSON(c.Writer, 200, out)
+}
 
 func (h handler) doc(c *gin.Context) {
 	id, _ := middleware.Nguoi(c)

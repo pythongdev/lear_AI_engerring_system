@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.80.0
+  version: 0.81.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -2765,6 +2765,37 @@ paths:
                 $ref: '#/components/schemas/Error'
         '404':
           description: Mã đã bị thay hoặc không tồn tại — cùng một mã lỗi (qr_code_not_current).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  # T-372, ADR-148 — chỉ đọc tiến độ phiên của mã QR hiện hành.
+  /qr-codes/{code}/progress:
+    get:
+      operationId: getTableProgress
+      tags:
+        - qr
+      security: []
+      summary: Theo dõi món của bàn qua mã QR hiện hành
+      description: >-
+        Trả phiên chưa đóng chứa bàn của mã, gồm nhãn các bàn ghép. Số lượng, dòng đã duyệt
+        và tiền lấy từ cùng nguồn service-board; không trả người, lịch sử đem ra hay bàn khác.
+        Không có phiên trả session null. Không ghi dữ liệu và không cần phiên đăng nhập.
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tiến độ hiện tại của bàn.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableProgress'
+        '404':
+          description: Mã đã thay hoặc không tồn tại (qr_code_not_current).
           content:
             application/json:
               schema:
@@ -5645,6 +5676,56 @@ components:
           description: Người tạo; người sửa nằm trong record_revision.
         created_at:
           $ref: '#/components/schemas/Instant'
+    TableProgress:
+      type: object
+      additionalProperties: false
+      required: [table_label, read_at, session]
+      properties:
+        table_label:
+          type: string
+        read_at:
+          $ref: '#/components/schemas/Instant'
+        session:
+          oneOf:
+            - $ref: '#/components/schemas/TableProgressSession'
+            - type: 'null'
+    TableProgressSession:
+      type: object
+      additionalProperties: false
+      required: [tables, items, lines, lines_total_vnd, served_amount_vnd, pending_lines, orders_ahead]
+      properties:
+        tables:
+          type: array
+          description: Nhãn các bàn của phiên, cùng thứ tự service-board.
+          items:
+            type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceBoardItem'
+        lines:
+          type: array
+          description: Dòng gốc của đơn đã duyệt chưa huỷ, theo đơn rồi id dòng; suất combo lồng trong portions.
+          items:
+            $ref: '#/components/schemas/PriceLine'
+        lines_total_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        served_amount_vnd:
+          $ref: '#/components/schemas/MoneyVnd'
+        pending_lines:
+          type: array
+          description: Dòng gốc của đơn chưa duyệt chưa huỷ trong phiên, theo đơn rồi id dòng; combo có portions. Rỗng là [].
+          items:
+            $ref: '#/components/schemas/PriceLine'
+        orders_ahead:
+          type: [integer, 'null']
+          format: int64
+          minimum: 0
+          description: >-
+            Mốc là created_at sớm nhất của đơn đã duyệt chưa huỷ trong phiên còn việc pending hoặc made;
+            không có mốc thì null. Đếm đơn khác phiên, mọi kênh, đã duyệt, không cancelled/delivering/completed,
+            còn việc pending hoặc made, created_at trước hẳn mốc và thuộc ngày bán hiện tại của service-board
+            (quy created_at bằng múi giờ giao dịch).
     ServiceBoard:
       type: object
       additionalProperties: false
