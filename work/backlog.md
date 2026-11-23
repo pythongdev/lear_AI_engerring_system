@@ -103,6 +103,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 - [x] YT-07 **Trang Yêu thích chưa được nghiệm thu trên app chạy so với bản thiết kế** — L1, sau YT-06; Codex viết kịch bản Playwright trong `../lean_wt/YT-07`, Claude chạy trên app thật và duyệt (nhận 2026-11-22) · [mô tả](backlog_YT.md#yt-07); **xong 2026-11-22**: kịch bản trên app thật `TONG pass=65 fail=0`; lệch so với bản thiết kế ghi thành T-367
 - [x] T-349 **Next.js 16.4.2 dính hai khuyến cáo bảo mật mới, `next build` lại dừng cách lượt** — L1 (đổi phụ thuộc `fe/`), chủ repo yêu cầu 2026-11-19; nâng `next` · `eslint-config-next` lên 16.4.6; Codex làm, Claude duyệt · [chi tiết](#t-349); **xong 2026-11-22**: `npm ls` 16.4.6, audit không còn `next`, `next build` hai lần exit 0
 - [x] T-332 **Gate 7b báo động giả khi chủ repo commit khối trước lúc hook chấm: file scope vừa bị hook dọn nên mọi file của khối bị coi là ngoài scope** — L1, mở 2026-11-16, F-081 (lần hai); Codex làm, Claude duyệt · [chi tiết](#t-332); **xong 2026-11-22**: Claude duyệt, test 7b đủ ca A1–A4, gate xanh
+- [x] T-329 **`db-check` mất hơn 700 giây mỗi lượt mà không ai biết thời gian nằm ở khối nào, và còn in một dòng `Broken pipe`** — L1 (chỉ đo và gỡ dòng nhiễu, không đổi điều kiện đạt/đỏ), mở 2026-11-16 theo Bước 6 của `work/proposals/danh-gia-he-thong-2026-11-11.md`; Codex làm, Claude duyệt và chạy `db-check` thật · [chi tiết](#t-329); **xong 2026-11-22**: Claude đo `db-check` 809 giây, khối đối chiếu 643 giây, không còn `Broken pipe`
 - [x] KC-05 **Backend chưa trả tổng tiền theo ngày, chưa đọc được lịch sử một khoản con và ngày chi gần nhất ngoài bộ lọc** — L2 (hợp đồng đọc tiền), chủ repo yêu cầu 2026-11-22; Claude viết test trước rồi tự làm vì Codex hết hạn mức, chưa ai duyệt độc lập · [chi tiết](backlog_KC.md#kc-05)
 - [x] KC-02 **Database chưa nối mục chi với sổ nguyên liệu: chưa có cờ theo dõi lượng, nối một thứ một khoản con, ngừng dùng, ngày nhập** — L2, chủ repo yêu cầu 2026-11-22; Claude viết test trước, Codex làm migration, Claude làm nốt khi Codex hết hạn mức · [chi tiết](backlog_KC.md#kc-02)
 - [x] KC-08 **Trang Khoản chi thật chưa có bố cục gọn của bản HTML: khối chọn ngày, mục xếp dọc, đầu khối có Hiện/Ẩn** — L1 (chỉ FE, dùng API đang có), chủ repo yêu cầu 2026-11-22; Codex làm trong `../lean_wt/KC-08`, Claude duyệt · [chi tiết](backlog_KC.md#kc-08)
@@ -688,6 +689,26 @@ Phạm vi (`work/scope/T-332.txt`): `scripts/check-commit-block.sh`, `scripts/ch
 không đưa mã vào `--task`; `git add` sau commit cuối và index thật vẫn chấm; `git log` lỗi ⇒ `skip` như nhánh sẵn có. `bash
 scripts/check-commit-block.test.sh` → *tất cả ca đều qua* (A1–A4 mỗi ca có tên `T-332 …`, ca cũ giữ nguyên); `./scripts/gate.sh` cây
 chính xanh 2026-11-22. Thiết kế 2026-11-16 chưa có lời chủ repo; Claude đóng theo vai dẫn việc L1 (ADR-054), chủ repo phản đối thì mở lại.
+
+<a id="t-329"></a>
+### T-329 — `db-check` mất hơn 700 giây mỗi lượt mà không ai biết thời gian nằm ở khối nào, và còn in một dòng `Broken pipe`
+
+Chủ repo 2026-11-16 dặn tiếp tục giao Codex làm, Claude kiểm. Số đo 2026-11-12 ở cây chính (T-321 · T-323): một lượt gate có đổi `be/` và phía database mất khoảng 1 060 giây, trong đó `db-check` **711–718 giây**, `be-check` 199–203 giây; hạn Stop hook là 180 giây. T-321 đã cho gate in thời gian từng cổng và từng bước của Gate 1, nhưng `db-check` vẫn là một khối đen. Bản đánh giá Bước 6 nói *đo rồi mới cắt*: task này chỉ đo. Ngoài ra mỗi lượt `db-check` in `./scripts/db-check.sh: line 6xx: printf: write error: Broken pipe` dù vẫn đạt (đo 2026-11-12, ba lượt) — một dòng lỗi trong output của một cổng đạt là thứ dạy người đọc bỏ qua dòng lỗi.
+
+Acceptance viết trước sửa:
+- [x] A1 — `scripts/db-check.sh` in một dòng `[time] db-check:<khối> <giây>s` cho mỗi khối lớn nó thật sự chạy (các khối theo đúng tiêu đề `# --- …` sẵn có của script: migration xuôi · lùi · xuôi lại, khối kiểm trong tài liệu, `db/tests`, dữ liệu mồi, dữ liệu thử máy dev, khoá chặn, bộ đối chiếu, ba scenario…), cùng khuôn với dòng `[time]` của `scripts/verify.sh`; không đổi dòng `PASS` · `FAIL` · `NOTE` nào, không đổi mã thoát.
+- [x] A2 — Gate hiện các số ấy trong dòng `Gate 1: …` mà không sinh dòng nhãn mới ở cột 0; `scripts/gate.test.sh` có ca chứng minh.
+- [x] A3 — Tìm ra lệnh gây `printf: write error: Broken pipe` và gỡ nó mà không đổi điều gì khối ấy kiểm (nêu vì sao kết quả kiểm không đổi); lượt `db-check` thật không còn dòng ấy.
+- [x] A4 — Claude chạy `./scripts/db-check.sh` bằng Docker: đạt, tổng các khối xấp xỉ tổng thời gian, số đo từng khối được ghi vào mục này; `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-329.txt`): `scripts/db-check.sh`, `scripts/db-check.test.sh`, `scripts/gate.sh`, `scripts/gate.test.sh`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-329`, nhánh `codex/T-329`, nền `4817376`. Duyệt: Claude, chưa duyệt.
+
+**Duyệt 2026-11-22** (Claude, cây chính `1fc16ae` cộng bản Codex đã áp). A1: `scripts/db-check.sh` in `[time] db-check:<khối>` cho
+mười hai khối. A2: dòng `Gate 1:` của `./scripts/gate.sh` mang số đo, ca `10b` ở `scripts/gate.test.sh` chứng minh, không thêm nhãn cột 0.
+A3: dòng nhiễu đến từ `printf … | grep -m1` — `grep` thoát ở dòng khớp đầu, `printf` ghi vào ống đã đóng; bản sửa đọc bằng here-string
+rồi lấy dòng khớp đầu, cùng dòng NOTICE như trước nên kết quả kiểm không đổi; lượt thật không còn dòng ấy. A4: gate cây chính xanh,
+`db-check` 809 giây: setup 4 · migration-up 57 · migration-down 54 · migration-up-again 2 · params 0 · qc-docs 2 · sql-tests 10 · seed 1 ·
+dev-fixture 0 · down-guard 30 · **reconcile 643** · scenarios 5 (cộng 808). Khối đối chiếu chiếm 79% — đúng chỗ T-336 nhắm.
 
 <a id="t-364"></a>
 ### T-364 — Ghi lời chủ repo cho U-120…U-125 và sửa sổ KC

@@ -41,6 +41,7 @@ failed=0
 compose() { docker compose -p "$PROJECT" "$@"; }
 cleanup() { compose down -v --remove-orphans >/dev/null 2>&1; }
 fail() { echo "FAIL $*"; failed=1; }
+time_block() { printf '[time] db-check:%s %ss\n' "$1" "$((SECONDS - $2))"; }
 
 # Chỉ nhận tên có PID dương; tên cũ không hậu tố và project làm việc không khớp.
 # PID được tái dùng, hay PID của user khác (kill -0 trả EPERM), vẫn coi là đang
@@ -80,14 +81,17 @@ cleanup_on_exit() {
   exit "$status"
 }
 
+block_started=$SECONDS
 if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
   echo "db-check: FAIL — Docker không chạy. Bật Docker rồi chạy lại ./scripts/db-check.sh"
+  time_block setup "$block_started"
   exit 1
 fi
 
 SHOP_TZ="$(grep -m1 '^| Múi giờ |' master_plan/shop-facts.md | grep -o '`[^`]*`' | head -1 | tr -d '`')"
 if [ -z "$SHOP_TZ" ]; then
   echo "db-check: FAIL — không đọc được múi giờ ở master_plan/shop-facts.md §1 (dòng '| Múi giờ |')"
+  time_block setup "$block_started"
   exit 1
 fi
 
@@ -98,6 +102,7 @@ cleanup_stale
 if ! compose up -d --wait db >/dev/null 2>&1; then
   echo "db-check: FAIL — database không lên"
   compose logs db 2>&1 | tail -20
+  time_block setup "$block_started"
   exit 1
 fi
 
@@ -111,6 +116,7 @@ psql_f() {
 psql_q() { psql_f "$@" </dev/null; }
 
 echo "=== db-check — $(psql_q -c 'SHOW server_version' 2>&1) · múi giờ kết nối $SHOP_TZ ==="
+time_block setup "$block_started"
 
 # --- migration: xuôi · lùi · xuôi lại (P2-09, docs/product/2-db/07-thu-tu-migration.md)
 # (a) xuôi TỪNG bước từ số không, chụp lược đồ sau mỗi bước; (b) lùi từng bước về số
@@ -122,6 +128,7 @@ schema_dump() {
   compose exec -T db pg_dump -U shop_owner -d banhcuon --schema-only --schema=shop </dev/null \
     | grep -Ev '^(--|\\(un)?restrict )' | grep -v '^$'
 }
+block_started=$SECONDS
 snap="$(mktemp -d)"
 versions="$(find db/migrations -maxdepth 1 -name '*.up.sql' 2>/dev/null | sed 's|.*/||' | sort)"
 n_mig="$(printf '%s' "$versions" | grep -c .)"
@@ -306,7 +313,9 @@ if [ "$n_mig" -gt 0 ]; then
     fail "ảnh chụp lược đồ — sau $n_mig bước không dài hơn lược đồ rỗng; pg_dump có chạy không?"
     mig_ok=0
   fi
+  time_block migration-up "$block_started"
   if [ "$mig_ok" -eq 1 ]; then
+    block_started=$SECONDS
     for f in $(printf '%s\n' $versions | sort -r); do
       v="${f%%_*}"; before="$(cat "$snap/$v.prev")"
       if ! out="$(migrate down 1)"; then
@@ -319,26 +328,32 @@ if [ "$n_mig" -gt 0 ]; then
         mig_ok=0; break
       fi
     done
+    time_block migration-down "$block_started"
   fi
   if [ "$mig_ok" -eq 1 ]; then
+    block_started=$SECONDS
     if out="$(migrate up)" && d="$(diff "$snap/$top" <(schema_dump))"; then
       echo "PASS xuôi lại — $n_mig bước từ số không, lược đồ giống hệt lần xuôi đầu ($(grep -c . "$snap/$top") dòng)"
     else
       fail "xuôi lại"; printf '%s\n' "$out" "${d:-}" | head -20 | sed 's/^/     /'
     fi
+    time_block migration-up-again "$block_started"
   else
+    block_started=$SECONDS
     # Vòng hỏng giữa chừng để lại lược đồ dở và dấu dirty: dựng lại database sạch để
     # các phép kiểm sau chạy trên lược đồ đầy đủ, không đỏ dây chuyền.
     echo "NOTE migrate — dựng lại database rỗng và xuôi cả dãy cho các phép kiểm sau"
     cleanup; compose up -d --wait db >/dev/null 2>&1 && migrate up >/dev/null \
       || fail "migrate — không dựng lại được lược đồ đầy đủ"
     top=0   # không kiểm khoá chặn trên một vòng đã hỏng
+    time_block migration-recovery "$block_started"
   fi
 else
   echo "NOTE migrate — db/migrations/ chưa có file nào; kiểm trên lược đồ rỗng"
 fi
 
 # --- tham số từ bảng §0 ------------------------------------------------------
+block_started=$SECONDS
 # Dòng dạng: | `:ten` | nghĩa | ai điền | `giá trị SQL` |
 subst_file="$(mktemp)"
 grep -E '^\| `:[a-z_]+` \|' "$PARAMS_FILE" | while IFS= read -r row; do
@@ -356,8 +371,10 @@ apply_params() {
   done < "$subst_file"
   printf '%s' "$sql"
 }
+time_block params "$block_started"
 
 # --- 1. khối kiểm trong tài liệu --------------------------------------------
+block_started=$SECONDS
 blocks="$(mktemp)"
 for f in "$DOCS"/*.md; do
   awk -v file="$f" '
@@ -390,8 +407,10 @@ while IFS="$(printf '\t')" read -r -d $'\036' code lang file body; do
 done < "$blocks"
 [ "$n_blocks" -gt 0 ] || fail "không tìm thấy khối kiểm nào trong $DOCS/*.md"
 rm -f "$blocks"
+time_block qc-docs "$block_started"
 
 # --- 3. db/tests/*.sql --------------------------------------------------------
+block_started=$SECONDS
 n_tests=0
 for t in db/tests/*.sql; do
   [ -f "$t" ] || continue
@@ -403,8 +422,10 @@ for t in db/tests/*.sql; do
   fi
 done
 [ "$n_tests" -gt 0 ] || echo "NOTE db/tests/ — chưa có file test nào"
+time_block sql-tests "$block_started"
 
 # --- 4. dữ liệu mồi (P2-10, docs/product/2-db/08-du-lieu-moi.md) ----------------
+block_started=$SECONDS
 # Sinh từ master_plan/shop-facts.md lúc chạy, dựng vào database này (sau mọi test,
 # vì các test chạy trên database rỗng), rồi tính lại các ca giá của §4.8 ⇒ khớp
 # từng đồng. Owner đổi hình mà bộ dựng không đọc được ⇒ FAIL.
@@ -454,8 +475,10 @@ if seed_sql="$(perl db/seed/seed.pl 2>&1)"; then
 else
   fail "dữ liệu mồi — db/seed/seed.pl không đọc được owner:"; printf '%s\n' "$seed_sql" | sed 's/^/     /'
 fi
+time_block seed "$block_started"
 
 # --- 4b. dữ liệu thử máy dev (T-236) ------------------------------------------
+block_started=$SECONDS
 # Kiểm trong một giao dịch rồi rollback: S5 tự gán danh mục cho món, nên không
 # để fixture thử làm trùng khoá hoặc đổi các đáp số scenario phía sau.
 # Chỉ bỏ BEGIN/COMMIT ngoài cùng của SQL sinh ra; mọi cửa ghi/trigger giữ nguyên.
@@ -544,8 +567,10 @@ else
   fail "dữ liệu thử — bộ dựng không đọc được owner"
   printf '%s\n' "$trial_sql" | sed 's/^/     /'
 fi
+time_block dev-fixture "$block_started"
 
 # --- 5. khoá chặn của đường lùi biết kêu (P2-09) ------------------------------
+block_started=$SECONDS
 # Database có dữ liệu mồi: bước rỗng được lùi (luật 2), bước đầu có dữ liệu phải
 # từ chối mà không đổi lược đồ. Gỡ dirty về bước ấy rồi xuôi lại đỉnh, so ảnh seeded.
 if [ "$n_mig" -gt 0 ] && [ "${top:-0}" != 0 ]; then
@@ -589,9 +614,11 @@ if [ "$n_mig" -gt 0 ] && [ "${top:-0}" != 0 ]; then
       fail "force $standing — không gỡ được dấu dirty: $(migrate version | tail -1)"
     fi
   fi
+  time_block down-guard "$block_started"
 fi
 
 # --- 6. bộ đối chiếu (P2-11, docs/product/2-db/09-doi-chieu-bat-bien.md) ---------
+block_started=$SECONDS
 # (a) comm -3 danh sách mã và (b) cả bộ trên dữ liệu mồi: chính lệnh chạy sau khi đóng quán.
 n_proof=0
 if out="$(scripts/reconcile.sh --project "$PROJECT" 2>&1)"; then
@@ -644,7 +671,7 @@ fi
 for f in $refusals; do
   name="$(basename "$f" .sql)"
   IFS="$(printf '\t')" read -r _ ran fired err <<<"$(printf '%s\n' "$sections" | grep -m1 "^$name$(printf '\t')")"
-  note="$(printf '%s\n' "$proof_out" | grep -m1 "NOTICE: *$(sed -n '1s/^-- tu-choi: //p' "$f")" | sed 's/^.*NOTICE: *//')"
+  note="$(grep "NOTICE: *$(sed -n '1s/^-- tu-choi: //p' "$f")" <<< "$proof_out" | sed -n '1s/^.*NOTICE: *//p')"
   if [ -z "$err" ] && [ -n "$note" ]; then echo "PASS từ chối $name — $note"
   else fail "từ chối $name — ${err:-không in dòng NOTICE nào}"
   fi
@@ -677,8 +704,10 @@ else
   fail "câu không có lỗi cài nào nhắm vào (cột trái) / lỗi cài nhắm vào câu không có (cột phải):"
   printf '%s\n' "$d" | sed 's/^/     /'
 fi
+time_block reconcile "$block_started"
 
 # --- 7. ba scenario nghiệm thu diễn qua lược đồ (P2-13, docs/product/2-db/11-cong-chat-luong-pha-2.md)
+block_started=$SECONDS
 # Database lúc này chỉ có dữ liệu mồi: bước 6 không COMMIT gì. (a) diễn: prelude + mở ngày + s1 · s2 ·
 # s3 · s4 trong MỘT phiên, mỗi khối DO một giao dịch được COMMIT; (b) đọc lại ở một kết nối KHÁC; (c) bộ
 # đối chiếu chạy lại trên ngày ấy ⇒ mọi câu rỗng; (d) chấm YC trong một giao dịch ROLLBACK — mỗi mã
@@ -766,6 +795,7 @@ if out="$(cat "$SC/prelude.sql" "$SC/yc.sql" | psql_f -f - 2>&1)"; then
 else
   fail "chấm YC — một kết cục không còn đúng:"; printf '%s\n' "$out" | grep -E 'ERROR' | head -5 | sed 's/^/     /'
 fi
+time_block scenarios "$block_started"
 
 rm -rf "$snap"
 rm -f "$subst_file"

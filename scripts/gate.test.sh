@@ -228,6 +228,27 @@ has "10 tổng bước Gate 1" "    Gate 1: be-static 20s · fe-rules 1s · fe-c
 has "10 đúng ba test chậm nhất theo thứ tự" "    test chậm nhất: b.test.sh 20s · d.test.sh 10s · a.test.sh 9s"
 hasnt "10 test thứ tư không vào top" "c.test.sh 1s"
 
+# 10b — db-check tự đo từng khối; Gate 1 giữ tổng và đếm đúng file test.
+r="$(newrepo db_times)"
+stub "$r" verify.sh 0 "[db] scripts/db-check.sh
+[time] db-check:setup 3s
+[time] db-check:migration-up 40s
+[time] db-check:reconcile 8s
+[time] db-check 51s
+[test] /abs/scripts/a.test.sh
+[time] test:a.test.sh 2s
+[test] /abs/scripts/b.test.sh
+[time] test:b.test.sh 4s
+Verification passed."
+echo "y" >> "$r/code.txt"
+run "$r"
+rc "10b db-check có thời gian từng khối" 0
+labels "10b"
+has "10b verify vẫn đếm hai file test" "PASS  Gate 1   verify — 2 file scripts/*.test.sh chạy, đều qua"
+has "10b Gate 1 có khối, tổng và test" "    Gate 1: db-check:setup 3s · db-check:migration-up 40s · db-check:reconcile 8s · db-check 51s · test 6s (2 file)"
+has "10b chỉ file test nằm trong danh sách chậm nhất" "    test chậm nhất: b.test.sh 4s · a.test.sh 2s"
+hasnt "10b không có nhãn riêng cho khối db-check" "PASS  Gate 1   db-check:"
+
 # 11 — verify chạy nhưng bộ test script bỏ qua: SKIP riêng, PASS verify đúng sự thật.
 r="$(newrepo test_skip)"
 stub "$r" verify.sh 0 "[time] be-static 2s
