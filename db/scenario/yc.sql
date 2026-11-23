@@ -763,7 +763,7 @@ BEGIN
   PERFORM pg_temp.yc_khong_cho('YC-26', 'danh mục có định lượng suất hoặc kết luận',
     $d$(SELECT array_agg(column_name::text ORDER BY ordinal_position) FROM information_schema.columns
         WHERE table_schema = 'shop' AND table_name = 'supply_item') =
-        ARRAY['id','name','purchase_unit','created_at','reminder_ratio']$d$, 'đọc toàn bộ cột danh mục: tỉ lệ nhắc được phép (T-186), không định lượng/kết luận');
+        ARRAY['id','name','purchase_unit','created_at','reminder_ratio','deleted_at','deleted_by_person_id']$d$, 'đọc toàn bộ cột danh mục: tỉ lệ nhắc được phép (T-186), dấu ngừng dùng được phép (KC-02, ADR-147 điểm 4), không định lượng/kết luận');
 
   PERFORM pg_temp.yc_doc('YC-27', (SELECT string_agg(format('%s %s %s = %s', s.name, e.entry_date,
     e.kind_code, e.entered_measure), ' · ' ORDER BY s.name, e.entry_date, e.kind_code)

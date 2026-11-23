@@ -243,6 +243,7 @@ type Expense struct {
 	ExpenseItemID     pgtype.Int8
 	DeletedAt         pgtype.Timestamptz
 	DeletedByPersonID pgtype.Int8
+	ReceivedDate      pgtype.Date
 }
 
 type ExpenseCategory struct {
@@ -252,6 +253,7 @@ type ExpenseCategory struct {
 	CreatedAt         pgtype.Timestamptz
 	DeletedAt         pgtype.Timestamptz
 	DeletedByPersonID pgtype.Int8
+	TracksSupply      bool
 }
 
 type ExpenseItem struct {
@@ -261,6 +263,8 @@ type ExpenseItem struct {
 	CreatedAt         pgtype.Timestamptz
 	DeletedAt         pgtype.Timestamptz
 	DeletedByPersonID pgtype.Int8
+	TracksSupply      bool
+	SupplyItemID      pgtype.Int8
 }
 
 type HolidayBonu struct {
@@ -701,11 +705,13 @@ type SupplyDayEntry struct {
 }
 
 type SupplyItem struct {
-	ID            int64
-	Name          string
-	PurchaseUnit  pgtype.Text
-	CreatedAt     pgtype.Timestamptz
-	ReminderRatio pgtype.Numeric
+	ID                int64
+	Name              string
+	PurchaseUnit      pgtype.Text
+	CreatedAt         pgtype.Timestamptz
+	ReminderRatio     pgtype.Numeric
+	DeletedAt         pgtype.Timestamptz
+	DeletedByPersonID pgtype.Int8
 }
 
 type TableSession struct {

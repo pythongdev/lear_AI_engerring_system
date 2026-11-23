@@ -11,6 +11,7 @@ BEGIN
  INSERT INTO expense(expense_category_id,expense_item_id,amount_vnd,paid_date) VALUES(category,item,70000,'2026-10-20') RETURNING id INTO entry;
  BEGIN
   INSERT INTO expense(expense_category_id,expense_item_id,amount_vnd,paid_date) VALUES(other_category,item,1,'2026-10-20');
+  SET CONSTRAINTS ALL IMMEDIATE; -- KC-02: expense_item_fkey kiểm hoãn tới cuối giao dịch (chuyển mục, ADR-147 điểm 12)
   RAISE EXCEPTION 'I-029: mismatched item/category accepted';
  EXCEPTION WHEN foreign_key_violation THEN NULL; END;
  BEGIN

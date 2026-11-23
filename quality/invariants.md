@@ -1884,3 +1884,35 @@ khách một không đổi; thân đọc không chứa `_vnd`, `price`, `item_na
 bán vẫn đọc ra `available=false` với mã ấy.
 
 *Viết ở YT-04, 2026-11-20, Claude Code — QC-17 đòi test backend mang mã mệnh đề; ADR-145 cũ ghi "không thêm bất biến", nay đổi.*
+
+### I-046 — Mỗi khoản con của mục chi theo dõi lượng là ĐÚNG MỘT thứ của sổ nguyên liệu, mang ĐÚNG tên và trạng thái ngừng của thứ ấy; thứ đã ngừng dùng không nhận con số mới hay sửa con số cũ
+
+**Invariant:**
+Mệnh đề của **mảng quản trị** sau khi gộp Kho và Nguyên liệu vào Khoản chi (`master_plan/shop-facts.md` §8.10
+*Lượt 2026-11-22*; `docs/decisions.md` ADR-147). Mệnh đề có bốn vế:
+
+- **Cờ của mục quyết định có nối.** Khoản con thuộc mục *theo dõi lượng* nối tới đúng một thứ của sổ; khoản con của
+  mục thường không nối tới thứ nào. Cờ của mục khai lúc tạo và không đổi.
+- **Một thứ, một khoản con.** Một thứ của sổ đứng dưới nhiều nhất một khoản con, nên tiền mua của nó nằm ở đúng một
+  mục; thứ chưa có khoản con là *chưa xếp mục*, sổ của nó vẫn ghi được.
+- **Một tên, một trạng thái.** Khoản con nối và thứ của sổ luôn cùng tên và cùng đang dùng hay cùng đã ngừng — sau
+  mọi giao dịch đã commit, kể cả lệnh SQL thẳng.
+- **Ngừng dùng khoá phần lượng.** Thứ đã ngừng không nhận con số mới, không sửa con số cũ, không nhận con số dời từ
+  thứ khác; tiền và con số đã ghi giữ nguyên và vẫn vào tổng. Mở lại là gỡ dấu ngừng của cả hai bên.
+
+**Mệnh đề không nói** ai được ngừng, mở lại, chuyển mục (quyền, KC-06), hay khoản chi mới có được ghi vào thứ đã ngừng
+(luật cửa ghi khoản chi, KC-06).
+
+**Why:**
+Chủ repo chọn ngày 2026-11-22: nguyên liệu ở Khoản chi và ở sổ là **cùng một thứ**, một thứ một mục, ngừng dùng thay xoá
+và khoá hẳn phần lượng. Nếu hai bên lệch tên hay lệch trạng thái, trang gộp bày hai thứ cho một thứ, và một con số ghi
+vào thứ đã ngừng làm đổi tổng mà chủ quán tưởng đã đóng. Nối hai bên mà không có mệnh đề này thì tên hay dấu ngừng chỉ
+cần một lệnh sửa một phía là lệch, không ai báo.
+
+**Verification:**
+`db/tests/kc02_supply_expense_link.sql` (Claude viết trước migration, KC-02): mục theo dõi mà khoản con không nối, mục
+thường mà có nối, cờ khoản con khác cờ mục, một thứ nối hai lần ⇒ **bị từ chối** đúng tên ràng buộc; đổi tên hay ngừng
+một phía ⇒ bị bắt lúc kiểm ràng buộc, đổi cả hai trong một giao dịch ⇒ qua; ghi hay sửa con số của thứ đã ngừng ⇒ bị
+từ chối, con số và khoản chi cũ không đổi; mở lại ⇒ ghi được và còn vết.
+
+*Viết ở KC-02, 2026-11-22, Claude Code — từ lời chủ repo ở §8.10 và ADR-147.*

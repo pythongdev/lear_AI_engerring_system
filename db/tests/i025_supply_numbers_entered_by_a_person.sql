@@ -164,7 +164,7 @@ BEGIN
 
   -- Vế "máy không giữ thứ gì để tự tính" (tầng 3, kiểm bằng ĐỌC LƯỢC ĐỒ): danh sách cột của hai
   -- bảng là đúng danh sách dưới đây. T-186 cho phép reminder_ratio theo I-025 sửa 2026-10-14;
-  -- vẫn không được cất định lượng suất, tổng hay kết luận thiếu.
+  -- KC-02, ADR-147 điểm 4 thêm cặp dấu ngừng; vẫn không cất định lượng suất, tổng hay kết luận thiếu.
   SELECT string_agg(table_name::text, ',' ORDER BY table_name::text COLLATE "C") INTO cols
   FROM information_schema.tables WHERE table_schema = 'shop' AND table_name LIKE 'supply%';
   IF cols IS DISTINCT FROM 'supply_day_entry,supply_item' THEN
@@ -172,7 +172,7 @@ BEGIN
   END IF;
   SELECT string_agg(column_name::text, ',' ORDER BY column_name::text COLLATE "C") INTO cols
   FROM information_schema.columns WHERE table_schema = 'shop' AND table_name = 'supply_item';
-  IF cols IS DISTINCT FROM 'created_at,id,name,purchase_unit,reminder_ratio' THEN
+  IF cols IS DISTINCT FROM 'created_at,deleted_at,deleted_by_person_id,id,name,purchase_unit,reminder_ratio' THEN
     RAISE EXCEPTION 'I-025: cột của supply_item khác danh sách đã duyệt: %', cols;
   END IF;
   RAISE NOTICE 'I-025 đọc lược đồ — supply_item: %', cols;
@@ -184,24 +184,31 @@ BEGIN
   RAISE NOTICE 'I-025 đọc lược đồ — supply_day_entry: % — không định lượng suất, không tổng cất sẵn; tỉ lệ nhắc ở supply_item', cols;
 
   -- Vế "không thao tác bán hàng nào chạm" (tầng 3), phần đọc được trên lược đồ: không khoá ngoại
-  -- nào nối sổ với đơn · phiên · mẻ · tiền; không hàm nào của schema nhắc tới sổ; hai bảng không
-  -- mang trigger nào ngoài trigger vết.
+  -- nào nối sổ với đơn · phiên · mẻ; KC-02 cho đúng liên kết từ khoản con tới thứ của sổ và hai
+  -- hàm chỉ kiểm cặp nối/ngừng dùng (ADR-147 điểm 2–4), không mở đường tự ghi lượng từ bán hàng.
   SELECT COUNT(*) INTO n FROM pg_constraint c
   JOIN pg_class a ON a.oid = c.conrelid JOIN pg_class b ON b.oid = c.confrelid
   JOIN pg_namespace ns ON ns.oid = c.connamespace
   WHERE ns.nspname = 'shop' AND c.contype = 'f'
     AND (   (b.relname LIKE 'supply%' AND a.relname NOT LIKE 'supply%')
-         OR (a.relname LIKE 'supply%' AND b.relname NOT IN ('supply_item', 'person')));
+         OR (a.relname LIKE 'supply%' AND b.relname NOT IN ('supply_item', 'person')))
+    AND NOT (a.relname = 'expense_item' AND b.relname = 'supply_item'
+             AND c.conname = 'expense_item_supply_item_fkey');
   IF n <> 0 THEN RAISE EXCEPTION 'I-025: % khoá ngoại nối sổ nguyên liệu với bảng ngoài danh mục và người', n; END IF;
   SELECT COUNT(*) INTO n FROM pg_proc f JOIN pg_namespace ns ON ns.oid = f.pronamespace
-  WHERE ns.nspname = 'shop' AND f.prosrc ILIKE '%supply\_%';
+  WHERE ns.nspname = 'shop' AND f.prosrc ILIKE '%supply\_%'
+    AND f.proname NOT IN ('expense_item_supply_match_guard', 'supply_day_entry_supply_item_stopped_guard');
   IF n <> 0 THEN RAISE EXCEPTION 'I-025: % hàm của schema nhắc tới sổ nguyên liệu — một đường ghi thứ hai', n; END IF;
   SELECT COUNT(*) INTO n FROM pg_trigger g JOIN pg_class c ON c.oid = g.tgrelid
   JOIN pg_namespace ns ON ns.oid = c.relnamespace JOIN pg_proc f ON f.oid = g.tgfoid
   WHERE ns.nspname = 'shop' AND c.relname LIKE 'supply%' AND NOT g.tgisinternal
-    AND f.proname <> 'record_revision_capture';
+    AND f.proname <> 'record_revision_capture'
+    AND NOT (c.relname = 'supply_item' AND g.tgname = 'supply_item_expense_match_check'
+             AND f.proname = 'expense_item_supply_match_guard')
+    AND NOT (c.relname = 'supply_day_entry' AND g.tgname = 'supply_day_entry_supply_item_stopped_check'
+             AND f.proname = 'supply_day_entry_supply_item_stopped_guard');
   IF n <> 0 THEN RAISE EXCEPTION 'I-025: % trigger ngoài trigger vết trên sổ nguyên liệu', n; END IF;
-  RAISE NOTICE 'I-025 đọc lược đồ — 0 khoá ngoại sang đơn · phiên · mẻ · tiền, 0 hàm nhắc tới sổ, 0 trigger ngoài trigger vết';
+  RAISE NOTICE 'I-025 đọc lược đồ — 0 liên kết/hàm/trigger ngoài vết và danh sách cho phép của KC-02';
 
   -- …và phần chạy thật, thu nhỏ: một đơn tới lấy được tạo, thu tiền, hoàn thành ⇒ sổ không đổi
   -- một con số nào. Buổi bán đủ năm kênh của mục Verification là việc của cổng P2A-08.
