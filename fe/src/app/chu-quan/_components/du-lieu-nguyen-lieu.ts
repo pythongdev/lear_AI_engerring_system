@@ -14,10 +14,10 @@ export function useNguyenLieu() {
     return r.data;
   } });
 }
-export function useSoNguyenLieu(supply_item_id: number) {
+export function useSoNguyenLieu(supply_item_id: number, enabled = true, staleTime = 0) {
   const api = useApi();
   return useQuery<KieuNguyenLieu["SupplyItemDetail"], ApiFailure>({
-    queryKey: ["supply-items", supply_item_id], queryFn: async () => {
+    queryKey: ["supply-items", supply_item_id], enabled, staleTime, queryFn: async () => {
       const r = await call(api.GET("/supply-items/{supply_item_id}", { params: { path: { supply_item_id } } }));
       if (!r.ok) throw r.failure;
       return r.data;

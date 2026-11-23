@@ -2,7 +2,7 @@
 
 import { useIsMutating } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useId, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { Fragment, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
@@ -15,6 +15,7 @@ import { useTongQuan } from "./du-lieu-tong-quan";
 import { useLoaiChi, useKhoanChi, useLichSuKhoanCon, useThemLoaiChi, useGhiKhoanChi, useSuaKhoanChi,
   useThemKhoanCon, useThemKhoanConCoLuong, useLichSuSuaTien, useDoiTenLoai, useDoiTenKhoanCon, useXoaLoai, useXoaKhoanCon, useXoaKhoanChi,
   loiKhoanChi, oLoiKhoanChi, type KieuKhoanChi } from "./du-lieu-khoan-chi";
+import { useNguyenLieu, useSoNguyenLieu, type KieuNguyenLieu } from "./du-lieu-nguyen-lieu";
 import "./khoan-chi.css";
 
 const loi = { loi: loiKhoanChi, oLoi: oLoiKhoanChi };
@@ -27,6 +28,7 @@ type Loai = KieuKhoanChi["ExpenseCategory"];
 type Khoan = KieuKhoanChi["Expense"];
 type Con = KieuKhoanChi["ExpenseItem"];
 type DuLieu = KieuKhoanChi["Expenses"];
+type NguyenLieu = KieuNguyenLieu["SupplyItem"];
 type Mo = { kind: "tao"; category?: number; item?: number } | { kind: "sua"; entry: Khoan } | { kind: "them-loai" } |
   { kind: "them-con"; category: Loai } | { kind: "ten-loai"; category: Loai } | { kind: "ten-con"; item: Con } |
   { kind: "xoa-loai"; category: Loai } | { kind: "xoa-con"; item: Con } | { kind: "xoa-chi"; entry: Khoan };
@@ -34,6 +36,18 @@ const tien = new Intl.NumberFormat("vi-VN");
 const money = (n: number) => `${tien.format(n)} đ`;
 const nguonTien = (ket: boolean) => ket ? "Trả từ két" : "Tiền riêng";
 const ngay = (s: string) => s.split("-").reverse().join("/");
+const luong = (s: string) => s.replaceAll(".", ",");
+function uocTinh(item: NguyenLieu) {
+  switch (item.usage_estimate.status) {
+    case "ready": return item.usage_estimate.days_left === "0.0" ? "Dưới 0,1 ngày" : `Khoảng ${luong(item.usage_estimate.days_left ?? "")} ngày`;
+    case "out_by_ledger": return item.purchased_total === "0" && item.used_total === "0" ? "Chưa nhập" : "Hết theo sổ";
+    case "no_usage": return "Chưa ghi ngày dùng";
+    case "zero_usage": return "Chưa tính được (dùng 0)";
+  }
+}
+function luongCon(item: NguyenLieu) {
+  return item.purchased_total === "0" && item.used_total === "0" ? "Chưa nhập" : `${luong(item.balance)}${item.purchase_unit ? ` ${item.purchase_unit}` : ""}`;
+}
 function theoNgay(expenses: Khoan[]) {
   const groups = new Map<string, Khoan[]>();
   expenses.slice().sort((a, b) => b.paid_date.localeCompare(a.paid_date) || b.expense_id - a.expense_id)
@@ -268,6 +282,55 @@ function BangNgayMuc({ category, result }: { category: Loai; result?: DuLieu }) 
   const entries = result?.expenses.filter((entry) => entry.expense_category_id === category.expense_category_id) ?? [];
   return <div className="kc-table-wrap"><table className="kc-data-table kc-day-table" aria-label={`Chi theo ngày của ${category.name}`}><thead><tr><th>Ngày chi</th><th>Các khoản chi trong ngày</th></tr></thead><tbody>{entries.length ? Array.from(theoNgay(entries), ([date, day]) => <tr key={date}><td>{ngay(date)}</td><td><ul className="kc-day-list">{day.map((entry) => <li key={entry.expense_id}><span>{entry.item_name || "Chưa chọn khoản con"}</span> <strong>{money(entry.amount_vnd)}</strong> <span>· {entry.person_name}</span></li>)}</ul></td></tr>) : <tr><td colSpan={2}>Chưa có khoản chi trong phạm vi này.</td></tr>}</tbody></table></div>;
 }
+function LichSuSuDung({ item, supplyId }: { item: Con; supplyId: number }) {
+  const id = useId();
+  const query = useSoNguyenLieu(supplyId, true, Infinity);
+  const used = query.data?.entries.filter((entry) => entry.kind === "used").sort((a, b) => b.entry_date.localeCompare(a.entry_date)) ?? [];
+  const latest = used[0]?.entry_date ?? "";
+  const fallback = { from: latest ? bayNgayCuoi(latest) : "", to: latest };
+  const [chosen, setChosen] = useState<{ from: string; to: string } | null>(null);
+  const dates = chosen ?? fallback;
+  const missing = !!latest && (!dates.from || !dates.to);
+  const invalid = !missing && !!dates.from && !!dates.to && dates.from > dates.to;
+  const rows = used.filter((entry) => entry.entry_date >= dates.from && entry.entry_date <= dates.to);
+  return <section className="kc-item-history" aria-label={`Lịch sử sử dụng ${item.name}`}>
+    {query.isError ? <p role="alert">Chưa đọc được sổ của {item.name}. Hãy thử đọc lại.</p> : query.isPending ? <p role="status">Đang đọc sổ của {item.name}…</p> : <>
+      <div className="kc-two"><Field><FieldLabel htmlFor={`${id}-from`}>Từ ngày</FieldLabel><Input id={`${id}-from`} type="date" value={dates.from} onChange={(e) => setChosen({ ...dates, from: e.target.value })} /></Field>
+        <Field><FieldLabel htmlFor={`${id}-to`}>Đến ngày</FieldLabel><Input id={`${id}-to`} type="date" value={dates.to} onChange={(e) => setChosen({ ...dates, to: e.target.value })} /></Field></div>
+      <Button variant="outline" onClick={() => setChosen(null)}>Xem lại 7 ngày</Button>
+      {!latest ? <p className="kc-muted">Chưa có lần sử dụng nào.</p> : missing ? <p role="alert">Chọn cả Từ ngày và Đến ngày.</p> : invalid ? <p role="alert">Từ ngày phải trước hoặc bằng Đến ngày.</p> : <>
+        <p>{rows.length} lần dùng từ {ngay(dates.from)} đến {ngay(dates.to)}.</p>
+        <div className="kc-table-wrap"><table className="kc-data-table kc-history-table" aria-label={`Ngày đã dùng ${item.name}`}><thead><tr><th>Ngày dùng</th><th>Lượng đã dùng</th></tr></thead><tbody>{rows.map((entry) => <tr key={entry.supply_day_entry_id}><td>{ngay(entry.entry_date)}</td><td>{luong(entry.measure)}{query.data.purchase_unit ? ` ${query.data.purchase_unit}` : ""}</td></tr>)}</tbody></table></div>
+      </>}
+    </>}
+  </section>;
+}
+function DongNguyenLieu({ item, supply, result, category, expanded, toggle, mo }: { item: Con; supply?: NguyenLieu; result?: DuLieu; category: Loai; expanded: boolean; toggle: () => void; mo: (m: Mo) => void }) {
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const id = useId();
+  const itemTotal = result?.item_totals?.find((t) => t.expense_item_id === item.expense_item_id);
+  return <Fragment><tr><td><button type="button" className="kc-item-name" aria-expanded={expanded} aria-controls={`${id}-detail`} onClick={toggle}>{item.name}</button></td><td>{supply ? uocTinh(supply) : "—"}</td><td>{supply ? luongCon(supply) : "—"}</td></tr>
+    <tr id={`${id}-detail`} className="kc-item-detail-row" hidden={!expanded}><td colSpan={3}>{expanded && <div className="kc-item-detail"><dl>
+      <div><dt>Ngày nhập gần nhất</dt><dd>{supply?.latest_purchase_date ? ngay(supply.latest_purchase_date) : supply ? "Chưa ghi" : "—"}</dd></div>
+      <div><dt>Đã dùng gần đây</dt><dd>{supply ? supply.usage_estimate.usage_days === 0 ? "Chưa ghi ngày dùng" : `${luong(supply.usage_estimate.used_in_window)}${supply.purchase_unit ? ` ${supply.purchase_unit}` : ""} trong ${supply.usage_estimate.usage_days} ngày có ghi gần nhất` : "—"}</dd></div>
+      <div><dt>Tổng chi trong kỳ</dt><dd>{result ? money(itemTotal?.total_vnd ?? 0) : "—"}</dd></div>
+    </dl><div className="kc-actions"><Button variant="outline" onClick={() => mo({ kind: "ten-con", item })}>Sửa tên</Button><Button variant="outline" className="kc-danger" onClick={() => mo({ kind: "xoa-con", item })}>Ngừng dùng</Button><Button variant="outline" onClick={() => mo({ kind: "tao", category: category.expense_category_id, item: item.expense_item_id })}>Ghi mua</Button><Button variant="outline" aria-expanded={historyOpen} aria-controls={`${id}-history`} onClick={() => setHistoryOpen(!historyOpen)}>Lịch sử sử dụng</Button></div>
+      <div id={`${id}-history`} hidden={!historyOpen}>{historyOpen && item.supply_item_id && <LichSuSuDung item={item} supplyId={item.supply_item_id} />}</div>
+    </div>}</td></tr></Fragment>;
+}
+function BangNguyenLieu({ category, result, visible, id, mo }: { category: Loai; result?: DuLieu; visible: boolean; id: string; mo: (m: Mo) => void }) {
+  const query = useNguyenLieu();
+  const [active, setActive] = useState<number | null>(null);
+  const byId = new Map(query.data?.supply_items.map((supply) => [supply.supply_item_id, supply]));
+  const readable = !query.isPending && !query.isError;
+  return <div id={`${id}-items`} hidden={!visible}>
+    {query.isError && <p className="kc-supply-error" role="alert">Chưa đọc được sổ nguyên liệu. Hãy thử đọc lại.</p>}
+    <div className="kc-table-wrap"><table className="kc-data-table kc-item-table kc-supply-table" aria-label={`Nguyên liệu trong ${category.name}`}><thead><tr><th>Nguyên liệu</th><th>Ước tính còn dùng</th><th>Lượng còn lại</th></tr></thead><tbody>
+      {(category.items ?? []).length ? category.items!.map((item) => <DongNguyenLieu key={item.expense_item_id} item={item} supply={readable && item.supply_item_id ? byId.get(item.supply_item_id) : undefined} result={result} category={category} expanded={active === item.expense_item_id} toggle={() => setActive(active === item.expense_item_id ? null : item.expense_item_id)} mo={mo} />) : <tr><td colSpan={3}>Chưa có khoản con. Thêm để bắt đầu theo dõi.</td></tr>}
+    </tbody></table></div>
+    <p className="kc-forecast-note">Ước tính tính từ sổ nguyên liệu, chỉ để xem và không thay lời nhắc kiểm hàng.</p>
+  </div>;
+}
 function MucChi({ category, data, from, to, selectedCategory, source, mo }: { category: Loai; data?: DuLieu; from?: string; to?: string; selectedCategory: string | null; source: string | null; mo: (m: Mo) => void }) {
   const [expanded, setExpanded] = useState(true);
   const [visible, setVisible] = useState(true);
@@ -291,10 +354,7 @@ function MucChi({ category, data, from, to, selectedCategory, source, mo }: { ca
       </div></div>
         <div id={`${id}-dates`} className="kc-local-filter" role="group" aria-label={`Lọc ngày ${category.name}`} hidden={!dateFilterOpen}><div className="kc-two"><Field><FieldLabel htmlFor={`${id}-from`}>Từ ngày · {category.name}</FieldLabel><Input id={`${id}-from`} type="date" value={dates.from} onChange={(e) => setDates({ ...dates, from: e.target.value })} /></Field><Field><FieldLabel htmlFor={`${id}-to`}>Đến ngày · {category.name}</FieldLabel><Input id={`${id}-to`} type="date" value={dates.to} onChange={(e) => setDates({ ...dates, to: e.target.value })} /></Field></div><small className="kc-muted">Lọc riêng mục này, trong phạm vi bộ lọc chung.</small>{invalid && <p role="alert">Ngày bắt đầu phải trước hoặc bằng ngày kết thúc, trong khoảng ngày chung.</p>}<Button variant="outline" onClick={() => setDates({ from: "", to: "" })}>Xoá lọc ngày</Button>{local && !invalid && <TrangThai query={query} ten="tổng theo mục" />}</div>
         {!category.tracks_supply && <BangNgayMuc category={category} result={result} />}
-        {category.tracks_supply ? <ul id={`${id}-items`} hidden={!visible}>{(category.items ?? []).length ? category.items!.map((item) => {
-          const itemTotal = result?.item_totals?.find((t) => t.expense_item_id === item.expense_item_id);
-          return <li key={item.expense_item_id}><div className="kc-item-copy"><strong>{item.name}</strong><small>{itemTotal?.last_paid_date ? `Ngày chi gần nhất: ${ngay(itemTotal.last_paid_date)}` : "Chưa có khoản chi trong khoảng ngày chọn"}</small></div><strong className="kc-money">{result || invalid || !matches ? money(itemTotal?.total_vnd ?? 0) : "—"}</strong><div className="kc-actions"><Button variant="outline" onClick={() => mo({ kind: "ten-con", item })}>Sửa</Button><Button variant="outline" className="kc-danger" onClick={() => mo({ kind: "xoa-con", item })}>Xoá</Button><Button variant="outline" onClick={() => mo({ kind: "tao", category: category.expense_category_id, item: item.expense_item_id })}>Ghi chi</Button></div></li>;
-        }) : <li className="kc-muted">Chưa có khoản con. Thêm để bắt đầu theo dõi.</li>}</ul> : <div id={`${id}-items`} hidden={!visible} className="kc-table-wrap"><table className="kc-data-table kc-item-table" aria-label={`Khoản con trong ${category.name}`}><thead><tr><th>Khoản con</th><th>Ngày chi gần nhất</th><th>Tổng chi trong kỳ</th></tr></thead><tbody>{(category.items ?? []).length ? category.items!.map((item) => <DongKhoanCon key={item.expense_item_id} item={item} category={category} result={result} entries={result?.expenses ?? []} mo={mo} />) : <tr><td colSpan={3}>Chưa có khoản con. Thêm để bắt đầu theo dõi.</td></tr>}</tbody></table></div>}
+        {category.tracks_supply ? <BangNguyenLieu category={category} result={result} visible={visible} id={id} mo={mo} /> : <div id={`${id}-items`} hidden={!visible} className="kc-table-wrap"><table className="kc-data-table kc-item-table" aria-label={`Khoản con trong ${category.name}`}><thead><tr><th>Khoản con</th><th>Ngày chi gần nhất</th><th>Tổng chi trong kỳ</th></tr></thead><tbody>{(category.items ?? []).length ? category.items!.map((item) => <DongKhoanCon key={item.expense_item_id} item={item} category={category} result={result} entries={result?.expenses ?? []} mo={mo} />) : <tr><td colSpan={3}>Chưa có khoản con. Thêm để bắt đầu theo dõi.</td></tr>}</tbody></table></div>}
         <div className="kc-row kc-item-total"><span>Tổng chi trong kỳ</span><strong>{total === undefined && !invalid && matches && (local ? query.isPending || query.isError : !data) ? "—" : money(total ?? 0)}</strong></div><footer><Button variant="outline" onClick={() => mo({ kind: "them-con", category })}>＋ Thêm khoản con</Button></footer>
       </section>
     </div>

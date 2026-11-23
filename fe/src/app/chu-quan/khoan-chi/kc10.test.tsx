@@ -269,8 +269,8 @@ describe("KC-10 — ngừng dùng thứ nối sổ", () => {
   it("xoá khoản con nối sổ là ngừng dùng: hộp nói rõ giữ lịch sử, gửi DELETE có lý do", async () => {
     const g = mo();
     const muc = await mucCho("Nguyên liệu");
-    const dong = within(muc).getByText("Bột gạo").closest("li") as HTMLElement;
-    fireEvent.click(within(dong).getByRole("button", { name: "Xoá" }));
+    fireEvent.click(within(muc).getByRole("button", { name: "Bột gạo" }));
+    fireEvent.click(within(muc).getByRole("button", { name: "Ngừng dùng" }));
     const f = screen.getByRole("form", { name: "Ngừng dùng" });
     expect(f.textContent).toMatch(/Ngừng dùng Bột gạo/);
     expect(f.textContent).toMatch(/giữ/);

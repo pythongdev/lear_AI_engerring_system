@@ -120,10 +120,12 @@ cần chúng; Claude bỏ bước không cần, cập nhật phụ thuộc rồi
 | [KC-08](#kc-08) | FE: khung trang, chọn nhanh gọn, nút thu gọn, bố cục đáp ứng | L1 | Codex làm, Claude duyệt | KC-01 phần trình bày; FE hiện có | **làm được ngay** sau KC-01 phần trình bày |
 | [KC-09](#kc-09) | FE: Sổ khoản chi, Các khoản chi, mục ngoài nguyên liệu và lịch sử chi theo ngày | L2 | Claude test trước, Codex làm | KC-05, KC-08 | — |
 | [KC-10](#kc-10) | FE: hộp ghi/sửa/xoá, Loại chi, Sửa tiền đã ghi, thêm nguyên liệu kèm tiền một lần bấm | L2 | Claude test trước, Codex làm | KC-06, KC-08 | — |
-| [KC-11](#kc-11) | FE: bảng nguyên liệu, chi tiết, ghi lượng mua/dùng, tỉ lệ nhắc, hai lịch sử | L2 | Claude test trước, Codex làm | KC-06, KC-08, KC-09 | — |
-| [KC-12](#kc-12) | FE: hiện ước tính còn dùng (chỉ đọc) | L1 | Codex làm, Claude duyệt | KC-07, KC-11 | — |
-| [KC-14](#kc-14) | FE: gỡ trang Kho và Nguyên liệu khỏi menu, đường cũ chuyển về Khoản chi | L1 | Codex làm, Claude duyệt | KC-11, KC-12 | — |
-| [KC-13](#kc-13) | Nghiệm thu trang thật với API/database, đối chiếu hình và hồi quy tiền/lượng | L2 | Codex viết kịch bản, Claude chạy và duyệt | KC-09…KC-12, KC-14 | — |
+| [KC-11](#kc-11) | FE: bảng nguyên liệu ba cột (gồm ước tính còn dùng), chi tiết dưới dòng, lịch sử sử dụng của từng thứ — **chia lại 2026-11-23** | L2 | Claude test trước, Codex làm | KC-06, KC-07, KC-09, KC-10 | — |
+| ~~[KC-12](#kc-12)~~ | ~~FE: hiện ước tính còn dùng~~ — **gộp vào KC-11 2026-11-23**: backend đã trả `usage_estimate` (KC-07), cột ước tính là một cột của bảng KC-11 | — | — | — | — |
+| [KC-15](#kc-15) | FE: lịch sử sử dụng và lịch sử mua hàng của cả mục, cạnh nhau, Hiện/Ẩn độc lập — **tách từ KC-11 2026-11-23** | L2 | Claude test trước, Codex làm | KC-11 | — |
+| [KC-16](#kc-16) | FE: việc của trang Kho/Nguyên liệu trên trang Khoản chi — ghi/sửa lượng có lý do, đơn vị lần đầu, tỉ lệ nhắc, xếp mục thứ *Chưa xếp mục*, dùng lại thứ đã ngừng — **tách từ KC-11 2026-11-23** | L2 | Claude test trước, Codex làm | KC-11 | — |
+| [KC-14](#kc-14) | FE: gỡ trang Kho và Nguyên liệu khỏi menu, đường cũ chuyển về Khoản chi | L1 | Codex làm, Claude duyệt | KC-11, KC-15, KC-16 | — |
+| [KC-13](#kc-13) | Nghiệm thu trang thật với API/database, đối chiếu hình và hồi quy tiền/lượng | L2 | Codex viết kịch bản, Claude chạy và duyệt | KC-09…KC-11, KC-14…KC-16 | — |
 
 KC-01 là L3 vì gộp hai danh mục đã có dữ liệu và đổi luật xoá: Claude duyệt thiết kế trước code, có thể chia KC-02 thành
 lát nhỏ hơn. Mã KC-14 đứng trước KC-13 trong thứ tự làm; số chỉ là mã, không phải thứ tự.
@@ -502,6 +504,12 @@ ba hộp Thêm mục chi · Thêm khoản con · Ghi khoản chi ở 390/1440 px
 <a id="kc-11"></a>
 ## KC-11 — FE: nguyên liệu và hai lịch sử thật
 
+**Chia lại 2026-11-23** (Claude Code, lead lane; ADR-147 điểm 8–9). A1–A6 dưới đây được chia: KC-11 làm bảng nguyên liệu ba cột
+(cột *Ước tính còn dùng* lấy `usage_estimate` của KC-07, nên KC-12 gộp vào đây), ngăn chi tiết dưới dòng và *Lịch sử sử dụng* của
+từng thứ (A1, phần chi tiết của A2, A3, A6); **KC-15** làm hai lịch sử của cả mục (phần còn lại của A2, A4, A5); **KC-16** làm các
+việc của trang Kho/Nguyên liệu mà ADR-147 điểm 9 dời sang đây. Lý do: một lượt Codex vừa tầm duyệt; KC-14 chỉ gỡ hai trang cũ khi
+KC-16 xong.
+
 **Vì sao.** Kho và Nguyên liệu đã đọc được ngày nhập gần nhất, lượng và sổ từng thứ; Khoản chi chưa dùng chúng.
 Thiếu quan hệ phải được giải quyết trước khi nối các màn.
 
@@ -533,8 +541,28 @@ Thiếu quan hệ phải được giải quyết trước khi nối các màn.
 
 **Nhận việc.**
 
+Claude Code, 2026-11-23 (chủ repo: *"tiếp tục yêu codex làm bạn kiểm tra"*). Thực hiện: Codex trong worktree `../lean_wt/KC-11`,
+nhánh `codex/KC-11` từ `4e66712` + cây cuối của năm khối commit KC-01/02/08/09/10 (`6229c49`, chỉ stage); duyệt: Claude. Phiếu:
+`../lean_wt/_claude_logs/KC-11/phieu.md`. Test viết trước: `fe/src/app/chu-quan/khoan-chi/kc11.test.tsx` (tám ca, đỏ cả tám). Hình
+Claude chốt: mục `tracks_supply` thay danh sách cũ bằng bảng *Nguyên liệu trong {mục}* ba cột, nối `items[].supply_item_id` với
+`GET /supply-items` theo mã; chữ ước tính theo bốn trạng thái của `usage_estimate`, số thập phân chỉ đổi dấu chấm thành phẩy; một
+ngăn chi tiết mở một lúc (ngày nhập gần nhất = `latest_purchase_date`, *đã dùng gần đây* = `used_in_window` trong `usage_days` ngày,
+tổng chi trong kỳ của backend); *Lịch sử sử dụng* đọc `GET /supply-items/{id}` một lần, lọc khoảng trên sổ đã đọc; mọi lần ghi khoản
+chi đọc lại cả `supply-items`.
+
+**Kết quả 2026-11-23** (thực hiện: Codex, duyệt và tích hợp: Claude). Codex thêm `BangNguyenLieu` · `DongNguyenLieu` · `LichSuSuDung`
+vào `khoan-chi.tsx` (chữ ước tính `uocTinh`, lượng `luongCon`, đổi dấu bằng `replaceAll(".", ",")`), `useSoNguyenLieu` nhận
+`enabled`/`staleTime`, `useGhi` đọc lại thêm `["supply-items"]`; đổi thao tác ở một ca của `kc10.test.tsx` (mở chi tiết rồi *Ngừng
+dùng*). Không sửa `kc11.test.tsx`. Codex hỏi khoản con không thấy thứ trong sổ đã đọc có cần câu riêng — Claude giữ `—`: I-046
+buộc khoản con của mục theo dõi nối đúng một thứ, nên chỉ gặp khi sổ chưa đọc xong. Bằng chứng: `./scripts/gate.sh` trong worktree
+PASS (`be-check` 33/33, `db-check` 51 bước, `fe-check` 894/894 theo Codex). Trang thật (FE worktree cổng 3001, backend `make dev`,
+dữ liệu mẫu, mọi lời gọi ghi bị chặn): 320/390/1440 px không tràn, bảng vừa khung, tên dài xuống dòng, lịch sử `2 lần dùng từ
+12/11/2026 đến 18/11/2026.`, 0 lỗi JS. Ảnh: `../lean_wt/_claude_logs/KC-11/anh/`.
+
 <a id="kc-12"></a>
 ## KC-12 — FE: dự tính theo luật đã chốt
+
+**Gộp vào KC-11, 2026-11-23:** cột ước tính đọc `usage_estimate` sẵn có; không còn việc riêng.
 
 **Vì sao.** Chép `stockEstimates` vào state/localStorage sẽ tạo số khác giữa máy và mất dữ liệu khi tải lại.
 Chỉ dựng phép nhập/hiện sau khi nguồn và cách lưu/tính đã được duyệt.
@@ -604,6 +632,24 @@ việc của hai trang về Khoản chi, để chủ quán không mất lối gh
 **Nhận việc.**
 
 <a id="cau-hoi-mo"></a>
+<a id="kc-15"></a>
+## KC-15 — FE: lịch sử sử dụng và lịch sử mua hàng của cả mục
+
+**Vì sao.** Phần A2 (cấp mục), A4, A5 của KC-11 cũ, tách 2026-11-23. **Acceptance:** như A2 · A4 · A5 của KC-11 — lịch sử sử dụng
+mỗi ngày một hàng, chọn một thứ hoặc tất cả, đọc `getSupplyItem.entries` loại `used` của các thứ trong mục, lỗi một lời gọi không
+thành *chưa có sử dụng*; lịch sử mua đọc khoản chi nhóm theo `received_date`, khoản thiếu ngày nhập có hàng riêng, không theo bộ lọc
+tiền chung; hai khối cạnh nhau màn rộng, xếp dọc màn hẹp, Hiện/Ẩn độc lập. **Phạm vi:** như KC-11. **Nhận việc:** —
+
+<a id="kc-16"></a>
+## KC-16 — FE: việc của trang Kho và Nguyên liệu trên trang Khoản chi
+
+**Vì sao.** ADR-147 điểm 9: trang Khoản chi gánh mọi việc của Kho và Nguyên liệu bằng các cửa `supply-*` đang có, trước khi KC-14 gỡ
+hai trang cũ. **Acceptance:** ghi con số mua vào/đã dùng của một ngày và sửa có lý do (`createSupplyDayEntry`, `updateSupplyDayEntry`);
+đặt đơn vị lần đầu; đặt tỉ lệ nhắc có lý do; nhóm *Chưa xếp mục* (thứ chưa có `expense_item_id`) xếp vào một mục theo dõi bằng
+`POST /expense-items` với `supply_item_id`; nhóm *Đã ngừng dùng* có nút *Dùng lại* (`reopenExpenseItem`); chuyển mục
+(`moveExpenseItem`) chỉ giữa mục cùng nguồn; mọi lỗi của sổ (`supply_item_stopped`, `supply_day_entry_already_recorded`…) hiện đúng
+ô. Không tự tính lượng. **Phạm vi:** như KC-11 cộng `du-lieu-kho.ts`, `du-lieu-nguyen-lieu.ts`. **Nhận việc:** —
+
 ## Câu hỏi mở — đã có lời 2026-11-22
 
 Cả sáu câu dưới đây đã có lời (bảng *Lời chủ repo 2026-11-22* ở đầu sổ). Phần dưới giữ nguyên câu hỏi và đề xuất của

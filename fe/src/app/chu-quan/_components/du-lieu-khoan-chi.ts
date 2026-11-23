@@ -47,7 +47,7 @@ function useGhi<B, R>(gui: (body: B) => Promise<ApiResult<R>>, key: string) {
   const qc = useQueryClient();
   return useMutation({ mutationKey: ["expense-write"], mutationFn: gui, retry: false, onSuccess: async (r) => {
     if (r.ok) {
-      await Promise.all([qc.invalidateQueries({ queryKey: [key] }), qc.invalidateQueries({ queryKey: [key === "expenses" ? "expense-categories" : "expenses"] })]);
+      await Promise.all([qc.invalidateQueries({ queryKey: [key] }), qc.invalidateQueries({ queryKey: [key === "expenses" ? "expense-categories" : "expenses"] }), qc.invalidateQueries({ queryKey: ["supply-items"] })]);
     }
     else if (r.failure.kind === "rejected") {
       if (r.failure.code === "expense_category_not_found" || r.failure.code === "expense_item_not_found") await qc.invalidateQueries({ queryKey: ["expense-categories"] });

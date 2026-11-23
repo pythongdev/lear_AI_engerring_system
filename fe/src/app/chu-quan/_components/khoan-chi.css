@@ -38,3 +38,9 @@
 .kc-existing-categories{list-style:none;margin:14px 0;padding:0;border:1px solid #303030;border-radius:10px;max-height:180px;overflow:auto}
 .kc-existing-categories li{padding:8px 12px;border-bottom:1px solid #303030;font-size:12px;overflow-wrap:anywhere}
 .kc-existing-categories li:last-child{border-bottom:0}
+.kc-supply-error,.kc-forecast-note{padding:10px 12px;font-size:12px}
+.kc-forecast-note{color:var(--kc-muted)}
+.kc-page .kc-supply-table th{white-space:normal;overflow-wrap:anywhere}
+.kc-page .kc-supply-table td:first-child{white-space:normal;overflow-wrap:anywhere}
+.kc-page .kc-supply-table .kc-item-name{max-width:100%;overflow-wrap:anywhere}
+@media(max-width:520px){.kc-page .kc-supply-table{min-width:0}.kc-page .kc-supply-table th,.kc-page .kc-supply-table td{padding:8px 5px;overflow-wrap:anywhere}.kc-page .kc-supply-table .kc-item-detail-row td{padding:0}}
