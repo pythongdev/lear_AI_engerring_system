@@ -172,7 +172,11 @@ describe("KC-11 — lịch sử sử dụng của từng thứ", () => {
   it("đọc sổ của đúng thứ, chỉ con số đã dùng, bảy ngày tới ngày dùng gần nhất, ngày mới trước", async () => {
     const { g, ls } = await moLichSu();
     await within(ls).findByText("2 lần dùng từ 11/10/2026 đến 17/10/2026.");
-    expect(g.filter((x) => x.method === "GET" && /^\/supply-items\/\d+$/.test(x.path)).map((x) => x.path)).toEqual(["/supply-items/7"]);
+    // Sửa 2026-11-23 (Claude, KC-15): khối lịch sử cấp mục đọc sổ mọi thứ của mục; ý định ở đây là không kéo sổ ngoài mục và
+    // không đọc lại sổ Bột gạo lần hai (dùng chung khoá ["supply-items", 7]).
+    const soDoc = g.filter((x) => x.method === "GET" && /^\/supply-items\/\d+$/.test(x.path)).map((x) => x.path);
+    expect(soDoc.every((p) => ["7", "8", "9", "10", "12", "13"].includes(p.split("/").pop()!))).toBe(true);
+    expect(soDoc.filter((p) => p === "/supply-items/7")).toHaveLength(1);
     expect((within(ls).getByLabelText("Từ ngày") as HTMLInputElement).value).toBe("2026-10-11");
     expect((within(ls).getByLabelText("Đến ngày") as HTMLInputElement).value).toBe("2026-10-17");
     const t = within(ls).getByRole("table", { name: "Ngày đã dùng Bột gạo" });
@@ -205,6 +209,7 @@ describe("KC-11 — lịch sử sử dụng của từng thứ", () => {
     await within(ls2).findByText(/Chưa đọc được sổ của Trứng/);
     expect(within(ls2).getByRole("alert")).toBeTruthy();
     expect(within(ls2).queryByText("Chưa có lần sử dụng nào.")).toBeNull();
-    expect(g.filter((x) => x.path === "/supply-items/9")).toHaveLength(1);
+    // Sửa 2026-11-23 (Claude, KC-15): khối cấp mục cũng đọc sổ Trứng; lỗi thì mở ngăn có thể đọc lại — chỉ đòi đã gọi thật.
+    expect(g.filter((x) => x.path === "/supply-items/9").length).toBeGreaterThanOrEqual(1);
   });
 });

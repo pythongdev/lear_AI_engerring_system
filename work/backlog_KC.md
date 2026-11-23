@@ -638,7 +638,23 @@ việc của hai trang về Khoản chi, để chủ quán không mất lối gh
 **Vì sao.** Phần A2 (cấp mục), A4, A5 của KC-11 cũ, tách 2026-11-23. **Acceptance:** như A2 · A4 · A5 của KC-11 — lịch sử sử dụng
 mỗi ngày một hàng, chọn một thứ hoặc tất cả, đọc `getSupplyItem.entries` loại `used` của các thứ trong mục, lỗi một lời gọi không
 thành *chưa có sử dụng*; lịch sử mua đọc khoản chi nhóm theo `received_date`, khoản thiếu ngày nhập có hàng riêng, không theo bộ lọc
-tiền chung; hai khối cạnh nhau màn rộng, xếp dọc màn hẹp, Hiện/Ẩn độc lập. **Phạm vi:** như KC-11. **Nhận việc:** —
+tiền chung; hai khối cạnh nhau màn rộng, xếp dọc màn hẹp, Hiện/Ẩn độc lập. **Phạm vi:** như KC-11. **Nhận việc:**
+Claude Code, 2026-11-23 (chủ repo: *"tiếp tục yêu cầu codex làm bạn kiểm tra"*). Thực hiện: Codex trong `../lean_wt/KC-15`, nhánh
+`codex/KC-15` từ `a033a83` + cây cuối của chuỗi KC (`66f83a0`, chỉ stage); duyệt: Claude. Phiếu: `../lean_wt/_claude_logs/KC-15/phieu.md`.
+Test viết trước: `fe/src/app/chu-quan/khoan-chi/kc15.test.tsx` (tám ca, đỏ cả tám). Hình Claude chốt: lịch sử sử dụng đọc sổ từng
+thứ của mục, mọi lời gọi phải đủ mới bày bảng; mở chi tiết một thứ thì ô *Xem nguyên liệu* chọn theo nó (mẫu `usageItem`); lịch sử
+mua đọc `listExpenses` với `from` · `to` · `expense_category_id`, **mặc định 30 ngày tới `last_paid_date` của mục** (phiên chọn —
+bản HTML không có khoảng vì dữ liệu minh hoạ ít; `listExpenses` bắt buộc `from`/`to`), nhóm theo `received_date`.
+
+
+**Kết quả 2026-11-23** (thực hiện: Codex, duyệt và tích hợp: Claude). Codex thêm `LichSuSuDungMuc`, `LichSuMuaHangMuc`, `ChonNguyenLieu`
+vào `khoan-chi.tsx`, đưa trạng thái `active` của bảng nguyên liệu lên `MucChi` để đồng bộ ô *Xem nguyên liệu*, thêm
+`useSoCacNguyenLieu` (`useQueries`, cùng khoá `["supply-items", id]`), CSS hai cột từ 1024 px. Codex dừng và hỏi đúng chỗ: hai ca
+KC-11 đòi cả trang chỉ gọi một sổ, trái với KC-15 — Claude (người viết cả hai test) sửa hai assertion theo ý định gốc: mọi lời gọi
+sổ thuộc mục, sổ Bột gạo đọc đúng một lần; sổ Trứng phải được gọi thật. Claude sửa thêm CSS: ở 390 px ô lần mua bị cắt mép phải
+(`li` giữ 150 px trong khung `overflow: hidden`) — dưới 520 px ô chiếm trọn hàng và xuống dòng. Bằng chứng: `./scripts/gate.sh`
+trong worktree PASS; sau sửa CSS chạy lại `fe-check` 902/902, `check-fe-rules` PASS. Trang thật (FE worktree cổng 3001, dữ liệu
+mẫu, mọi lời gọi ghi bị chặn): 1440 px hai khối cạnh nhau, 320/390 px xếp dọc, không tràn, 0 lỗi JS. Ảnh: `../lean_wt/_claude_logs/KC-15/anh/`.
 
 <a id="kc-16"></a>
 ## KC-16 — FE: việc của trang Kho và Nguyên liệu trên trang Khoản chi

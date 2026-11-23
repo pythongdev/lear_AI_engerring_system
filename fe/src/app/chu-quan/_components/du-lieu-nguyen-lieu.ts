@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { call, type ApiFailure, type ApiResult } from "@/lib/api/client";
 import { useApi } from "@/lib/api/provider";
 import type { components } from "@/lib/api/schema";
@@ -23,6 +23,17 @@ export function useSoNguyenLieu(supply_item_id: number, enabled = true, staleTim
       return r.data;
     },
   });
+}
+export function useSoCacNguyenLieu(ids: number[], enabled: boolean) {
+  const api = useApi();
+  return useQueries({ queries: ids.map((supply_item_id) => ({
+    queryKey: ["supply-items", supply_item_id], enabled, staleTime: Infinity,
+    queryFn: async (): Promise<KieuNguyenLieu["SupplyItemDetail"]> => {
+      const r = await call(api.GET("/supply-items/{supply_item_id}", { params: { path: { supply_item_id } } }));
+      if (!r.ok) throw r.failure;
+      return r.data;
+    },
+  })) });
 }
 function useGhi<B, R>(gui: (body: B) => Promise<ApiResult<R>>) {
   const qc = useQueryClient();
