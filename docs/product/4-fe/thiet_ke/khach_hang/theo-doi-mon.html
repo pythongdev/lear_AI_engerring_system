@@ -60,27 +60,40 @@ progress::-webkit-progress-bar { background: var(--line); }
 progress::-webkit-progress-value { background: var(--accent); border-radius: 99px; }
 progress::-moz-progress-bar { background: var(--accent); border-radius: 99px; }
 .progress-note { margin-top: 10px; font-size: 11px; }
-table { width: 100%; border-collapse: collapse; table-layout: fixed; text-align: left; margin-top: 14px; }
-col.dish-column { width: 49%; }
-col.number-column { width: 17%; }
-th, td { padding: 10px 5px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.table-scroll { max-width: 100%; margin-top: 14px; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; text-align: left; font-size: 13px; }
+col.status-column { width: 14%; }
+col.number-column { width: 10%; }
+col.egg-column { width: 20%; }
+col.money-column { width: 26%; }
+th, td { padding: 8px 2px; border-bottom: 1px solid var(--line); vertical-align: middle; }
 thead th { background: #FAF9F6; color: var(--muted); font-size: 11px; font-weight: 500; }
 tbody th { font-size: 12px; font-weight: 500; }
 th:not(:first-child), td { text-align: right; font-variant-numeric: tabular-nums; }
 .dish-option { display: block; font-size: 11px; color: var(--muted); font-weight: 400; }
 .missing-row { background: #FFF6E8; }
 .missing { color: #7A4100; font-weight: 700; }
-.complete { color: var(--accent); white-space: nowrap; }
-tfoot th, tfoot td { border-bottom: 0; border-top: 2px solid var(--line); padding-top: 12px; font-weight: 700; }
+.khong { color: var(--muted); opacity: .45; }
+.part-count { white-space: nowrap; }
+.served-money { color: var(--accent); font-weight: 600; white-space: nowrap; }
+.served-money-summary { display: none; margin-top: 10px; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 10px; font-size: 13px; }
+@media (max-width: 479px) {
+  col.status-column { width: 20%; }
+  col.number-column { width: 13%; }
+  col.egg-column { width: 28%; }
+  col.money-column, th.money-column, td.served-money { display: none; }
+  .served-money-summary { display: flex; }
+}
 .pending { background: #FFF6E8; border-color: #E9D8BD; }
 .pending h2 { color: #7A4100; }
 .pending-list { list-style: none; margin: 12px 0 0; padding: 0; }
 .pending-list li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; border-top: 1px solid #E9D8BD; padding-top: 12px; }
 .quantity { white-space: nowrap; font-variant-numeric: tabular-nums; }
-.summary-group { margin-top: 16px; }
-.summary-row { display: grid; grid-template-columns: minmax(0, 1fr) 40px 42px 26px 65px; gap: 5px; align-items: start; font-size: 11px; }
+.summary-toggle { display: block; width: 100%; min-height: 44px; margin-top: 12px; padding: 10px 12px; border: 1px solid var(--accent); border-radius: 9px; background: white; color: var(--accent); text-align: left; cursor: pointer; font-weight: 600; }
+.summary-toggle:hover { background: var(--selected); }
+.summary-list { margin: 12px 0 0; padding: 0; list-style: none; }
+.summary-row { display: grid; grid-template-columns: minmax(0, 1fr) 28px 78px; gap: 8px; align-items: start; font-size: 11px; }
 .summary-row > * { min-width: 0; overflow-wrap: anywhere; }
-.summary-columns { color: var(--muted); font-size: 10px; align-items: end; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
 .summary-line { padding: 12px 0; border-bottom: 1px solid var(--line); }
 .summary-line:last-child { border-bottom: 0; }
 .dish-name { font-size: 12px; font-weight: 500; }
@@ -129,16 +142,18 @@ summary { min-height: 44px; padding: 10px 0; width: fit-content; cursor: pointer
   </section>
   <section data-component="ServeProgress" class="card" aria-labelledby="progress-title">
     <span class="nhan-component">ServeProgress</span>
-    <div class="progress-heading"><h2 id="progress-title">Món quán đã nhận</h2><span id="accepted-count" class="muted small"></span></div>
+    <div class="progress-heading"><h2 id="progress-title">Số bánh quán đã nhận</h2><span id="accepted-count" class="muted small"></span></div>
     <label for="serve-progress" class="progress-label" id="progress-label"></label>
-    <progress id="serve-progress" max="18" value="12"></progress>
-    <table aria-label="Tiến độ món quán đã nhận" aria-describedby="progress-note">
-      <colgroup><col class="dish-column"><col class="number-column"><col class="number-column"><col class="number-column"></colgroup>
-      <thead><tr><th scope="col">Món</th><th scope="col">Đặt</th><th scope="col">Đã ra</th><th scope="col">Còn thiếu</th></tr></thead>
-      <tbody id="progress-rows"></tbody>
-      <tfoot><tr><th scope="row">Tổng</th><td id="total-ordered"></td><td id="total-served"></td><td id="total-missing"></td></tr></tfoot>
-    </table>
-    <p id="progress-note" class="progress-note muted">Mỗi phần là một cái bánh, quả trứng, chiếc giò hoặc bát canh. ✓ là món đã đủ.</p>
+    <progress id="serve-progress" max="175" value="88"></progress>
+    <div class="table-scroll">
+      <table aria-label="Số bánh quán đã nhận" aria-describedby="progress-note">
+        <colgroup><col class="status-column"><col class="number-column"><col class="number-column"><col class="egg-column"><col class="number-column"><col class="number-column"><col class="money-column"></colgroup>
+        <thead><tr><th scope="col">Tiến độ</th><th scope="col">Thịt</th><th scope="col">Mộc nhĩ</th><th scope="col">Trứng</th><th scope="col">Chay</th><th scope="col">Giò</th><th scope="col" class="money-column">Tiền bánh đã ra</th></tr></thead>
+        <tbody id="progress-rows"></tbody>
+      </table>
+    </div>
+    <p class="served-money-summary"><span>Tiền bánh đã ra:</span><strong id="served-money-total" class="served-money"></strong></p>
+    <p id="progress-note" class="progress-note muted">Số bánh gồm bánh cuốn (cái), trứng (quả) và giò (chiếc), không đếm canh. Canh chỉ nằm trong đơn đã đặt.</p>
   </section>
   <section data-component="PendingLines" class="card pending" aria-labelledby="pending-title">
     <span class="nhan-component">PendingLines</span>
@@ -148,9 +163,10 @@ summary { min-height: 44px; padding: 10px 0; width: fit-content; cursor: pointer
   </section>
   <section data-component="OrderSummary" class="card" aria-labelledby="summary-title">
     <span class="nhan-component">OrderSummary</span>
-    <h2 id="summary-title">Tóm tắt đơn hàng</h2>
+    <h2 id="summary-title">Đơn đã đặt</h2>
     <p class="small muted">Các món quán đã nhận.</p>
-    <div id="summary-lines"></div>
+    <button type="button" id="summary-toggle" class="summary-toggle" aria-expanded="false" aria-controls="summary-lines">Xem đơn đã đặt (25 dòng)</button>
+    <ol id="summary-lines" class="summary-list" aria-label="Các dòng đơn theo thứ tự đặt" hidden></ol>
     <p class="total"><span>Tổng tiền đơn</span><strong id="order-total" class="price"></strong></p>
     <p class="payment-note small muted">Món chưa ra thì quầy chưa tính tiền.</p>
   </section>
@@ -170,66 +186,94 @@ const parts = {
   meat: { name: 'Bánh cuốn', option: 'Nhân thịt · Thường' },
   mushroom: { name: 'Bánh cuốn', option: 'Nhân mộc nhĩ · Thường' },
   plain: { name: 'Bánh cuốn', option: 'Chay' },
-  egg: { name: 'Trứng chín', option: 'Nhân thịt · Thường' },
+  eggCooked: { name: 'Trứng chín', option: 'Nhân thịt · Thường', label: 'chín' },
+  eggSoft: { name: 'Trứng tái', option: 'Nhân thịt · Thường', label: 'tái' },
+  eggGolden: { name: 'Trứng vàng', option: 'Nhân thịt · Thường', label: 'vàng' },
   sausage: { name: 'Giò', option: '' },
-  soup: { name: 'Canh', option: 'Ít rau' }
+  soup: { name: 'Canh bánh cuốn', option: '' }
 };
 const acceptedLines = [
-  { group: 'COMBO', name: 'Combo Đầy đủ trứng chín', filling: 'Thịt', amount: 'Thường', quantity: 2, unitPrice: 30000, parts: { meat: 3, egg: 1, sausage: 1 } },
-  { group: 'MÓN LẺ', name: 'Suất bánh cuốn', filling: 'Mộc nhĩ', amount: 'Thường', quantity: 2, unitPrice: 4000, parts: { mushroom: 1 } },
-  { group: 'MÓN LẺ', name: 'Suất bánh cuốn', filling: 'Chay', amount: '', quantity: 2, unitPrice: 3000, parts: { plain: 1 } },
-  { group: 'MÓN LẺ', name: 'Giò bán rời', filling: '', amount: '', quantity: 1, unitPrice: 9000, parts: { sausage: 1 } },
-  { group: 'MÓN LẺ', name: 'Canh bánh cuốn', filling: '', amount: '', note: 'Rau: Ít rau', quantity: 3, unitPrice: 0, parts: { soup: 1 } }
+  { name: 'Suất bánh cuốn', filling: 'Thịt', amount: 'Thường', quantity: 1, unitPrice: 4000, parts: { meat: 1 } },
+  { combo: true, name: 'Combo Đầy đủ trứng chín', filling: 'Thịt', amount: 'Thường', quantity: 3, unitPrice: 30000, parts: { meat: 3, eggCooked: 1, sausage: 1 } },
+  { combo: true, name: 'Combo Đầy đủ trứng tái', filling: 'Thịt', amount: 'Thường', quantity: 4, unitPrice: 30000, parts: { meat: 3, eggSoft: 1, sausage: 1 } },
+  { name: 'Suất giò', filling: 'Thịt', amount: 'Thường', quantity: 3, unitPrice: 25000, parts: { meat: 4, sausage: 1 } },
+  { name: 'Suất trứng tái', filling: 'Thịt', amount: 'Thường', quantity: 3, unitPrice: 25000, parts: { meat: 4, eggSoft: 1 } },
+  { name: 'Suất trứng vàng', filling: 'Thịt', amount: 'Thường', quantity: 2, unitPrice: 25000, parts: { meat: 4, eggGolden: 1 } },
+  { name: 'Suất bánh cuốn', filling: 'Thịt', amount: 'Thường', quantity: 3, unitPrice: 4000, parts: { meat: 1 } },
+  { name: 'Giò bán rời', quantity: 3, unitPrice: 9000, parts: { sausage: 1 } },
+  { name: 'Bánh trứng bán rời chín', filling: 'Thịt', amount: 'Thường', quantity: 3, unitPrice: 9000, parts: { eggCooked: 1 } },
+  { name: 'Bánh trứng bán rời tái', filling: 'Thịt', amount: 'Thường', quantity: 3, unitPrice: 9000, parts: { eggSoft: 1 } },
+  { name: 'Canh bánh cuốn', note: 'Rau: Không rau', quantity: 2, unitPrice: 0, parts: { soup: 1 } },
+  { name: 'Canh bánh cuốn', note: 'Rau: Ít rau', quantity: 4, unitPrice: 0, parts: { soup: 1 } },
+  { name: 'Canh bánh cuốn', note: 'Rau: Nhiều rau', quantity: 4, unitPrice: 0, parts: { soup: 1 } },
+  { combo: true, name: 'Combo Đầy đủ trứng chín', filling: 'Thịt', amount: 'Thường', quantity: 3, unitPrice: 30000, parts: { meat: 3, eggCooked: 1, sausage: 1 } },
+  { combo: true, name: 'Combo Đầy đủ trứng tái', filling: 'Thịt', amount: 'Thường', quantity: 4, unitPrice: 30000, parts: { meat: 3, eggSoft: 1, sausage: 1 } },
+  { name: 'Suất giò', filling: 'Thịt', amount: 'Thường', quantity: 3, unitPrice: 25000, parts: { meat: 4, sausage: 1 } },
+  { name: 'Suất trứng tái', filling: 'Thịt', amount: 'Thường', quantity: 3, unitPrice: 25000, parts: { meat: 4, eggSoft: 1 } },
+  { name: 'Suất trứng vàng', filling: 'Thịt', amount: 'Thường', quantity: 2, unitPrice: 25000, parts: { meat: 4, eggGolden: 1 } },
+  { name: 'Suất bánh cuốn', filling: 'Thịt', amount: 'Thường', quantity: 3, unitPrice: 4000, parts: { meat: 1 } },
+  { name: 'Giò bán rời', quantity: 3, unitPrice: 9000, parts: { sausage: 1 } },
+  { name: 'Bánh trứng bán rời chín', filling: 'Thịt', amount: 'Thường', quantity: 3, unitPrice: 9000, parts: { eggCooked: 1 } },
+  { name: 'Bánh trứng bán rời tái', filling: 'Thịt', amount: 'Thường', quantity: 3, unitPrice: 9000, parts: { eggSoft: 1 } },
+  { name: 'Canh bánh cuốn', note: 'Rau: Không rau', quantity: 2, unitPrice: 0, parts: { soup: 1 } },
+  { name: 'Canh bánh cuốn', note: 'Rau: Ít rau', quantity: 4, unitPrice: 0, parts: { soup: 1 } },
+  { name: 'Canh bánh cuốn', note: 'Rau: Nhiều rau', quantity: 4, unitPrice: 0, parts: { soup: 1 } }
 ];
-const servedExample = { meat: 4, mushroom: 0, plain: 2, egg: 1, sausage: 3, soup: 2 };
+// Đang chờ món: dòng 1–13 đã ra hết, dòng 14–25 chưa ra.
+// Tiền đã ra chỉ cộng dòng đã ra hết (ADR-125), không tính suất ra dở.
+const servedLinesExample = acceptedLines.slice(0, 13);
+const countColumns = [['meat'], ['mushroom'], ['eggCooked', 'eggSoft', 'eggGolden'], ['plain'], ['sausage']];
+const sumParts = lines => Object.fromEntries(Object.keys(parts).map(key => [key,
+  lines.reduce((sum, line) => sum + (line.parts[key] || 0) * line.quantity, 0)
+]));
+const sumMoney = lines => lines.reduce((sum, line) => sum + line.quantity * line.unitPrice, 0);
+const countCakes = totals => countColumns.flat().reduce((sum, key) => sum + totals[key], 0);
 const money = value => value.toLocaleString('vi-VN') + 'đ';
 const byId = id => document.getElementById(id);
 const component = name => document.querySelector(`[data-component="${name}"]`);
 
 function renderSummary() {
-  byId('summary-lines').innerHTML = ['COMBO', 'MÓN LẺ'].map(group => `
-    <div class="summary-group" role="group" aria-label="${group}">
-      <div class="summary-row summary-columns"><h3>${group}</h3><span>Nhân</span><span>Lượng nhân</span><span>SL</span><span class="price">Giá</span></div>
-      ${acceptedLines.filter(line => line.group === group).map(line => `
-        <div class="summary-line">
+  byId('summary-lines').innerHTML = acceptedLines.map(line => `
+        <li class="summary-line">
           <div class="summary-row">
-            <div><span class="dish-name">${line.name}</span>${line.note ? `<span class="dish-option">${line.note}</span>` : ''}</div>
-            <span aria-label="Nhân: ${line.filling || 'không áp dụng'}">${line.filling || '—'}</span>
-            <span aria-label="Lượng nhân: ${line.amount || 'không áp dụng'}">${line.amount || '—'}</span>
+            <div><span class="dish-name">${line.name}</span>${line.filling || line.note ? `<span class="dish-option">${line.note || `${line.filling} · ${line.amount}`}</span>` : ''}</div>
             <span class="quantity" aria-label="Số lượng: ${line.quantity}">×${line.quantity}</span>
             <span class="price" aria-label="Giá dòng">${money(line.quantity * line.unitPrice)}</span>
           </div>
-          ${group === 'COMBO' ? `<details><summary>Chi tiết</summary><ul class="ingredients" aria-label="Thành phần mỗi combo">
+          ${line.combo ? `<details><summary>Chi tiết</summary><ul class="ingredients" aria-label="Thành phần mỗi combo">
             <li><strong>Mỗi combo gồm:</strong></li>
             ${Object.entries(line.parts).map(([key, quantity]) => `<li>×${quantity} ${parts[key].name}${parts[key].option ? ` · ${parts[key].option}` : ''}</li>`).join('')}
           </ul></details>` : ''}
-        </div>`).join('')}
-    </div>`).join('');
-  byId('order-total').textContent = money(acceptedLines.reduce((sum, line) => sum + line.quantity * line.unitPrice, 0));
+        </li>`).join('');
+  byId('order-total').textContent = money(sumMoney(acceptedLines));
 }
 
 function renderProgress(complete) {
-  let totalOrdered = 0;
-  let totalServed = 0;
-  byId('progress-rows').innerHTML = Object.entries(parts).map(([key, part]) => {
-    const ordered = acceptedLines.reduce((sum, line) => sum + (line.parts[key] || 0) * line.quantity, 0);
-    const served = complete ? ordered : servedExample[key];
-    const missing = ordered - served;
-    totalOrdered += ordered;
-    totalServed += served;
-    return `<tr class="${missing ? 'missing-row' : ''}">
-      <th scope="row">${part.name}${part.option ? `<span class="dish-option">${part.option}</span>` : ''}</th>
-      <td>${ordered}</td><td>${served}</td>
-      <td class="${missing ? 'missing' : 'complete'}">${missing}${missing ? '' : ' <span aria-label="đã đủ">✓</span>'}</td>
-    </tr>`;
-  }).join('');
-  byId('accepted-count').textContent = `Tổng ${totalOrdered} phần`;
-  byId('progress-label').textContent = `${totalServed} / ${totalOrdered} phần đã ra`;
+  const servedLines = complete ? acceptedLines : servedLinesExample;
+  const servedAmount = sumMoney(servedLines);
+  const ordered = sumParts(acceptedLines);
+  const served = sumParts(servedLines);
+  const missing = Object.fromEntries(Object.keys(parts).map(key => [key, ordered[key] - served[key]]));
+  byId('progress-rows').innerHTML = [
+    { name: 'Đặt', totals: ordered },
+    { name: 'Đã ra', totals: served, amount: servedAmount },
+    { name: 'Còn thiếu', totals: missing, highlight: true }
+  ].map(row => `
+    <tr class="${row.highlight && countCakes(missing) > 0 ? 'missing-row' : ''}">
+      <th scope="row">${row.name}</th>
+      ${countColumns.map(keys => `<td>${keys.map(key => {
+        const count = row.totals[key];
+        return `<div class="part-count ${count === 0 ? 'khong' : row.highlight ? 'missing' : ''}">${count}${parts[key].label ? ` ${parts[key].label}` : ''}</div>`;
+      }).join('')}</td>`).join('')}
+      <td class="served-money">${row.amount === undefined ? '—' : money(row.amount)}</td>
+    </tr>`).join('');
+  const totalOrdered = countCakes(ordered);
+  const totalServed = countCakes(served);
+  byId('accepted-count').textContent = `Tổng ${totalOrdered} bánh`;
+  byId('progress-label').textContent = `${totalServed} / ${totalOrdered} bánh đã ra`;
   byId('serve-progress').max = totalOrdered;
   byId('serve-progress').value = totalServed;
-  byId('total-ordered').textContent = totalOrdered;
-  byId('total-served').textContent = totalServed;
-  byId('total-missing').textContent = totalOrdered - totalServed;
+  byId('served-money-total').textContent = money(servedAmount);
 }
 
 function showState(state) {
@@ -255,6 +299,12 @@ function showState(state) {
   renderProgress(complete);
 }
 renderSummary();
+byId('summary-toggle').addEventListener('click', () => {
+  const expanded = byId('summary-toggle').getAttribute('aria-expanded') === 'true';
+  byId('summary-toggle').setAttribute('aria-expanded', String(!expanded));
+  byId('summary-toggle').textContent = expanded ? `Xem đơn đã đặt (${acceptedLines.length} dòng)` : 'Ẩn đơn đã đặt';
+  byId('summary-lines').hidden = expanded;
+});
 showState(byId('preview-state').value);
 byId('preview-state').addEventListener('change', event => showState(event.target.value));
 </script>
