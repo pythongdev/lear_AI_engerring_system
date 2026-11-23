@@ -631,6 +631,15 @@ việc của hai trang về Khoản chi, để chủ quán không mất lối gh
 
 **Nhận việc.**
 
+Claude Code, 2026-11-24 (chủ repo: *"tiếp tục yêu cầu codex làm các bước tiếp theo bạn kiểm tra"*). Thực hiện: Codex trong
+`../lean_wt/KC-14`, nhánh `codex/KC-14` từ `1895100`; duyệt: Claude. Phiếu: `../lean_wt/_claude_logs/KC-14/phieu.md`. Phạm vi mở thêm
+`khoan-chi.tsx` · `khoan-chi.css` · `khoan-chi/` (mở sẵn theo `?thu=`, `kc14.test.tsx`), `chu-quan.test.tsx` (danh sách menu),
+`the-de-xuat.tsx` và test của nó (link màn tay của thẻ chat), `du-lieu-kho.ts` · `du-lieu-nguyen-lieu.ts`, `kho.tsx` · `nguyen-lieu.tsx`.
+Hình Claude chốt: hai route cũ chuyển hướng phía server về `/chu-quan/khoan-chi`, `nguyen-lieu` giữ `?thu=` chỉ khi là mã số hợp lệ;
+Khoản chi đọc `?thu=` mở sẵn ngăn chi tiết của khoản con nối thứ ấy, không thấy thì hiện bình thường; thẻ đề xuất chat trỏ
+*Xem Khoản chi*; test hai trang cũ thành test chuyển hướng, mỗi ca cũ có ca thay hoặc lý do *không chuyển* (vd. thêm thứ ngoài mục —
+ADR-147 điểm 2: thêm thứ là thêm khoản con của mục theo dõi). `kho.tsx`, `nguyen-lieu.tsx` hết người dùng: chủ repo xoá trong khối commit.
+
 <a id="cau-hoi-mo"></a>
 <a id="kc-15"></a>
 ## KC-15 — FE: lịch sử sử dụng và lịch sử mua hàng của cả mục
