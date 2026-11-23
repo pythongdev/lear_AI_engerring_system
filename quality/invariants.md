@@ -1182,6 +1182,9 @@ Mệnh đề của **mảng quản trị** — sổ nguyên liệu ở mức *s�
   theo ở bước lược đồ thêm cột tỉ lệ (`work/backlog.md` **T-186**); tới lúc ấy test cũ còn xanh vì lược đồ chưa đổi.
   **Sửa 2026-10-19 (T-204, chủ repo đóng `U-102`):** chưa có lần nhập, hoặc lần nhập gần nhất ghi 0 ⇒ máy **nhắc** POS
   kiểm tra; vẫn là lời nhắc, không đổi con số nào.
+  **Sửa 2026-11-22 (KC-01, chủ repo đóng `U-123`):** máy được **hiện** *ước tính còn dùng N ngày* = hiệu số ÷ trung bình
+  con số *đã dùng* của tối đa 7 ngày gần nhất có ghi — **tính lúc đọc, không cất**, chỉ để xem. Vẫn cấm: cất một con số
+  tính ra, kết luận *thiếu*, nhắc hay tự tắt món theo ước tính. Cơ chế: `docs/decisions.md` ADR-147 điểm 8.
 - **Sửa một con số đã nhập là một lần cập nhật.** Nó để lại bản trước, bản sau, lý do và người sửa
   theo `I-018`; không có đường sửa đè.
 

@@ -2417,10 +2417,29 @@ trong câu hỏi có sẵn phương án; chưa có xác nhận lời đến từ
    tiền đã chi và lượng đã ghi giữ nguyên, vẫn vào tổng cũ.
 7. **Thêm nguyên liệu mới kèm tiền mua bằng một lần bấm**: thành công cả hai hoặc không có gì.
 
-*Cách đọc của phiên, chưa ai xác nhận:* đổi tên ở một nơi là đổi tên của cùng một thứ (câu hỏi nêu thế, chủ repo không
-phản đối); vế 6 chỉ áp cho nguyên liệu — khoản con khác (điện, nước, đồ dùng) giữ luật chặn xoá của T-247; ít hơn 7 ngày
-có ghi dùng thì trung bình trên số ngày có, không có ngày nào hoặc mức dùng bằng 0 thì hiện *chưa tính được*; ai được
-ghi lượng vẫn như trang Nguyên liệu hiện nay (chủ quán).
+**Lượt hai cùng ngày** (KC-01; chủ repo chọn trong câu hỏi có sẵn phương án, xác nhận cả bốn cách đọc phiên đã nêu):
+
+8. **Mục chi nào theo dõi lượng do chủ quán chọn lúc tạo mục**, như chọn nguồn tiền, không đổi được sau; ví dụ *Mua nguyên
+   liệu* và *Đồ dùng cho quán* có theo dõi, *Điện* thì không. Chỉ thứ thuộc mục có theo dõi mới có số còn, ước tính, sổ lượng.
+9. **Các thứ đã có trong sổ do chủ quán tự xếp vào mục**, mỗi thứ một lần; trước khi xếp, trang hiện nhóm *Chưa xếp mục* và
+   sổ vẫn ghi được. Máy không tự tạo mục, không đoán nguồn tiền.
+10. **Hộp ghi chi mua có ô lượng tuỳ chọn, hiện và đặt con số *mua vào* của ngày nhập** — người gõ tổng của ngày (sáng 5,
+    chiều mua thêm 3 thì sửa thành 8); con số trong sổ luôn đúng như người gõ, máy không cộng dồn. Bỏ trống thì sổ không đổi.
+11. **Bốn cách đọc được xác nhận** (*"Đúng cả bốn"*): đổi tên ở Khoản chi là đổi tên của chính thứ trong sổ; vế 6 chỉ áp cho
+    thứ có theo dõi lượng — khoản con khác (điện, nước…) vẫn bị chặn xoá khi còn khoản chi (T-247); chưa đủ 7 ngày có ghi
+    dùng thì trung bình trên số ngày đang có; không có ngày nào hoặc mức dùng bằng 0 thì hiện *chưa tính được*.
+
+**Lượt ba cùng ngày** (duyệt ADR-147; chủ repo chọn trong câu hỏi có sẵn phương án):
+
+12. **Một thứ chỉ nằm dưới một mục chi.**
+13. **Chuyển được một thứ sang mục khác** (ví dụ *Túi bóng* từ *Mua nguyên liệu* sang *Đồ dùng cho quán*), làm trong đợt này;
+    tiền đã chi cũ đi theo thứ sang mục mới.
+14. **Ngừng dùng là khoá hẳn phần lượng** — không ghi mới, không sửa con số cũ — nhưng **mở lại được**: thứ quay về đúng mục cũ
+    với toàn bộ lịch sử.
+15. **Số còn ≤ 0 thì ước tính hiện *Hết theo sổ***; còn lại hiện số ngày một chữ số thập phân, ví dụ *2,5 ngày*.
+
+*Cách đọc của phiên, chưa ai xác nhận:* ai được ghi lượng vẫn như trang Nguyên liệu hiện nay (chủ quán). Phần cơ chế (bảng,
+cửa, công thức chi tiết): `docs/decisions.md` **ADR-147**.
 
 **Chủ quán trả lời 2026-09-25 (T-093).** Chuẩn hoá chính tả, giữ nguyên ý;
 đây là dữ kiện và nhu cầu, chưa phải thiết kế nghiệp vụ tài chính.

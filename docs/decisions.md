@@ -9024,3 +9024,82 @@ hay một lệnh nhập tay truyền một cột mà quên cột kia, cộng ti�
 
 **Applies to:** `QD-31` · `I-014` · `I-021` · `T-342` · `bill` · `debt_collection` · `prepayment` · `refund`.
 
+## ADR-147 — Gộp Kho và Nguyên liệu vào Khoản chi: mục chi mang cờ theo dõi lượng, khoản con nối đúng một thứ của sổ, sổ lượng giữ nguyên luật
+
+**Status:** **Đã chốt** 2026-11-22 — Claude Code thiết kế ở `KC-01` (mức **L3**); chủ repo chọn *"Duyệt, giao Codex làm"*
+trong câu hỏi có sẵn phương án, rồi trả lời năm điểm phiên đã nêu (điểm 12). Lời quán là `master_plan/shop-facts.md` §8.10
+*Lượt 2026-11-22* vế 1–15; mọi cơ chế dưới đây là thiết kế của phiên.
+
+**Context:** Bản thiết kế `docs/product/4-fe/thiet_ke/chu_quan/khoan-chi/khoan-chi.html` (T-350…T-362) bày tiền mua và lượng
+của nguyên liệu trên một trang. Hệ thống đang để hai nửa riêng: tiền ở `expense_category` · `expense_item` · `expense`
+(ADR-106, T-248), lượng ở `supply_item` · `supply_day_entry` (ADR-071). Chủ repo chọn: cùng một thứ; trang Khoản chi thay cả
+Kho lẫn Nguyên liệu; mục chi nào theo dõi lượng do chủ quán chọn lúc tạo; thứ đã có do chủ quán tự xếp; ngày nhập ghi riêng;
+số còn là hiệu số; máy hiện ước tính còn dùng; xoá thứ đã dùng là ngừng dùng; thêm thứ kèm tiền một lần bấm; ô lượng đặt con
+số của ngày, không cộng dồn. Database đang chạy ngày 2026-11-22: 5 mục chi (Điện, Nước, Wifi, Xăng xe, Marketing), 0 khoản
+con, 30 thứ trong sổ, 1 khoản chi, 2 con số — chưa có cặp nào để ghép.
+
+**Decision:**
+
+1. **Cờ theo dõi lượng trên mục chi.** `expense_category` thêm một cờ bắt buộc khai lúc tạo, không sửa được — cùng hình
+   `paid_from_till` (ADR-106 điểm 1). Năm mục đang có nhận *không theo dõi*. Tên cột, ràng buộc: migration thắng (ADR-053).
+2. **Khoản con của mục theo dõi lượng nối đúng một thứ của sổ, và ngược lại.** `expense_item` thêm khoá ngoại tới
+   `supply_item`, duy nhất trên toàn bảng: một thứ đứng dưới nhiều nhất một khoản con. Database giữ cả hai chiều — khoản con
+   của mục theo dõi phải có nối, khoản con của mục thường không được có — ưu tiên ràng buộc khai báo (khoá ngoại ghép
+   *mục + cờ*), trigger chỉ khi khai báo không đủ; `KC-02` chọn và chứng minh bằng test. Thứ chưa có khoản con nối là nhóm
+   *Chưa xếp mục*; **xếp mục** là tạo khoản con nối nó, chủ quán làm từng thứ. Migration không tạo dòng, không ghép theo tên.
+3. **Một tên.** Tên khoản con nối luôn bằng tên thứ trong sổ. Đổi tên đi qua **một** cửa đổi cả hai trong cùng giao dịch,
+   có lý do và vết; database bắt lệch nếu một lệnh SQL thẳng chỉ đổi một bên. `supply_item.name` vốn duy nhất (I-026 vế
+   *một thứ đứng một lần*), nên hai mục theo dõi không thể có hai thứ trùng tên.
+4. **Ngừng dùng thay cho xoá, chỉ với thứ có theo dõi lượng.** `supply_item` thêm cặp dấu xoá mềm `deleted_at` ·
+   `deleted_by_person_id` (khuôn T-248). Ngừng dùng một thứ = xoá mềm thứ ấy **và** khoản con nối trong cùng giao dịch, có lý
+   do; được phép cả khi đã có tiền chi hay con số. Sau đó **khoá hẳn phần lượng**: không ghi con số mới, không sửa con số
+   cũ; không ghi khoản chi mới cho nó; khoản chi, con số, tổng cũ đọc như cũ. **Dùng lại** được: một cửa có lý do gỡ dấu
+   ngừng của thứ và khoản con nối, thứ trở về đúng mục cũ cùng toàn bộ lịch sử (tên cũ vẫn giữ chỗ vì khoá duy nhất tính cả
+   dòng đã ngừng). Khoản con của mục thường giữ luật chặn xoá của T-247. **Sửa ADR-071 điểm 4** (*không trạng thái ngừng
+   dùng*): danh mục nay có dấu ngừng dùng; test so cột của lát đổi theo trong `KC-02`.
+5. **Ngày nhập trên khoản chi.** `expense` thêm một cột ngày nhập trống được. Khoản thuộc khoản con có nối: cửa ghi điền bằng
+   ngày chi khi người không đổi; khoản cũ và khoản của mục thường để trống. Không ràng thứ tự với ngày chi. Sửa ngày nhập đi
+   qua cửa sửa khoản sẵn có, cùng luật lý do · vết · khoá ngày đã đối soát.
+6. **Ô lượng đặt con số của ngày, sổ giữ nguyên luật.** Cửa ghi khoản chi của khoản con có nối nhận tuỳ chọn con số *mua vào*
+   của (thứ, ngày nhập): chưa có con số thì tạo, đã có mà khác thì là **một lần sửa** con số ấy — phải kèm lý do như cửa sửa
+   sổ hiện nay. Cùng giao dịch với khoản chi. Sửa hay xoá khoản chi về sau **không** đổi sổ: con số thuộc sổ, không thuộc
+   khoản. I-025, I-026 và ADR-071 điểm 1–3 đứng nguyên.
+7. **Thêm thứ kèm tiền: một cửa nguyên khối.** Tạo thứ trong sổ (tên, đơn vị mua tuỳ chọn) + khoản con nối + tuỳ chọn khoản
+   chi (tiền, ngày chi, ngày nhập) + tuỳ chọn con số mua vào, thành công cả hoặc không có gì. Repo chưa có khoá chống gửi lặp
+   chung; lần gửi thứ hai cùng tên bị `supply_item_name_key` từ chối nên không sinh khoản chi thứ hai. FE khoá nút khi đang
+   gửi; mất phản hồi thì đọc lại danh mục rồi mới cho gửi tiếp.
+8. **Ước tính còn dùng tính lúc đọc, không cất.** Backend trả cho mỗi thứ: mức dùng = trung bình các con số *đã dùng* của tối
+   đa 7 ngày gần nhất có con số *đã dùng* (con số 0 đã ghi là một ngày có ghi), tính tới ngày bán hôm nay; ít hơn 7 ngày thì
+   trên số ngày có; số ngày còn = hiệu số ÷ mức dùng, **làm tròn xuống tới một chữ số thập phân** (FE hiện *2,5 ngày*).
+   Không có ngày nào hoặc mức dùng 0 ⇒ *chưa tính được*; hiệu số ≤ 0 ⇒ *Hết theo sổ*. Phép tính dùng
+   `numeric`, không qua số thực. Không nhắc, không vào lời nhắc POS, không đổi `reminder_ratio`. **Sửa I-025 vế 3** trong cùng
+   thay đổi: máy được *hiện* ước tính tính lúc đọc; vẫn không cất, không kết luận *thiếu*, không tự tắt món.
+9. **Một trang, cửa cũ dùng lại.** Trang Khoản chi gánh mọi việc của trang Kho và Nguyên liệu — danh mục, sổ từng thứ, thêm và
+   sửa con số có lý do, đơn vị lần đầu, tỉ lệ nhắc — bằng **các cửa `supply-*` đang có**, không dựng cửa thứ hai cho cùng
+   việc. Hai route cũ gỡ ở `KC-14`, sau khi trang mới làm được hết. Mọi cửa vẫn lớp `chu_quan`; `GET /supply-check-reminders`
+   của POS không đổi.
+10. **Tiền theo ngày do backend tính.** Tổng tiền theo ngày và lịch sử chi đọc ngoài bộ lọc chung là phần mở rộng hợp đồng đọc
+    của `KC-05`; FE không cộng tiền (`docs/product/4-fe/01-khung-fe.md`).
+11. **Bất biến mới đi cùng lát của nó.** Mệnh đề *khoản con theo dõi ⇔ đúng một thứ, một tên* vào `quality/invariants.md` ở
+    `KC-02`, cùng dòng của bộ đối chiếu `docs/product/2-db/09-doi-chieu-bat-bien.md` và test hồi quy viết trước — không viết
+    mệnh đề trước lát (F-080: bất biến không kèm dòng đối chiếu làm `db-check` đỏ).
+
+12. **Chuyển mục.** Một thứ chuyển được sang mục khác, có lý do và vết: khoản con nối đổi mục, và mọi khoản chi của nó đổi mục
+    theo trong cùng giao dịch. **Chỉ giữa hai mục cùng theo dõi lượng và cùng nguồn tiền**; khác nguồn thì từ chối — chuyển
+    sẽ viết lại nguồn của tiền đã chi, đổi số két của những ngày đã qua (I-021). *Vế cùng nguồn là phiên chọn theo hướng chặt,
+    chủ repo nới được.* Một thứ ở **đúng một** mục (lời chủ repo chọn điểm (a)).
+
+**Năm điểm phiên nêu, chủ repo trả lời 2026-11-22:** (a) một thứ một mục — *đồng ý*; (b) chuyển mục — *"Có, làm trong đợt
+này"* ⇒ điểm 12; (c) thứ đã ngừng sửa số cũ — *"Không, khoá hẳn"* ⇒ điểm 4; (d) hiệu số ≤ 0 — *"Hiện 'Hết theo sổ'"*, số ngày
+một chữ số thập phân ⇒ điểm 8; (e) mở lại — *"Được mở lại"* ⇒ điểm 4. *Suy ra, chưa ai xác nhận:* làm tròn **xuống**; khoản
+chi cũ của thứ đã ngừng giữ luật T-248 hiện hành cho khoản con đã xoá mềm.
+
+**Rejected alternatives:** gộp hai bảng thành một — đổi khoá của mọi khoản chi và con số cũ, đụng I-026 và mọi test của hai
+lát, trong khi nối bằng khoá ngoại đủ cho cùng hành vi; ghép theo tên lúc migration — chủ repo chọn tự xếp; cộng dồn lượng
+theo từng lần mua — chủ repo không chọn, và phải viết lại I-025 · I-026; cất mức dùng hay số ngày — đều suy được từ sổ.
+
+**Consequences:** thứ tự thi công `KC-02` → `KC-03` → `KC-05` → `KC-06` → `KC-07` → FE (`work/backlog_KC.md`). Hai lát cũ
+(ADR-071, ADR-106) thêm cột, không đổi cột nào. Trong lúc lane chạy, trang Kho và Nguyên liệu vẫn chạy như cũ trên cùng dữ
+liệu. Lùi: mỗi migration lùi được tới lúc có dòng dùng cột mới (khoá chặn, ADR-065).
+
+**Applies to:** `KC-01`…`KC-14` · `I-025` · `I-026` · `I-029` · ADR-071 · ADR-103 · ADR-106 · T-247 · T-248.
