@@ -99,6 +99,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-371 **Trang Yêu thích trên app vẫn khác bản thiết kế `favourite.html` ở phần nhìn: màu nhấn cam, thẻ nền xám không viền, giá cạnh lựa chọn, khung viền bao ngoài** — L1 (chỉ kiểu FE, không đổi dữ liệu), chủ repo yêu cầu 2026-11-23; Codex làm trong `../lean_wt/T-371`, Claude duyệt · [chi tiết](#t-371); **xong 2026-11-23**: nút, giá, tab, khối tạo bộ cam (sáng `#EA6A0C`, tối `#FF7A1A`), bỏ khung viền ngoài, 8/8 ảnh 360/430 tràn 0px
 - [x] T-343 **Trigger giữ số đếm của ngày đã ký không lấy khoá ngày, nên lệnh SQL thẳng chạy cùng lúc với lần ký vẫn lọt** — L3 (ADR-080, I-021), chủ repo yêu cầu 2026-11-16 sau bản đánh giá database; thiết kế được duyệt 2026-11-23 (Sửa đổi ADR-080), Claude viết test, Codex viết migration · [chi tiết](#t-343)
 - [x] T-367 **Trang Yêu thích trên app lệch bản thiết kế `favourite.html` ở màu, thẻ món, tab lọc và hộp tạo bộ** — L1 (chỉ FE), mở 2026-11-22 từ nghiệm thu YT-07; chủ repo chọn 2026-11-23 sửa điểm 3–6, không sửa màu nhấn và đầu trang; Codex làm, Claude duyệt · [chi tiết](#t-367)
 - [ ] KC-09 **Trang Khoản chi chưa có bảng tổng theo ngày, các khoản chi gom theo ngày, bảng khoản con ba cột và lịch sử chi riêng của từng khoản con** — L2 (hiện tiền từ backend), chủ repo yêu cầu 2026-11-23 (*"ok hãy tiếp tục giao cho codex làm bạn kiểm tra"*); Claude viết test trước, Codex làm trong `../lean_wt/KC-09`, Claude duyệt · [chi tiết](backlog_KC.md#kc-09)
@@ -675,6 +676,47 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-371"></a>
+### T-371 — Trang Yêu thích: đưa phần nhìn về bản thiết kế
+
+Chủ repo yêu cầu 2026-11-23: *"hãy làm cho style page `/khach/yeu-thich` giống với style của `favourite.html`, chỉ style không
+thay đổi dữ liệu"*, Codex làm, Claude kiểm. T-367 đã sửa thẻ món, tab, hộp tạo bộ (điểm 3–6) nhưng khi ấy chủ repo chọn không
+đổi màu nhấn (điểm 1) và đầu trang (điểm 2); yêu cầu này mở lại **điểm 1** cho riêng trang Yêu thích.
+
+*Claude quyết phạm vi, chưa hỏi chủ repo (2026-11-23):* chỉ trang Yêu thích đổi kiểu; thanh điều hướng chung của khách
+(`KhungKhach`) giữ nguyên vì mọi trang khách dùng chung và là cấu trúc, không phải kiểu — nên *← Thực đơn*, nút đổi giao diện
+trên đầu và thanh tab dưới đáy của bản thiết kế **không** làm. Khung viền bao ngoài thì bỏ cho riêng trang này qua một tuỳ
+chọn mới của `KhungKhach`, trang khác không đổi. Khối *Hồ sơ khách minh hoạ* chỉ là đồ thử của bản thiết kế, không đưa vào.
+
+Acceptance viết trước khi làm:
+- A1 — màu nhấn cam của bản thiết kế (sáng `#EA6A0C`, tối `#FF7A1A`) chỉ trong trang Yêu thích: nút chính (*Tạo bộ món riêng*,
+  *Thêm vào giỏ* của bộ, *Thêm tất cả vào giỏ*, nút lưu trong hộp), giá, nhãn trên cùng, tab đang chọn (viền và nền cam nhạt),
+  trái tim, checkbox; khối *Tạo bộ món riêng* nền cam nhạt viền cam; nhãn *Bộ món riêng* chữ cam nền cam nhạt.
+- A2 — thẻ bộ món và thẻ dòng tim nền xám (`--card` của bản thiết kế) bo góc, nhãn loại (*MÓN LẺ*/*COMBO*) chữ hoa nhỏ, giá cam
+  nằm cùng dòng với chữ lựa chọn, ảnh món nền cam nhạt bo góc; hàng nút −/＋ và *＋ Giỏ* nhỏ như bản thiết kế.
+- A3 — trang Yêu thích không còn khung viền bao ngoài; thanh điều hướng khách và mọi trang khách khác giữ nguyên (test `khach`
+  khác vẫn xanh).
+- A4 — không đổi dữ liệu hay hành vi: không sửa lời gọi API, body, luật tính, chữ hiện ra; test cũ của
+  `fe/src/app/khach/yeu-thich/` xanh không phải sửa (nếu phải sửa thì nêu từng chỗ và vì sao); `tsc --noEmit` sạch.
+- A5 — sáng và tối đều đúng màu; không tràn ngang ở 360/430px; Claude chạy app thật chụp ảnh so bản thiết kế; `./scripts/gate.sh`
+  xanh.
+
+Phạm vi (`work/scope/T-371.txt`): `fe/src/components/khach/yeu-thich.tsx`, `fe/src/components/khach/yeu-thich/`,
+`fe/src/components/khach/khung.tsx`, `fe/src/app/khach/yeu-thich/`, `work/backlog.md`. Thi công: Codex trong `../lean_wt/T-371`,
+nhánh `codex/T-371`, nền `4e66712`; phiếu và log `../lean_wt/_claude_logs/T-371/`.
+
+**Kết quả 2026-11-23** (thực hiện: Codex, duyệt: Claude; một lượt, Claude sửa thêm hai dòng CSS). File mới
+`fe/src/components/khach/yeu-thich/yeu-thich.css`: bảng màu riêng `yt-theme` (sáng/tối theo bản thiết kế, đặt cả trên
+`DialogContent` vì hộp thoại render qua portal); `KhungKhach` thêm `vien` mặc định `true`, chỉ Yêu thích truyền `false`; các
+component Yêu thích chỉ đổi `className`. Claude đọc diff: không đổi chuỗi chữ, lời gọi API hay body. Claude tự sửa sau ảnh:
+`.yt-description:empty` ẩn đoạn mô tả rỗng (giá món không lựa chọn bị thụt), trái tim `#f87171` như bản thiết kế (phiếu ghi
+nhầm cam). Bằng chứng Claude tự lấy ở clone chính sau `git apply`: A4 — `npx vitest run src/app/khach src/components/khach`
+76/76, không sửa test, `tsc --noEmit` sạch; A1/A3/A5 — Playwright app thật 360/430 × sáng/tối (`chup.cjs`): 8/8 ảnh tràn 0px,
+`main [data-slot=card]` = 0, nền nút *Thêm tất cả vào giỏ* `rgb(234, 106, 12)` sáng · `rgb(255, 122, 26)` tối; ảnh
+`../lean_wt/_claude_logs/T-371/anh/`. Ghi nhận, không sửa: nút nhỏ hơn 44px như bản thiết kế; một `console.error` 401 ở trang
+đăng nhập trước khi có phiên (có từ trước); kịch bản chụp thả tim lại hai món của tài khoản thử nên số lượng trong database làm
+việc tăng. Gate trong worktree đỏ 1f/1g ở `be/internal/khoanchi/` của nền, không thuộc việc này.
 
 <a id="t-369"></a>
 ### T-369 — Trang theo dõi món cho khách ngồi bàn

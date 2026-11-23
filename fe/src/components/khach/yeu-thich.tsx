@@ -13,6 +13,7 @@ import { KhungKhach, LoiDocKhach } from "./khung";
 import { KHOA, themVaoGio, useGiaCacNhom, type Dong, type Menu } from "./yeu-thich/du-lieu";
 import { HopSuaBo, type HopBo } from "./yeu-thich/hop-bo";
 import { Gia, TheBo, TheDong } from "./yeu-thich/the";
+import "./yeu-thich/yeu-thich.css";
 
 export function YeuThichKhach() {
   const api = useApi(); const [matPhien, setMatPhien] = useState(false);
@@ -29,9 +30,10 @@ export function YeuThichKhach() {
   const loiDoc = doc.error as ApiFailure | null; const loiMenu = menu.error as ApiFailure | null;
   const canDangNhap = matPhien || hetPhien(loiDoc) || hetPhien(loiMenu);
   const docLai = () => { void doc.refetch(); void menu.refetch(); };
-  return <KhungKhach title="Yêu thích">
-    <header className="space-y-2"><p className="text-xs tracking-widest text-[var(--muted-foreground)]">MÓN QUEN, LUÔN Ở ĐÂY</p>
-      <h2 className="text-xl font-semibold">Hôm nay ăn món mình thích ♥</h2><p className="text-[var(--muted-foreground)]">Lưu món ngon, chọn lại thật nhanh cho bữa sau.</p>
+  return <KhungKhach title="Yêu thích" vien={false}>
+    <div className="yt-theme yt-page min-w-0 space-y-6">
+    <header className="space-y-2"><p className="yt-eyebrow">MÓN QUEN, LUÔN Ở ĐÂY</p>
+      <h2 className="text-xl font-semibold">Hôm nay ăn món mình thích ♥</h2><p className="yt-muted">Lưu món ngon, chọn lại thật nhanh cho bữa sau.</p>
     </header>
     {canDangNhap ? <section className="space-y-3"><p>Đăng nhập để xem và lưu món yêu thích của bạn.</p><Link className="underline" href="/khach/dang-nhap">Đăng nhập</Link></section> : <>
       {(doc.isPending || menu.isPending) && <p role="status">Đang tải món yêu thích…</p>}
@@ -42,6 +44,7 @@ export function YeuThichKhach() {
         <NoiDung data={doc.data} menu={menu.data} readAt={doc.dataUpdatedAt} menuReadAt={menu.dataUpdatedAt} moiDangNhap={() => setMatPhien(true)} />
       </>}
     </>}
+    </div>
   </KhungKhach>;
 }
 
@@ -59,30 +62,30 @@ function NoiDung({ data, menu, readAt, menuReadAt, moiDangNhap }: {
   const theBo = (bo: components["schemas"]["FavouriteSet"]) => <TheBo key={bo.favourite_set_id} bo={bo} menu={menu}
     query={queries[data.sets.indexOf(bo) + 1]} moiDangNhap={moiDangNhap} them={them} sua={() => setHop({ kind: "rieng", bo })} />;
   return <>
-    <section className="space-y-3 rounded-2xl border border-[var(--border)] bg-[var(--accent)] p-4 text-[var(--accent-foreground)]">
-      <p className="text-xs tracking-wider">THEO KHẨU VỊ CỦA BẠN</p><h2 className="text-lg font-semibold">Một bộ món, đúng ý mình</h2>
-      <p>Tự chọn món quen, đặt tên riêng và lưu lại cho lần sau.</p><Button className="min-h-11 w-full" onClick={() => setHop({ kind: "rieng" })}>Tạo bộ món riêng</Button>
+    <section className="yt-create space-y-3">
+      <p className="yt-eyebrow">THEO KHẨU VỊ CỦA BẠN</p><h2 className="text-lg font-semibold">Một bộ món, đúng ý mình</h2>
+      <p className="yt-muted">Tự chọn món quen, đặt tên riêng và lưu lại cho lần sau.</p><Button className="min-h-11 w-full" onClick={() => setHop({ kind: "rieng" })}>Tạo bộ món riêng</Button>
     </section>
     <section aria-label="Bộ món của bạn" className="space-y-3">
-      <div className="flex items-center justify-between gap-2"><h2 className="font-semibold">Bộ món của bạn</h2><span>{boRieng.length} bộ</span></div>
-      {boRieng.length ? boRieng.map(theBo) : <p className="rounded-xl border border-dashed border-[var(--border)] p-4 text-[var(--muted-foreground)]">Chưa có bộ món riêng. Tạo bộ món đầu tiên để lần sau chọn món nhanh hơn.</p>}
+      <div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-sm font-semibold">Bộ món của bạn</h2><span className="yt-muted">{boRieng.length} bộ</span></div>
+      {boRieng.length ? boRieng.map(theBo) : <p className="yt-empty">Chưa có bộ món riêng. Tạo bộ món đầu tiên để lần sau chọn món nhanh hơn.</p>}
     </section>
-    <div className="flex flex-wrap items-center justify-between gap-2"><span>{data.lines.length} món yêu thích</span><Button variant="outline" className="min-h-11" onClick={() => setMoBo(true)}>Bộ đã lưu ({boLuu.length})</Button></div>
-    <nav aria-label="Lọc món yêu thích" className="flex flex-wrap gap-2">{([["all", "Tất cả", data.lines.length], ["mon", "Món lẻ", soMonLe], ["combo", "Combo", soCombo]] as const).map(([value, label, count]) =>
-      <Button key={value} variant={tab === value ? "secondary" : "outline"} className="min-h-11 min-w-0 flex-1 whitespace-nowrap" aria-pressed={tab === value} onClick={() => setTab(value)}>{label} ({count})</Button>)}</nav>
+    <div className="flex flex-wrap items-center justify-between gap-2"><span className="yt-muted">{data.lines.length} món yêu thích</span><Button variant="outline" onClick={() => setMoBo(true)}>Bộ đã lưu ({boLuu.length})</Button></div>
+    <nav aria-label="Lọc món yêu thích" className="yt-tabs flex flex-wrap gap-2">{([["all", "Tất cả", data.lines.length], ["mon", "Món lẻ", soMonLe], ["combo", "Combo", soCombo]] as const).map(([value, label, count]) =>
+      <Button key={value} variant={tab === value ? "secondary" : "outline"} className="min-w-0 flex-1 whitespace-nowrap" aria-pressed={tab === value} onClick={() => setTab(value)}>{label} ({count})</Button>)}</nav>
     <section aria-label="Món yêu thích" className="space-y-3">
       {data.lines.filter((d) => tab === "all" || (tab === "mon" ? d.menu_combo_id === null : d.menu_combo_id !== null)).map((d) =>
         <TheDong key={d.favourite_line_id} dong={d} query={queries[0]} index={conBan.indexOf(d)} menu={menu} moiDangNhap={moiDangNhap} them={them} />)}
       {!data.lines.length && <p>Bạn chưa lưu món yêu thích. <Link className="underline" href="/dat-mon">Xem thực đơn</Link></p>}
     </section>
-    <footer className="space-y-3 border-t border-[var(--border)] pt-4">
+    <footer className="yt-footer space-y-3">
       <div className="flex flex-wrap justify-between gap-2"><span>{conBan.reduce((n, d) => n + d.quantity, 0)} phần đã chọn</span>{conBan.length > 0 ? <Gia query={queries[0]} /> : <span>Chưa có món còn bán</span>}</div>
       <Button className="min-h-12 w-full" disabled={!conBan.length} onClick={() => them(conBan, "các món yêu thích")}>Thêm tất cả vào giỏ</Button>
-      <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-sm text-[var(--muted-foreground)]">Giữ lại lựa chọn cho lần sau</span><Button variant="outline" className="min-h-11" disabled={!conBan.length} onClick={() => setHop({ kind: "da_luu", lines: data.lines })}>Lưu thành bộ</Button></div>
+      <div className="flex flex-wrap items-center justify-between gap-2"><span className="yt-muted">Giữ lại lựa chọn cho lần sau</span><Button variant="outline" disabled={!conBan.length} onClick={() => setHop({ kind: "da_luu", lines: data.lines })}>Lưu thành bộ</Button></div>
     </footer>
     {bao && <p role="status">{bao} <Link className="underline" href="/dat-mon">Xem giỏ hàng</Link></p>}
     {hop && <HopSuaBo hop={hop} menu={menu} yeuThich={data.lines} moiDangNhap={moiDangNhap} dong={() => setHop(null)} />}
-    <Dialog open={moBo} onOpenChange={setMoBo}><DialogContent showCloseButton={false} className="max-h-[calc(100dvh-2rem)] overflow-y-auto">
+    <Dialog open={moBo} onOpenChange={setMoBo}><DialogContent showCloseButton={false} className="yt-theme yt-dialog max-h-[calc(100dvh-2rem)] min-w-0 overflow-y-auto">
       <DialogTitle>Bộ đã lưu</DialogTitle><DialogDescription>Các bộ món đã lưu từ danh sách yêu thích.</DialogDescription>
       {boLuu.length ? boLuu.map(theBo) : <p>Bạn chưa lưu bộ nào.</p>}
       {bao && <p role="status">{bao} <Link className="underline" href="/dat-mon">Xem giỏ hàng</Link></p>}

@@ -1,0 +1,279 @@
+/* Bảng màu riêng của Yêu thích; đặt yt-theme cả trên DialogContent qua portal. */
+.yt-theme {
+  --yt-bg: #FFFFFF;
+  --yt-card: #F3F4F6;
+  --yt-line: #E5E7EB;
+  --yt-muted: #6B7280;
+  --yt-accent: #EA6A0C;
+  --yt-field: #E5E7EB;
+  --yt-text: #111827;
+  --yt-banner: #FDE8D4;
+  --yt-banner-ink: #C2702F;
+  --yt-badge: #FDECDC;
+  color-scheme: light;
+  color: var(--yt-text);
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.dark .yt-theme {
+  --yt-bg: #000000;
+  --yt-card: #1F2937;
+  --yt-line: #2D3748;
+  --yt-muted: #9CA3AF;
+  --yt-accent: #FF7A1A;
+  --yt-field: #374151;
+  --yt-text: #F9FAFB;
+  --yt-banner: #3a2310;
+  --yt-banner-ink: #7c4a23;
+  --yt-badge: #3a2a18;
+  color-scheme: dark;
+}
+
+.yt-page {
+  background: var(--yt-bg);
+}
+
+.yt-theme [data-slot="button"] {
+  height: auto;
+  max-width: 100%;
+  border-radius: 7px;
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: normal;
+}
+
+.yt-theme [data-variant="default"] {
+  border-color: var(--yt-accent);
+  background: var(--yt-accent);
+  color: #FFFFFF;
+}
+
+.yt-theme [data-variant="outline"],
+.yt-theme [data-variant="secondary"] {
+  border-color: var(--yt-line);
+  background: transparent;
+  color: var(--yt-text);
+}
+
+.yt-theme [data-slot="button"]:hover:not(:disabled) {
+  filter: brightness(1.15);
+}
+
+.yt-theme [data-variant="ghost"]:hover {
+  background: var(--yt-badge);
+  color: var(--yt-accent);
+}
+
+.yt-theme :is(button, input, select):focus-visible {
+  outline: 2px solid var(--yt-accent);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+.yt-muted,
+.yt-description {
+  color: var(--yt-muted);
+}
+
+.yt-description {
+  min-width: 0;
+  font-size: 11px;
+}
+
+.yt-description:empty {
+  display: none;
+}
+
+.yt-price {
+  color: var(--yt-accent);
+}
+
+.yt-eyebrow {
+  color: var(--yt-accent);
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.yt-create {
+  padding: 18px;
+  border: 1px solid var(--yt-banner-ink);
+  border-radius: 16px;
+  background: var(--yt-banner);
+}
+
+.yt-create .yt-eyebrow {
+  letter-spacing: 1px;
+}
+
+.yt-create [data-slot="button"] {
+  font-weight: 600;
+}
+
+.yt-empty {
+  border: 1px dashed var(--yt-line);
+  border-radius: 14px;
+  padding: 18px;
+  color: var(--yt-muted);
+}
+
+.yt-tabs {
+  margin-top: 8px;
+  margin-bottom: 18px;
+}
+
+.yt-tabs [data-slot="button"] {
+  color: var(--yt-muted);
+}
+
+.yt-tabs [aria-pressed="true"] {
+  border-color: var(--yt-accent);
+  background: var(--yt-badge);
+  color: var(--yt-accent);
+}
+
+.yt-card {
+  min-width: 0;
+  border: 1px solid var(--yt-line);
+  border-radius: 14px;
+  background: var(--yt-card);
+}
+
+.yt-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: var(--yt-badge);
+  color: var(--yt-accent);
+  font-size: 10px;
+}
+
+.yt-item {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  padding: 16px 12px;
+}
+
+.yt-art {
+  width: 68px;
+  height: 68px;
+  border-radius: 10px;
+  background: var(--yt-banner);
+  color: var(--yt-muted);
+}
+
+.yt-item-copy {
+  position: relative;
+}
+
+.yt-kind {
+  display: block;
+  padding-right: 30px;
+  color: var(--yt-muted);
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.yt-theme .yt-heart {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  border: 0;
+  padding: 2px 6px;
+  color: #f87171;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.yt-item-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  min-width: 0;
+}
+
+.yt-options {
+  gap: 6px;
+  color: var(--yt-muted);
+}
+
+.yt-options select {
+  max-width: 100%;
+  border: 1px solid var(--yt-line);
+  border-radius: 7px;
+  padding: 8px;
+  background: var(--yt-field);
+  color: var(--yt-text);
+  font: inherit;
+}
+
+.yt-stepper {
+  border: 1px solid var(--yt-line);
+  border-radius: 7px;
+}
+
+.yt-stepper [data-slot="button"] {
+  border: 0;
+  padding: 6px 10px;
+}
+
+.yt-footer {
+  border-top: 1px solid var(--yt-line);
+  padding-top: 14px;
+}
+
+.yt-theme.yt-dialog {
+  width: calc(100% - 32px);
+  max-width: 430px;
+  gap: 14px;
+  border: 1px solid var(--yt-line);
+  border-radius: 18px;
+  padding: 22px;
+  background: var(--yt-bg);
+  box-shadow: none;
+}
+
+.yt-dialog [data-slot="dialog-title"] {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.yt-dialog [data-slot="dialog-description"] {
+  color: var(--yt-muted);
+  font-size: 12px;
+}
+
+.yt-dialog [data-slot="input"] {
+  height: auto;
+  border-color: var(--yt-line);
+  padding: 12px;
+  background: var(--yt-card);
+  color: var(--yt-text);
+}
+
+.yt-dialog input[type="checkbox"] {
+  accent-color: var(--yt-accent);
+}
+
+.yt-choice {
+  border-bottom: 1px solid var(--yt-line);
+}
+
+.yt-choice .yt-stepper [data-slot="button"] {
+  min-width: 36px;
+  min-height: 44px;
+}
+
+.yt-summary {
+  bottom: -22px;
+  margin-top: 16px;
+  border-top: 1px solid var(--yt-line);
+  padding: 16px 0 8px;
+  background: var(--yt-bg);
+}

@@ -8,14 +8,15 @@ import { Bao } from "@/components/tai-khoan/khung-form";
 import { loiTaiKhoan } from "@/lib/auth/messages";
 import type { ApiFailure } from "@/lib/api/client";
 
-export function KhungKhach({ title, children }: { title: string; children: ReactNode }) {
+export function KhungKhach({ title, children, vien = true }: { title: string; children: ReactNode; vien?: boolean }) {
   return <main className="mx-auto min-h-dvh max-w-lg space-y-6 px-4 py-8">
     <nav aria-label="Điều hướng khách" className="flex flex-wrap gap-4 text-sm">
       <Link href="/dat-mon">Đặt món</Link><Link href="/khach/don">Đơn đã đặt</Link><Link href="/khach/tai-khoan">Tài khoản</Link>
       <Link href="/khach/yeu-thich">Yêu thích</Link>
     </nav>
-    <Card><CardHeader><CardTitle><h1 className="text-2xl">{title}</h1></CardTitle></CardHeader>
+    {vien ? <Card><CardHeader><CardTitle><h1 className="text-2xl">{title}</h1></CardTitle></CardHeader>
       <CardContent className="space-y-6">{children}</CardContent></Card>
+      : <div className="min-w-0 space-y-6"><h1 className="text-2xl font-medium">{title}</h1>{children}</div>}
   </main>;
 }
 export function LoiDocKhach({ error, docLai, readAt }: { error: ApiFailure; docLai: () => void; readAt?: number }) {

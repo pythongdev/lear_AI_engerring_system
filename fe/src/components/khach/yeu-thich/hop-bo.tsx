@@ -94,7 +94,7 @@ export function HopSuaBo({ hop, menu, yeuThich, dong, moiDangNhap }: {
     if (ok) dong();
   }
   return <Dialog open onOpenChange={(open) => { if (!open && !ghi.busy) dong(); }}>
-    <DialogContent showCloseButton={false} className="max-h-[calc(100dvh-2rem)] min-w-0 overflow-y-auto">
+    <DialogContent showCloseButton={false} className="yt-theme yt-dialog max-h-[calc(100dvh-2rem)] min-w-0 overflow-y-auto">
       <DialogTitle>{title}</DialogTitle><DialogDescription>Chọn món bạn thích và lưu thành bộ món của mình.</DialogDescription>
       <form noValidate className="min-w-0 space-y-4" onSubmit={(e) => { e.preventDefault(); void luu(); }}>
         <fieldset disabled={ghi.busy} className="min-w-0 space-y-4">
@@ -102,35 +102,35 @@ export function HopSuaBo({ hop, menu, yeuThich, dong, moiDangNhap }: {
           <Input id={`${id}-ten`} value={name} onChange={(e) => setName(e.target.value)} aria-invalid={kiemTra && !!loiTen} aria-describedby={kiemTra && loiTen ? `${id}-loi-ten` : undefined} autoComplete="off" />
           {kiemTra && loiTen && <p id={`${id}-loi-ten`} role="alert">{loiTen}</p>}
           {hop.kind === "rieng" && <fieldset className="min-w-0 space-y-2"><legend className="mb-2 font-semibold">Chọn món và số lượng</legend>
-            <div className="min-w-0 divide-y divide-[var(--border)]">{choices.map(({ dong: d, available, selected }, i) => {
+            <div className="min-w-0">{choices.map(({ dong: d, available, selected }, i) => {
               const mon = menu.items.find((m) => m.menu_item_id === d.menu_item_id);
               const tenMon = tenDong(d, menu);
-              return <section key={khoaHinh(d)} aria-label={`Lựa chọn ${tenMon}`} className="min-w-0 space-y-2 py-3">
+              return <section key={khoaHinh(d)} aria-label={`Lựa chọn ${tenMon}`} className="yt-choice min-w-0 space-y-2 py-3">
                 <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-                  <label className="flex min-w-0 flex-1 items-center gap-2"><input type="checkbox" className="size-4 shrink-0" checked={selected} disabled={!available && !selected || !selected && lines.length >= 20}
+                  <label className="flex min-h-11 min-w-0 flex-1 items-center gap-2"><input type="checkbox" className="size-[18px] shrink-0" checked={selected} disabled={!available && !selected || !selected && lines.length >= 20}
                     onChange={(e) => setChoices((cu) => cu.map((v, j) => j === i ? { ...v, selected: e.target.checked } : v))} />
                     <span className="min-w-0 break-words font-medium">{tenMon}</span></label>
-                  <div className="flex shrink-0 items-center rounded-lg border border-[var(--border)]">
+                  <div className="yt-stepper flex shrink-0 items-center">
                     <Button type="button" variant="ghost" className="min-h-11" aria-label={`Giảm số lượng ${tenMon}`} disabled={!selected || !available || d.quantity <= 1} onClick={() => sua(i, doiSoLuong(d, d.quantity - 1, menu))}>−</Button>
                     <output aria-label={`Số lượng ${tenMon}`} className="min-w-6 text-center">{d.quantity}</output>
                     <Button type="button" variant="ghost" className="min-h-11" aria-label={`Tăng số lượng ${tenMon}`} disabled={!selected || !available || d.quantity >= 99} onClick={() => sua(i, doiSoLuong(d, d.quantity + 1, menu))}>＋</Button>
                   </div>
                 </div>
-                {!available && <p className="text-sm text-[var(--muted-foreground)]">Hết bán — bỏ chọn trước khi lưu</p>}
+                {!available && <p className="yt-muted">Hết bán — bỏ chọn trước khi lưu</p>}
                 {mon && available && mon.option_groups.length > 0 ? <LuaChonDanhSach groups={mon.option_groups} ids={d.option_ids ?? []} name={tenMon} onChange={(ids) => suaLuaChon(i, ids)} /> : <MoTaDong dong={d} menu={menu} />}
               </section>;
             })}</div>
           </fieldset>}
-          {hop.kind === "da_luu" && lines.map(({ dong: d }, i) => <section key={i} aria-label={`Dòng ${i + 1}`} className="space-y-2 rounded-xl border border-[var(--border)] p-3">
+          {hop.kind === "da_luu" && lines.map(({ dong: d }, i) => <section key={i} aria-label={`Dòng ${i + 1}`} className="yt-choice space-y-2 py-3">
             <h3 className="font-semibold">{tenDong(d, menu)}</h3><MoTaDong dong={d} menu={menu} /><p>Số lượng: {d.quantity}</p>
           </section>)}
           {kiemTra && loiDong && <p role="alert">{loiDong}</p>}
         </fieldset>
         {ghi.loi && <p role="alert">{ghi.loi}</p>}
-        <div className={hop.kind === "rieng" ? "sticky bottom-0 z-10 space-y-3 border-t border-[var(--border)] bg-[var(--popover)] py-3" : "space-y-3"}>
+        <div className={hop.kind === "rieng" ? "yt-summary sticky z-10 space-y-3" : "space-y-3"}>
         {hop.kind === "rieng" && <div className="space-y-1">
           <div className="flex flex-wrap items-center justify-between gap-2"><span>{lines.length ? `${lines.length} món · ${lines.reduce((n, v) => n + v.dong.quantity, 0)} phần` : "Chưa chọn món"}</span>
-            <strong className="text-[var(--primary)]">{!lines.length ? "—" : !lines.every((v) => v.available) ? "Có món hết bán" : quote.error ? quote.error.message : quote.isPending || quote.isFetching ? "Đang tính giá…" : quote.data ? tien(quote.data.total_vnd) : "Chưa tính được giá."}</strong></div>
+            <strong className="yt-price">{!lines.length ? "—" : !lines.every((v) => v.available) ? "Có món hết bán" : quote.error ? quote.error.message : quote.isPending || quote.isFetching ? "Đang tính giá…" : quote.data ? tien(quote.data.total_vnd) : "Chưa tính được giá."}</strong></div>
           {quote.error && <Button type="button" variant="outline" className="min-h-11" onClick={() => void quote.refetch()}>Thử lại giá</Button>}
         </div>}
         <div className="flex flex-wrap justify-end gap-2">
