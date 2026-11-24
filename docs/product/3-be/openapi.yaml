@@ -6,7 +6,7 @@
 openapi: 3.1.0
 info:
   title: Bánh cuốn Bà Thanh — API
-  version: 0.81.0
+  version: 0.82.0
   description: >-
     Nguồn duy nhất cho FE (pha 4 sinh type từ file này). Rỗng đường gọi ở P3-04;
     mỗi lát P3-05…P3-12 thêm đường gọi của mình cùng lượt dựng cửa.
@@ -774,6 +774,108 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /menu-combos/{menu_combo_id}:
+    put:
+      operationId: updateMenuCombo
+      tags: [combo]
+      summary: Cập nhật tên, giá và thành phần của một combo.
+      description: Lớp chu_quan. Kiểm hình trước quyền theo thứ tự menu_combo_id, name, price_vnd, items, từng phần tử như lập combo, rồi reason. Sau quyền, khoá combo; không có trả menu_combo_not_found, đã ẩn trả menu_combo_hidden. Toàn bộ cập nhật chỉ nhận ngoài giờ bán; trong giờ trả menu_combo_update_in_sales_hours. Món trong danh sách không tồn tại trả menu_item_not_found, ngừng bán trả menu_item_discontinued cùng field=items[i].menu_item_id. Tên, giá, số suất, món thêm và món rút ghi một giao dịch với lý do; chỉ ghi trường đổi. Món rút được đánh dấu retired_at, không xoá cứng; món thêm lại có dòng mới, phụ thu cũ không tự áp lại. Giá riêng không cộng giá món.
+      parameters:
+        - name: menu_combo_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMenuCombo'
+      responses:
+        '200':
+          description: Thành công.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuCombo'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /menu-combos/{menu_combo_id}/image:
+    get:
+      operationId: getMenuComboImage
+      security: []
+      tags: [combo]
+      summary: Đọc ảnh hiện hành của combo.
+      description: Công khai. Ảnh tải lên được đọc theo mã combo, không phụ thuộc tên. Chưa có ảnh trả menu_combo_image_missing; combo không có trả menu_combo_not_found. Cache-Control no-store.
+      parameters:
+        - name: menu_combo_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Tệp JPEG, PNG hoặc WebP hiện hành.
+          content:
+            'image/*':
+              schema:
+                type: string
+                format: binary
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: updateMenuComboImage
+      tags: [combo]
+      summary: Chủ quán cập nhật ảnh combo.
+      description: Lớp chu_quan. Kiểm path, số lượng/kích thước tệp, reason và nội dung tệp trước quyền. Chỉ nhận JPEG, PNG, WebP tối đa 5 MiB. Lưu tệp trong kho bền vững, cập nhật khoá tệp của combo trong giao dịch có vết và lý do. Tệp cũ giữ lại để lượt đọc đang chạy không gãy. Combo ẩn trả menu_combo_hidden. Không khoá giờ bán.
+      parameters:
+        - name: menu_combo_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [reason, file]
+              properties:
+                reason:
+                  type: string
+                  minLength: 1
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Đã lưu ảnh.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuComboImageUpdate'
+        default:
+          description: Lời từ chối theo ErrorCode và x-http-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /menu-combos/{menu_combo_id}/price:
     put:
       operationId: updateMenuComboPrice
@@ -845,7 +947,7 @@ paths:
       operationId: hideMenuCombo
       tags: [combo]
       summary: Ẩn combo có lý do.
-      description: Lớp chu_quan. Kiểm hình trước quyền và database; path id sai hoặc không dương trả 400 field=menu_combo_id. reason cắt khoảng trắng, thiếu hoặc rỗng trả 400 field=reason. Khoá combo; không có trả 404 menu_combo_not_found, đã ẩn trả 409 menu_combo_hidden. Ghi hidden_at=now(), hidden_by_person_id=actor_person_id(), có vết và lý do. Không khoá theo giờ bán. Thành phần ở lại. Không có cửa đổi tên, thành phần hoặc số phần.
+      description: Lớp chu_quan. Kiểm hình trước quyền và database; path id sai hoặc không dương trả 400 field=menu_combo_id. reason cắt khoảng trắng, thiếu hoặc rỗng trả 400 field=reason. Khoá combo; không có trả 404 menu_combo_not_found, đã ẩn trả 409 menu_combo_hidden. Ghi hidden_at=now(), hidden_by_person_id=actor_person_id(), có vết và lý do. Không khoá theo giờ bán. Thành phần ở lại.
       parameters:
         - name: menu_combo_id
           in: path
@@ -6265,8 +6367,11 @@ components:
           minimum: 0
     MenuCombo:
       type: object
-      required: [menu_combo_id, name, price_vnd, person_id, person_name, created_at, hidden_at, hidden_by_person_id, hidden_by_name, items]
+      required: [image_url, menu_combo_id, name, price_vnd, person_id, person_name, created_at, hidden_at, hidden_by_person_id, hidden_by_name, items]
       properties:
+        image_url:
+          type: [string, 'null']
+          description: Đường đọc ảnh hiện hành; null khi chưa tải ảnh.
         menu_combo_id:
           type: integer
           format: int64
@@ -6297,6 +6402,16 @@ components:
           description: Theo menu_combo_item.id, tức thứ tự gửi khi lập; không có trường giá trên từng món.
           items:
             $ref: '#/components/schemas/MenuComboItem'
+    MenuComboImageUpdate:
+      type: object
+      required: [menu_combo_id, image_url]
+      additionalProperties: false
+      properties:
+        menu_combo_id:
+          type: integer
+          format: int64
+        image_url:
+          type: string
     MenuComboList:
       type: object
       required: [combos]
@@ -6334,6 +6449,25 @@ components:
           type: integer
           format: int32
           minimum: 1
+    UpdateMenuCombo:
+      type: object
+      required: [name, price_vnd, items, reason]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        price_vnd:
+          type: integer
+          format: int64
+          minimum: 1
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/CreateMenuComboItem'
+        reason:
+          type: string
+          minLength: 1
     UpdateMenuComboPrice:
       type: object
       required: [price_vnd, reason]
@@ -8889,6 +9023,8 @@ components:
         - login_failed
         - menu_combo_not_found
         - menu_combo_hidden
+        - menu_combo_image_missing
+        - menu_combo_update_in_sales_hours
         - menu_combo_price_in_sales_hours
         - menu_combo_item_not_found
         - menu_combo_surcharge_in_sales_hours
@@ -9036,6 +9172,8 @@ components:
         login_failed: 401
         menu_combo_not_found: 404
         menu_combo_hidden: 409
+        menu_combo_image_missing: 404
+        menu_combo_update_in_sales_hours: 409
         menu_combo_price_in_sales_hours: 409
         menu_combo_item_not_found: 404
         menu_combo_surcharge_in_sales_hours: 409
@@ -9574,9 +9712,12 @@ components:
           type: string
     MenuSaleCombo:
       type: object
-      required: [menu_combo_id, name, price_vnd, items]
+      required: [image_url, menu_combo_id, name, price_vnd, items]
       additionalProperties: false
       properties:
+        image_url:
+          type: [string, 'null']
+          description: Đường đọc ảnh hiện hành; null khi chưa tải ảnh.
         menu_combo_id:
           type: integer
           format: int64
@@ -10267,12 +10408,14 @@ x-constraint-errors:
   menu_category_person_fkey: internal
   menu_category_pkey: internal
   menu_combo_has_item_check: internal
+  menu_combo_active_item_check: internal
   menu_combo_hidden_after_created_check: internal
   menu_combo_hidden_by_iff_hidden_check: internal
   menu_combo_hidden_by_person_fkey: internal
   menu_combo_item_menu_combo_fkey: internal
   menu_combo_item_menu_item_fkey: menu_item_not_found
-  menu_combo_item_once_key: internal
+  menu_combo_item_active_once_key: internal
+  menu_combo_item_retired_after_created_check: internal
   menu_combo_item_pkey: internal
   menu_combo_item_quantity_positive_check: internal
   menu_combo_name_not_blank_check: internal
@@ -10379,3 +10522,4 @@ x-constraint-errors:
   customer_email_verification_used_at_check: internal
   customer_email_verification_used_once_check: internal
   menu_item_image_code_format_check: internal
+  menu_combo_image_code_format_check: internal

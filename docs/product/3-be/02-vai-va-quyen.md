@@ -213,7 +213,8 @@ mỗi dòng là một cửa có thật. Gate 1g đọc khuôn dòng ``| `<gói>/
 | `daotao/sua_ghi_nhan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |
 | `daotao/an_ghi_nhan` | `quay_hoac_chu_quan` | `I-031` — chủ quán hoặc POS ghi nhận xét (lời đóng `U-086` · `U-090` · `U-091`, 2026-10-14); ADR-105 điểm 1; ADR-107; phiếu P3A-04 |
 | `combo/them` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); giá riêng: lời đóng `U-092`; không đổi giá giữa buổi: lời T-188; ADR-116; phiếu P3A-06 |
-| `combo/doi_gia` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); giá riêng: lời đóng `U-092`; không đổi giá giữa buổi: lời T-188; ADR-116; phiếu P3A-06 |
+| `combo/doi_gia` | `chu_quan` | `I-032` — chủ quán tự quản lý combo (lời đóng `U-082`); giá riêng theo `U-092`; T-315 ghép T-309, dùng cùng cửa ghi này để cập nhật tên, giá và thành phần trong một giao dịch, giữ lịch sử dòng rút đi; chỉ ngoài giờ bán theo ADR-142 (menu_combo_update_in_sales_hours); cửa /price giữ mã cũ |
+| `combo/cap_nhat_anh` | `chu_quan` | Chủ repo chọn tải ảnh combo từ máy 2026-11-10, T-315, ADR-142 điểm 3; combo ẩn bị từ chối, ảnh không khoá giờ bán; lý do và vết theo `I-018` |
 | `combo/an` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); giá riêng: lời đóng `U-092`; không đổi giá giữa buổi: lời T-188; ADR-116; phiếu P3A-06 |
 | `combo/dat_muc` | `chu_quan` | `I-034` — phụ thu trong combo chủ quán đặt theo từng món (lượt bảy, `master_plan/shop-facts.md` §8.9); khoá như giá combo, chỉ ngoài giờ bán (lượt tám, đóng `U-096`); ADR-117 điểm 6; T-194 |
 | `danhmuc/them` | `chu_quan` | `I-032` — chủ quán tự quản lý menu (lời đóng `U-082`, 2026-10-14); ADR-105 điểm 1; ADR-115; phiếu P3A-05 |

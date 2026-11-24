@@ -25,7 +25,7 @@ const menu: Menu = { categories: [], items: [
   { menu_item_id: 1, item_name: "Bánh cuốn", menu_category_id: null, option_groups: [nhan, luong], prices: [
     { option_ids: [11, 21], unit_price_vnd: 35000 }, { option_ids: [11, 22], unit_price_vnd: 40000 }, { option_ids: [12], unit_price_vnd: 30000 },
   ] },
-], combos: [{ menu_combo_id: 5, name: "Bữa sáng", price_vnd: 72000, items: [
+], combos: [{ menu_combo_id: 5, name: "Bữa sáng", price_vnd: 72000, image_url: null, items: [
   { menu_item_id: 1, item_name: "Bánh cuốn", quantity: 2, option_groups: [nhan, luong], surcharges: [] },
   { menu_item_id: 2, item_name: "Canh", quantity: 1, option_groups: [], surcharges: [] },
 ] }] };

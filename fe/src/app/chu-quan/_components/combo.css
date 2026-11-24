@@ -58,3 +58,5 @@
 .cb-ingredient input,.cb-ingredient select{padding:8px}
 .cb-ingredient [data-slot=field-error]{grid-column:1/-1;overflow-wrap:anywhere}
 @media(max-width:640px){.cb-header .cb-actions{width:100%}.cb-toolbar input{width:100%}.cb-table-scroll{margin:0 -12px;padding:0 12px}.combo-shell table{min-width:640px}}
+
+.cb-edit-sections{display:grid;gap:24px}.cb-edit-sections>section+section{border-top:1px solid var(--cb-line);padding-top:24px}.cb-edit-sections h3{font-size:15px;font-weight:600;margin:0 0 12px}.cb-preview{width:100%;height:auto;max-height:260px;object-fit:contain;border-radius:8px}

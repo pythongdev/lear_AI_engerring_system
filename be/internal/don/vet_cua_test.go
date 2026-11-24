@@ -284,6 +284,59 @@ var cacCaVet = []caVet{
 			c.suaMenu(t, c.chu, "PUT", fmt.Sprintf("/menu-items/%d", id), map[string]any{"name": moi, "reason": "đổi tên món kiểm vết"})
 		}}
 	}},
+	{"combo/cap_nhat_anh", func(t *testing.T, c canh) dichVet {
+		r := gin.New()
+		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))
+		combo.Routes(r, combo.NewService(c.pool).WithFileDir(t.TempDir()))
+		srv := httptest.NewServer(r)
+		t.Cleanup(srv.Close)
+		var id int64
+		// Cả combo và món kèm cùng giao dịch để thoả trigger hoãn.
+		// Món đã ngừng bán không lọt vào GET /menu.
+		if err := c.coVet(func(tx pgx.Tx) error {
+			var mon int64
+			if err := tx.QueryRow(c.ctx, "INSERT INTO shop.menu_item(name, discontinued_at) VALUES ($1, now()) RETURNING id", t.Name()).Scan(&mon); err != nil {
+				return err
+			}
+			if err := tx.QueryRow(c.ctx, "INSERT INTO shop.menu_combo(name, price_vnd) VALUES ($1, 1000) RETURNING id", t.Name()).Scan(&id); err != nil {
+				return err
+			}
+			_, err := tx.Exec(c.ctx, "INSERT INTO shop.menu_combo_item(menu_combo_id, menu_item_id, quantity) VALUES ($1,$2,1)", id, mon)
+			return err
+		}); err != nil {
+			t.Fatal(err)
+		}
+		return dichVet{"menu_combo", id, c.chu, "image_code", nil, "mốc", func() {
+			var body bytes.Buffer
+			form := multipart.NewWriter(&body)
+			_ = form.WriteField("reason", "đổi ảnh kiểm vết")
+			f, err := form.CreateFormFile("file", "anh.png")
+			if err != nil {
+				t.Fatal(err)
+			}
+			if _, err = f.Write([]byte("\x89PNG\r\n\x1a\nanh")); err != nil {
+				t.Fatal(err)
+			}
+			if err = form.Close(); err != nil {
+				t.Fatal(err)
+			}
+			req, err := http.NewRequestWithContext(c.ctx, "PUT", fmt.Sprintf("%s/menu-combos/%d/image", srv.URL, id), &body)
+			if err != nil {
+				t.Fatal(err)
+			}
+			req.Header.Set("Content-Type", form.FormDataContentType())
+			req.AddCookie(&http.Cookie{Name: taikhoan.CookiePhien, Value: testhelper.Session(t, c.chu)})
+			res, err := http.DefaultClient.Do(req)
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer res.Body.Close()
+			if res.StatusCode != 200 {
+				raw, _ := io.ReadAll(res.Body)
+				t.Fatalf("cập nhật ảnh: %d %s", res.StatusCode, raw)
+			}
+		}}
+	}},
 	{"menu/cap_nhat_anh", func(t *testing.T, c canh) dichVet {
 		r := gin.New()
 		r.Use(middleware.GanNguoi(taikhoan.NewAuthenticator(c.pool)))

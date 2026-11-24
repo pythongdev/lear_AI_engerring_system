@@ -13,7 +13,13 @@ function useGhiMenu<B, R>(gui: (body: B) => Promise<ApiResult<R>>, khoa: "menu-c
   const qc = useQueryClient();
   return useMutation({ mutationFn: gui, retry: false, onSuccess: async (r) => {
     if (r.ok) {
-      await qc.invalidateQueries({ queryKey: [khoa] });
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: [khoa] }),
+        ...(khoa === "menu-combos" ? [
+          qc.invalidateQueries({ queryKey: ["menu"] }),
+          qc.invalidateQueries({ queryKey: ["price-quotes"] }),
+        ] : []),
+      ]);
     } else if (r.failure.kind === "rejected") {
       const code = r.failure.code;
       if (code.endsWith("_not_found") || code.endsWith("_hidden") ||
@@ -66,6 +72,23 @@ export function useDoiGiaCombo(menu_combo_id: number) {
     params: { path: { menu_combo_id } }, body,
   })), "menu-combos");
 }
+export function useCapNhatCombo(menu_combo_id: number) {
+  const api = useApi();
+  return useGhiMenu((body: KieuMenu["UpdateMenuCombo"]) => call(api.PUT("/menu-combos/{menu_combo_id}", {
+    params: { path: { menu_combo_id } }, body,
+  })), "menu-combos");
+}
+export function useCapNhatAnhCombo(menu_combo_id: number) {
+  const api = useApi();
+  return useGhiMenu(({ file, reason }: { file: File; reason: string }) => {
+    const form = new FormData();
+    form.set("file", file);
+    form.set("reason", reason);
+    return call(api.PUT("/menu-combos/{menu_combo_id}/image", {
+      params: { path: { menu_combo_id } }, body: { file: file.name, reason }, bodySerializer: () => form,
+    }));
+  }, "menu-combos");
+}
 export function useDatPhuThuCombo(menu_combo_id: number) {
   const api = useApi();
   return useGhiMenu((body: KieuMenu["SetMenuComboSurcharges"]) => call(api.PUT("/menu-combos/{menu_combo_id}/surcharges", {
@@ -90,12 +113,15 @@ export function loiMenu(failure: ApiFailure) {
     case "menu_item_already_in_category": return "Món đã ở danh mục này. Hãy đọc lại danh sách.";
     case "menu_combo_hidden": return "Combo đã bị ẩn. Hãy đọc lại danh sách.";
     case "menu_combo_not_found": return "Combo không còn trong danh sách. Hãy đọc lại danh sách.";
+    case "menu_combo_update_in_sales_hours": return "Chỉ sửa món và giá combo ngoài giờ bán.";
+    case "menu_combo_image_missing": return "Combo chưa có ảnh tải lên.";
+    case "file_too_large": return "Ảnh vượt quá 5 MiB. Hãy chọn ảnh nhỏ hơn.";
     case "menu_combo_price_in_sales_hours": return "Chỉ đổi giá combo ngoài giờ bán.";
     case "menu_combo_surcharge_in_sales_hours": return "Chỉ đặt phụ thu combo ngoài giờ bán.";
     case "menu_combo_item_not_found": return "Món không còn trong combo. Hãy đọc lại danh sách.";
     case "menu_option_not_found": return "Lựa chọn không còn. Hãy đọc lại danh sách.";
     case "option_combination_invalid": return "Lựa chọn không thuộc nhóm nào của món này. Hãy đọc lại danh sách.";
-    case "invalid_request": return "Dữ liệu chưa hợp lệ. Hãy kiểm tra lại.";
+    case "invalid_request": if (failure.field === "file") return "Hãy chọn ảnh JPEG, PNG hoặc WebP hợp lệ."; return "Dữ liệu chưa hợp lệ. Hãy kiểm tra lại.";
     case "unauthenticated": return "Phiên đăng nhập đã hết. Hãy đăng nhập lại.";
     case "owner_only": return "Chỉ chủ quán được thực hiện thao tác này.";
     default: return "Không lưu được. Mã: " + failure.code;

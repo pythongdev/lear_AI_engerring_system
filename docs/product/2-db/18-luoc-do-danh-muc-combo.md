@@ -21,8 +21,8 @@ bước 26 và khoá chặn đường lùi ở [07-thu-tu-migration.md](07-thu-t
 |---|---|---|
 | `menu_category` | tên, người lập, lúc lập, người và lúc ẩn | chủ quán tự thêm danh mục; tên duy nhất trong danh mục còn dùng, ẩn rồi nhường tên |
 | `menu_item_category` | món duy nhất, danh mục, người xếp, lúc xếp | nhiều nhất một danh mục mỗi món; chưa xếp là không có dòng, bảng món giữ nguyên |
-| `menu_combo` | tên, giá riêng nguyên đồng dương, người lập, lúc lập, dấu ẩn | giá chủ quán đặt, không tính từ thành phần; tên combo không buộc duy nhất |
-| `menu_combo_item` | combo, món, số phần nguyên dương, lúc tạo; mỗi cặp một dòng | đọc lại thành phần và số phần, không chứa cột tiền |
+| `menu_combo` | tên, giá riêng nguyên đồng dương, người lập, lúc lập, dấu ẩn, khoá ảnh `image_code` (T-315) | giá chủ quán đặt, không tính từ thành phần; tên combo không buộc duy nhất |
+| `menu_combo_item` | combo, món, số phần nguyên dương, lúc tạo, `retired_at`; mỗi cặp một dòng còn dùng | đọc lại thành phần và số phần, không chứa cột tiền |
 
 Cả bốn bảng có khoá identity, lúc tạo mặc định `now()`. Ba bảng có người thao tác lấy mặc
 định `actor_person_id()`. Các người trỏ về `person`, món trỏ về `menu_item`. Khoá ngoại
@@ -34,13 +34,28 @@ không trước lúc tạo. Tên dùng `COLLATE "vi-x-icu"`, không trắng (QD-
 Trigger ràng buộc sau lần chèn combo là `DEFERRABLE INITIALLY DEFERRED`: cha và món ghi
 trong cùng giao dịch; lúc kiểm, combo còn tồn tại mà không có món thì từ chối bằng
 `menu_combo_has_item_check`. Hàm giữ quyền chủ lược đồ, cố định `search_path`, thu quyền
-của PUBLIC. Vai `shop_app` không xoá hay chuyển món sang combo khác, nên không cần trigger
-xoá thành phần. Đổi thành phần là lập combo mới và ẩn combo cũ theo ADR-108 điểm 5.
+của PUBLIC. Vai `shop_app` không xoá hay chuyển món sang combo khác. Ở lát đầu,
+đổi thành phần là lập combo mới và ẩn combo cũ theo ADR-108 điểm 5.
 
-Quyền sửa chỉ có: danh mục sửa tên/dấu ẩn; xếp món sửa danh mục; combo sửa tên/giá/dấu ẩn;
-thành phần combo sửa số phần. Người lập/xếp và lúc tạo không sửa được qua vai ứng dụng.
+T-315 ghép T-309 theo ADR-142 (chủ repo chọn 2026-11-10): dòng thành phần rút đi
+được đánh dấu `retired_at`, không xoá; chỉ mục duy nhất chỉ áp cho dòng còn dùng. Trigger hoãn
+giữ ít nhất một dòng còn dùng. Đường đọc tại mốc lấy ảnh trước vết của `retired_at` để giữ
+thành phần cũ cho báo giá đã mở. Trigger thêm dòng vào combo đã có ghi vết ở cha với người,
+lý do và hai ảnh danh sách thành phần; dòng lập cùng lúc với combo không ghi vết sửa.
+Hành vi mới thay ADR-108 điểm 5 theo ADR-142. Tên, giá, món và số suất chỉ cập nhật ngoài giờ bán; trong giờ trả `menu_combo_update_in_sales_hours`.
+
+Quyền sửa chỉ có: danh mục sửa tên/dấu ẩn; xếp món sửa danh mục; combo sửa tên/giá/dấu ẩn/khoá ảnh;
+thành phần combo sửa số phần hoặc đánh dấu rút. Người lập/xếp và lúc tạo không sửa được qua vai ứng dụng.
 Đường lùi kiểm cả bốn bảng rỗng trước khi gỡ bất cứ thứ gì, rồi gỡ trigger ràng buộc, hàm,
 thành phần combo, combo, xếp món và danh mục theo thứ tự ngược.
+
+Ảnh combo (T-315, ADR-142 điểm 3, 2026-11-10) thuộc migration
+[`20261124110000_anh_combo.up.sql`](../../../db/migrations/20261124110000_anh_combo.up.sql):
+`menu_combo.image_code` nullable, CHECK `menu_combo_image_code_format_check` chỉ nhận
+`images/menu-combos/<32 hex>.(jpg|png|webp)`. Tệp nằm trong kho `BANHCUON_FILE_DIR` dùng chung
+với ảnh món, không cất byte ở database. Cập nhật có lý do và vết, chặn combo ẩn nhưng không
+khoá giờ bán; tệp cũ giữ lại. Đường lùi khoá bảng và từ chối khi còn khoá ảnh đang dùng,
+chỉ gỡ CHECK/cột khi mọi ảnh đều rỗng. Khuôn quyền và API thuộc pha 3.
 
 ## 2. Mệnh đề → cái giữ nó → bằng chứng
 
@@ -57,6 +72,7 @@ Tám câu ở `db/reconcile/i032.sql`; mỗi câu có lỗi cài cùng số ở 
 | Món có thật, số phần nguyên dương | 1 | khoá ngoại, integer NOT NULL, CHECK | test món lạ, thiếu/0/âm; `I-032/4`, `i032_4.sql` số phần 0 |
 | Đúng một giá riêng nguyên đồng dương | 1 | một cột bigint NOT NULL, CHECK; thành phần không có tiền | test đọc lược đồ, giá thiếu/0/âm, đổi giá món; `I-032/5`, `i032_5.sql` giá NULL |
 | Giá không đổi giữa buổi | 3 | cửa sửa giá xét giờ bán; database nhận | `I-032/6`, `i032_6.sql` dời vết đổi giá vào giờ bán |
+| Món và số suất chỉ đổi ngoài giờ bán (ADR-142) | 3 | cửa cập nhật combo xét giờ bán trước ghi | `be/internal/combo/cap_nhat_test.go`: từ chối không đổi dữ liệu; báo giá tại mốc giữ thành phần cũ |
 | Danh mục và combo ẩn có người/lúc, đọc lại được | 1 | cặp dấu ẩn, khoá ngoại, mốc ẩn; không quyền xoá | test ẩn rồi đọc lại, từ chối xoá; `I-032/7`, `i032_7.sql` bỏ người ẩn |
 | Người lập, sửa, ẩn là chủ quán | 3 | cửa ghi xét vai; database giữ người có thật | test ghi người ngoài vai được database nhận; `I-032/8`, `i032_8.sql` người lập là người đứng quầy |
 | Sửa có vết; đơn cũ giữ giá | `I-018` · `I-009` | trigger vết chung; ảnh chụp đơn hiện hữu | test đọc bản trước/sau/người/lý do; dùng tập chung, không viết câu riêng |

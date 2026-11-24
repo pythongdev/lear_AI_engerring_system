@@ -34,6 +34,8 @@ const (
 	CodeMenuItemComponentConflict      Code = "menu_item_component_conflict"
 	CodeMenuItemNameConflict           Code = "menu_item_name_conflict"
 	CodeMenuComponentNameConflict      Code = "menu_component_name_conflict"
+	CodeMenuComboUpdateInSalesHours    Code = "menu_combo_update_in_sales_hours"
+	CodeMenuComboImageMissing          Code = "menu_combo_image_missing"
 	CodeMenuComboPriceInSalesHours     Code = "menu_combo_price_in_sales_hours"
 	CodeMenuComboHidden                Code = "menu_combo_hidden"
 	CodeMenuComboNotFound              Code = "menu_combo_not_found"
@@ -196,6 +198,8 @@ var statusOf = map[Code]int{
 	CodeContactRequired:                400,
 	CodePhoneTaken:                     409,
 	CodeLoginFailed:                    401,
+	CodeMenuComboUpdateInSalesHours:    409,
+	CodeMenuComboImageMissing:          404,
 	CodeMenuComboPriceInSalesHours:     409,
 	CodeMenuComboHidden:                409,
 	CodeMenuComboNotFound:              404,

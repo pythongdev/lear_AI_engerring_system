@@ -173,7 +173,7 @@ export function ThucDonKhach({ items, combos = [], categories = [], lines, onCha
       <h2 className="menu-section-title">COMBO</h2>
       {comboLoc.map((combo) => <article className="menu-card" data-component="ComboCard" key={combo.menu_combo_id}>
         <Link href={chiTiet("combo", combo.menu_combo_id)} aria-label={`Xem chi tiết combo ${combo.name}`} className="menu-photo">
-          <AnhSanPham ten={combo.name} combo className="menu-image" />
+          <AnhSanPham ten={combo.name} imageUrl={combo.image_url} combo className="menu-image" />
           <span className="menu-photo-caption">Xem chi tiết ảnh</span>
         </Link>
         <div className="menu-card-body">

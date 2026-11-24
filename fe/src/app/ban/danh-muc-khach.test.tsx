@@ -35,7 +35,7 @@ function menuCoDanhMuc(): Menu {
       { menu_item_id: 3, item_name: "Chả quế", option_groups: [], prices: [{ option_ids: [], unit_price_vnd: 15000 }], menu_category_id: 8 },
       { menu_item_id: 4, item_name: "Nước chanh", option_groups: [], prices: [{ option_ids: [], unit_price_vnd: 12000 }], menu_category_id: null },
     ],
-    combos: [{ menu_combo_id: 99, name: "Đầy đặn", price_vnd: 72000, items: [{ ...banh, quantity: 2, surcharges: [] }] }],
+    combos: [{ image_url: null, menu_combo_id: 99, name: "Đầy đặn", price_vnd: 72000, items: [{ ...banh, quantity: 2, surcharges: [] }] }],
   };
 }
 
@@ -118,4 +118,13 @@ it("D5 chưa có danh mục nào thì giữ bố cục cũ, không có hàng th�
   expect(screen.queryByRole("navigation", { name: "Danh mục" })).toBeNull();
   const list = screen.getByRole("heading", { name: "MÓN LẺ" }).closest("section")!;
   expect(new Set(within(list).getAllByRole("heading", { level: 3 }).map((h) => h.textContent?.trim()))).toEqual(new Set(["Bánh cuốn", "Canh"]));
+});
+
+it.each([null, "/menu-combos/99/image"])("T-315 thực đơn khách hiện ảnh combo hoặc ảnh sẵn khi image_url=%s", (image_url) => {
+  const menu = menuCoDanhMuc();
+  menu.combos[0].image_url = image_url;
+  mo(menu);
+  const src = screen.getByRole("img", { name: "Đầy đặn" }).getAttribute("src");
+  if (image_url) expect(new URL(src!, "http://localhost").pathname).toBe("/api/menu-combos/99/image");
+  else expect(src).toContain("banh-cuon-minh-hoa.jpg");
 });

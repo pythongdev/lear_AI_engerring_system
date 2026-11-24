@@ -285,6 +285,7 @@ sql:
     queries:
       - internal/combo/sql
       - internal/combo/sql/them
+      - internal/combo/sql/cap_nhat_anh
       - internal/combo/sql/doi_gia
       - internal/combo/sql/an
       - internal/combo/sql/dat_muc

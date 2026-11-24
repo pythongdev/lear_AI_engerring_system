@@ -65,3 +65,36 @@ func TestQC14_HinhComboTruocQuyenVaDatabase(t *testing.T) {
 		})
 	}
 }
+
+// T-315: cửa sửa phải chặn dữ liệu sai trước quyền/database như cửa lập.
+func TestQC14_HinhCapNhatComboTruocQuyenVaDatabase(t *testing.T) {
+	r := gin.New()
+	combo.Routes(r, combo.NewService(nil))
+	for _, tc := range []struct{ path, body, field string }{
+		{"/menu-combos/0", `{}`, "menu_combo_id"},
+		{"/menu-combos/abc", `{}`, "menu_combo_id"},
+		{"/menu-combos/1", `{`, ""},
+		{"/menu-combos/1", `{"name":" "}`, "name"},
+		{"/menu-combos/1", `{"name":"x","price_vnd":0}`, "price_vnd"},
+		{"/menu-combos/1", `{"name":"x","price_vnd":1500.5}`, "price_vnd"},
+		{"/menu-combos/1", `{"name":"x","price_vnd":"1500"}`, ""},
+		{"/menu-combos/1", `{"name":"x","price_vnd":1500,"items":[]}`, "items"},
+		{"/menu-combos/1", `{"name":"x","price_vnd":1500,"items":[{"menu_item_id":0,"quantity":1}]}`, "items[0].menu_item_id"},
+		{"/menu-combos/1", `{"name":"x","price_vnd":1500,"items":[{"menu_item_id":1,"quantity":0}]}`, "items[0].quantity"},
+		{"/menu-combos/1", `{"name":"x","price_vnd":1500,"items":[{"menu_item_id":1,"quantity":1},{"menu_item_id":1,"quantity":2}]}`, "items[1].menu_item_id"},
+		{"/menu-combos/1", `{"name":"x","price_vnd":1500,"items":[{"menu_item_id":1,"quantity":1}]}`, "reason"},
+		{"/menu-combos/1", `{"name":"x","price_vnd":1500,"items":[{"menu_item_id":1,"quantity":1}],"reason":" "}`, "reason"},
+	} {
+		t.Run(tc.path+"/"+tc.field, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			r.ServeHTTP(w, httptest.NewRequest("PUT", tc.path, strings.NewReader(tc.body)))
+			var out struct{ Code, Field string }
+			if err := json.Unmarshal(w.Body.Bytes(), &out); err != nil {
+				t.Fatal(err)
+			}
+			if w.Code != 400 || out.Code != "invalid_request" || out.Field != tc.field {
+				t.Fatalf("muốn 400 invalid_request field=%s; nhận %d %s", tc.field, w.Code, w.Body.String())
+			}
+		})
+	}
+}

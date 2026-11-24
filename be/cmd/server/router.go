@@ -88,7 +88,7 @@ func routerWithRealtimeBoGioBan(pool *pgxpool.Pool, auth authz.Authenticator, b 
 	khoanchi.Routes(r, khoanchi.NewService(pool))
 	nguyenlieu.Routes(r, nguyenlieu.NewService(pool))
 	danhmuc.Routes(r, danhmuc.NewService(pool))
-	combo.Routes(r, combo.NewService(pool))
+	combo.Routes(r, combo.NewService(pool).WithFileDir(os.Getenv("BANHCUON_FILE_DIR")))
 	giaoviec.Routes(r, giaoviec.NewService(pool))
 	hoptin.Routes(r, hoptin.NewService(pool))
 	baonghi.Routes(r, baonghi.NewService(pool))

@@ -10,9 +10,9 @@ SELECT x.menu_item_id AS mon FROM menu_item_category x
 LEFT JOIN menu_category c ON c.id = x.menu_category_id
 GROUP BY x.menu_item_id HAVING count(*) > 1 OR bool_or(c.id IS NULL)
 
--- @@ I-032/3 — combo không có món sau khi giao dịch kết thúc
+-- @@ I-032/3 — combo không có món đang dùng sau khi giao dịch kết thúc
 SELECT c.id AS combo FROM menu_combo c
-WHERE NOT EXISTS (SELECT 1 FROM menu_combo_item i WHERE i.menu_combo_id = c.id)
+WHERE NOT EXISTS (SELECT 1 FROM menu_combo_item i WHERE i.menu_combo_id = c.id AND i.retired_at IS NULL)
 
 -- @@ I-032/4 — món trong combo không có thật, thiếu số phần hoặc số phần không dương
 SELECT x.id AS thanh_phan FROM menu_combo_item x

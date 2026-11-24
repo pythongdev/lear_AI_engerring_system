@@ -3,9 +3,11 @@ package combo
 import (
 	"banhcuon/be/internal/apierr"
 	"banhcuon/be/internal/middleware"
+	"banhcuon/be/internal/platform/anh"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"strconv"
 	"strings"
 )
@@ -14,6 +16,9 @@ func Routes(r *gin.Engine, svc *Service) {
 	h := handler{svc}
 	r.GET("/menu-combos", h.doc)
 	r.POST("/menu-combos", h.them)
+	r.PUT("/menu-combos/:menu_combo_id", h.capNhat)
+	r.PUT("/menu-combos/:menu_combo_id/image", h.capNhatAnh)
+	r.GET("/menu-combos/:menu_combo_id/image", h.docAnh)
 	r.PUT("/menu-combos/:menu_combo_id/price", h.doiGia)
 	r.POST("/menu-combos/:menu_combo_id/hiding", h.an)
 	r.PUT("/menu-combos/:menu_combo_id/surcharges", h.datMuc)
@@ -103,6 +108,57 @@ func (h handler) them(c *gin.Context) {
 	}
 	out, e := h.svc.Them(c.Request.Context(), nguoi(c), p.Name, gia, p.Items)
 	tra(c, 201, out, e)
+}
+func (h handler) capNhat(c *gin.Context) {
+	id, ok := ma(c, "menu_combo_id")
+	if !ok {
+		return
+	}
+	var p struct {
+		Name   string          `json:"name"`
+		Price  json.RawMessage `json:"price_vnd"`
+		Items  []ThanhPhan     `json:"items"`
+		Reason string          `json:"reason"`
+	}
+	if !apierr.ReadJSON(c.Writer, c.Request, &p) {
+		return
+	}
+	p.Name = strings.TrimSpace(p.Name)
+	if p.Name == "" {
+		sai(c, "name")
+		return
+	}
+	gia, ok := docGia(c, p.Price)
+	if !ok {
+		return
+	}
+	if len(p.Items) == 0 {
+		sai(c, "items")
+		return
+	}
+	seen := map[int64]bool{}
+	for i, item := range p.Items {
+		if item.MenuItemID <= 0 {
+			sai(c, fmt.Sprintf("items[%d].menu_item_id", i))
+			return
+		}
+		if item.Quantity <= 0 {
+			sai(c, fmt.Sprintf("items[%d].quantity", i))
+			return
+		}
+		if seen[item.MenuItemID] {
+			sai(c, fmt.Sprintf("items[%d].menu_item_id", i))
+			return
+		}
+		seen[item.MenuItemID] = true
+	}
+	p.Reason = strings.TrimSpace(p.Reason)
+	if p.Reason == "" {
+		sai(c, "reason")
+		return
+	}
+	out, e := h.svc.CapNhat(c.Request.Context(), nguoi(c), id, p.Name, gia, p.Items, p.Reason)
+	tra(c, 200, out, e)
 }
 func (h handler) doiGia(c *gin.Context) {
 	id, ok := ma(c, "menu_combo_id")
@@ -232,4 +288,46 @@ func (h handler) datMuc(c *gin.Context) {
 	}
 	out, e := h.svc.DatMuc(c.Request.Context(), nguoi(c), id, p.Reason, cac)
 	tra(c, 200, out, e)
+}
+
+func (h handler) capNhatAnh(c *gin.Context) {
+	id, ok := ma(c, "menu_combo_id")
+	if !ok {
+		return
+	}
+	data, ext, reason, err := anh.DocTaiLen(c.Writer, c.Request)
+	if err != nil {
+		apierr.WriteError(c.Writer, err)
+		return
+	}
+	out, err := h.svc.CapNhatAnh(c.Request.Context(), nguoi(c), id, reason, data, ext)
+	if err != nil {
+		apierr.WriteError(c.Writer, err)
+		return
+	}
+	tra(c, 200, struct {
+		MenuComboID int64  `json:"menu_combo_id"`
+		ImageURL    string `json:"image_url"`
+	}{out.ID, *out.ImageURL}, nil)
+}
+func (h handler) docAnh(c *gin.Context) {
+	id, ok := ma(c, "menu_combo_id")
+	if !ok {
+		return
+	}
+	f, mime, err := h.svc.DocAnh(c.Request.Context(), id)
+	if err != nil {
+		apierr.WriteError(c.Writer, err)
+		return
+	}
+	defer f.Close()
+	stat, err := f.Stat()
+	if err != nil {
+		apierr.WriteError(c.Writer, err)
+		return
+	}
+	c.Header("Cache-Control", "no-store")
+	c.Header("X-Content-Type-Options", "nosniff")
+	c.Header("Content-Type", mime)
+	http.ServeContent(c.Writer, c.Request, stat.Name(), stat.ModTime(), f)
 }

@@ -14,7 +14,7 @@ function render(ui: Parameters<typeof renderGoc>[0]) {
 vi.mock("next/navigation", () => ({ notFound: () => { throw new Error("NEXT_NOT_FOUND"); } }));
 afterEach(() => { cleanup(); useNhapKhach.getState().xoaHet(); vi.unstubAllGlobals(); });
 
-const menu = { ...menuMau, combos: [{ menu_combo_id: 99, name: "Combo hai bánh", price_vnd: 72000,
+const menu = { ...menuMau, combos: [{ image_url: null, menu_combo_id: 99, name: "Combo hai bánh", price_vnd: 72000,
   items: [{ ...menuMau.items[0], quantity: 2, surcharges: [] }],
 }] };
 const trang = (loai: string, id: string, ban?: string) => ChiTietMonPage({ params: Promise.resolve({ loai, id }), searchParams: Promise.resolve({ ban }) });
@@ -121,4 +121,12 @@ it("chuyển sang món khác bắt đầu lại số lượng và lựa chọn c
   expect((screen.getByRole("spinbutton", { name: "Số lượng" }) as HTMLInputElement).value).toBe("1");
   fireEvent.click(screen.getByRole("button", { name: "Thêm vào giỏ" }));
   expect(useNhapKhach.getState().gio["qr:3"]).toEqual([{ menu_item_id: 2, quantity: 1, option_ids: [] }]);
+});
+
+it.each([null, "/menu-combos/99/image"])("T-315 chi tiết combo hiện ảnh tải lên, null dùng ảnh sẵn (%s)", async (image_url) => {
+  vi.stubGlobal("fetch", async () => Response.json({ ...menu, combos: [{ ...menu.combos[0], image_url }] }));
+  render(await trang("combo", "99"));
+  const src = screen.getByRole("img", { name: "Combo hai bánh" }).getAttribute("src");
+  if (image_url) expect(new URL(src!, "http://localhost").pathname).toBe("/api/menu-combos/99/image");
+  else expect(src).toContain("banh-cuon-minh-hoa.jpg");
 });

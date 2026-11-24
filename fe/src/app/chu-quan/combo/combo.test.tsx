@@ -23,11 +23,11 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
-afterEach(cleanup);
+afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 function combo(id: number, name: string, price_vnd: number, items: MenuCombo["items"]): MenuCombo {
   return {
-    menu_combo_id: id, name, price_vnd, person_id: 1, person_name: "Chủ", created_at: "2026-10-16T01:00:00Z",
+    image_url: null, menu_combo_id: id, name, price_vnd, person_id: 1, person_name: "Chủ", created_at: "2026-10-16T01:00:00Z",
     hidden_at: null, hidden_by_person_id: null, hidden_by_name: null, items,
   };
 }
@@ -80,9 +80,11 @@ function go(o: HTMLElement, nhan: string, giaTri: string) {
 }
 const oSai = (o: HTMLElement, nhan: string) => within(o).getByLabelText(nhan).getAttribute("aria-invalid");
 async function mo(nhanNut: string) {
-  fireEvent.click(await screen.findByRole("button", { name: `Cập nhật ${nhanNut.endsWith("Combo Chay") ? "Combo Chay" : "Combo Đầy đủ"}` }));
-  fireEvent.click(await screen.findByRole("button", { name: nhanNut }));
-  return screen.getByRole("form", { name: nhanNut });
+  if (nhanNut.startsWith("Ẩn ")) fireEvent.click(await screen.findByRole("button", { name: nhanNut.replace(/^Ẩn /, "Chi tiết ") }));
+  const nut = await screen.findByRole("button", { name: nhanNut });
+  await waitFor(() => expect(nut.hasAttribute("disabled")).toBe(false));
+  fireEvent.click(nut);
+  return screen.getByRole("form", { name: nhanNut.replace(/^Sửa /, "Cập nhật ") });
 }
 async function formLap() {
   const nutLap = await screen.findByRole("button", { name: "＋ Lập combo" });
@@ -103,7 +105,7 @@ function dienComboHopLe(f: HTMLElement) {
 describe("trang combo — danh sách", () => {
   it("bày combo đúng thứ backend, giá đúng price_vnd, món kèm số suất, món ngừng bán có nhãn, mức phụ thu chỉ đọc", async () => {
     const goi = moTrang();
-    const day = (await screen.findByRole("button", { name: "Cập nhật Combo Đầy đủ" })).closest("tr")!;
+    const day = (await screen.findByRole("button", { name: "Chi tiết Combo Đầy đủ" })).closest("tr")!;
     expect(within(screen.getByRole("region", { name: "Bảng combo" })).getAllByRole("columnheader").map((o) => o.textContent))
       .toEqual(["Combo", "Trạng thái", "Giá", "Thành phần", "Thao tác"]);
     expect(day.textContent ?? "").toMatch(/45\.000\s*đ/);
@@ -113,16 +115,16 @@ describe("trang combo — danh sách", () => {
     expect(mon[0]).not.toContain("Ngừng bán");
     expect(mon[1]).toContain("Chả quế");
     expect(mon[1]).toContain("Ngừng bán");
-    const chay = screen.getByRole("button", { name: "Cập nhật Combo Chay" }).closest("tr")!;
+    const chay = screen.getByRole("button", { name: "Chi tiết Combo Chay" }).closest("tr")!;
     expect(day.compareDocumentPosition(chay) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(chay.textContent ?? "").toMatch(/30\.000\s*đ/);
     // Không đọc giá món hay tính thử: giá combo là giá riêng backend trả.
     expect(goi.some((g) => g.path === "/price-quotes" || g.path === "/menu")).toBe(false);
   });
 
-  it("không có nút xoá, đổi tên, sửa món hay đặt phụ thu — hợp đồng không có cửa ấy ở bước này", async () => {
+  it("không có nút xoá, đổi tên, sửa món hay phụ thu rời — chỉnh sửa nằm trong hộp thoại", async () => {
     moTrang();
-    await screen.findByRole("button", { name: "Cập nhật Combo Đầy đủ" });
+    await screen.findByRole("button", { name: "Chi tiết Combo Đầy đủ" });
     expect(screen.queryByRole("button", { name: /xoá|xóa|đổi tên|sửa món|phụ thu/i })).toBeNull();
   });
 
@@ -239,42 +241,42 @@ describe("trang combo — lập", () => {
 describe("trang combo — đổi giá và ẩn", () => {
   it("đổi giá: giá cũ điền sẵn; thiếu lý do thì không gửi", async () => {
     const goi = moTrang();
-    const f = await mo("Đổi giá Combo Đầy đủ");
-    expect((within(f).getByLabelText("Giá mới (đồng)") as HTMLInputElement).value).toBe("45000");
-    go(f, "Giá mới (đồng)", "47000");
-    fireEvent.click(within(f).getByRole("button", { name: "Lưu giá" }));
-    await waitFor(() => expect(oSai(f, "Lý do")).toBe("true"));
+    const f = await mo("Sửa Combo Đầy đủ");
+    expect((within(f).getByLabelText("Giá combo (đồng)") as HTMLInputElement).value).toBe("45000");
+    go(f, "Giá combo (đồng)", "47000");
+    fireEvent.click(within(f).getByRole("button", { name: "Lưu combo" }));
+    await waitFor(() => expect(oSai(f, "Lý do cập nhật")).toBe("true"));
     expect(ghi(goi)).toEqual([]);
   });
 
   it("đổi giá: gửi số nguyên và lý do tới đúng combo, báo theo giá backend trả, đọc lại", async () => {
     const goi = moTrang({ ghi: () => ({ status: 200, body: combo(5, "Combo Đầy đủ", 47000, []) }) });
-    const f = await mo("Đổi giá Combo Đầy đủ");
-    go(f, "Giá mới (đồng)", "47000");
-    go(f, "Lý do", "Giá nguyên liệu tăng");
-    fireEvent.click(within(f).getByRole("button", { name: "Lưu giá" }));
-    expect(await screen.findByText(/Đã đổi giá Combo Đầy đủ thành 47\.000\s*đ\./)).toBeTruthy();
+    const f = await mo("Sửa Combo Đầy đủ");
+    go(f, "Giá combo (đồng)", "47000");
+    go(f, "Lý do cập nhật", "Giá nguyên liệu tăng");
+    fireEvent.click(within(f).getByRole("button", { name: "Lưu combo" }));
+    expect(await screen.findByText(/Đã cập nhật combo Combo Đầy đủ\. Giá combo 47\.000\s*đ\./)).toBeTruthy();
     expect(ghi(goi)).toEqual([{
-      method: "PUT", path: "/menu-combos/5/price", body: { price_vnd: 47000, reason: "Giá nguyên liệu tăng" },
+      method: "PUT", path: "/menu-combos/5", body: { name: "Combo Đầy đủ", price_vnd: 47000, items: [{ menu_item_id: 11, quantity: 2 }, { menu_item_id: 20, quantity: 1 }], reason: "Giá nguyên liệu tăng" },
     }]);
     await waitFor(() => expect(soLanDoc(goi)).toBe(2));
   });
 
-  it("đổi giá trong giờ bán (409 menu_combo_price_in_sales_hours): nói chỉ đổi được ngoài giờ bán, giữ dữ liệu", async () => {
-    moTrang({ ghi: () => ({ status: 409, body: { code: "menu_combo_price_in_sales_hours" } }) });
-    const f = await mo("Đổi giá Combo Chay");
-    go(f, "Giá mới (đồng)", "32000");
-    go(f, "Lý do", "thử");
-    fireEvent.click(within(f).getByRole("button", { name: "Lưu giá" }));
-    await waitFor(() => expect(f.textContent ?? "").toMatch(/ngoài giờ bán/));
-    expect((within(f).getByLabelText("Giá mới (đồng)") as HTMLInputElement).value).toBe("32000");
+  it("đổi giá trong giờ bán (409 menu_combo_update_in_sales_hours): nói chỉ đổi được ngoài giờ bán, giữ dữ liệu", async () => {
+    moTrang({ ghi: () => ({ status: 409, body: { code: "menu_combo_update_in_sales_hours" } }) });
+    const f = await mo("Sửa Combo Chay");
+    go(f, "Giá combo (đồng)", "32000");
+    go(f, "Lý do cập nhật", "thử");
+    fireEvent.click(within(f).getByRole("button", { name: "Lưu combo" }));
+    await waitFor(() => expect(f.textContent ?? "").toContain("Chỉ sửa món và giá combo ngoài giờ bán."));
+    expect((within(f).getByLabelText("Giá combo (đồng)") as HTMLInputElement).value).toBe("32000");
   });
 
   it("combo vừa bị ẩn (409 menu_combo_hidden): báo và đọc lại", async () => {
     const goi = moTrang({ ghi: () => ({ status: 409, body: { code: "menu_combo_hidden" } }) });
-    const f = await mo("Đổi giá Combo Chay");
-    go(f, "Lý do", "thử");
-    fireEvent.click(within(f).getByRole("button", { name: "Lưu giá" }));
+    const f = await mo("Sửa Combo Chay");
+    go(f, "Lý do cập nhật", "thử");
+    fireEvent.click(within(f).getByRole("button", { name: "Lưu combo" }));
     await waitFor(() => expect(f.textContent ?? "").toMatch(/đã bị ẩn/));
     await waitFor(() => expect(soLanDoc(goi)).toBe(2));
   });
@@ -313,9 +315,8 @@ describe("trang combo — đặt phụ thu theo món (T-211)", () => {
     });
   }
   async function moForm() {
-    fireEvent.click(await screen.findByRole("button", { name: "Cập nhật Combo Đầy đủ" }));
-    fireEvent.click(await screen.findByRole("button", { name: "Đặt phụ thu Combo Đầy đủ" }));
-    return screen.getByRole("form", { name: "Đặt phụ thu Combo Đầy đủ" });
+    await mo("Sửa Combo Đầy đủ");
+    return screen.findByRole("form", { name: "Đặt phụ thu Combo Đầy đủ" });
   }
 
   it("bày lựa chọn theo món, đặt sẵn mức hiện có, không bày lựa chọn đã ẩn", async () => {
@@ -364,17 +365,17 @@ describe("trang combo — lọc và chi tiết", () => {
       const body = url.pathname.endsWith("/menu-combos") ? mauCombo : url.pathname.endsWith("/menu-categories") ? mauMon : { option_groups: [] };
       return new Response(JSON.stringify(body), { status: 200, headers: { "content-type": "application/json" } });
     }}><Page /></ApiProvider>);
-    await screen.findByRole("button", { name: "Cập nhật Combo Đầy đủ" });
+    await screen.findByRole("button", { name: "Chi tiết Combo Đầy đủ" });
     expect(urls.find((url) => url.pathname.endsWith("/menu-combos"))?.searchParams.get("include_hidden")).toBe("true");
   });
   it("tìm theo tên không phân biệt hoa thường, mở ngăn cập nhật chi tiết", async () => {
     const goi = moTrang();
-    fireEvent.click(await screen.findByRole("button", { name: "Cập nhật Combo Chay" }));
-    expect(within(screen.getByRole("dialog")).getByRole("heading", { name: "Cập nhật Combo Chay" })).toBeTruthy();
+    fireEvent.click(await screen.findByRole("button", { name: "Chi tiết Combo Chay" }));
+    expect(within(screen.getByRole("dialog")).getByRole("heading", { name: "Chi tiết Combo Chay" })).toBeTruthy();
     fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Close" }));
     fireEvent.change(screen.getByRole("searchbox", { name: "Tìm tên combo" }), { target: { value: "ĐẦY ĐỦ" } });
-    expect(screen.queryByRole("button", { name: "Cập nhật Combo Chay" })).toBeNull();
-    expect(screen.getByRole("button", { name: "Cập nhật Combo Đầy đủ" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Chi tiết Combo Chay" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Chi tiết Combo Đầy đủ" })).toBeTruthy();
     fireEvent.change(screen.getByRole("searchbox", { name: "Tìm tên combo" }), { target: { value: "không khớp" } });
     expect(screen.getByText("Không có combo phù hợp.")).toBeTruthy();
     expect(ghi(goi)).toEqual([]);
@@ -382,15 +383,145 @@ describe("trang combo — lọc và chi tiết", () => {
   it("lọc combo ẩn, đếm theo toàn danh sách và không cho sửa combo đã ẩn", async () => {
     moTrang({ doc: () => ({ status: 200, body: { combos: [mauCombo.combos[0], { ...mauCombo.combos[1], hidden_at: "2026-10-25T01:00:00Z" }] } }) });
     await screen.findByRole("button", { name: "Chi tiết Combo Chay" });
+    expect(screen.queryByRole("button", { name: "Sửa Combo Chay" })).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Đã ẩn" }));
-    expect(screen.queryByRole("button", { name: "Cập nhật Combo Đầy đủ" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Chi tiết Combo Đầy đủ" })).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Chi tiết Combo Chay" }));
     expect(within(screen.getByRole("dialog")).getByRole("heading", { name: "Chi tiết Combo Chay" })).toBeTruthy();
-    expect(within(screen.getByRole("dialog")).queryByRole("button", { name: /Đổi giá|Ẩn combo|Đặt phụ thu/ })).toBeNull();
+    expect(within(screen.getByRole("dialog")).queryByRole("button", { name: /Sửa combo|Ẩn combo|Đặt phụ thu/ })).toBeNull();
     fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Close" }));
     expect(screen.getByRole("heading", { name: /Combo 2 combo/ })).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Hiển thị" }));
     expect(screen.queryByRole("button", { name: "Chi tiết Combo Chay" })).toBeNull();
-    expect(screen.getByRole("button", { name: "Cập nhật Combo Đầy đủ" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Chi tiết Combo Đầy đủ" })).toBeTruthy();
+  });
+});
+
+describe("T-309 — cập nhật từng combo", () => {
+  it("mỗi combo có nút cập nhật; form điền sẵn và gửi tên, giá, thành phần cùng lý do", async () => {
+    const goi = moTrang({ ghi: (g) => g.method === "PUT" && g.path === "/menu-combos/5"
+      ? { status: 200, body: combo(5, "Combo Đầy đủ mới", 52000, [
+        { menu_item_id: 11, item_name: "Bánh cuốn trứng", quantity: 3, discontinued: false, surcharges: [] },
+        { menu_item_id: 12, item_name: "Bánh cuốn chay", quantity: 1, discontinued: false, surcharges: [] },
+      ]) } : { status: 599, body: { code: "khong_co_trong_hop_dong" } } });
+    await screen.findByRole("button", { name: "Chi tiết Combo Đầy đủ" });
+    expect(screen.getByRole("button", { name: "Sửa Combo Chay" })).toBeTruthy();
+    const nutCapNhat = screen.getByRole("button", { name: "Sửa Combo Đầy đủ" });
+    await waitFor(() => expect(nutCapNhat.hasAttribute("disabled")).toBe(false));
+    fireEvent.click(nutCapNhat);
+    const form = await screen.findByRole("form", { name: "Cập nhật Combo Đầy đủ" });
+    expect((within(form).getByLabelText("Tên combo") as HTMLInputElement).value).toBe("Combo Đầy đủ");
+    expect((within(form).getByLabelText("Giá combo (đồng)") as HTMLInputElement).value).toBe("45000");
+    go(form, "Tên combo", "Combo Đầy đủ mới");
+    go(form, "Giá combo (đồng)", "52000");
+    go(form, "Số suất món 1", "3");
+    fireEvent.click(within(form).getByRole("button", { name: "Bỏ món 2" }));
+    fireEvent.click(within(form).getByRole("button", { name: "Thêm món vào combo" }));
+    go(form, "Món 2", "12");
+    go(form, "Lý do cập nhật", "Đổi thực đơn");
+    fireEvent.click(within(form).getByRole("button", { name: "Lưu combo" }));
+    expect(await screen.findByText("Đã cập nhật combo Combo Đầy đủ mới. Giá combo 52.000 đ.")).toBeTruthy();
+    expect(ghi(goi)).toEqual([{ method: "PUT", path: "/menu-combos/5", body: {
+      name: "Combo Đầy đủ mới", price_vnd: 52000, reason: "Đổi thực đơn",
+      items: [{ menu_item_id: 11, quantity: 3 }, { menu_item_id: 12, quantity: 1 }],
+    } }]);
+    await waitFor(() => expect(soLanDoc(goi)).toBe(2));
+  });
+});
+
+describe("T-315 — sửa combo và ảnh", () => {
+  it("nút Sửa là anh em với nút chọn; mở đúng combo và đủ ba phần có lý do riêng", async () => {
+    const goi = voiBackend(<Page />, (g) => {
+      if (g.path === "/menu-combos") return { status: 200, body: mauCombo };
+      if (g.path === "/menu-categories") return { status: 200, body: mauMon };
+      return { status: 200, body: { option_groups: [{ option_group_id: 1, name: "Nhân", menu_item_ids: [12],
+        prerequisite_option_ids: [], options: [{ menu_option_id: 3, name: "Thịt", surcharge_vnd: 1000, is_default: true, hidden_at: null }] }] } };
+    });
+    const card = (await screen.findByRole("button", { name: "Chi tiết Combo Chay" })).closest("tr")!;
+    const sua = within(card).getByRole("button", { name: "Sửa Combo Chay" });
+    expect(sua.closest("button")?.parentElement?.closest("button")).toBeNull();
+    const chon = within(card).getByRole("button", { name: "Chi tiết Combo Chay" });
+    expect(chon.contains(sua)).toBe(false);
+    expect(chon.parentElement).toBe(sua.parentElement);
+    const form = await mo("Sửa Combo Chay");
+    expect((within(form).getByLabelText("Tên combo") as HTMLInputElement).value).toBe("Combo Chay");
+    const dialog = screen.getByRole("dialog", { name: "Sửa combo" });
+    for (const name of ["Tên, giá và món", "Ảnh combo", "Phụ thu theo món"]) expect(within(dialog).getByRole("region", { name })).toBeTruthy();
+    const anh = within(dialog).getByRole("form", { name: "Cập nhật ảnh Combo Chay" });
+    const phuThu = await within(dialog).findByRole("form", { name: "Đặt phụ thu Combo Chay" });
+    go(form, "Lý do cập nhật", "đổi món");
+    go(anh, "Lý do cập nhật ảnh", "đổi ảnh");
+    go(phuThu, "Bánh cuốn chay · Nhân · Thịt", "2000");
+    fireEvent.submit(phuThu);
+    await waitFor(() => expect(oSai(phuThu, "Lý do")).toBe("true"));
+    expect(ghi(goi)).toHaveLength(0);
+    go(phuThu, "Lý do", "đổi phụ thu");
+    expect((within(form).getByLabelText("Lý do cập nhật") as HTMLInputElement).value).toBe("đổi món");
+    expect((within(anh).getByLabelText("Lý do cập nhật ảnh") as HTMLInputElement).value).toBe("đổi ảnh");
+    expect((within(phuThu).getByLabelText("Lý do") as HTMLInputElement).value).toBe("đổi phụ thu");
+  });
+
+  it("nút Sửa combo ở chi tiết mở hộp thoại, thay hai nút giá và phụ thu rời", async () => {
+    moTrang();
+    await screen.findByRole("button", { name: "Chi tiết Combo Đầy đủ" });
+    fireEvent.click(screen.getByRole("button", { name: "Chi tiết Combo Đầy đủ" }));
+    const detail = screen.getByRole("dialog", { name: "Chi tiết Combo Đầy đủ" });
+    expect(within(detail).queryByRole("button", { name: /Đổi giá|Đặt phụ thu/ })).toBeNull();
+    const sua = within(detail).getByRole("button", { name: "Sửa combo" });
+    await waitFor(() => expect(sua.hasAttribute("disabled")).toBe(false));
+    fireEvent.click(sua);
+    expect(screen.getByRole("dialog", { name: "Sửa combo" })).toBeTruthy();
+    expect(screen.getByRole("form", { name: "Cập nhật Combo Đầy đủ" })).toBeTruthy();
+  });
+
+  it("ảnh null dùng ảnh sẵn; tải có xem trước, gửi đúng multipart và lý do, đọc lại hiện ảnh trên thẻ", async () => {
+    const URLGoc = URL;
+    const revoke = vi.fn();
+    vi.stubGlobal("URL", class extends URLGoc {
+      static createObjectURL = vi.fn(() => "blob:anh-combo");
+      static revokeObjectURL = revoke;
+    });
+    const phan: [string, string | Blob][] = [];
+    const setGoc = FormData.prototype.set;
+    vi.spyOn(FormData.prototype, "set").mockImplementation(function (this: FormData, ...args: [string, string | Blob, string?]) {
+      phan.push([args[0], args[1]]);
+      return Reflect.apply(setGoc, this, args.filter((a) => a !== undefined));
+    });
+    let daTai = false;
+    const writes: { path: string; method: string; contentType: string | null }[] = [];
+    render(<ApiProvider fetch={async (req) => {
+      const path = new URL(req.url).pathname.replace(/^\/api/, "");
+      if (req.method !== "GET") {
+        writes.push({ path, method: req.method, contentType: req.headers.get("content-type") });
+        daTai = true;
+        return Response.json({ menu_combo_id: 5, image_url: "/menu-combos/5/image" });
+      }
+      if (path === "/menu-combos") return Response.json({ combos: [{ ...mauCombo.combos[0], image_url: daTai ? "/menu-combos/5/image" : null }] });
+      if (path === "/menu-categories") return Response.json(mauMon);
+      return Response.json({ option_groups: [] });
+    }}><Page /></ApiProvider>);
+    const card = (await screen.findByRole("button", { name: "Chi tiết Combo Đầy đủ" })).closest("tr")!;
+    expect(within(card).getByRole("img", { name: "Combo Đầy đủ" }).getAttribute("src")).toContain("suat-day-du.jpeg");
+    const comboForm = await mo("Sửa Combo Đầy đủ");
+    go(comboForm, "Lý do cập nhật", "lý do tên giá riêng");
+    const form = screen.getByRole("form", { name: "Cập nhật ảnh Combo Đầy đủ" });
+    fireEvent.submit(form);
+    expect(await within(form).findByRole("alert")).toBeTruthy();
+    expect(writes).toHaveLength(0);
+    const file = new File(["ảnh combo"], "combo.webp", { type: "image/webp" });
+    fireEvent.change(within(form).getByLabelText(/Ảnh mới/), { target: { files: [file] } });
+    expect(within(form).getByRole("img", { name: "Xem trước ảnh Combo Đầy đủ" }).getAttribute("src")).toBe("blob:anh-combo");
+    fireEvent.submit(form);
+    expect(writes).toHaveLength(0);
+    go(form, "Lý do cập nhật ảnh", "  ảnh mới chụp  ");
+    fireEvent.submit(form);
+    fireEvent.submit(form);
+    await screen.findByText("Đã cập nhật ảnh Combo Đầy đủ.");
+    expect(writes).toEqual([{ path: "/menu-combos/5/image", method: "PUT", contentType: expect.stringMatching(/^multipart\/form-data;/) }]);
+    expect(phan).toEqual([["file", file], ["reason", "ảnh mới chụp"]]);
+    fireEvent.click(within(screen.getByRole("dialog", { name: "Chi tiết Combo Đầy đủ" })).getByRole("button", { name: "Close" }));
+    expect(within(card).getByRole("img", { name: "Combo Đầy đủ" }).getAttribute("src")).toMatch(/^\/api\/menu-combos\/5\/image\?v=/);
+    expect(revoke).toHaveBeenCalledWith("blob:anh-combo");
+    vi.unstubAllGlobals();
   });
 });

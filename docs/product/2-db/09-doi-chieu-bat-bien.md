@@ -191,10 +191,17 @@ Kiểm bằng đọc lược đồ và kịch bản của `db/tests/i032_categor
 vết sửa dùng tập chung `I-018`, đơn cũ giữ giá dùng `I-009`, không viết lại câu.
 `I-032/6` chỉ xét vết có lúc, đọc giờ và múi giờ qua tham số owner như `I-011`;
 `I-032/8` đọc cờ chủ quán hiện hành như `I-030/2`, không xét trực quầy.
+T-315 (ADR-142, 2026-11-10): món/số suất cũng chỉ đổi ngoài giờ bán; lần từ chối không
+sinh dữ liệu nên kiểm bằng `be/internal/combo/cap_nhat_test.go`, không coi `I-032/6`
+(chỉ đối chiếu đổi giá) là đã kiểm vế đổi món. `db/tests/i032_combo_retirement.sql`
+kiểm rút món giữ lịch sử và ít nhất một dòng còn dùng. Ảnh combo nullable, khoá tệp có CHECK;
+vết đổi ảnh dùng `I-018`, không thêm câu cộng tiền.
 Ý định và giới hạn ở [18-luoc-do-danh-muc-combo.md](18-luoc-do-danh-muc-combo.md).
 
-`I-034/4` đọc thành phần combo **hiện hành**: chủ quán đổi số phần sau khi đặt thì câu báo một combo cũ là thiếu
-suất dù lúc đặt đủ — đọc kèm vết `menu_combo_item` (`I-018`) trước khi kết luận. Vế *giá khách gửi bị bỏ* không có
+`I-034/4` đọc thành phần combo tại mốc khoá: dòng tạo trước mốc và chưa rút lúc ấy, số phần từ vết
+`menu_combo_item` (`I-018`). Câu chỉ kêu khi lịch sử tại mốc lệch số suất đã ghi; lỗi cài dời vết về trước mốc
+để chứng minh. `I-034/5` cũng chọn đúng dòng thành phần tại mốc khi món từng bị rút rồi thêm lại.
+Vế *giá khách gửi bị bỏ* không có
 tập (giá gửi không được cất); kiểm bằng test của cửa ghi (T-196).
 `I-034/6` đọc giờ và múi giờ qua tham số owner như `I-032/6`. Kịch bản database ở
 `db/tests/i034_combo_on_order.sql`; ý định ở [20-luoc-do-ban-combo.md](20-luoc-do-ban-combo.md).

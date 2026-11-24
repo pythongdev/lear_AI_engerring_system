@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type repository struct{ q *sqlcgen.Queries }
@@ -21,6 +22,15 @@ func (r repository) themMon(ctx context.Context, id int64, item ThanhPhan) error
 }
 func (r repository) doiGia(ctx context.Context, id, gia int64) error {
 	return r.q.DoiGia(ctx, sqlcgen.DoiGiaParams{ID: id, PriceVnd: gia})
+}
+func (r repository) capNhatTen(ctx context.Context, id int64, ten string) error {
+	return r.q.CapNhatTenCombo(ctx, sqlcgen.CapNhatTenComboParams{ID: id, Name: ten})
+}
+func (r repository) suaSoLuong(ctx context.Context, comboID, itemID int64, soLuong int32) error {
+	return r.q.SuaSoLuongCombo(ctx, sqlcgen.SuaSoLuongComboParams{MenuComboID: comboID, MenuItemID: itemID, Quantity: soLuong})
+}
+func (r repository) rutMon(ctx context.Context, comboID, itemID int64) error {
+	return r.q.RutMonCombo(ctx, sqlcgen.RutMonComboParams{MenuComboID: comboID, MenuItemID: itemID})
 }
 func (r repository) an(ctx context.Context, id int64) error { return r.q.An(ctx, id) }
 func (r repository) kiemMon(ctx context.Context, id int64, i int) error {
@@ -99,4 +109,17 @@ func (r repository) datMuc(ctx context.Context, id int64, i int, m MucDat) error
 		return e
 	}
 	return r.q.DoiMuc(ctx, sqlcgen.DoiMucParams{ID: cu.ID, SurchargeVnd: m.SurchargeVND})
+}
+
+func (r repository) capNhatAnh(ctx context.Context, id int64, code string) error {
+	return r.q.CapNhatAnhCombo(ctx, sqlcgen.CapNhatAnhComboParams{ID: id, ImageCode: pgtype.Text{String: code, Valid: true}})
+}
+
+// docMaAnh đọc khoá ảnh ngoài giao dịch; nil khi combo chưa có ảnh tải lên.
+func (s *Service) docMaAnh(ctx context.Context, id int64) (*string, error) {
+	code, err := sqlcgen.New(s.pool).DocAnhCombo(ctx, id)
+	if err != nil || !code.Valid {
+		return nil, err
+	}
+	return &code.String, nil
 }

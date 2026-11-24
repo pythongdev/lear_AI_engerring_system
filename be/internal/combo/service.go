@@ -34,6 +34,7 @@ type Muc struct {
 	OptionName      string `json:"option_name"`
 }
 type MenuCombo struct {
+	ImageURL     *string    `json:"image_url"`
 	PriceVND     int64      `json:"price_vnd"`
 	ID           int64      `json:"menu_combo_id"`
 	Name         string     `json:"name"`
@@ -48,7 +49,10 @@ type MenuCombo struct {
 type DanhSach struct {
 	Combos []MenuCombo `json:"combos"`
 }
-type Service struct{ pool *pgxpool.Pool }
+type Service struct {
+	pool *pgxpool.Pool
+	kho  string
+}
 
 func NewService(pool *pgxpool.Pool) *Service { return &Service{pool: pool} }
 func (s *Service) Doc(ctx context.Context, nguoi int64, kemAn bool) (out DanhSach, err error) {
@@ -99,6 +103,80 @@ func (s *Service) DoiGia(ctx context.Context, nguoi, id, gia int64, reason strin
 			return apierr.Error{Code: apierr.CodeMenuComboPriceInSalesHours}
 		}
 		if e := vongdoi.CoVet(ctx, tx, reason, func() error { return r.doiGia(ctx, id, gia) }); e != nil {
+			return e
+		}
+		out, e = r.docMenuCombo(ctx, id)
+		return e
+	})
+	return
+}
+
+// CapNhat sửa một combo trong một giao dịch; dòng rút đi vẫn giữ cho báo giá tại mốc.
+func (s *Service) CapNhat(ctx context.Context, nguoi, id int64, ten string, gia int64, items []ThanhPhan, reason string) (out MenuCombo, err error) {
+	err = authz.Run(ctx, s.pool, nguoi, DoiGia, func(tx pgx.Tx) error {
+		r := newRepository(tx)
+		if e := r.khoa(ctx, id); e != nil {
+			return e
+		}
+		moc, e := ngayban.DongHo(ctx, tx)
+		if e != nil {
+			return e
+		}
+		ngoai, e := ngayban.NgoaiGio(ctx, tx, moc)
+		if e != nil {
+			return e
+		}
+		if !ngoai {
+			return apierr.Error{Code: apierr.CodeMenuComboUpdateInSalesHours}
+		}
+		for i, item := range items {
+			if e := r.kiemMon(ctx, item.MenuItemID, i); e != nil {
+				return e
+			}
+		}
+		cu, e := r.docMenuCombo(ctx, id)
+		if e != nil {
+			return e
+		}
+		cuTheoMon := make(map[int64]Mon, len(cu.Items))
+		moiTheoMon := make(map[int64]ThanhPhan, len(items))
+		for _, item := range cu.Items {
+			cuTheoMon[item.ID] = item
+		}
+		for _, item := range items {
+			moiTheoMon[item.MenuItemID] = item
+		}
+		if e = vongdoi.CoVet(ctx, tx, reason, func() error {
+			if cu.Name != ten {
+				if e := r.capNhatTen(ctx, id, ten); e != nil {
+					return e
+				}
+			}
+			if cu.PriceVND != gia {
+				if e := r.doiGia(ctx, id, gia); e != nil {
+					return e
+				}
+			}
+			for _, item := range cu.Items {
+				if _, ok := moiTheoMon[item.ID]; !ok {
+					if e := r.rutMon(ctx, id, item.ID); e != nil {
+						return e
+					}
+				}
+			}
+			for _, item := range items {
+				if old, ok := cuTheoMon[item.MenuItemID]; ok {
+					if old.Quantity != item.Quantity {
+						if e := r.suaSoLuong(ctx, id, item.MenuItemID, item.Quantity); e != nil {
+							return e
+						}
+					}
+				} else if e := r.themMon(ctx, id, item); e != nil {
+					return e
+				}
+			}
+			return nil
+		}); e != nil {
 			return e
 		}
 		out, e = r.docMenuCombo(ctx, id)

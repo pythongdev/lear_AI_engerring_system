@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Package, UtensilsCrossed } from "lucide-react";
+import { ArrowLeft, UtensilsCrossed } from "lucide-react";
 import { backendUrl } from "@/lib/api/backend-url";
 import type { components } from "@/lib/api/schema";
 import { tien } from "@/components/shared/dong-mon-da-ghi";
+import { AnhSanPham } from "@/app/chu-quan/_components/anh-san-pham";
 import { ChonMonChiTiet } from "../../chon-mon-chi-tiet";
 import "../../../ban/_components/thuc-don-khach.css";
 
@@ -36,9 +37,7 @@ export default async function ChiTietMonPage({ params, searchParams }: {
   return <main className="khach-menu min-h-dvh bg-[var(--page)] text-[var(--text)]">
     <article className="mx-auto min-h-dvh max-w-[472px] bg-[var(--bg)] p-4">
       {quayLai}
-      <div className="my-4 grid h-48 place-items-center rounded-2xl bg-[var(--field)] text-[var(--muted)]">
-        {combo ? <Package size={64} aria-hidden="true" /> : <UtensilsCrossed size={64} aria-hidden="true" />}
-      </div>
+      {combo ? <AnhSanPham ten={ten} combo imageUrl={combo.image_url} className="my-4 h-48 w-full rounded-2xl" /> : <div className="my-4 grid h-48 place-items-center rounded-2xl bg-[var(--field)] text-[var(--muted)]"><UtensilsCrossed size={64} aria-hidden="true" /></div>}
       <p className="text-xs text-[var(--muted)]">{combo ? "COMBO" : "MÓN LẺ"}</p>
       <h1 className="mt-2 text-2xl font-semibold">{ten}</h1>
       {combo && <>

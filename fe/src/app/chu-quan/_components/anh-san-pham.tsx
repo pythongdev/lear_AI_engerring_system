@@ -29,7 +29,7 @@ export function AnhSanPham({ ten, combo = false, className = "", imageUrl, anhVe
     .trim().replace(/\s+/g, " ").replace(/\s*\(ban roi\)$/, "").replace(/\s+(chin|tai|vang)$/, "");
   const tep = combo ? anhCombo[tenChuan.replace(/^combo\s+/, "")] ?? "banh-cuon-minh-hoa.jpg"
     : anhTheoTen[tenChuan];
-  const anhTaiLen = imageUrl?.startsWith("/menu-items/") ? `/api${imageUrl}${anhVersion ? `?v=${anhVersion}` : ""}` : null;
+  const anhTaiLen = (imageUrl?.startsWith("/menu-items/") || imageUrl?.startsWith("/menu-combos/")) ? `/api${imageUrl}${anhVersion ? `?v=${anhVersion}` : ""}` : null;
   const anhMacDinh = tep ? thuMucAnh + tep : null;
   const [anhLoi, setAnhLoi] = useState<string | null>(null);
   const src = anhTaiLen && anhLoi !== anhTaiLen ? anhTaiLen : anhMacDinh;

@@ -11,14 +11,14 @@ import (
 
 const doc = `-- name: Doc :one
 WITH combos AS (
- SELECT c.id, c.name, c.price_vnd, c.person_id, p.display_name AS person_name, c.created_at,
+ SELECT c.id, c.image_code, c.name, c.price_vnd, c.person_id, p.display_name AS person_name, c.created_at,
  c.hidden_at, c.hidden_by_person_id, h.display_name AS hidden_by_name
  FROM menu_combo c JOIN person p ON p.id = c.person_id
  LEFT JOIN person h ON h.id = c.hidden_by_person_id
  WHERE ($1::bigint = 0 OR c.id = $1) AND ($2::boolean OR c.hidden_at IS NULL)
 )
 SELECT jsonb_build_object('combos', coalesce((SELECT jsonb_agg(jsonb_build_object(
- 'menu_combo_id', c.id, 'name', c.name, 'price_vnd', c.price_vnd, 'person_id', c.person_id,
+ 'menu_combo_id', c.id, 'image_url', CASE WHEN c.image_code IS NOT NULL THEN '/menu-combos/' || c.id || '/image' ELSE NULL END, 'name', c.name, 'price_vnd', c.price_vnd, 'person_id', c.person_id,
  'person_name', c.person_name, 'created_at', c.created_at, 'hidden_at', c.hidden_at,
  'hidden_by_person_id', c.hidden_by_person_id, 'hidden_by_name', c.hidden_by_name,
  'items', coalesce((SELECT jsonb_agg(jsonb_build_object('menu_item_id', m.id,
@@ -28,7 +28,7 @@ SELECT jsonb_build_object('combos', coalesce((SELECT jsonb_agg(jsonb_build_objec
  FROM menu_combo_item_option_surcharge s JOIN menu_option o ON o.id = s.menu_option_id
  JOIN option_group g ON g.id = o.option_group_id WHERE s.menu_combo_item_id = x.id), '[]'::jsonb)) ORDER BY x.id)
  FROM menu_combo_item x JOIN menu_item m ON m.id = x.menu_item_id
- WHERE x.menu_combo_id = c.id), '[]'::jsonb)) ORDER BY c.name, c.id)
+ WHERE x.menu_combo_id = c.id AND x.retired_at IS NULL), '[]'::jsonb)) ORDER BY c.name, c.id)
  FROM combos c), '[]'::jsonb))::jsonb AS result
 `
 

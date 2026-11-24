@@ -99,7 +99,6 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
-- [x] T-377 **Hộp *Tạo bộ món riêng* ở trang Yêu thích không có ảnh, món và combo trông khác thẻ ở trang đặt món `/ban/[ma]`; tên nút cần đổi thành *Tạo món yêu thích*** — L1 (chỉ FE: chữ và phần nhìn, không đổi dữ liệu, giá hay lời gọi API), chủ repo yêu cầu 2026-11-24 (*"yêu cầu codex làm bạn kiểm tra"*); Codex làm trong `../lean_wt/T-377`, Claude duyệt · [chi tiết](#t-377)
 - [x] KC-14 **Thanh điều hướng chủ quán còn hai trang Kho và Nguyên liệu dù Khoản chi đã làm được hết việc của chúng** — L1 (chỉ FE: menu, chuyển hướng route cũ, mở sẵn nguyên liệu theo `?thu=`), chủ repo yêu cầu 2026-11-24 (*"tiếp tục yêu cầu codex làm các bước tiếp theo bạn kiểm tra"*); Codex làm trong `../lean_wt/KC-14`, Claude duyệt, gate xanh 2026-11-24 · [chi tiết](backlog_KC.md#kc-14)
 - [x] T-376 **Người làm của quán không có chỗ xem mình được giao việc gì và ngày nghỉ của mình** — L1 (chỉ FE, dùng cửa API sẵn có, không đổi dữ liệu hay quyền), chủ repo yêu cầu 2026-11-24; thêm trang Cá nhân ở khung quầy và trạm; Codex làm trong `../lean_wt/T-376`, Claude duyệt · [chi tiết](#t-376)
 - [x] T-375 **Trang Tài khoản khách chưa theo bản thiết kế hồ sơ: không có nút Cập nhật thông tin, không có lối sang Yêu thích** — L1 (chỉ FE, dùng cửa API sẵn có), chủ repo yêu cầu 2026-11-24; sửa tên · số · Gmail chờ U-126; Codex làm trong `../lean_wt/T-375`, Claude duyệt · [chi tiết](#t-375)
@@ -178,7 +177,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 - [x] T-318 **Cột Khác ở Tổng thiếu theo bàn hiện "N nước chấm" làm nhân viên hiểu sai** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; chủ repo chọn bỏ hẳn cột Khác khỏi mục này (cả giò lẫn nước chấm), *Bàn đang phục vụ* giữ cột Khác; Claude làm; fe-check và gate đạt · [chi tiết](#t-318)
 - [x] T-317 **Nút chuyển chế độ của từng bàn ở Tổng thiếu theo bàn là chữ dài, chiếm chỗ ô bàn** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; nút *Chi tiết đem ra* / *Xem đơn đã đặt* thành nút icon, giữ tên truy cập và `aria-pressed`; Codex làm, Claude duyệt; fe-check 784/784 và gate đạt · [chi tiết](#t-317)
 - [x] T-316 **Dòng món ở Tổng thiếu theo bàn và Cộng thử ghép đơn dài như hoá đơn nên nhân viên khó đọc nhanh** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-11; mỗi dòng gọn thành "số + tên ngắn + lựa chọn" (ví dụ "1 canh không rau"), bỏ giá, suất trong combo và dòng tổng ở hai mục này; Claude làm; fe-check và gate đạt · [chi tiết](#t-316)
-- [ ] T-315 **Combo chưa có nút Sửa nên chủ quán không đổi được tên, món, ảnh của combo** — L3, ADR-142, I-032, mở 2026-11-10; dùng bản cũ T-309 (sửa tên · giá · món) và T-307 (ảnh món) làm nền, thêm ảnh combo và hộp thoại *Sửa combo* ba phần; Codex làm, Claude duyệt · [chi tiết](#t-315)
+- [x] T-315 **Combo chưa có nút Sửa nên chủ quán không đổi được tên, món, ảnh của combo** — L3, ADR-142, I-032, mở 2026-11-10; dùng bản cũ T-309 (sửa tên · giá · món) và T-307 (ảnh món) làm nền, thêm ảnh combo và hộp thoại *Sửa combo* ba phần; Codex làm, Claude duyệt · [chi tiết](#t-315)
 - [x] T-314 **Tổng thiếu theo bàn chỉ hiện số theo cột nên lúc đầu khó đọc bàn đã đặt gì** — L1 (đổi cách hiện, không đổi dữ liệu hay tiền), xong 2026-11-10; mỗi hàng bàn mặc định hiện dòng món như đơn khách đặt, nút *Chi tiết đem ra* của từng bàn chuyển sang ô cột và ô đem ra; Codex làm, Claude duyệt; fe-check 766/766 và gate đạt · [chi tiết](#t-314)
 - [x] T-313 **Vận hành chỉ đếm theo thành phần nên chủ quán không thấy dòng món của bàn như ở Đơn chờ** — L2 (thêm trường vào hợp đồng API), xong 2026-11-09; `GET /service-board` thêm `lines` và `lines_total_vnd` cho mỗi phiên, hợp đồng 0.71.0; *Cộng thử ghép đơn* thay hàng cột bằng dòng món, *Tổng thiếu theo bàn* giữ cột và ô đem ra, thêm dòng món khi mở chi tiết bàn; Codex làm, Claude sửa nốt và duyệt; be-check, fe-check 745/745 và gate đạt · [chi tiết](#t-313)
 - [x] T-312 **Máy dev không đặt được đơn ngoài giờ bán nên không thử được luồng khách → Vận hành** — L2, ADR-141, xong 2026-11-09; cờ `BANHCUON_DEV_BO_GIO_BAN` (make dev bật sẵn, chỉ origin localhost) bỏ riêng điều kiện giờ bán; Claude viết test trước, Codex làm, Claude duyệt; be-check và gate đạt, đơn QR thử lúc 13:21 hiện ở hàng chờ chủ quán · [chi tiết](#t-312)
@@ -686,58 +685,6 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
-
-<a id="t-377"></a>
-### T-377 — Hộp tạo món yêu thích có ảnh, thẻ món và combo theo trang đặt món
-
-Chủ repo yêu cầu 2026-11-24 về `/khach/yeu-thich`: *"Tạo bộ món riêng — chuyển title thành tạo món yêu thích. cần có ảnh hay làm
-các món ăn và combo giống với http://localhost:3000/ban/3 cho align toàn bộ hệ thống. yêu cầu codex làm bạn kiểm tra"*. Hiện hộp
-`HopSuaBo` (`fe/src/components/khach/yeu-thich/hop-bo.tsx`) liệt kê món và combo thành hàng chữ có checkbox, lựa chọn bằng ô
-`select`, không ảnh, không giá; thẻ `TheDong` trên trang có ảnh nhỏ cạnh chữ. Trang đặt món `/ban/[ma]` dùng thẻ `.menu-card`
-(ảnh trên, tên và giá cùng hàng, nút chip mở lựa chọn `LuaChonThe`, bộ tăng giảm) trong `thuc-don-khach.tsx/.css`.
-
-Suy luận của Claude, chưa hỏi lại: "title" là chữ trên nút mở hộp và tiêu đề hộp khi tạo; hộp khi sửa đổi theo cho cùng lời thành
-*Sửa món yêu thích*; tên bộ, nhãn *♥ Bộ món riêng* và luật lưu bộ (ADR-145) giữ nguyên. "Align toàn bộ hệ thống" hiểu là cả
-thẻ trong hộp lẫn thẻ món yêu thích trên trang (`TheDong`) cùng hình thẻ trang đặt món; thẻ bộ (`TheBo`) giữ hình cũ.
-
-Acceptance viết trước khi làm:
-- A1 — nút trên trang và tiêu đề hộp khi tạo là *Tạo món yêu thích*; khi sửa là *Sửa món yêu thích*; chữ khác không đổi.
-- A2 — mỗi món và combo trong hộp tạo/sửa là một thẻ cùng hình `.menu-card` của `/ban/[ma]`: ảnh `AnhSanPham` (món lấy
-  `image_url`, combo `combo`) ở trên, tên và giá cùng hàng (món: giá thấp nhất, có *từ* khi các giá khác nhau; combo:
-  `price_vnd` — chỉ hiển thị, tổng của bộ vẫn lấy từ `POST /price-quotes`), lựa chọn bằng chip `LuaChonThe` với nhãn như
-  trang đặt món (*Lượng nhân*: Thường → Vừa, Nhiều nhân → Nhiều — chỉ nhãn, mã lựa chọn giữ nguyên), combo có *Thành phần*
-  như trang đặt món; checkbox chọn và bộ tăng giảm giữ đúng hành vi cũ (tối đa 20 dòng, 1–99, gộp dòng trùng hình).
-- A3 — thẻ món yêu thích trên trang (`TheDong`) cùng hình thẻ ấy: ảnh trên, tên + giá dòng (từ `price-quotes` như cũ), nhãn
-  *Món lẻ*/*Combo*, nút ♥ bỏ yêu thích, chip lựa chọn, bộ tăng giảm và *＋ Giỏ* — hành vi và lời gọi API không đổi.
-- A4 — cùng bộ màu sáng/tối với `/ban/[ma]` (biến của `.khach-menu`, nhấn `#EA6A0C`/`#FF7A1A`); vừa khung 360/430px không tràn
-  ngang, cả trong hộp.
-- A5 — không đổi dữ liệu, luật, lời gọi API; không sửa `thuc-don-khach.*`, `phieu-khach.tsx`, `lua-chon-the.tsx`,
-  `anh-san-pham.tsx` (đang có thay đổi chưa commit của việc khác hoặc dùng chung) — chỉ import; test cũ xanh, test chỉ đổi theo
-  chữ mới hoặc theo vai trò của chip (radio thay combobox), nêu từng chỗ; `tsc --noEmit` sạch; `./scripts/gate.sh` xanh.
-- A6 — Claude chạy app thật, chụp `/ban/3` và hộp *Tạo món yêu thích* cạnh nhau ở 360/430 × sáng/tối.
-
-Phạm vi (`work/scope/T-377.txt`): `fe/src/components/khach/yeu-thich.tsx`, `fe/src/components/khach/yeu-thich/`,
-`fe/src/app/khach/yeu-thich/`, `work/backlog.md`. Thi công: Codex trong `../lean_wt/T-377`, nhánh `codex/T-377`, nền `6b4ab83`;
-phiếu và log `../lean_wt/_claude_logs/T-377/`.
-
-**Bàn giao 2026-11-24:** lần gọi Codex đầu (`codex exec -m gpt-6-astra`, phiên `codex.log`) dừng vì hết hạn mức tài khoản tới
-2026-11-25 17:35, chưa sửa file nào (`git -C ../lean_wt/T-377 status --short` rỗng). Worktree, `npm ci`, phiếu và kịch bản chụp
-`chup.cjs` đã sẵn; việc tiếp: gọi lại Codex với cùng phiếu sau mốc ấy, hoặc Claude tự làm nếu chủ repo chọn.
-Chủ repo bảo *"tiếp tục yêu cầu codex làm bạn kiểm tra"*; lần gọi thứ hai chạy được.
-
-**Kết quả 2026-11-24** (thực hiện: Codex, `codex exec -m gpt-6-astra` trong `../lean_wt/T-377`, nền `db95076`; duyệt: Claude, một
-lượt, không vòng sửa). Bảy file: `yeu-thich.tsx` (chữ nút), `hop-bo.tsx` (thẻ `.menu-card` có ảnh `AnhSanPham`, tên + giá, chip,
-*Thành phần* cho combo, thanh *Số lượng*; checkbox, 20 dòng, 1–99, `khoaHinh` giữ nguyên), `lua-chon.tsx` (`LuaChonThe` thay
-`select`, nhãn Vừa/Nhiều chép từ `nhanNhom` kèm chú thích giữ khớp), `the.tsx` (`giaMon`, `ThanhPhanDong`, `TheDong` thành
-`.menu-card`), `yeu-thich.css` (chép các lớp `.menu-*` dưới `.yt-theme` với biến `--yt-*`, ảnh trong hộp 140px), hai test.
-Test đổi chỉ theo chữ mới và chip (mở chip rồi chọn radio thay combobox), kỳ vọng payload và API giữ nguyên; thêm hai ca kiểm
-ảnh, giá *từ 30.000đ*, giá combo và mở/đóng *Thành phần*. A1 — `grep "Tạo bộ món riêng\|Sửa bộ món riêng" fe/src` rỗng. A5 —
-Claude chạy ở clone chính sau `git apply`: `vitest src/app/khach src/components/khach` 122/122, `tsc --noEmit` sạch; file mẫu
-`thuc-don-khach.*`, `lua-chon-the.tsx`, `anh-san-pham.tsx` không đổi. A6 — Claude chụp app thật (`../lean_wt/_claude_logs/T-377/anh/`,
-`chup.cjs`) 360/430 × sáng/tối: trang và hộp tràn 0px cả 8 cặp, thẻ hộp cùng hình thẻ `/ban/3`, nhấn `#EA6A0C`/`#FF7A1A`.
-Còn lại, không chặn: món *Canh* (0đ) trong hộp hiện khung *Chưa có ảnh* vì `AnhSanPham` không có ảnh cho tên này — cùng khung
-dự phòng như thực đơn; khi T-294 commit (`anhMenu` cho combo trên `/ban/[ma]`) thì ảnh combo ở Yêu thích cần đối lại. Một
-`401` ở console là `GET /customer-sessions/current` của trang đăng nhập trước khi đăng nhập, đúng hành vi.
 
 <a id="t-376"></a>
 ### T-376 — Trang Cá nhân của người làm: việc được giao và ngày nghỉ
@@ -1878,6 +1825,33 @@ Acceptance viết trước sửa:
 - A9 — `db-check`, `be-check` (Claude chạy), `fe-check` và `./scripts/gate.sh` xanh.
 
 Phạm vi (`work/scope/T-315.txt`): `db/`, `be/`, `fe/src/app/chu-quan/`, `fe/src/app/ban/`, `fe/src/app/thuc-don/`, `fe/src/lib/api/schema.ts`, `docs/product/2-db/`, `docs/product/3-be/`, `docs/product/4-fe/01-khung-fe.md`, `docs/decisions.md`, `quality/invariants.md`, `master_plan/shop-facts.md`, `work/backlog.md`. Thi công: Codex trong worktree `../lean_wt/T-315`, nhánh `codex/T-315`, nền `97163aa`. Duyệt: Claude, chưa duyệt.
+
+**Lát dời nền 2026-11-24** (Claude giao, chủ repo: *"yêu cầu codex làm bạn kiểm tra"*). Lượt Codex 2026-11-11 bị ngắt trước báo
+cáo, để lại diff 116 file trên `97163aa` (cũ 78 commit), lẫn thay đổi của việc khác đã commit sau đó. Claude áp diff ấy `--3way` lên
+`db95076` trong `../lean_wt/T-315b` (nhánh `codex/T-315b`): 26 file xung đột. *Claude quyết (cách làm):* bỏ migration
+`20261106100000_anh_san_pham` vì trùng `20261119100000_anh_san_pham` của T-307 đã commit; đổi mốc `combo_cap_nhat` →
+`20261124100000`, `anh_combo` → `20261124110000` để đứng sau `20261123120000_khoa_ngay_so_dem`; HEAD thắng mọi phần đã commit,
+chỉ giữ phần thuộc ADR-142. Phiếu và log `../lean_wt/_claude_logs/T-315/`. Worktree cũ `../lean_wt/T-315` giữ làm tham khảo.
+
+**Kết quả 2026-11-24** (thực hiện: Codex `gpt-6-astra` trong `../lean_wt/T-315b`; duyệt và làm nốt: Claude). Codex giải hết 26 xung
+đột rồi hết hạn mức trước báo cáo (lần thứ ba trong ngày); diff là bằng chứng. Diff sau giải còn 85 file, đều của T-315: miền
+`combo` + sqlc, `gia`, hai migration, `apierr`, router, `platform/anh`, hợp đồng **0.82.0** + `01` · `02`, `2-db/07` · `09` · `18`,
+FE combo · thực đơn khách · chi tiết, `schema.ts`; `models.go` các gói khác chỉ thêm cột do sqlc sinh lại. Phần `troly` ·
+`components/shared` lọt từ việc khác không còn. **Claude sửa thêm:** dữ liệu giả `nut-tim.test.tsx` thiếu `image_url` (scope mở thêm
+file ấy); khi đưa về clone chính, ghép với T-294 chưa commit — ảnh combo chủ quán tải lên **thắng** ảnh trình bày chung `anhMenu`
+(A6: *chưa có thì về ảnh trình bày sẵn*), sửa `AnhSanPham` · `ThucDonKhach`, test hồi quy mới ở `thuc-don-khach.test.tsx`, ca null của
+`danh-muc-khach.test.tsx` đổi theo ảnh chung — **hai chỗ này thuộc phần T-294**, commit cùng T-294; bản commit của T-315 dùng đúng
+file của worktree. `01-khung-fe.md` §1 · §2 · §4 (A8).
+
+Acceptance → bằng chứng: A1 — nền `db95076`, `git diff --check` sạch, không còn `UU`/`AA`; A2 — `TestI032_CapNhatComboGiuDongCuVaQuyen`
+(409 trong giờ bán giữ tên · giá · món · vết, ngoài giờ sửa được, không phải chủ quán `owner_only`), `TestI032_KhongDoiGiaComboTrongGioBan`;
+A3 — `TestQC14_HinhCapNhatAnhCombo`, `TestI018_AnhComboCoQuyenCoVetVaDocCongKhai`; A4 — test ảnh món T-307 qua trong `be-check`; A5 · A7
+— `combo.test.tsx` *nút Sửa là anh em…*, *nút Sửa combo ở chi tiết…*, *đổi giá trong giờ bán (409 …)*, câu *Chỉ sửa món và giá combo
+ngoài giờ bán.*; A6 — `chi-tiet.test.tsx` *T-315 chi tiết combo hiện ảnh tải lên*, `danh-muc-khach.test.tsx`, `thuc-don-khach.test.tsx`;
+A9 — worktree: `db-check` PASS (53 bước xuôi · lùi · xuôi lại, hai migration `20261124100000_combo_cap_nhat` ·
+`20261124110000_anh_combo` lùi về đúng lược đồ, `i032_combo_retirement.sql`), `be-check` 33/33 gói, `./scripts/gate.sh` mọi cổng PASS
+(log `../lean_wt/_claude_logs/T-315/gate-wt.log`); clone chính sau ghép: vitest `src/app/ban` · `chu-quan` · `thuc-don` · `src/components`
+823/823, `tsc` sạch, gate — xem log `gate-chinh.log` cùng thư mục.
 
 <a id="t-326"></a>
 ### T-326 — Tổng thiếu theo bàn có cột Canh nhưng giò không có chỗ hiện để đem ra

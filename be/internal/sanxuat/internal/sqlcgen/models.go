@@ -316,6 +316,7 @@ type MenuCombo struct {
 	CreatedAt        pgtype.Timestamptz
 	HiddenAt         pgtype.Timestamptz
 	HiddenByPersonID pgtype.Int8
+	ImageCode        pgtype.Text
 }
 
 type MenuComboItem struct {
@@ -324,6 +325,7 @@ type MenuComboItem struct {
 	MenuItemID  int64
 	Quantity    int32
 	CreatedAt   pgtype.Timestamptz
+	RetiredAt   pgtype.Timestamptz
 }
 
 type MenuComboItemOptionSurcharge struct {

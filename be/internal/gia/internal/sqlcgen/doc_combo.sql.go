@@ -32,7 +32,8 @@ mon_tai_moc AS (
  SELECT (COALESCE(v.before_image, to_jsonb(goc))->>'id')::bigint AS id,
  (COALESCE(v.before_image, to_jsonb(goc))->>'menu_combo_id')::bigint AS menu_combo_id,
  (COALESCE(v.before_image, to_jsonb(goc))->>'menu_item_id')::bigint AS menu_item_id,
- (COALESCE(v.before_image, to_jsonb(goc))->>'quantity')::integer AS quantity
+ (COALESCE(v.before_image, to_jsonb(goc))->>'quantity')::integer AS quantity,
+ (COALESCE(v.before_image, to_jsonb(goc))->>'retired_at')::timestamptz AS retired_at
  FROM menu_combo_item goc
  LEFT JOIN vet v ON v.target_table_code = 'menu_combo_item' AND v.target_row = goc.id
  WHERE goc.created_at <= COALESCE($2::timestamptz, now())
@@ -47,10 +48,12 @@ muc_tai_moc AS (
 )
 SELECT c.name, c.price_vnd, COALESCE(c.hidden_at <= COALESCE($2::timestamptz, now()), false)::boolean AS an,
  (SELECT COALESCE(jsonb_agg(jsonb_build_object('menu_item_id', x.menu_item_id, 'quantity', x.quantity) ORDER BY x.id),
-  '[]'::jsonb) FROM mon_tai_moc x WHERE x.menu_combo_id = c.id)::jsonb AS mon,
+  '[]'::jsonb) FROM mon_tai_moc x WHERE x.menu_combo_id = c.id
+    AND (x.retired_at IS NULL OR x.retired_at > COALESCE($2::timestamptz, now())))::jsonb AS mon,
  (SELECT COALESCE(jsonb_agg(jsonb_build_object('menu_item_id', x.menu_item_id, 'menu_option_id', s.menu_option_id,
   'surcharge_vnd', s.surcharge_vnd)), '[]'::jsonb)
-  FROM muc_tai_moc s JOIN mon_tai_moc x ON x.id = s.menu_combo_item_id WHERE x.menu_combo_id = c.id)::jsonb AS muc
+  FROM muc_tai_moc s JOIN mon_tai_moc x ON x.id = s.menu_combo_item_id WHERE x.menu_combo_id = c.id
+    AND (x.retired_at IS NULL OR x.retired_at > COALESCE($2::timestamptz, now())))::jsonb AS muc
 FROM combo_tai_moc c WHERE c.id = $1::bigint
 `
 

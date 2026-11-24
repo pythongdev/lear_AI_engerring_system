@@ -373,6 +373,7 @@ type menuKetQua struct {
 // comboMenu bày combo đang bán: giá combo, món kèm số phần, nhóm tuỳ chọn và mức của từng lựa chọn. Không kê giá mọi
 // tổ hợp như món lẻ — số tổ hợp nhân theo số suất; con số cuối lấy từ tính thử (ADR-117 điểm 5).
 type comboMenu struct {
+	ImageURL    *string    `json:"image_url"`
 	MenuComboID int64      `json:"menu_combo_id"`
 	Name        string     `json:"name"`
 	PriceVnd    int64      `json:"price_vnd"`

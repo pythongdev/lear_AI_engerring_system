@@ -23,10 +23,12 @@ WHERE c.parent_order_line_id IS NOT NULL
        OR p.is_takeaway <> c.is_takeaway OR c.menu_item_id IS NULL)
 
 -- @@ I-034/4 — combo thiếu hay thừa suất: số suất mỗi món khác số phần × số combo
--- Đọc thành phần combo hiện hành: số phần đổi sau khi đặt thì câu báo nhầm — xem giới hạn ở file 09.
+-- Chỉ đọc dòng thành phần có hiệu lực tại mốc khoá; số phần lấy từ vết sớm nhất sau mốc.
 WITH can AS (
-  SELECT l.id AS dong_combo, ci.menu_item_id, ci.quantity * l.quantity AS so_suat
+  SELECT l.id AS dong_combo, ci.menu_item_id,
+         pg_temp.gia_tai('menu_combo_item', ci.id, 'quantity', ci.quantity, l.priced_at) * l.quantity AS so_suat
   FROM order_line l JOIN menu_combo_item ci ON ci.menu_combo_id = l.menu_combo_id
+  WHERE ci.created_at <= l.priced_at AND (ci.retired_at IS NULL OR ci.retired_at > l.priced_at)
 ), co AS (
   SELECT c.parent_order_line_id AS dong_combo, c.menu_item_id, sum(c.quantity) AS so_suat
   FROM order_line c WHERE c.parent_order_line_id IS NOT NULL
@@ -46,6 +48,7 @@ WHERE c.unit_price_vnd <> (
                                             s.surcharge_vnd, c.priced_at)), 0)
         FROM order_line_option x
         JOIN menu_combo_item ci ON ci.menu_combo_id = p.menu_combo_id AND ci.menu_item_id = c.menu_item_id
+          AND ci.created_at <= c.priced_at AND (ci.retired_at IS NULL OR ci.retired_at > c.priced_at)
         JOIN menu_combo_item_option_surcharge s
           ON s.menu_combo_item_id = ci.id AND s.menu_option_id = x.menu_option_id AND s.created_at <= c.priced_at
         WHERE x.order_line_id = c.id)

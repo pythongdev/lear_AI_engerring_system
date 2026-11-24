@@ -15,7 +15,7 @@ async function mo(tinhThu?: (...a: Parameters<Ghi>) => Promise<TraLoi>, suaMenu?
   menu.items[0].option_groups[1].prerequisite_option_ids.push(13);
   menu.items[0].prices.push({ option_ids: [13, 21], unit_price_vnd: 35000 }, { option_ids: [13, 22], unit_price_vnd: 40000 });
   menu.combos = [{
-    menu_combo_id: 99, name: "Đầy đặn", price_vnd: 72000,
+    image_url: null, menu_combo_id: 99, name: "Đầy đặn", price_vnd: 72000,
     items: [{ ...menu.items[0], quantity: 2, surcharges: [] }],
   }];
   suaMenu?.(menu);
