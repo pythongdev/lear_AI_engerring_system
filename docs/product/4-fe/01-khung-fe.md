@@ -35,7 +35,7 @@ Mỗi màn thêm **một dòng** ở đây cùng lượt dựng nó, và nhóm n
 | `/khach/dang-nhap` | khách | một ô số điện thoại hoặc Gmail và mật khẩu; đăng nhập tuỳ chọn (2026-10-28, phiếu Claude, ADR-131) | `T-265` |
 | `/khach/dang-ky` | khách | tên, ít nhất số điện thoại hoặc Gmail, mật khẩu; mở phiên ngay sau đăng ký | `T-265` |
 | `/khach/xac-nhan-gmail` | công khai | đọc ma từ query, xác nhận một lần, link về tài khoản | `T-270` |
-| `/khach/tai-khoan` | khách | tên · số · thư; sửa hoặc xoá bộ giao đã nhớ, đổi mật khẩu, đăng xuất | `T-265` |
+| `/khach/tai-khoan` | khách | theo `docs/product/4-fe/thiet_ke/khach_hang/profile/profile.html` (2026-11-24, T-375): khối đầu chữ cái đầu · tên, tên · số · thư chỉ đọc (sửa chờ `U-126`), bộ giao đã nhớ chỉ đọc kèm nút *Cập nhật thông tin* mở form có Huỷ (để trống cả ba là xoá), mục *Của tôi* sang Yêu thích · Đơn đã đặt, đổi mật khẩu gập sau nút, đăng xuất; không có nút đổi ảnh | `T-265` · `T-375` |
 | `/khach/don` | khách | lịch sử đơn của phiên, mới nhất trước, Xem thêm theo con trỏ backend | `T-265` |
 | `/khach/yeu-thich` | khách | Món đã thả tim và bộ món của khách theo `docs/product/4-fe/thiet_ke/khach_hang/favourite/favourite.html`; đọc `GET /customer-accounts/current/favourites` · `GET /menu`, giá từ `POST /price-quotes`; chưa đăng nhập thì mời đăng nhập, không lưu trên máy (2026-11-20, phiếu Claude, ADR-145) | `YT-05` |
 | `/khach/quen-mat-khau` | khách | xin mã qua Gmail; nói rõ khách chỉ có số chưa có cách lấy lại mật khẩu | `T-265` |

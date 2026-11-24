@@ -100,6 +100,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## In Progress
 
 - [x] KC-14 **Thanh điều hướng chủ quán còn hai trang Kho và Nguyên liệu dù Khoản chi đã làm được hết việc của chúng** — L1 (chỉ FE: menu, chuyển hướng route cũ, mở sẵn nguyên liệu theo `?thu=`), chủ repo yêu cầu 2026-11-24 (*"tiếp tục yêu cầu codex làm các bước tiếp theo bạn kiểm tra"*); Codex làm trong `../lean_wt/KC-14`, Claude duyệt, gate xanh 2026-11-24 · [chi tiết](backlog_KC.md#kc-14)
+- [x] T-375 **Trang Tài khoản khách chưa theo bản thiết kế hồ sơ: không có nút Cập nhật thông tin, không có lối sang Yêu thích** — L1 (chỉ FE, dùng cửa API sẵn có), chủ repo yêu cầu 2026-11-24; sửa tên · số · Gmail chờ U-126; Codex làm trong `../lean_wt/T-375`, Claude duyệt · [chi tiết](#t-375)
 - [x] T-374 **Khách điều hướng bằng một dòng chữ nhỏ trên đầu trang; cần thanh tab dưới đáy Đặt món · Đơn đã đặt · Tài khoản · Yêu thích** — L1 (chỉ FE điều hướng, không đổi route, dữ liệu hay quyền), chủ repo yêu cầu 2026-11-23; Codex làm trong `../lean_wt/T-374`, Claude duyệt · [chi tiết](#t-374)
 - [x] T-373 **Trang Theo dõi món trong app dùng màu xanh lá riêng, trông khác trang đặt món `/ban/[ma]` và căn chưa gọn** — L1 (chỉ FE, không đổi dữ liệu hay chữ), chủ repo yêu cầu 2026-11-23; Codex làm trong `../lean_wt/T-373`, Claude duyệt · [chi tiết](#t-373); **xong 2026-11-24**: cùng khung và màu `.khach-menu` sáng/tối, 8/8 ảnh tràn 0px, vitest 96/96
 - [x] KC-16 **Trang Khoản chi chưa làm được việc của Kho và Nguyên liệu: ghi/sửa lượng có lý do, đơn vị lần đầu, tỉ lệ nhắc, xếp thứ *Chưa xếp mục*, dùng lại thứ đã ngừng, chuyển mục** — L2 (ghi sổ lượng, chuyển mục kéo theo khoản chi), chủ repo yêu cầu 2026-11-23 (*"yêu cầu codex làm bạn kiểm tra"*); Claude viết test trước, Codex làm trong `../lean_wt/KC-16`, Claude duyệt, gate xanh 2026-11-24 · [chi tiết](backlog_KC.md#kc-16)
@@ -683,6 +684,56 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-375"></a>
+### T-375 — Trang Tài khoản khách theo bản thiết kế hồ sơ
+
+Chủ repo yêu cầu 2026-11-24, chỉ vào `docs/product/4-fe/thiet_ke/khach_hang/profile/profile.html`: *"kiểm tra xem thiết kế như
+trên đã được [làm chưa] … cần làm thêm nút cập nhật thông tin khi khách muốn sửa, thêm được link sang mục yêu thích vì cái đó thuộc
+về cá nhân"*. Claude đối chiếu 2026-11-24: `/khach/tai-khoan` (`TaiKhoanKhach`, T-265) có đủ dữ liệu nhưng chưa theo thiết kế —
+không có khối đầu trang (chữ cái đầu + tên), form thông tin giao luôn mở thay vì có nút *Cập nhật thông tin*, không có ô sang
+*Yêu thích* hay *Đơn đã đặt*, chữ và khung chưa theo kiểu thẻ cam của bản thiết kế. Bản thiết kế cho sửa cả tên · số · Gmail của
+tài khoản; hợp đồng chỉ có cửa sửa bộ thông tin giao — câu ấy là **U-126**, không tự mở cửa.
+
+*Claude quyết, chưa hỏi chủ repo (2026-11-24, cách làm):* bỏ nút đổi ảnh của bản thiết kế (không có cửa tải ảnh, nút tắt chỉ làm
+rối); tên · số · Gmail hiện chỉ đọc; thông tin giao hiện chỉ đọc kèm nút *Cập nhật thông tin* mở form, có *Huỷ*; đổi mật khẩu
+cũng gập sau một nút; mục *Của tôi* có hai ô *Yêu thích* (`/khach/yeu-thich`, nổi bật) và *Đơn đã đặt* (`/khach/don`) — *Đặt món*
+đã có ở thanh tab của T-374 nên không lặp.
+
+Acceptance viết trước khi làm:
+- A1 — khối đầu trang: ô chữ cái đầu từ `display_name` (hai chữ cuối, viết hoa) và tên; dưới là số điện thoại hoặc Gmail; không
+  có nút đổi ảnh.
+- A2 — *Thông tin cá nhân* chỉ đọc (tên, số, Gmail, *Chưa có* khi vắng); khối Gmail chờ xác nhận và nút gửi lại giữ nguyên hành vi.
+- A3 — *Thông tin giao đã nhớ* mặc định chỉ đọc (hoặc *Chưa có thông tin giao*); nút *Cập nhật thông tin* mở form ba ô điền sẵn,
+  *Lưu* gửi đúng `PUT /customer-accounts/current/delivery-profile` như trước, xong thì đóng form và đọc lại; *Huỷ* đóng form không
+  gọi API; câu *để trống cả ba ô rồi lưu để xoá* giữ trong form.
+- A4 — mục *Của tôi* có hai liên kết *Yêu thích* → `/khach/yeu-thich` và *Đơn đã đặt* → `/khach/don`.
+- A5 — *Đổi mật khẩu* gập sau một nút, hành vi gửi giữ nguyên; *Đăng xuất* giữ nguyên.
+- A6 — kiểu theo bản thiết kế (thẻ, viền, cam nhấn) bằng biến màu sẵn có của trang khách, đọc rõ ở sáng và tối, vừa 360/430px
+  không tràn ngang.
+- A7 — test mới cho A1–A5; test cũ `src/app/khach`, `src/components/khach` xanh (sửa test cũ chỉ để thêm cú bấm mở form, nêu từng
+  chỗ); `tsc --noEmit` sạch; `./scripts/gate.sh` xanh.
+- A8 — Claude đọc diff, chạy lại test, chụp `/khach/tai-khoan` nếu backend chạy được; Claude cập nhật dòng `/khach/tai-khoan` của
+  `docs/product/4-fe/01-khung-fe.md`.
+
+Phạm vi (`work/scope/T-375.txt`): `fe/src/components/khach/tai-khoan.tsx`, `fe/src/components/khach/tai-khoan.test.tsx`,
+`fe/src/components/khach/tai-khoan.css`, `fe/src/app/khach/tai-khoan/`, `fe/src/app/khach/khach.test.tsx`,
+`docs/product/99-unknowns.md`, `docs/product/4-fe/01-khung-fe.md`, `work/backlog.md`. Thi công: Codex trong `../lean_wt/T-375`,
+nhánh `codex/T-375`, nền `a35fa26` cộng thay đổi chưa commit của T-374; phiếu và log `../lean_wt/_claude_logs/T-375/`.
+**Thứ tự commit:** T-374 trước (T-375 sửa `khach.test.tsx` mà T-374 cũng sửa).
+
+**Kết quả 2026-11-24** (thực hiện: Codex, `codex exec -m gpt-6-astra` trong `../lean_wt/T-375`, nền `a35fa26` + T-374 stage sẵn; duyệt và
+làm nốt: Claude). Codex hết hạn mức tài khoản giữa lượt nên **không có báo cáo và bảng A0**; diff trong worktree là bằng chứng duy nhất,
+Claude đọc từng dòng. Đối chiếu thiết kế ↔ trang cũ (Claude, thay A0): `CustomerTopNav` có (khung khách); `ProfileAvatarHeader` thiếu;
+`PersonalInfoForm` khác — form giao luôn mở, tên · số · Gmail không sửa được (U-126); `QuickNavGrid` thiếu; `SaveCTABar` khác — nút lưu
+trong form; `ClientBottomNav` có từ T-374. Codex làm: `tai-khoan.tsx` theo A1–A5, `tai-khoan.css` (biến `yt-theme` của trang Yêu thích,
+chữ tối trên nút cam để đủ tương phản), test mới `tai-khoan.test.tsx` 16 ca, `khach.test.tsx` thêm bốn cú bấm mở form/nút (dòng 65, 71,
+79, 91). **Claude sửa thêm:** bỏ `aria-expanded`/`aria-controls` trỏ khối chưa có của nút *Cập nhật thông tin*; ảnh thật cho thấy chữ cái
+đầu "T(" với tên "Khách thử (dev)" ⇒ chỉ lấy từ bắt đầu bằng chữ cái, thêm hai ca test (`KT`, `(dev) 123` ⇒ `KH`); dòng
+`/khach/tai-khoan` của `01-khung-fe.md` §1. Bằng chứng: A1–A5, A7 — `npx vitest run src/app/khach src/components/khach …` 159/159, `tsc
+--noEmit` sạch, `check-fe-rules` PASS; A6 — ảnh `../lean_wt/_claude_logs/T-374/anh-that-2/tai-khoan-*` 4/4 PASS, sáng tối đọc rõ, không
+tràn; A8 — `./scripts/gate.sh` ở clone chính có cả T-374 · T-375 · T-376: Gate 3, 1b, 1c, 1e–1h, verify (fe-rules, fe-check 58s) PASS,
+`PASS gate không cổng nào đỏ`; log `../lean_wt/_claude_logs/T-375/gate-chinh.log`. Còn mở: U-126.
 
 <a id="t-374"></a>
 ### T-374 — Thanh tab dưới đáy cho trang khách

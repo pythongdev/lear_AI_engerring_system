@@ -1,0 +1,134 @@
+/* Dùng bảng màu yt-theme của trang khách cho cả sáng và .dark. */
+.tk-page {
+  --tk-accent-ink: color-mix(in srgb, var(--yt-accent) 75%, var(--yt-text));
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.tk-page .yt-eyebrow {
+  color: var(--tk-accent-ink);
+  font-weight: 700;
+}
+
+.tk-identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.tk-avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border: 1px solid var(--yt-accent);
+  border-radius: 24px;
+  background: var(--yt-badge);
+  color: var(--tk-accent-ink);
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.tk-section {
+  padding: 18px;
+}
+
+.tk-section-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.tk-details {
+  line-height: 1.65;
+}
+
+.tk-verification {
+  border-top: 1px solid var(--yt-line);
+  padding-top: 14px;
+}
+
+.tk-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.tk-tile {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 13px;
+}
+
+.tk-featured {
+  border-color: transparent;
+  background: var(--yt-badge);
+}
+
+.tk-tile svg {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  color: var(--tk-accent-ink);
+}
+
+.tk-tile span {
+  min-width: 0;
+}
+
+.tk-tile strong,
+.tk-tile small {
+  display: block;
+}
+
+.tk-tile strong {
+  font-size: 13px;
+}
+
+.tk-tile small {
+  margin-top: 3px;
+  color: var(--yt-muted);
+  font-size: 11px;
+}
+
+.tk-tile:hover {
+  border-color: var(--yt-accent);
+}
+
+.tk-page [data-slot="button"] {
+  min-height: 44px;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.tk-page [data-variant="default"] {
+  color: #111827;
+}
+
+.tk-page .tk-password-toggle {
+  padding: 0;
+  color: var(--yt-text);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.tk-page [data-slot="input"] {
+  min-width: 0;
+  height: auto;
+  min-height: 44px;
+  border: 1px solid var(--yt-line);
+  border-radius: 12px;
+  padding: 12px;
+  background: var(--yt-bg);
+  color: var(--yt-text);
+}
+
+.tk-page :is(a, button, input):focus-visible {
+  outline: 2px solid var(--yt-accent);
+  outline-offset: 3px;
+}

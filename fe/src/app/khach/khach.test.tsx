@@ -62,11 +62,13 @@ describe("T-265 tài khoản khách", () => {
       if (g.method === "GET") { reads++; return { status: 200, body: current }; }
       current = { ...current, ...(g.body as object) }; return ok;
     });
+    fireEvent.click(await screen.findByRole("button", { name: "Cập nhật thông tin" }));
     await screen.findByLabelText("Tên người nhận");
     expect(screen.getByText("Số điện thoại: Chưa có")).toBeTruthy();
     dien("Tên người nhận", "Ngọc"); fireEvent.click(screen.getByRole("button", { name: "Lưu thông tin giao" }));
     await screen.findByText("Đã lưu thông tin giao."); expect(reads).toBe(2);
     expect(calls[1]).toMatchObject({ method: "PUT", path: "/customer-accounts/current/delivery-profile", body: { delivery_name: "Ngọc", delivery_phone: "0912345678", delivery_address: "5 Lò Sũ" } });
+    fireEvent.click(screen.getByRole("button", { name: "Cập nhật thông tin" }));
     for (const label of ["Tên người nhận", "Số điện thoại người nhận", "Địa chỉ giao"]) dien(label, "");
     fireEvent.click(screen.getByRole("button", { name: "Lưu thông tin giao" }));
     await waitFor(() => expect(reads).toBe(3));
@@ -74,6 +76,7 @@ describe("T-265 tài khoản khách", () => {
   });
   it("đổi mật khẩu giữ phiên, đăng xuất kết thúc phiên khách", async () => {
     const calls = mo(<TaiKhoanKhach />, (g) => g.method === "GET" ? { status: 200, body: profile } : ok);
+    fireEvent.click(await screen.findByRole("button", { name: "Đổi mật khẩu" }));
     await screen.findByLabelText("Mật khẩu hiện tại"); dien("Mật khẩu hiện tại", "abcdefgh"); dien(/Mật khẩu mới/, "12345678");
     fireEvent.click(screen.getByRole("button", { name: "Đổi mật khẩu" }));
     await screen.findByText(/Các phiên khác đã kết thúc/);
@@ -85,6 +88,7 @@ describe("T-265 tài khoản khách", () => {
   });
   it("PUT hồ sơ hết phiên cũng chuyển đăng nhập", async () => {
     mo(<TaiKhoanKhach />, (g) => g.method === "GET" ? { status: 200, body: profile } : unauthorized);
+    fireEvent.click(await screen.findByRole("button", { name: "Cập nhật thông tin" }));
     await screen.findByLabelText("Tên người nhận"); fireEvent.click(screen.getByRole("button", { name: "Lưu thông tin giao" }));
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/khach/dang-nhap"));
   });
