@@ -162,11 +162,13 @@ describe("YT-06 A3 — QR và điều hướng", () => {
 
   it("khung khách và trang đặt món có link Yêu thích đúng đích", async () => {
     mo(<><KhungKhach title="Tài khoản">Nội dung</KhungKhach><DatMonKhach initialMenu={menu} /></>);
-    for (const name of ["Điều hướng khách", "Tài khoản khách"]) {
-      const nav = screen.getByRole("navigation", { name });
+    const navs = screen.getAllByRole("navigation", { name: "Điều hướng khách" });
+    expect(navs).toHaveLength(2);
+    for (const nav of navs) {
       expect(within(nav).getByRole("link", { name: "Yêu thích" }).getAttribute("href")).toBe("/khach/yeu-thich");
+      expect(within(nav).getByRole("link", { name: "Tài khoản" }).getAttribute("href")).toBe("/khach/tai-khoan");
     }
-    await screen.findByRole("link", { name: "Đăng nhập" });
+    await screen.findByLabelText("Tên");
   });
 });
 

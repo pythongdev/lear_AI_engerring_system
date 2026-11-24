@@ -9,7 +9,7 @@ import { CAU_GUI_KHACH, QuenMatKhauKhach, DatLaiMatKhauKhach } from "@/component
 import type { ReactElement } from "react";
 
 const replace = vi.fn();
-vi.mock("next/navigation", () => ({ useRouter: () => ({ replace }), useSearchParams: () => new URLSearchParams("token=ma-trong-thu") }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ replace }), usePathname: () => "/khach/tai-khoan", useSearchParams: () => new URLSearchParams("token=ma-trong-thu") }));
 afterEach(() => { cleanup(); useNhapKhach.getState().xoaHet(); }); beforeEach(() => replace.mockReset());
 const profile = { customer_account_id: 1, display_name: "Lan", phone: null, email: "lan@gmail.com", delivery_name: "Lan nhận", delivery_phone: "0912345678", delivery_address: "5 Lò Sũ" };
 type Goi = { method: string; path: string; query: URLSearchParams; body: unknown };

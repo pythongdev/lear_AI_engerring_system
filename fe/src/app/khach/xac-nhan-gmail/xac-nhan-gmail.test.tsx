@@ -6,7 +6,7 @@ import { XacNhanGmail, LINK_KHONG_HOP_LE } from "@/components/khach/xac-nhan-gma
 import { TaiKhoanKhach } from "@/components/khach/tai-khoan";
 
 let query = "ma=ma-thu";
-vi.mock("next/navigation", () => ({ useSearchParams: () => new URLSearchParams(query), useRouter: () => ({ replace: vi.fn() }) }));
+vi.mock("next/navigation", () => ({ useSearchParams: () => new URLSearchParams(query), useRouter: () => ({ replace: vi.fn() }), usePathname: () => "/khach/xac-nhan-gmail" }));
 afterEach(cleanup);
 beforeEach(() => { query = "ma=ma-thu"; });
 const profile = { customer_account_id: 1, display_name: "Lan", phone: null, email: null, pending_email: "lan@gmail.com", delivery_name: null, delivery_phone: null, delivery_address: null };

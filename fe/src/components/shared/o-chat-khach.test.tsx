@@ -43,6 +43,17 @@ describe("CHAT-07 OChatKhach", () => {
     render(<ApiProvider fetch={() => new Promise(() => {})}><OChatKhach /></ApiProvider>);
     expect(screen.getByRole("button", { name: "Trợ lý bánh cuốn" })).toBeTruthy(); expect(screen.queryByRole("textbox", { hidden: true })).toBeNull();
   });
+  it.each([
+    ["/dat-mon", "5rem", "9.5rem", "11rem"],
+    ["/ban/3", "1rem", "5.5rem", "7rem"],
+  ])("%s đặt nút và bảng chat đúng độ cao, giữ giới hạn chiều cao", async (path, nutDay, bangDay, truCao) => {
+    route.path = path;
+    dung(); const button = await mo();
+    expect(button.classList.contains(`bottom-[calc(${nutDay}+env(safe-area-inset-bottom))]`)).toBe(true);
+    const dialog = screen.getByRole("dialog", { name: "Trợ lý bánh cuốn" });
+    expect(dialog.classList.contains(`bottom-[calc(${bangDay}+env(safe-area-inset-bottom))]`)).toBe(true);
+    expect(dialog.classList.contains(`max-h-[calc(100dvh-${truCao})]`)).toBe(true);
+  });
   it("mở focus Câu hỏi, Esc trả focus, đóng chỉ ẩn giữ hội thoại; vỏ giới hạn chiều rộng", async () => {
     dung(); const button = await mo(); const input = screen.getByRole("textbox", { name: "Câu hỏi" });
     expect(document.activeElement).toBe(input); expect(screen.getByRole("dialog").getAttribute("aria-modal")).toBe("false");

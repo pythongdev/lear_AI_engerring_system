@@ -4,7 +4,7 @@ import { ApiProvider } from "@/lib/api/provider";
 import { DangNhapKhach } from "./dang-nhap";
 
 const replace = vi.fn();
-vi.mock("next/navigation", () => ({ useRouter: () => ({ replace }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ replace }), usePathname: () => "/khach/dang-nhap" }));
 vi.mock("next/script", () => ({ default: () => null }));
 let callback: (response: { credential: string }) => void;
 const initialize = vi.fn((options) => { callback = options.callback; });

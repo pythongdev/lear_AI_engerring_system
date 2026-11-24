@@ -12,7 +12,7 @@ function theoDoi(thayDoi: () => void) {
 const docGiaoDien = () => document.documentElement.classList.contains("dark");
 const giaoDienServer = () => false;
 
-// `noi`: nút nổi góc dưới của root layout, tự ẩn khi trang có nút ở thanh đầu (T-230).
+// `noi`: nút nổi góc dưới của root layout, tự ẩn khi trang có nút ở thanh đầu (T-230), nâng lên trên thanh tab khách (T-374).
 export function ChuyenGiaoDien({ noi = false }: { noi?: boolean }) {
   const toi = useSyncExternalStore(theoDoi, docGiaoDien, giaoDienServer);
   useEffect(() => {
@@ -26,7 +26,7 @@ export function ChuyenGiaoDien({ noi = false }: { noi?: boolean }) {
       variant="outline"
       size={noi ? "icon" : "icon-sm"}
       data-giao-dien={noi ? "noi" : "dau"}
-      className={noi ? "fixed bottom-4 left-4 z-40 shadow-sm [body:has([data-giao-dien=dau])_&]:hidden" : undefined}
+      className={noi ? "fixed bottom-4 left-4 z-40 shadow-sm [body:has([data-giao-dien=dau])_&]:hidden [body:has([data-component=ThanhTabKhach])_&]:bottom-[calc(5rem+env(safe-area-inset-bottom))]" : undefined}
       aria-label={toi ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối"}
       onClick={doiGiaoDien}
     >

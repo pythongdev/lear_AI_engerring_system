@@ -87,4 +87,5 @@ it("nút ở thanh đầu không nổi; nút nổi tự ẩn khi trang có nút 
   expect(noi.dataset.giaoDien).toBe("noi");
   expect(noi.className).toContain("fixed");
   expect(noi.className).toContain("[body:has([data-giao-dien=dau])_&]:hidden");
+  expect(noi.className).toContain("[body:has([data-component=ThanhTabKhach])_&]:bottom-[calc(5rem+env(safe-area-inset-bottom))]");
 });

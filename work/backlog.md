@@ -100,6 +100,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## In Progress
 
 - [x] KC-14 **Thanh điều hướng chủ quán còn hai trang Kho và Nguyên liệu dù Khoản chi đã làm được hết việc của chúng** — L1 (chỉ FE: menu, chuyển hướng route cũ, mở sẵn nguyên liệu theo `?thu=`), chủ repo yêu cầu 2026-11-24 (*"tiếp tục yêu cầu codex làm các bước tiếp theo bạn kiểm tra"*); Codex làm trong `../lean_wt/KC-14`, Claude duyệt, gate xanh 2026-11-24 · [chi tiết](backlog_KC.md#kc-14)
+- [x] T-374 **Khách điều hướng bằng một dòng chữ nhỏ trên đầu trang; cần thanh tab dưới đáy Đặt món · Đơn đã đặt · Tài khoản · Yêu thích** — L1 (chỉ FE điều hướng, không đổi route, dữ liệu hay quyền), chủ repo yêu cầu 2026-11-23; Codex làm trong `../lean_wt/T-374`, Claude duyệt · [chi tiết](#t-374)
 - [x] T-373 **Trang Theo dõi món trong app dùng màu xanh lá riêng, trông khác trang đặt món `/ban/[ma]` và căn chưa gọn** — L1 (chỉ FE, không đổi dữ liệu hay chữ), chủ repo yêu cầu 2026-11-23; Codex làm trong `../lean_wt/T-373`, Claude duyệt · [chi tiết](#t-373); **xong 2026-11-24**: cùng khung và màu `.khach-menu` sáng/tối, 8/8 ảnh tràn 0px, vitest 96/96
 - [x] KC-16 **Trang Khoản chi chưa làm được việc của Kho và Nguyên liệu: ghi/sửa lượng có lý do, đơn vị lần đầu, tỉ lệ nhắc, xếp thứ *Chưa xếp mục*, dùng lại thứ đã ngừng, chuyển mục** — L2 (ghi sổ lượng, chuyển mục kéo theo khoản chi), chủ repo yêu cầu 2026-11-23 (*"yêu cầu codex làm bạn kiểm tra"*); Claude viết test trước, Codex làm trong `../lean_wt/KC-16`, Claude duyệt, gate xanh 2026-11-24 · [chi tiết](backlog_KC.md#kc-16)
 - [x] KC-15 **Mục nguyên liệu chưa có lịch sử sử dụng và lịch sử mua hàng của cả mục, cạnh nhau, Hiện/Ẩn độc lập** — L2 (đọc sổ lượng và khoản chi ngoài bộ lọc), chủ repo yêu cầu 2026-11-23 (*"tiếp tục yêu cầu codex làm bạn kiểm tra"*); Claude viết test trước, Codex làm trong `../lean_wt/KC-15`, Claude duyệt, gate xanh 2026-11-23 · [chi tiết](backlog_KC.md#kc-15)
@@ -682,6 +683,60 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-374"></a>
+### T-374 — Thanh tab dưới đáy cho trang khách
+
+Chủ repo yêu cầu 2026-11-23: *"yêu cầu codex làm navigation bottom tab bar cho ứng dụng bao gồm Đặt món, Đơn đã đặt, Tài khoản,
+Yêu thích"*; trả lời câu hỏi cùng ngày: **thay** dòng điều hướng trên đầu (không giữ cả hai), hiện ở `/dat-mon` và mọi trang
+`/khach/…`, không hiện ở màn QR `/ban/[ma]`. Hiện `KhungKhach` có `nav` chữ trên đầu với bốn liên kết; `DatMonKhach` có `nav`
+riêng *Tài khoản/Đăng nhập · Yêu thích* ở góc trên.
+
+*Claude quyết, chưa hỏi chủ repo (2026-11-23):* thứ tự tab theo lời chủ repo; tab *Tài khoản* luôn trỏ `/khach/tai-khoan` (trang
+ấy đã tự chuyển đăng nhập khi 401) và sáng khi đang ở các trang đăng nhập · đăng ký · quên/đặt lại mật khẩu · xác nhận Gmail;
+nút nổi *Trợ lý bánh cuốn* (`OChatKhach`) nâng lên trên thanh tab ở những trang có thanh, để không che nhau. Kiểu theo nút đáy
+của bản thiết kế (`favourite.html` `ClientBottomNav`): biểu tượng trên, nhãn dưới, tab đang mở màu cam `#EA6A0C`.
+
+Acceptance viết trước khi làm:
+- A1 — một component `ThanhTabKhach` (`fe/src/components/khach/thanh-tab-khach.tsx`) đọc **một** danh sách bốn mục; `nav`
+  cố định dưới đáy, có `aria-label`, mỗi mục là liên kết có biểu tượng lucide và nhãn đúng chữ; mục khớp đường dẫn mang
+  `aria-current="page"`.
+- A2 — `KhungKhach` và `DatMonKhach` không còn `nav` trên đầu; cả hai hiện `ThanhTabKhach`; `/ban/[ma]` không hiện.
+- A3 — nội dung không bị thanh che (đệm đáy gồm `env(safe-area-inset-bottom)`); nút nổi chat nằm trên thanh ở trang có thanh,
+  giữ chỗ cũ ở trang khác; vừa 360/430px không tràn ngang; sáng và tối đọc rõ.
+- A4 — test mới cho thanh (bốn liên kết, href, `aria-current` theo đường dẫn, Tài khoản sáng ở trang đăng nhập); test cũ của
+  `src/app/khach`, `src/app/dat-mon`, `src/components/khach`, `o-chat-khach` xanh (chỉ sửa mock `usePathname` nếu cần, nêu từng
+  chỗ); `tsc --noEmit` sạch; `./scripts/gate.sh` xanh.
+- A5 — Claude chạy app thật, chụp `/dat-mon` và `/khach/yeu-thich` ở 360/430 × sáng/tối; Claude cập nhật dòng `KhungKhach` của
+  `docs/product/4-fe/01-khung-fe.md` §5.
+
+Phạm vi (`work/scope/T-374.txt`): `fe/src/components/khach/`, `fe/src/app/khach/`, `fe/src/app/dat-mon/`,
+`fe/src/components/shared/o-chat-khach.tsx`, `fe/src/components/shared/o-chat-khach.test.tsx`, `docs/product/4-fe/01-khung-fe.md`,
+`work/backlog.md`. Thi công: Codex trong `../lean_wt/T-374`, nhánh `codex/T-374`, nền `066bbbb`; phiếu và log
+`../lean_wt/_claude_logs/T-374/`.
+
+**Kết quả 2026-11-24** (thực hiện: Codex, duyệt: Claude; một lượt, Claude sửa thêm một chỗ). Codex thêm
+`fe/src/components/khach/thanh-tab-khach.tsx` (`ThanhTabKhach`, `MUC_TAB_KHACH`, `coThanhTabKhach`) và test riêng; bỏ `nav` trên
+đầu ở `KhungKhach` và `DatMonKhach`, thêm đệm đáy; `OChatKhach` nâng nút và bảng ở trang có thanh. Test cũ chỉ thêm `usePathname`
+vào mock (`khach`, `google`, `xac-nhan-gmail`) và đổi kỳ vọng link *Đăng nhập* → *Tài khoản* (`t265`, `nut-tim`). Claude đọc diff:
+không đụng `fe/src/app/ban/`, không đổi API hay chữ khác. **Claude tự sửa sau ảnh:** nút nổi đổi sáng/tối (`ChuyenGiaoDien noi`,
+`fixed bottom-4 left-4`) đè tab *Đặt món* — thêm lớp `[body:has([data-component=ThanhTabKhach])_&]:bottom-[calc(5rem+…)]` cùng kiểu
+luật tự ẩn T-230, scope mở thêm `chuyen-giao-dien.tsx` và test của nó. Bằng chứng ở clone chính sau `git apply`: A1–A4 —
+`npx vitest run src/components/khach src/app/khach src/app/dat-mon src/components/shared/o-chat-khach.test.tsx` 123/123,
+`chuyen-giao-dien.test.tsx` 13/13, `tsc --noEmit` sạch; A3/A5 — Playwright `chup-fe.cjs` trên `next dev` không backend,
+`/khach/dang-nhap` · `/khach/yeu-thich` · `/khach/dang-ky` × 360/430 × sáng/tối: 12/12 PASS (tràn 0px, thanh 743–800/800, tab đúng
+trang sáng `rgb(234, 106, 12)` sáng · `rgb(255, 122, 26)` tối, nút giao diện đáy 720 ≤ thanh 743); ảnh `../lean_wt/_claude_logs/T-374/anh/`.
+**Còn thiếu:** ảnh `/dat-mon` có menu thật và nút chat bật cờ — Docker chưa chạy (Docker Desktop chờ chủ repo nhập mật khẩu máy),
+nên backend và database chưa lên; script `chup.cjs` đã sẵn cho lượt ấy.
+
+**Đóng 2026-11-24** (Claude). Docker đã chạy; `next dev` ở clone chính, `NEXT_PUBLIC_CHAT_ENABLED=true`, backend 8080 có menu thật,
+đăng nhập khách thử của T-368. Ảnh lần một lộ một lỗi phép đo cũ bỏ sót: cuộn hết trang thì nút nổi sáng/tối (trái) và nút chat (phải)
+đè nội dung cuối — đè nút *Thêm vào giỏ* ở `/dat-mon`, nút *Đăng xuất* ở `/khach/tai-khoan` — vì đệm đáy 5rem chỉ chừa thanh tab, còn
+nút chat cao tới 8,5rem tính từ đáy. **Claude sửa:** đệm đáy `KhungKhach` và `DatMonKhach` thành `calc(9rem+env(safe-area-inset-bottom))`;
+phép đo `chup2.cjs` thêm điều kiện nội dung cuối ≤ đỉnh cả hai nút nổi. Kết quả `/dat-mon` · `/khach/yeu-thich` · `/khach/tai-khoan`
+× 360/430 × sáng/tối: 12/12 PASS (tràn 0px, nội dung cuối 625–656 ≤ nút nổi 664/688 ≤ thanh 743), `/ban/khong-co-ma` không có thanh;
+ảnh `../lean_wt/_claude_logs/T-374/anh-that-2/`. `npx vitest run src/app/khach src/components/khach src/app/dat-mon` + `o-chat-khach` ·
+`chuyen-giao-dien` 159/159. Gate clone chính (cùng cây với T-375, T-376) xanh — xem T-375.
 
 <a id="t-373"></a>
 ### T-373 — Trang Theo dõi món theo style trang đặt món

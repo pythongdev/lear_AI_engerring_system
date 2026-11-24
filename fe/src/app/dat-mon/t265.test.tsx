@@ -25,5 +25,5 @@ it("T-265 không phiên vẫn đặt món với form trống", async () => {
   await screen.findByLabelText("Tên"); fireEvent.click(screen.getByRole("radio", { name: "Giao tận nơi" }));
   for (const label of ["Tên", "Số điện thoại", "Địa chỉ giao"]) expect((screen.getByLabelText(label) as HTMLInputElement).value).toBe("");
   expect(screen.getByRole("button", { name: "Thêm Canh" })).toBeTruthy();
-  expect(screen.getByRole("link", { name: "Đăng nhập" }).getAttribute("href")).toBe("/khach/dang-nhap");
+  expect(screen.getByRole("link", { name: "Tài khoản" }).getAttribute("href")).toBe("/khach/tai-khoan");
 });
