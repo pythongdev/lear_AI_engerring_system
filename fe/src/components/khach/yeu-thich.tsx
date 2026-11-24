@@ -64,7 +64,7 @@ function NoiDung({ data, menu, readAt, menuReadAt, moiDangNhap }: {
   return <>
     <section className="yt-create space-y-3">
       <p className="yt-eyebrow">THEO KHẨU VỊ CỦA BẠN</p><h2 className="text-lg font-semibold">Một bộ món, đúng ý mình</h2>
-      <p className="yt-muted">Tự chọn món quen, đặt tên riêng và lưu lại cho lần sau.</p><Button className="min-h-11 w-full" onClick={() => setHop({ kind: "rieng" })}>Tạo bộ món riêng</Button>
+      <p className="yt-muted">Tự chọn món quen, đặt tên riêng và lưu lại cho lần sau.</p><Button className="min-h-11 w-full" onClick={() => setHop({ kind: "rieng" })}>Tạo món yêu thích</Button>
     </section>
     <section aria-label="Bộ món của bạn" className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-sm font-semibold">Bộ món của bạn</h2><span className="yt-muted">{boRieng.length} bộ</span></div>

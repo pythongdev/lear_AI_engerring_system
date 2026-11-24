@@ -1,5 +1,7 @@
 "use client";
 
+import { useId, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnhSanPham } from "@/app/chu-quan/_components/anh-san-pham";
 import { tien } from "@/components/shared/dong-mon-da-ghi";
@@ -13,15 +15,32 @@ export function tenDong(d: DongGui, menu: Menu) {
     : menu.items.find((m) => m.menu_item_id === d.menu_item_id)?.item_name) ?? "Món không còn trên thực đơn";
 }
 
-export function MoTaDong({ dong: d, menu }: { dong: DongGui; menu: Menu }) {
+// Giá thực đơn chỉ để xem trong hộp; giá dòng và tổng vẫn dùng price-quotes.
+export function giaMon(mon: Menu["items"][number]) {
+  if (!mon.prices.length) return null;
+  const min = Math.min(...mon.prices.map((p) => p.unit_price_vnd));
+  return `${mon.prices.every((p) => p.unit_price_vnd === min) ? "" : "từ "}${tien(min)}`;
+}
+
+export function MoTaDong({ dong: d, menu, thanhPhan = false }: { dong: DongGui; menu: Menu; thanhPhan?: boolean }) {
   const combo = menu.combos.find((c) => c.menu_combo_id === d.menu_combo_id);
   const tenLuaChon = (id: number, ids: number[]) => {
     const mon = menu.items.find((m) => m.menu_item_id === id) ?? combo?.items.find((m) => m.menu_item_id === id);
     return ids.map((v) => mon?.option_groups.flatMap((g) => g.options).find((o) => o.menu_option_id === v)?.option_name ?? "Lựa chọn không còn trên thực đơn").join(" · ");
   };
   return d.menu_combo_id !== undefined
-    ? <ul className="yt-description space-y-1">{d.portions?.map((p, i) => <li key={i}>{p.quantity} × {menu.items.find((m) => m.menu_item_id === p.menu_item_id)?.item_name ?? combo?.items.find((m) => m.menu_item_id === p.menu_item_id)?.item_name ?? "Món không còn trên thực đơn"}{p.option_ids.length > 0 && ` · ${tenLuaChon(p.menu_item_id, p.option_ids)}`}</li>)}</ul>
+    ? <ul className={thanhPhan ? "menu-ingredients" : "yt-description space-y-1"}>{d.portions?.map((p, i) => <li key={i}>{thanhPhan ? `×${p.quantity}` : `${p.quantity} ×`} {menu.items.find((m) => m.menu_item_id === p.menu_item_id)?.item_name ?? combo?.items.find((m) => m.menu_item_id === p.menu_item_id)?.item_name ?? "Món không còn trên thực đơn"}{p.option_ids.length > 0 && ` · ${tenLuaChon(p.menu_item_id, p.option_ids)}`}</li>)}</ul>
     : <p className="yt-description">{tenLuaChon(d.menu_item_id!, d.option_ids ?? [])}</p>;
+}
+
+export function ThanhPhanDong({ dong, menu }: { dong: DongGui; menu: Menu }) {
+  const [mo, setMo] = useState(false); const id = useId();
+  return <>
+    <button type="button" className="menu-chip menu-details" aria-expanded={mo} aria-controls={id} onClick={() => setMo(!mo)}>Thành phần <ChevronDown aria-hidden="true" size={12} /></button>
+    <div id={id} className="menu-panel" data-open={mo} aria-hidden={!mo} inert={!mo}><div>
+      <MoTaDong dong={dong} menu={menu} thanhPhan />
+    </div></div>
+  </>;
 }
 
 export function Gia({ query, index }: { query: GiaNhom; index?: number }) {
@@ -37,18 +56,19 @@ export function TheDong({ dong, query, index, menu, moiDangNhap, them }: ThaoTac
   const mon = menu.items.find((m) => m.menu_item_id === dong.menu_item_id);
   const params = { path: { favourite_line_id: dong.favourite_line_id } };
   const sua = (quantity: number) => ghi.gui(() => call(api.PUT("/customer-accounts/current/favourites/{favourite_line_id}", { params, body: doiSoLuong(d, quantity, menu) })));
-  return <article aria-label={ten} className="yt-card yt-item">
-    <AnhSanPham ten={ten} combo={dong.menu_combo_id !== null} imageUrl={mon?.image_url} className="yt-art" />
-    <div className="yt-item-copy min-w-0 space-y-2">
-      <span className="yt-kind">{dong.menu_combo_id === null ? "Món lẻ" : "Combo"}</span>
-      <h3 className="text-sm font-medium break-words">{ten}</h3>
-      <div className="yt-item-price"><MoTaDong dong={d} menu={menu} />
+  return <article aria-label={ten} className="menu-card">
+    <div className="menu-photo"><AnhSanPham ten={ten} combo={dong.menu_combo_id !== null} imageUrl={mon?.image_url} className="menu-image" /></div>
+    <div className="menu-card-body">
+      <div className="menu-card-heading"><h3>{ten}</h3>
+        <div className="menu-price">{dong.available ? <Gia query={query} index={index} /> : <p>Hết bán</p>}</div>
+      </div>
+      <div className="yt-item-meta"><span className="yt-kind">{dong.menu_combo_id === null ? "Món lẻ" : "Combo"}</span>
         <Button variant="ghost" className="yt-heart" aria-label={`Bỏ yêu thích ${ten}`} disabled={ghi.busy}
           onClick={() => void ghi.gui(() => call(api.POST("/customer-accounts/current/favourites/{favourite_line_id}/removal", { params })))}>♥</Button>
-        {dong.available ? <Gia query={query} index={index} /> : <p className="yt-muted">Hết bán</p>}
       </div>
+    <div className="yt-card-description"><MoTaDong dong={d} menu={menu} /></div>
     {dong.available && mon && mon.option_groups.length > 0 && <LuaChonDanhSach groups={mon.option_groups} ids={d.option_ids ?? []} name={ten} disabled={ghi.busy} onChange={(option_ids) => void ghi.gui(() => call(api.PUT("/customer-accounts/current/favourites/{favourite_line_id}", { params, body: { ...d, option_ids } })))} />}
-    <div className="flex flex-wrap items-center justify-between gap-2">
+    <div className="menu-quantity">
       <div className="yt-stepper flex items-center">
         <Button variant="ghost" aria-label={`Giảm ${ten}`} disabled={ghi.busy || !dong.available || dong.quantity <= 1} onClick={() => void sua(dong.quantity - 1)}>−</Button>
         <output aria-label={`Số lượng ${ten}`} className="min-w-6 text-center">{dong.quantity}</output>
@@ -56,7 +76,7 @@ export function TheDong({ dong, query, index, menu, moiDangNhap, them }: ThaoTac
       </div>
       {dong.available && <Button variant="outline" aria-label={`Thêm ${ten} vào giỏ`} onClick={() => them([dong], ten)}>＋ Giỏ</Button>}
     </div>
-    {ghi.busy && <p role="status">Đang lưu…</p>}{ghi.loi && <p role="alert">{ghi.loi}</p>}{ghi.bao && <p role="status">{ghi.bao}</p>}
+    <div className="yt-card-feedback">{ghi.busy && <p role="status">Đang lưu…</p>}{ghi.loi && <p role="alert">{ghi.loi}</p>}{ghi.bao && <p role="status">{ghi.bao}</p>}</div>
     </div>
   </article>;
 }

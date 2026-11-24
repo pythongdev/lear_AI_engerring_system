@@ -1,21 +1,22 @@
 "use client";
 
-import { chonNhom } from "@/components/shared/bo-soan-mon";
+import { useId } from "react";
+import { LuaChonThe } from "@/app/ban/_components/lua-chon-the";
 import type { Menu } from "./du-lieu";
 
 type Nhom = Menu["items"][number]["option_groups"][number];
 
+// Chỉ đổi chữ hiển thị; giữ khớp nhãn của thuc-don-khach.tsx.
+const nhanNhom = (groups: Nhom[]) => groups.map((g) => ({ ...g, options: g.options.map((o) => ({
+  ...o, option_name: g.option_group_name === "Lượng nhân" && o.option_name === "Thường" ? "Vừa" : g.option_group_name === "Lượng nhân" && o.option_name === "Nhiều nhân" ? "Nhiều" : o.option_name,
+})) }));
+
 export function LuaChonDanhSach({ groups, ids, name, disabled, onChange }: {
   groups: Nhom[]; ids: number[]; name: string; disabled?: boolean; onChange: (ids: number[]) => void;
 }) {
-  return <div className="yt-options grid min-w-0 grid-cols-1 gap-2">{groups.filter((g) =>
-    !g.prerequisite_option_ids.length || g.prerequisite_option_ids.some((v) => ids.includes(v))).map((group) =>
-    <label key={group.option_group_id} className="grid min-w-0 gap-1"><span>{group.option_group_name}</span>
-      <select aria-label={`${group.option_group_name} — ${name}`} className="w-full min-w-0"
-        disabled={disabled} value={group.options.find((o) => ids.includes(o.menu_option_id))?.menu_option_id ?? ""}
-        onChange={(e) => { const option = Number(e.target.value); if (Number.isFinite(option)) onChange(chonNhom(groups,
-          [...ids.filter((v) => !group.options.some((o) => o.menu_option_id === v)), option])); }}>
-        {group.options.map((o) => <option key={o.menu_option_id} value={o.menu_option_id}>{o.option_name}</option>)}
-      </select>
-    </label>)}</div>;
+  // Mỗi hình món có nhóm radio riêng, kể cả khi tên món trùng nhau.
+  const id = useId();
+  return <fieldset className="yt-options" aria-label={`Lựa chọn ${name}`} disabled={disabled}>
+    <LuaChonThe groups={nhanNhom(groups)} ids={ids} name={id} onChange={onChange} />
+  </fieldset>;
 }

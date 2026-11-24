@@ -99,6 +99,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-377 **Hộp *Tạo bộ món riêng* ở trang Yêu thích không có ảnh, món và combo trông khác thẻ ở trang đặt món `/ban/[ma]`; tên nút cần đổi thành *Tạo món yêu thích*** — L1 (chỉ FE: chữ và phần nhìn, không đổi dữ liệu, giá hay lời gọi API), chủ repo yêu cầu 2026-11-24 (*"yêu cầu codex làm bạn kiểm tra"*); Codex làm trong `../lean_wt/T-377`, Claude duyệt · [chi tiết](#t-377)
 - [x] KC-14 **Thanh điều hướng chủ quán còn hai trang Kho và Nguyên liệu dù Khoản chi đã làm được hết việc của chúng** — L1 (chỉ FE: menu, chuyển hướng route cũ, mở sẵn nguyên liệu theo `?thu=`), chủ repo yêu cầu 2026-11-24 (*"tiếp tục yêu cầu codex làm các bước tiếp theo bạn kiểm tra"*); Codex làm trong `../lean_wt/KC-14`, Claude duyệt, gate xanh 2026-11-24 · [chi tiết](backlog_KC.md#kc-14)
 - [x] T-376 **Người làm của quán không có chỗ xem mình được giao việc gì và ngày nghỉ của mình** — L1 (chỉ FE, dùng cửa API sẵn có, không đổi dữ liệu hay quyền), chủ repo yêu cầu 2026-11-24; thêm trang Cá nhân ở khung quầy và trạm; Codex làm trong `../lean_wt/T-376`, Claude duyệt · [chi tiết](#t-376)
 - [x] T-375 **Trang Tài khoản khách chưa theo bản thiết kế hồ sơ: không có nút Cập nhật thông tin, không có lối sang Yêu thích** — L1 (chỉ FE, dùng cửa API sẵn có), chủ repo yêu cầu 2026-11-24; sửa tên · số · Gmail chờ U-126; Codex làm trong `../lean_wt/T-375`, Claude duyệt · [chi tiết](#t-375)
@@ -685,6 +686,58 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-377"></a>
+### T-377 — Hộp tạo món yêu thích có ảnh, thẻ món và combo theo trang đặt món
+
+Chủ repo yêu cầu 2026-11-24 về `/khach/yeu-thich`: *"Tạo bộ món riêng — chuyển title thành tạo món yêu thích. cần có ảnh hay làm
+các món ăn và combo giống với http://localhost:3000/ban/3 cho align toàn bộ hệ thống. yêu cầu codex làm bạn kiểm tra"*. Hiện hộp
+`HopSuaBo` (`fe/src/components/khach/yeu-thich/hop-bo.tsx`) liệt kê món và combo thành hàng chữ có checkbox, lựa chọn bằng ô
+`select`, không ảnh, không giá; thẻ `TheDong` trên trang có ảnh nhỏ cạnh chữ. Trang đặt món `/ban/[ma]` dùng thẻ `.menu-card`
+(ảnh trên, tên và giá cùng hàng, nút chip mở lựa chọn `LuaChonThe`, bộ tăng giảm) trong `thuc-don-khach.tsx/.css`.
+
+Suy luận của Claude, chưa hỏi lại: "title" là chữ trên nút mở hộp và tiêu đề hộp khi tạo; hộp khi sửa đổi theo cho cùng lời thành
+*Sửa món yêu thích*; tên bộ, nhãn *♥ Bộ món riêng* và luật lưu bộ (ADR-145) giữ nguyên. "Align toàn bộ hệ thống" hiểu là cả
+thẻ trong hộp lẫn thẻ món yêu thích trên trang (`TheDong`) cùng hình thẻ trang đặt món; thẻ bộ (`TheBo`) giữ hình cũ.
+
+Acceptance viết trước khi làm:
+- A1 — nút trên trang và tiêu đề hộp khi tạo là *Tạo món yêu thích*; khi sửa là *Sửa món yêu thích*; chữ khác không đổi.
+- A2 — mỗi món và combo trong hộp tạo/sửa là một thẻ cùng hình `.menu-card` của `/ban/[ma]`: ảnh `AnhSanPham` (món lấy
+  `image_url`, combo `combo`) ở trên, tên và giá cùng hàng (món: giá thấp nhất, có *từ* khi các giá khác nhau; combo:
+  `price_vnd` — chỉ hiển thị, tổng của bộ vẫn lấy từ `POST /price-quotes`), lựa chọn bằng chip `LuaChonThe` với nhãn như
+  trang đặt món (*Lượng nhân*: Thường → Vừa, Nhiều nhân → Nhiều — chỉ nhãn, mã lựa chọn giữ nguyên), combo có *Thành phần*
+  như trang đặt món; checkbox chọn và bộ tăng giảm giữ đúng hành vi cũ (tối đa 20 dòng, 1–99, gộp dòng trùng hình).
+- A3 — thẻ món yêu thích trên trang (`TheDong`) cùng hình thẻ ấy: ảnh trên, tên + giá dòng (từ `price-quotes` như cũ), nhãn
+  *Món lẻ*/*Combo*, nút ♥ bỏ yêu thích, chip lựa chọn, bộ tăng giảm và *＋ Giỏ* — hành vi và lời gọi API không đổi.
+- A4 — cùng bộ màu sáng/tối với `/ban/[ma]` (biến của `.khach-menu`, nhấn `#EA6A0C`/`#FF7A1A`); vừa khung 360/430px không tràn
+  ngang, cả trong hộp.
+- A5 — không đổi dữ liệu, luật, lời gọi API; không sửa `thuc-don-khach.*`, `phieu-khach.tsx`, `lua-chon-the.tsx`,
+  `anh-san-pham.tsx` (đang có thay đổi chưa commit của việc khác hoặc dùng chung) — chỉ import; test cũ xanh, test chỉ đổi theo
+  chữ mới hoặc theo vai trò của chip (radio thay combobox), nêu từng chỗ; `tsc --noEmit` sạch; `./scripts/gate.sh` xanh.
+- A6 — Claude chạy app thật, chụp `/ban/3` và hộp *Tạo món yêu thích* cạnh nhau ở 360/430 × sáng/tối.
+
+Phạm vi (`work/scope/T-377.txt`): `fe/src/components/khach/yeu-thich.tsx`, `fe/src/components/khach/yeu-thich/`,
+`fe/src/app/khach/yeu-thich/`, `work/backlog.md`. Thi công: Codex trong `../lean_wt/T-377`, nhánh `codex/T-377`, nền `6b4ab83`;
+phiếu và log `../lean_wt/_claude_logs/T-377/`.
+
+**Bàn giao 2026-11-24:** lần gọi Codex đầu (`codex exec -m gpt-6-astra`, phiên `codex.log`) dừng vì hết hạn mức tài khoản tới
+2026-11-25 17:35, chưa sửa file nào (`git -C ../lean_wt/T-377 status --short` rỗng). Worktree, `npm ci`, phiếu và kịch bản chụp
+`chup.cjs` đã sẵn; việc tiếp: gọi lại Codex với cùng phiếu sau mốc ấy, hoặc Claude tự làm nếu chủ repo chọn.
+Chủ repo bảo *"tiếp tục yêu cầu codex làm bạn kiểm tra"*; lần gọi thứ hai chạy được.
+
+**Kết quả 2026-11-24** (thực hiện: Codex, `codex exec -m gpt-6-astra` trong `../lean_wt/T-377`, nền `db95076`; duyệt: Claude, một
+lượt, không vòng sửa). Bảy file: `yeu-thich.tsx` (chữ nút), `hop-bo.tsx` (thẻ `.menu-card` có ảnh `AnhSanPham`, tên + giá, chip,
+*Thành phần* cho combo, thanh *Số lượng*; checkbox, 20 dòng, 1–99, `khoaHinh` giữ nguyên), `lua-chon.tsx` (`LuaChonThe` thay
+`select`, nhãn Vừa/Nhiều chép từ `nhanNhom` kèm chú thích giữ khớp), `the.tsx` (`giaMon`, `ThanhPhanDong`, `TheDong` thành
+`.menu-card`), `yeu-thich.css` (chép các lớp `.menu-*` dưới `.yt-theme` với biến `--yt-*`, ảnh trong hộp 140px), hai test.
+Test đổi chỉ theo chữ mới và chip (mở chip rồi chọn radio thay combobox), kỳ vọng payload và API giữ nguyên; thêm hai ca kiểm
+ảnh, giá *từ 30.000đ*, giá combo và mở/đóng *Thành phần*. A1 — `grep "Tạo bộ món riêng\|Sửa bộ món riêng" fe/src` rỗng. A5 —
+Claude chạy ở clone chính sau `git apply`: `vitest src/app/khach src/components/khach` 122/122, `tsc --noEmit` sạch; file mẫu
+`thuc-don-khach.*`, `lua-chon-the.tsx`, `anh-san-pham.tsx` không đổi. A6 — Claude chụp app thật (`../lean_wt/_claude_logs/T-377/anh/`,
+`chup.cjs`) 360/430 × sáng/tối: trang và hộp tràn 0px cả 8 cặp, thẻ hộp cùng hình thẻ `/ban/3`, nhấn `#EA6A0C`/`#FF7A1A`.
+Còn lại, không chặn: món *Canh* (0đ) trong hộp hiện khung *Chưa có ảnh* vì `AnhSanPham` không có ảnh cho tên này — cùng khung
+dự phòng như thực đơn; khi T-294 commit (`anhMenu` cho combo trên `/ban/[ma]`) thì ảnh combo ở Yêu thích cần đối lại. Một
+`401` ở console là `GET /customer-sessions/current` của trang đăng nhập trước khi đăng nhập, đúng hành vi.
 
 <a id="t-376"></a>
 ### T-376 — Trang Cá nhân của người làm: việc được giao và ngày nghỉ

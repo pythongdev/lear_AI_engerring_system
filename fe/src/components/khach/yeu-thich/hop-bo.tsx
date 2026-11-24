@@ -5,13 +5,14 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { AnhSanPham } from "@/app/chu-quan/_components/anh-san-pham";
 import { chonNhom, dongGui, soSuat } from "@/components/shared/bo-soan-mon";
 import { tien } from "@/components/shared/dong-mon-da-ghi";
 import { call } from "@/lib/api/client";
 import { useApi } from "@/lib/api/provider";
 import { doiSoLuong, guiDong, useGhiYeuThich, type Bo, type Dong, type DongGui, type Menu } from "./du-lieu";
 import { LuaChonDanhSach } from "./lua-chon";
-import { MoTaDong, tenDong } from "./the";
+import { giaMon, MoTaDong, ThanhPhanDong, tenDong } from "./the";
 
 export type HopBo = { kind: "da_luu"; lines: Dong[] } | { kind: "rieng"; bo?: Bo };
 type DongNhap = { dong: DongGui; available: boolean; selected: boolean };
@@ -83,7 +84,7 @@ export function HopSuaBo({ hop, menu, yeuThich, dong, moiDangNhap }: {
     if (quantity > 99) return cu;
     return cu.map((v, j) => j === trung ? { ...v, selected: v.selected || moi.selected, dong: { ...v.dong, quantity } } : v).filter((_, j) => j !== i);
   });
-  const title = hop.kind === "da_luu" ? "Lưu bộ yêu thích" : bo ? "Sửa bộ món riêng" : "Tạo bộ món riêng";
+  const title = hop.kind === "da_luu" ? "Lưu bộ yêu thích" : bo ? "Sửa món yêu thích" : "Tạo món yêu thích";
   async function luu() {
     setKiemTra(true);
     if (loiTen || loiDong) return;
@@ -104,20 +105,29 @@ export function HopSuaBo({ hop, menu, yeuThich, dong, moiDangNhap }: {
           {hop.kind === "rieng" && <fieldset className="min-w-0 space-y-2"><legend className="mb-2 font-semibold">Chọn món và số lượng</legend>
             <div className="min-w-0">{choices.map(({ dong: d, available, selected }, i) => {
               const mon = menu.items.find((m) => m.menu_item_id === d.menu_item_id);
+              const combo = menu.combos.find((c) => c.menu_combo_id === d.menu_combo_id);
               const tenMon = tenDong(d, menu);
-              return <section key={khoaHinh(d)} aria-label={`Lựa chọn ${tenMon}`} className="yt-choice min-w-0 space-y-2 py-3">
-                <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-                  <label className="flex min-h-11 min-w-0 flex-1 items-center gap-2"><input type="checkbox" className="size-[18px] shrink-0" checked={selected} disabled={!available && !selected || !selected && lines.length >= 20}
+              return <section key={khoaHinh(d)} aria-label={`Lựa chọn ${tenMon}`} className="menu-card">
+                <div className="menu-photo"><AnhSanPham ten={tenMon} combo={d.menu_combo_id !== undefined} imageUrl={mon?.image_url} className="menu-image" /></div>
+                <div className="menu-card-body">
+                  <div className="menu-card-heading">
+                  <h3><label className="flex min-h-11 min-w-0 items-center gap-2"><input type="checkbox" className="size-[18px] shrink-0" checked={selected} disabled={!available && !selected || !selected && lines.length >= 20}
                     onChange={(e) => setChoices((cu) => cu.map((v, j) => j === i ? { ...v, selected: e.target.checked } : v))} />
-                    <span className="min-w-0 break-words font-medium">{tenMon}</span></label>
+                    <span className="min-w-0">{tenMon}</span></label></h3>
+                  {available && <span className="menu-price">{combo ? tien(combo.price_vnd) : mon ? giaMon(mon) : null}</span>}
+                  </div>
+                  {!available && <p className="yt-card-description yt-muted">Hết bán — bỏ chọn trước khi lưu</p>}
+                  {d.menu_combo_id !== undefined ? <ThanhPhanDong dong={d} menu={menu} />
+                    : mon && available && mon.option_groups.length > 0 ? <LuaChonDanhSach groups={mon.option_groups} ids={d.option_ids ?? []} name={tenMon} onChange={(ids) => suaLuaChon(i, ids)} />
+                    : <div className="yt-card-description"><MoTaDong dong={d} menu={menu} /></div>}
+                  <div className="menu-quantity"><span className="menu-quantity-text">Số lượng</span>
                   <div className="yt-stepper flex shrink-0 items-center">
                     <Button type="button" variant="ghost" className="min-h-11" aria-label={`Giảm số lượng ${tenMon}`} disabled={!selected || !available || d.quantity <= 1} onClick={() => sua(i, doiSoLuong(d, d.quantity - 1, menu))}>−</Button>
                     <output aria-label={`Số lượng ${tenMon}`} className="min-w-6 text-center">{d.quantity}</output>
                     <Button type="button" variant="ghost" className="min-h-11" aria-label={`Tăng số lượng ${tenMon}`} disabled={!selected || !available || d.quantity >= 99} onClick={() => sua(i, doiSoLuong(d, d.quantity + 1, menu))}>＋</Button>
                   </div>
+                  </div>
                 </div>
-                {!available && <p className="yt-muted">Hết bán — bỏ chọn trước khi lưu</p>}
-                {mon && available && mon.option_groups.length > 0 ? <LuaChonDanhSach groups={mon.option_groups} ids={d.option_ids ?? []} name={tenMon} onChange={(ids) => suaLuaChon(i, ids)} /> : <MoTaDong dong={d} menu={menu} />}
               </section>;
             })}</div>
           </fieldset>}

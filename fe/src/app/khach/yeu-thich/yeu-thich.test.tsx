@@ -108,7 +108,7 @@ describe("YT-05 trang Yêu thích — đọc và giá", () => {
     const { calls } = mo();
     const banh = await the("Bánh cuốn");
     await within(banh).findByText("81.001đ");
-    expect(within(banh).getByText(/Thịt · Nhiều/)).toBeTruthy();
+    expect(within(banh).getByRole("button", { name: "Thịt · Nhiều" })).toBeTruthy();
     expect(within(await the("Suất giò")).getByText("52.003đ")).toBeTruthy();
     await screen.findByText("99.991đ");
     for (const sai of ["40.000đ", "80.000đ", "45.000đ", "133.004đ"]) expect(screen.queryByText(sai)).toBeNull();
@@ -183,8 +183,9 @@ describe("YT-05 trang Yêu thích — ghi", () => {
     expect(anh.getAttribute("src")).toContain("/api/menu-items/1/image");
     expect(within(await the("Suất giò")).getByRole("img", { name: "Suất giò" })).toBeTruthy();
     expect(within(banh).getByRole("button", { name: "Thêm Bánh cuốn vào giỏ" }).textContent).toBe("＋ Giỏ");
-    expect(within(banh).getByRole("combobox", { name: "Lượng nhân — Bánh cuốn" })).toBeTruthy();
-    fireEvent.change(within(banh).getByRole("combobox", { name: "Nhân — Bánh cuốn" }), { target: { value: "12" } });
+    fireEvent.click(within(banh).getByRole("button", { name: "Thịt · Nhiều" }));
+    expect(within(banh).getByRole("group", { name: "Lượng nhân:" })).toBeTruthy();
+    fireEvent.click(within(banh).getByRole("radio", { name: "Chay" }));
     await waitFor(() => expect(docTim(calls)).toHaveLength(2));
     expect(calls.filter((g) => g.method === "PUT")).toEqual([{ method: "PUT", path: "/customer-accounts/current/favourites/101", body: { menu_item_id: 1, option_ids: [12], quantity: 2 } }]);
   });
@@ -229,5 +230,51 @@ describe("YT-05 trang Yêu thích — phiên và lỗi đọc", () => {
     mo(undefined, () => (++lan === 1 ? { status: 503, body: { code: "internal" } } : { status: 200, body: yeuThich }));
     fireEvent.click(await screen.findByRole("button", { name: "Đọc lại" }));
     expect(await the("Bánh cuốn")).toBeTruthy();
+  });
+});
+
+describe("T-377 thẻ trong hộp món yêu thích", () => {
+  it("mỗi thẻ có ảnh hoặc khung ảnh dự phòng; giá món từ thấp nhất và giá combo chỉ để xem", async () => {
+    const { calls } = mo();
+    await screen.findByText("99.991đ");
+    const soLanTinhGia = tinhGia(calls).length;
+    fireEvent.click(screen.getByRole("button", { name: "Tạo món yêu thích" }));
+    const hop = await screen.findByRole("dialog", { name: "Tạo món yêu thích" });
+    for (const card of within(hop).getAllByRole("region")) {
+      const ten = within(card).getByRole("heading", { level: 3 }).textContent!;
+      expect(within(card).getByRole("img", { name: (name) => name === ten || name === `Chưa có ảnh ${ten}` })).toBeTruthy();
+    }
+    for (const banh of within(hop).getAllByRole("region", { name: "Lựa chọn Bánh cuốn" })) {
+      expect(within(banh).getByRole("img", { name: "Bánh cuốn" }).getAttribute("src")).toContain("/api/menu-items/1/image");
+      expect(within(banh).getByText("từ 30.000đ")).toBeTruthy();
+    }
+    const canh = within(hop).getByRole("region", { name: "Lựa chọn Canh" });
+    expect(within(canh).getByText("10.000đ")).toBeTruthy();
+    expect(within(canh).queryByText(/từ/)).toBeNull();
+    const combo = within(hop).getByRole("region", { name: "Lựa chọn Suất giò" });
+    expect(within(combo).getByRole("img", { name: "Suất giò" })).toBeTruthy();
+    expect(within(combo).getByText("45.000đ")).toBeTruthy();
+    expect(within(hop).getByText("Chưa chọn món")).toBeTruthy();
+    expect(tinhGia(calls)).toHaveLength(soLanTinhGia);
+  });
+
+  it("Thành phần mở và đóng danh sách suất combo, không chọn dòng hay gửi lệnh", async () => {
+    const { calls } = mo();
+    await screen.findByText("99.991đ");
+    fireEvent.click(screen.getByRole("button", { name: "Tạo món yêu thích" }));
+    const hop = await screen.findByRole("dialog", { name: "Tạo món yêu thích" });
+    const combo = within(hop).getByRole("region", { name: "Lựa chọn Suất giò" });
+    const nut = within(combo).getByRole("button", { name: "Thành phần" });
+    expect(nut.getAttribute("aria-expanded")).toBe("false");
+    expect(within(combo).queryByRole("list")).toBeNull();
+    fireEvent.click(nut);
+    expect(nut.getAttribute("aria-expanded")).toBe("true");
+    const suat = within(combo).getByRole("list");
+    expect(within(suat).getByText("×2 Bánh cuốn · Thịt · Thường")).toBeTruthy();
+    expect(within(suat).getByText("×1 Canh")).toBeTruthy();
+    fireEvent.click(nut);
+    expect(within(combo).queryByRole("list")).toBeNull();
+    expect(within(hop).getByText("Chưa chọn món")).toBeTruthy();
+    expect(calls.filter((g) => g.method !== "GET" && g.path !== "/price-quotes")).toHaveLength(0);
   });
 });

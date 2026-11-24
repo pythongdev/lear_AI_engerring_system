@@ -49,8 +49,8 @@ function mo(options: { doc?: () => Dap; ghi?: (g: Goi) => Dap | Promise<Dap>; qu
   };
 }
 async function tao() {
-  fireEvent.click(await screen.findByRole("button", { name: "Tạo bộ món riêng" }));
-  return screen.findByRole("dialog", { name: "Tạo bộ món riêng" });
+  fireEvent.click(await screen.findByRole("button", { name: "Tạo món yêu thích" }));
+  return screen.findByRole("dialog", { name: "Tạo món yêu thích" });
 }
 
 describe("YT-05 bộ món riêng", () => {
@@ -67,8 +67,12 @@ describe("YT-05 bộ món riêng", () => {
     const r = mo(); const hop = await tao();
     fireEvent.change(within(hop).getByLabelText("Tên bộ món"), { target: { value: "  Bữa trưa  " } });
     fireEvent.click(within(hop).getAllByRole("checkbox", { name: "Bánh cuốn" })[0]);
-    fireEvent.change(within(hop).getAllByRole("combobox", { name: "Nhân — Bánh cuốn" })[0], { target: { value: "12" } });
-    expect(within(within(hop).getAllByRole("region", { name: "Lựa chọn Bánh cuốn" })[0]).queryByRole("combobox", { name: "Lượng nhân — Bánh cuốn" })).toBeNull();
+    const banh = within(hop).getAllByRole("region", { name: "Lựa chọn Bánh cuốn" })[0];
+    fireEvent.click(within(banh).getByRole("button", { name: "Thịt · Vừa" }));
+    fireEvent.click(within(banh).getByRole("radio", { name: "Chay" }));
+    const banhMoi = within(hop).getAllByRole("region", { name: "Lựa chọn Bánh cuốn" })[0];
+    fireEvent.click(within(banhMoi).getByRole("button", { name: "Chay" }));
+    expect(within(banhMoi).queryByRole("group", { name: "Lượng nhân:" })).toBeNull();
     fireEvent.click(within(hop).getAllByRole("checkbox", { name: "Bữa sáng" })[0]);
     fireEvent.click(within(hop).getByRole("button", { name: "Lưu bộ món" }));
     await waitFor(() => expect(r.doc()).toHaveLength(2));
@@ -94,7 +98,7 @@ describe("YT-05 bộ món riêng", () => {
   it("sửa bộ gửi PUT với tên và dòng mới, không gửi kind hoặc mã dòng; đọc lại", async () => {
     const r = mo();
     fireEvent.click(within(await screen.findByRole("article", { name: "Bộ của mình" })).getByRole("button", { name: "Sửa" }));
-    const hop = await screen.findByRole("dialog", { name: "Sửa bộ món riêng" });
+    const hop = await screen.findByRole("dialog", { name: "Sửa món yêu thích" });
     fireEvent.change(within(hop).getByLabelText("Tên bộ món"), { target: { value: "Bộ mới" } });
     expect(within(hop).getAllByRole("checkbox", { name: "Bánh cuốn" })[0].getAttribute("checked")).not.toBeNull();
     expect(within(hop).getAllByRole("status", { name: "Số lượng Bánh cuốn" })[0].textContent).toBe("2");
@@ -232,7 +236,7 @@ describe("YT-05 lọc, giá và phiên", () => {
   it("sửa bộ có dòng hết bán không âm thầm bỏ dòng; yêu cầu khách bỏ rồi mới lưu", async () => {
     const r = mo({ doc: () => ok({ ...data, sets: [{ ...data.sets[0], lines: [dong(3, 1, false)] }] }) });
     fireEvent.click(within(await screen.findByRole("article", { name: "Bộ của mình" })).getByRole("button", { name: "Sửa" }));
-    const hop = await screen.findByRole("dialog", { name: "Sửa bộ món riêng" });
+    const hop = await screen.findByRole("dialog", { name: "Sửa món yêu thích" });
     fireEvent.click(within(hop).getByRole("checkbox", { name: "Canh" }));
     fireEvent.click(within(hop).getByRole("button", { name: "Lưu bộ món" }));
     expect(within(hop).getByRole("alert").textContent).toContain("Có món hết bán"); expect(r.ghi()).toHaveLength(0);
