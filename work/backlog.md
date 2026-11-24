@@ -100,6 +100,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 ## In Progress
 
 - [x] KC-14 **Thanh điều hướng chủ quán còn hai trang Kho và Nguyên liệu dù Khoản chi đã làm được hết việc của chúng** — L1 (chỉ FE: menu, chuyển hướng route cũ, mở sẵn nguyên liệu theo `?thu=`), chủ repo yêu cầu 2026-11-24 (*"tiếp tục yêu cầu codex làm các bước tiếp theo bạn kiểm tra"*); Codex làm trong `../lean_wt/KC-14`, Claude duyệt, gate xanh 2026-11-24 · [chi tiết](backlog_KC.md#kc-14)
+- [x] T-376 **Người làm của quán không có chỗ xem mình được giao việc gì và ngày nghỉ của mình** — L1 (chỉ FE, dùng cửa API sẵn có, không đổi dữ liệu hay quyền), chủ repo yêu cầu 2026-11-24; thêm trang Cá nhân ở khung quầy và trạm; Codex làm trong `../lean_wt/T-376`, Claude duyệt · [chi tiết](#t-376)
 - [x] T-375 **Trang Tài khoản khách chưa theo bản thiết kế hồ sơ: không có nút Cập nhật thông tin, không có lối sang Yêu thích** — L1 (chỉ FE, dùng cửa API sẵn có), chủ repo yêu cầu 2026-11-24; sửa tên · số · Gmail chờ U-126; Codex làm trong `../lean_wt/T-375`, Claude duyệt · [chi tiết](#t-375)
 - [x] T-374 **Khách điều hướng bằng một dòng chữ nhỏ trên đầu trang; cần thanh tab dưới đáy Đặt món · Đơn đã đặt · Tài khoản · Yêu thích** — L1 (chỉ FE điều hướng, không đổi route, dữ liệu hay quyền), chủ repo yêu cầu 2026-11-23; Codex làm trong `../lean_wt/T-374`, Claude duyệt · [chi tiết](#t-374)
 - [x] T-373 **Trang Theo dõi món trong app dùng màu xanh lá riêng, trông khác trang đặt món `/ban/[ma]` và căn chưa gọn** — L1 (chỉ FE, không đổi dữ liệu hay chữ), chủ repo yêu cầu 2026-11-23; Codex làm trong `../lean_wt/T-373`, Claude duyệt · [chi tiết](#t-373); **xong 2026-11-24**: cùng khung và màu `.khach-menu` sáng/tối, 8/8 ảnh tràn 0px, vitest 96/96
@@ -684,6 +685,46 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-376"></a>
+### T-376 — Trang Cá nhân của người làm: việc được giao và ngày nghỉ
+
+Chủ repo yêu cầu 2026-11-24: *"đối với người của quán cần thêm các thông tin khác như được giao việc gì hay mục ngày nghỉ như
+nào"*. Hiện người làm chỉ thấy việc được giao lẫn trong hộp tin của `OChat` và báo nghỉ trong một thẻ của `OChat`; không có
+trang nào gom thông tin của riêng mình. Mọi cửa cần đã có: `GET /sessions/current`, `GET /assigned-tasks/mine` (lớp `nguoi_quan`),
+`GET /leave-notices/mine` · `POST /leave-notices` · `/cancel` (qua `BaoNghi`), `/doi-mat-khau`.
+
+*Claude quyết, chưa hỏi chủ repo (2026-11-24, cách làm, không phải luật quán):* trang ở `/quay/ca-nhan` và `/tram/ca-nhan`, cùng
+một component `TrangCaNhan` (`fe/src/components/shared/trang-ca-nhan.tsx`); khung chủ quán **không** có trang này (chủ quán xem
+báo nghỉ của mọi người ở trang riêng). Lối vào là liên kết *Cá nhân* trên thanh đầu của `KhungTheoVai` ở hai khung ấy. Việc được
+giao chỉ đọc (đánh dấu xong vẫn ở trang Giao việc); việc chưa xong đứng trước việc đã xong, trong mỗi nhóm giữ thứ tự backend.
+
+Acceptance viết trước khi làm:
+- A1 — `/quay/ca-nhan` và `/tram/ca-nhan` hiện tên, vai (nhãn tiếng Việt), dấu *đang đứng quầy* khi `counter_duty_id` khác 0; thanh
+  đầu của `KhungTheoVai` ở `/quay` · `/tram` có liên kết *Cá nhân*, `/chu-quan` không có; khung không đọc `usePathname` (nhiều test
+  cũ giả `next/navigation` chỉ có `useRouter`); trang có liên kết quay về màn chính của khung.
+- A2 — mục *Việc được giao* đọc `GET /assigned-tasks/mine`: nội dung, người giao, hạn theo giờ Việt Nam (vắng hạn thì *Chưa có
+  hạn*), trạng thái Xong/Chưa xong, nhãn *Quá hạn* khi chưa xong mà hạn đã qua, hướng dẫn chữ; rỗng thì một câu báo; lỗi đọc giữ
+  câu lỗi và nút Đọc lại; không có nút ghi nào.
+- A3 — mục *Ngày nghỉ của tôi* dùng lại `BaoNghi` (không viết lại logic gửi, huỷ); mục *Tài khoản* có liên kết *Đổi mật khẩu* tới
+  `/doi-mat-khau`.
+- A4 — test mới cho trang (hai khung, việc sắp đúng thứ tự, quá hạn, rỗng, lỗi đọc, không gọi cửa ghi việc nào) và cho liên kết ở
+  khung; test cũ của `src/components/tai-khoan`, `src/components/shared`, `src/app/quay`, `src/app/tram` xanh; `tsc --noEmit`
+  sạch; `./scripts/gate.sh` xanh.
+- A5 — Claude đọc diff, chạy lại test; Claude cập nhật route và component của `docs/product/4-fe/01-khung-fe.md`.
+
+Phạm vi (`work/scope/T-376.txt`): `fe/src/components/shared/trang-ca-nhan.tsx`, `fe/src/components/shared/trang-ca-nhan.test.tsx`,
+`fe/src/app/quay/ca-nhan/`, `fe/src/app/tram/ca-nhan/`, `fe/src/components/tai-khoan/khung-theo-vai.tsx`,
+`fe/src/components/tai-khoan/tai-khoan.test.tsx`, `docs/product/4-fe/01-khung-fe.md`, `work/backlog.md`. Thi công: Codex
+trong `../lean_wt/T-376`, nhánh `codex/T-376`, nền `a35fa26` cộng thay đổi chưa commit của T-374; phiếu và log
+`../lean_wt/_claude_logs/T-376/`.
+
+**Kết quả 2026-11-24** (thực hiện: Codex `gpt-6-astra`; duyệt: Claude). Codex hết hạn mức giữa lượt, không có báo cáo; Claude duyệt từ
+diff. File: `trang-ca-nhan.tsx` + test (7 ca), `app/quay/ca-nhan/page.tsx`, `app/tram/ca-nhan/page.tsx`, `khung-theo-vai.tsx` (một liên
+kết, không `usePathname`), `tai-khoan.test.tsx` (+2 ca liên kết). Nhãn vai khai lại trong component vì tầng shared không import
+`app/chu-quan` — cùng chữ với `du-lieu-nhan-vien.ts`. Bằng chứng: A1–A4 — `npx vitest run src/components/tai-khoan src/components/shared
+src/app/quay src/app/tram` 313/313, `tsc --noEmit` sạch, `check-fe-rules` PASS; A5 — Claude đọc diff, cập nhật §1 · §2 · §4 của
+`01-khung-fe.md`; gate clone chính xanh (xem T-375). Chưa chụp ảnh trang người làm.
 
 <a id="t-375"></a>
 ### T-375 — Trang Tài khoản khách theo bản thiết kế hồ sơ

@@ -2,6 +2,7 @@
 // Khung theo vai (P4-04): gác lối vào khung quầy · chủ quán · trạm theo phiên đăng nhập. Đây là TIỆN, không phải
 // bảo vệ — mọi cửa vẫn do backend chặn theo lớp quyền (02-vai-va-quyen.md); khung chỉ chọn màn mặc định.
 import { useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
@@ -51,6 +52,7 @@ export function KhungTheoVai({ khung, children }: { khung: Khung; children: Reac
           {s.counter_duty_id ? " · đang đứng quầy" : ""}
         </span>
         <div className="flex items-center gap-2">
+          {khung !== "/chu-quan" && <Link href={`${khung}/ca-nhan`} className="inline-flex min-h-11 items-center px-2 text-sm underline">Cá nhân</Link>}
           <ChuyenGiaoDien />
           <Button
             type="button"

@@ -74,6 +74,22 @@ describe("màn quên mật khẩu", () => {
 });
 
 describe("khung theo vai — tiện, không phải bảo vệ", () => {
+  it.each([
+    ["/quay", "quay"],
+    ["/tram", "trang_banh"],
+  ] as const)("%s có liên kết Cá nhân trên thanh đầu", async (khung, role_code) => {
+    voiBackend(<KhungTheoVai khung={khung}>nội dung</KhungTheoVai>, () => ({ status: 200, body: phien({ role_code }) }));
+    const lienKet = await screen.findByRole("link", { name: "Cá nhân" });
+    expect(lienKet.getAttribute("href")).toBe(`${khung}/ca-nhan`);
+    expect(lienKet.closest("header")).not.toBeNull();
+  });
+
+  it("/chu-quan không có liên kết Cá nhân", async () => {
+    voiBackend(<KhungTheoVai khung="/chu-quan">nội dung</KhungTheoVai>, () => ({ status: 200, body: phien({ is_owner: true, role_code: "owner" }) }));
+    await screen.findByText("nội dung");
+    expect(screen.queryByRole("link", { name: "Cá nhân" })).toBeNull();
+  });
+
   it("chưa đăng nhập (401) ⇒ về màn đăng nhập", async () => {
     voiBackend(<KhungTheoVai khung="/quay">nội dung</KhungTheoVai>, () => ({ status: 401, body: { code: "unauthenticated" } }));
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/dang-nhap"));
