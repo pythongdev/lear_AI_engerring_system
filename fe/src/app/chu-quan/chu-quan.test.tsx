@@ -101,7 +101,7 @@ describe("khung chủ quán", () => {
     expect(nhanVien.getAttribute("aria-current")).toBe("page");
   });
 
-  it.each([["Vận hành", "/chu-quan/van-hanh", null], ["Giao việc", "/chu-quan/giao-viec", "Nhân sự"], ["Nguyên liệu", "/chu-quan/nguyen-lieu", "Kho & chi"], ["Kho", "/chu-quan/kho", "Kho & chi"], ["Khoản chi", "/chu-quan/khoan-chi", "Kho & chi"], ["Đào tạo", "/chu-quan/dao-tao", "Nhân sự"]])("%s sáng ở route của nó", async (nhan, route, nhom) => {
+  it.each([["Vận hành", "/chu-quan/van-hanh", null], ["Giao việc", "/chu-quan/giao-viec", "Nhân sự"], ["Khoản chi", "/chu-quan/khoan-chi", "Kho & chi"], ["Đào tạo", "/chu-quan/dao-tao", "Nhân sự"]])("%s sáng ở route của nó", async (nhan, route, nhom) => {
     duongDan = route;
     moKhung(200, phien(true));
     const nav = await screen.findByRole("navigation");
@@ -121,7 +121,7 @@ describe("khung chủ quán", () => {
     const cacNhom = [
       ["Bán hàng", ["Sản phẩm", "Menu & giá", "Danh mục", "Combo", "Topping"]],
       ["Nhân sự", ["Nhân viên", "Giao việc", "Đào tạo"]],
-      ["Kho & chi", ["Nguyên liệu", "Kho", "Khoản chi"]],
+      ["Kho & chi", ["Khoản chi"]],
     ] as const;
     for (const [ten, cacTrang] of cacNhom) {
       const nut = moNhom(nav, ten);
@@ -177,8 +177,6 @@ describe("khung chủ quán", () => {
       { nhan: "Topping", route: "/chu-quan/topping", nhom: "ban_hang" },
       { nhan: "Nhân viên", route: "/chu-quan/nhan-vien", nhom: "nhan_su" },
       { nhan: "Giao việc", route: "/chu-quan/giao-viec", nhom: "nhan_su" },
-      { nhan: "Nguyên liệu", route: "/chu-quan/nguyen-lieu", nhom: "kho_chi" },
-      { nhan: "Kho", route: "/chu-quan/kho", nhom: "kho_chi" },
       { nhan: "Khoản chi", route: "/chu-quan/khoan-chi", nhom: "kho_chi" },
       { nhan: "Đào tạo", route: "/chu-quan/dao-tao", nhom: "nhan_su" },
     ]);

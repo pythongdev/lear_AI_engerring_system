@@ -640,6 +640,27 @@ Khoản chi đọc `?thu=` mở sẵn ngăn chi tiết của khoản con nối t
 *Xem Khoản chi*; test hai trang cũ thành test chuyển hướng, mỗi ca cũ có ca thay hoặc lý do *không chuyển* (vd. thêm thứ ngoài mục —
 ADR-147 điểm 2: thêm thứ là thêm khoản con của mục theo dõi). `kho.tsx`, `nguyen-lieu.tsx` hết người dùng: chủ repo xoá trong khối commit.
 
+**Kết quả 2026-11-24** (thực hiện: Codex, duyệt và tích hợp: Claude). Codex làm xong code rồi **hết hạn mức trước báo cáo** (log:
+*usage limit … try again at 11:03 AM*); Claude đọc diff, tự đối chiếu ca cũ và kiểm thay báo cáo. Code: `muc-chu-quan.ts` bỏ hai mục;
+`kho/page.tsx` và `nguyen-lieu/page.tsx` gọi `redirect` phía server (nguyen-lieu giữ `?thu=` khi khớp `^[1-9][0-9]*$` và ≤ 2^53−1);
+`TrangKhoanChi` tìm khoản con nối `thu` (thứ chưa ngừng, đúng mục) rồi `MucChi` mở sẵn ngăn, chọn ô *Xem nguyên liệu*, cuộn và focus một
+lần; `the-de-xuat.tsx` trỏ *Xem Khoản chi*; `01-khung-fe.md` đổi hai dòng route, hai dòng nguồn dữ liệu và dòng Khoản chi. Lọc của trang
+(`loc()`) giữ `thu` nếu có. **Ca cũ → ca thay** (A2): Nguyên liệu — thứ tự danh mục/đơn vị lần đầu → `kc11` bảng + `kc16` *Đặt đơn vị*;
+tên trống/trùng → `kc10` thêm khoản con (`supply_item_name_taken` ở ô tên); mở sổ theo URL → `kc14` `?thu=` + `kc16` *Sổ lượng*; sổ rỗng →
+`kc16`; ngày/loại chưa chọn, giữ `1.250` → `kc14`; trùng con số → `kc16`; sửa mặc định chuỗi, đòi lý do → `kc16`; dòng không còn → `kc14`;
+thứ không tìm thấy → `kc14` (`?thu=` lạ, `supply_item_not_found`); phản hồi lạ, gửi hai lần → `kc14`; *danh mục rỗng* **không chuyển**
+(Khoản chi không có danh mục nguyên liệu riêng; mục rỗng có câu riêng). Kho — thứ tự và chuỗi số kể cả âm → `kc11` + `kc16`; rỗng khác
+lỗi đọc lần đầu → `kc11`; đặt tỉ lệ (mặc định, biên, ngoài khuôn, thiếu lý do, 400 field, nguyên liệu mất, phản hồi lạ, hai lần) → `kc16` +
+`kc14`; **hai ca không chuyển**: *lỗi đọc lại giữ bản cũ kèm mốc* và *đã ghi nhưng đọc lại lỗi* — bảng nguyên liệu của KC-11 hiện `—` khi
+lần đọc lại lỗi thay vì giữ số cũ kèm cảnh báo; Claude không tự thêm trong lượt này (việc nối tiếp, mục *Còn mở* dưới đây). Bằng chứng:
+worktree — `lint` · `typecheck` sạch, `vitest` 930/930, `./scripts/gate.sh` PASS, `git diff --check` sạch, `grep` không còn link hai route
+cũ ngoài thư mục của chúng; clone chính sau `git apply` — gate PASS, `vitest src/app/chu-quan` + thẻ đề xuất 446/446; trang thật (FE
+worktree 3001, `/api` chặn bằng mẫu, ghi bị chặn): `/chu-quan/nguyen-lieu?thu=7&x=1` → `/chu-quan/khoan-chi?thu=7`, ngăn *Bột gạo* mở và
+được focus; `?thu=abc` → `/chu-quan/khoan-chi` không mở ngăn; `/chu-quan/kho` → `/chu-quan/khoan-chi`; menu chỉ còn *Khoản chi*; 0 lỗi JS.
+Ảnh: `../lean_wt/_claude_logs/KC-14/anh/`. **Còn mở:** (1) bảng nguyên liệu giữ số cũ kèm cảnh báo khi đọc lại lỗi, như trang Kho cũ;
+(2) sau khi xoá hai tệp, `useKho` · `oLoiKho` (`du-lieu-kho.ts`) và `useThemNguyenLieu` (`du-lieu-nguyen-lieu.ts`) không còn ai gọi — bỏ ở
+lượt sau (bỏ ngay làm `kho.tsx` còn trên đĩa hỏng typecheck trước khi chủ repo xoá).
+
 <a id="cau-hoi-mo"></a>
 <a id="kc-15"></a>
 ## KC-15 — FE: lịch sử sử dụng và lịch sử mua hàng của cả mục

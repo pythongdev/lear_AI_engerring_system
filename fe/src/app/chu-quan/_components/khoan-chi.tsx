@@ -2,7 +2,7 @@
 
 import { useIsMutating } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Fragment, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { Fragment, useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
@@ -333,12 +333,12 @@ function SoLuong({ supply, mo }: { supply: NguyenLieu; mo: (m: Mo) => void }) {
       </tbody></table></div>}
   </section>;
 }
-function DongNguyenLieu({ item, supply, result, category, expanded, toggle, mo }: { item: Con; supply?: NguyenLieu; result?: DuLieu; category: Loai; expanded: boolean; toggle: () => void; mo: (m: Mo) => void }) {
+function DongNguyenLieu({ item, supply, result, category, expanded, toggle, mo, deepLinkButton }: { item: Con; supply?: NguyenLieu; result?: DuLieu; category: Loai; expanded: boolean; toggle: () => void; mo: (m: Mo) => void; deepLinkButton?: React.Ref<HTMLButtonElement> }) {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [ledgerOpen, setLedgerOpen] = useState(false);
   const id = useId();
   const itemTotal = result?.item_totals?.find((t) => t.expense_item_id === item.expense_item_id);
-  return <Fragment><tr><td><button type="button" className="kc-item-name" aria-expanded={expanded} aria-controls={`${id}-detail`} onClick={toggle}>{item.name}</button></td><td>{supply ? uocTinh(supply) : "—"}</td><td>{supply ? luongCon(supply) : "—"}</td></tr>
+  return <Fragment><tr><td><button ref={deepLinkButton} type="button" className="kc-item-name" aria-expanded={expanded} aria-controls={`${id}-detail`} onClick={toggle}>{item.name}</button></td><td>{supply ? uocTinh(supply) : "—"}</td><td>{supply ? luongCon(supply) : "—"}</td></tr>
     <tr id={`${id}-detail`} className="kc-item-detail-row" hidden={!expanded}><td colSpan={3}>{expanded && <div className="kc-item-detail"><dl>
       <div><dt>Ngày nhập gần nhất</dt><dd>{supply?.latest_purchase_date ? ngay(supply.latest_purchase_date) : supply ? "Chưa ghi" : "—"}</dd></div>
       <div><dt>Đã dùng gần đây</dt><dd>{supply ? supply.usage_estimate.usage_days === 0 ? "Chưa ghi ngày dùng" : `${luong(supply.usage_estimate.used_in_window)}${supply.purchase_unit ? ` ${supply.purchase_unit}` : ""} trong ${supply.usage_estimate.usage_days} ngày có ghi gần nhất` : "—"}</dd></div>
@@ -355,14 +355,14 @@ function DongNguyenLieu({ item, supply, result, category, expanded, toggle, mo }
       <div id={`${id}-ledger`} hidden={!ledgerOpen}>{ledgerOpen && supply && <SoLuong supply={supply} mo={mo} />}</div>
     </div>}</td></tr></Fragment>;
 }
-function BangNguyenLieu({ category, result, visible, id, active, toggle, mo }: { category: Loai; result?: DuLieu; visible: boolean; id: string; active: number | null; toggle: (itemId: number) => void; mo: (m: Mo) => void }) {
+function BangNguyenLieu({ category, result, visible, id, active, toggle, mo, deepLinkItemId, deepLinkButton }: { category: Loai; result?: DuLieu; visible: boolean; id: string; active: number | null; toggle: (itemId: number) => void; mo: (m: Mo) => void; deepLinkItemId: number | null; deepLinkButton: React.Ref<HTMLButtonElement> }) {
   const query = useNguyenLieu();
   const byId = new Map(query.data?.supply_items.map((supply) => [supply.supply_item_id, supply]));
   const readable = !query.isPending && !query.isError;
   return <div id={`${id}-items`} hidden={!visible}>
     {query.isError && <p className="kc-supply-error" role="alert">Chưa đọc được sổ nguyên liệu. Hãy thử đọc lại.</p>}
     <div className="kc-table-wrap"><table className="kc-data-table kc-item-table kc-supply-table" aria-label={`Nguyên liệu trong ${category.name}`}><thead><tr><th>Nguyên liệu</th><th>Ước tính còn dùng</th><th>Lượng còn lại</th></tr></thead><tbody>
-      {(category.items ?? []).length ? category.items!.map((item) => <DongNguyenLieu key={item.expense_item_id} item={item} supply={readable && item.supply_item_id ? byId.get(item.supply_item_id) : undefined} result={result} category={category} expanded={active === item.expense_item_id} toggle={() => toggle(item.expense_item_id)} mo={mo} />) : <tr><td colSpan={3}>Chưa có khoản con. Thêm để bắt đầu theo dõi.</td></tr>}
+      {(category.items ?? []).length ? category.items!.map((item) => <DongNguyenLieu key={item.expense_item_id} item={item} supply={readable && item.supply_item_id ? byId.get(item.supply_item_id) : undefined} result={result} category={category} expanded={active === item.expense_item_id} toggle={() => toggle(item.expense_item_id)} mo={mo} deepLinkButton={item.expense_item_id === deepLinkItemId ? deepLinkButton : undefined} />) : <tr><td colSpan={3}>Chưa có khoản con. Thêm để bắt đầu theo dõi.</td></tr>}
     </tbody></table></div>
     <p className="kc-forecast-note">Ước tính tính từ sổ nguyên liệu, chỉ để xem và không thay lời nhắc kiểm hàng.</p>
   </div>;
@@ -443,7 +443,7 @@ function LichSuMuaHangMuc({ category, visible, setVisible, heading }: { category
     </div>
   </section>;
 }
-function MucChi({ category, data, from, to, selectedCategory, source, mo }: { category: Loai; data?: DuLieu; from?: string; to?: string; selectedCategory: string | null; source: string | null; mo: (m: Mo) => void }) {
+function MucChi({ category, data, from, to, selectedCategory, source, mo, deepLinkItemId }: { category: Loai; data?: DuLieu; from?: string; to?: string; selectedCategory: string | null; source: string | null; mo: (m: Mo) => void; deepLinkItemId: number | null }) {
   const [expanded, setExpanded] = useState(true);
   const [visible, setVisible] = useState(true);
   const [dateFilterOpen, setDateFilterOpen] = useState(false);
@@ -453,6 +453,24 @@ function MucChi({ category, data, from, to, selectedCategory, source, mo }: { ca
   const [usageVisible, setUsageVisible] = useState(true);
   const [purchaseVisible, setPurchaseVisible] = useState(true);
   const purchaseHeading = useRef<HTMLHeadingElement>(null);
+  const deepLinkButton = useRef<HTMLButtonElement>(null);
+  const openedFromUrl = useRef<number | null>(null);
+  const pendingFocus = useRef<number | null>(null);
+  useEffect(() => {
+    if (deepLinkItemId === null || openedFromUrl.current === deepLinkItemId) return;
+    openedFromUrl.current = deepLinkItemId;
+    pendingFocus.current = deepLinkItemId;
+    setExpanded(true);
+    setVisible(true);
+    setActive(deepLinkItemId);
+    setUsageSelected(String(deepLinkItemId));
+  }, [deepLinkItemId]);
+  useEffect(() => {
+    if (active !== deepLinkItemId || pendingFocus.current !== deepLinkItemId) return;
+    pendingFocus.current = null;
+    deepLinkButton.current?.scrollIntoView?.();
+    deepLinkButton.current?.focus();
+  }, [active, deepLinkItemId]);
   const local = !!(dates.from || dates.to);
   const localFrom = dates.from && from ? (dates.from > from ? dates.from : from) : from;
   const localTo = dates.to && to ? (dates.to < to ? dates.to : to) : to;
@@ -472,7 +490,7 @@ function MucChi({ category, data, from, to, selectedCategory, source, mo }: { ca
       </div></div>
         <div id={`${id}-dates`} className="kc-local-filter" role="group" aria-label={`Lọc ngày ${category.name}`} hidden={!dateFilterOpen}><div className="kc-two"><Field><FieldLabel htmlFor={`${id}-from`}>Từ ngày · {category.name}</FieldLabel><Input id={`${id}-from`} type="date" value={dates.from} onChange={(e) => setDates({ ...dates, from: e.target.value })} /></Field><Field><FieldLabel htmlFor={`${id}-to`}>Đến ngày · {category.name}</FieldLabel><Input id={`${id}-to`} type="date" value={dates.to} onChange={(e) => setDates({ ...dates, to: e.target.value })} /></Field></div><small className="kc-muted">Lọc riêng mục này, trong phạm vi bộ lọc chung.</small>{invalid && <p role="alert">Ngày bắt đầu phải trước hoặc bằng ngày kết thúc, trong khoảng ngày chung.</p>}<Button variant="outline" onClick={() => setDates({ from: "", to: "" })}>Xoá lọc ngày</Button>{local && !invalid && <TrangThai query={query} ten="tổng theo mục" />}</div>
         {!category.tracks_supply && <BangNgayMuc category={category} result={result} />}
-        {category.tracks_supply ? <><BangNguyenLieu category={category} result={result} visible={visible} id={id} active={active} toggle={(itemId) => { const next = active === itemId ? null : itemId; setActive(next); setUsageSelected(next === null ? "" : String(next)); }} mo={mo} />
+        {category.tracks_supply ? <><BangNguyenLieu category={category} result={result} visible={visible} id={id} active={active} toggle={(itemId) => { const next = active === itemId ? null : itemId; setActive(next); setUsageSelected(next === null ? "" : String(next)); }} mo={mo} deepLinkItemId={deepLinkItemId} deepLinkButton={deepLinkButton} />
           <div className="kc-category-histories"><LichSuSuDungMuc category={category} visible={usageVisible} setVisible={setUsageVisible} selected={usageSelected} setSelected={setUsageSelected} />
             <LichSuMuaHangMuc category={category} visible={purchaseVisible} setVisible={setPurchaseVisible} heading={purchaseHeading} /></div></> : <div id={`${id}-items`} hidden={!visible} className="kc-table-wrap"><table className="kc-data-table kc-item-table" aria-label={`Khoản con trong ${category.name}`}><thead><tr><th>Khoản con</th><th>Ngày chi gần nhất</th><th>Tổng chi trong kỳ</th></tr></thead><tbody>{(category.items ?? []).length ? category.items!.map((item) => <DongKhoanCon key={item.expense_item_id} item={item} category={category} result={result} entries={result?.expenses ?? []} mo={mo} />) : <tr><td colSpan={3}>Chưa có khoản con. Thêm để bắt đầu theo dõi.</td></tr>}</tbody></table></div>}
         <div className="kc-row kc-item-total"><span>Tổng chi trong kỳ</span><strong>{total === undefined && !invalid && matches && (local ? query.isPending || query.isError : !data) ? "—" : money(total ?? 0)}</strong></div><footer><Button variant="outline" onClick={() => mo({ kind: "them-con", category })}>＋ Thêm khoản con</Button></footer>
@@ -511,6 +529,11 @@ export function TrangKhoanChi() {
   const supplies = !nguyenLieu.isPending && !nguyenLieu.isError ? nguyenLieu.data?.supply_items ?? [] : [];
   const chuaXep = supplies.filter((s) => s.expense_item_id === null && s.stopped_at === null);
   const daNgung = supplies.filter((s) => s.stopped_at !== null);
+  const thu = params.get("thu");
+  const deepLink = thu && /^[1-9][0-9]*$/.test(thu) && Number.isSafeInteger(Number(thu))
+    ? categories.flatMap((category) => category.tracks_supply ? (category.items ?? []).filter((item) => item.supply_item_id === Number(thu)).map((item) => ({ categoryId: category.expense_category_id, itemId: item.expense_item_id })) : [])
+      .find(({ categoryId, itemId }) => supplies.some((supply) => supply.supply_item_id === Number(thu) && supply.expense_category_id === categoryId && supply.expense_item_id === itemId && supply.stopped_at === null))
+    : undefined;
   const grouped = theoNgay(query.data?.expenses ?? []);
   return <div className="kc-page">
     <header className="kc-row kc-header"><div><p className="kc-eyebrow">HÀNG &amp; TIỀN</p><h1 ref={heading} tabIndex={-1}>Khoản chi</h1><p className="kc-muted">Theo dõi từng khoản, rõ từng nguồn tiền.</p></div><div className="kc-actions"><Button variant="outline" onClick={() => open({ kind: "them-loai" })}>＋ Thêm mục chi</Button><Button disabled={!categories.length} onClick={() => open({ kind: "tao" })}>Ghi khoản chi</Button></div></header>
@@ -520,7 +543,7 @@ export function TrangKhoanChi() {
     </section>
     <section className="kc-overview" aria-label="Tổng chi trong kỳ"><small>Tổng chi trong kỳ</small><strong>{query.data ? money(query.data.total_vnd) : "—"}</strong><small>{query.data ? `${query.data.expenses.length} khoản chi theo bộ lọc` : "Đang chờ dữ liệu"}</small></section>
     <section className="kc-categories" aria-label="Loại chi"><div className="kc-row"><div><h2>Mục chi &amp; sản phẩm</h2><p className="kc-muted">Chọn từng nguyên liệu hoặc sản phẩm khi ghi khoản chi.</p></div><Button variant="outline" disabled={loai.isFetching} onClick={() => void loai.refetch()}>Đọc lại loại chi</Button></div><TrangThai query={loai} ten="loại chi" daGhi={bao.startsWith("Đã ")} />
-      {loai.data && (categories.length ? <div className="kc-category-list" role="list" aria-label="Danh sách loại chi">{categories.map((l) => <div role="listitem" key={l.expense_category_id}><MucChi category={l} data={query.data} from={from} to={to} selectedCategory={params.get("loai")} source={params.get("nguon")} mo={open} /></div>)}</div> : <p>Chưa có loại chi nào.</p>)}
+      {loai.data && (categories.length ? <div className="kc-category-list" role="list" aria-label="Danh sách loại chi">{categories.map((l) => <div role="listitem" key={l.expense_category_id}><MucChi category={l} data={query.data} from={from} to={to} selectedCategory={params.get("loai")} source={params.get("nguon")} mo={open} deepLinkItemId={deepLink?.categoryId === l.expense_category_id ? deepLink.itemId : null} /></div>)}</div> : <p>Chưa có loại chi nào.</p>)}
       {chuaXep.length > 0 && <section className="kc-supply-group" aria-labelledby={`${id}-unlinked`}><h3 id={`${id}-unlinked`}>Nguyên liệu chưa xếp mục</h3><ul>{chuaXep.map((s) => <li key={s.supply_item_id}><span>{s.name}{s.purchase_unit ? ` · ${s.purchase_unit}` : ""}</span><Button variant="outline" aria-label={`Xếp ${s.name} vào mục`} onClick={() => open({ kind: "xep-muc", supply: s })}>Xếp vào mục</Button></li>)}</ul></section>}
       {daNgung.length > 0 && <section className="kc-supply-group" aria-labelledby={`${id}-stopped`}><h3 id={`${id}-stopped`}>Nguyên liệu đã ngừng dùng</h3><ul>{daNgung.map((s) => { const oldCategory = categories.find((c) => c.expense_category_id === s.expense_category_id); return <li key={s.supply_item_id}><span>{s.name}{oldCategory ? ` · ${oldCategory.name}` : ""}</span>{s.expense_item_id !== null && <Button variant="outline" aria-label={`Dùng lại ${s.name}`} onClick={() => open({ kind: "dung-lai", supply: s })}>Dùng lại</Button>}</li>; })}</ul></section>}
     </section>

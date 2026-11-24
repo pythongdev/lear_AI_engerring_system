@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { TrangKho } from "../_components/kho";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = { title: "Kho" };
-export default function Page() { return <TrangKho />; }
+export default function Page() { redirect("/chu-quan/khoan-chi"); }

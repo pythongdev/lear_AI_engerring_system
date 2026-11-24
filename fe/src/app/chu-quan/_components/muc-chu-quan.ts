@@ -11,8 +11,6 @@ export const mucChuQuan = [
   { nhan: "Topping", route: "/chu-quan/topping", nhom: "ban_hang" },
   { nhan: "Nhân viên", route: "/chu-quan/nhan-vien", nhom: "nhan_su" },
   { nhan: "Giao việc", route: "/chu-quan/giao-viec", nhom: "nhan_su" },
-  { nhan: "Nguyên liệu", route: "/chu-quan/nguyen-lieu", nhom: "kho_chi" },
-  { nhan: "Kho", route: "/chu-quan/kho", nhom: "kho_chi" },
   { nhan: "Khoản chi", route: "/chu-quan/khoan-chi", nhom: "kho_chi" },
   { nhan: "Đào tạo", route: "/chu-quan/dao-tao", nhom: "nhan_su" },
 ] as const;

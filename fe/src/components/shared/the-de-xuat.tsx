@@ -26,7 +26,7 @@ const manTayDaoTao: CuaGhi["manTay"] = {
   "/chu-quan": { href: "/chu-quan/dao-tao", ten: "Xem Đào tạo" },
 };
 const manTayNguyenLieu: CuaGhi["manTay"] = {
-  "/chu-quan": { href: "/chu-quan/nguyen-lieu", ten: "Xem Nguyên liệu" },
+  "/chu-quan": { href: "/chu-quan/khoan-chi", ten: "Xem Khoản chi" },
 };
 const chuChonNguoiGiaoViec = {
   nhan: "Người nhận",

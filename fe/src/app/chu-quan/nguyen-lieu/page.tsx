@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import { TrangNguyenLieu } from "../_components/nguyen-lieu";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = { title: "Nguyên liệu" };
-export default function Page() {
-  return <Suspense fallback={<p role="status">Đang đọc nguyên liệu…</p>}><TrangNguyenLieu /></Suspense>;
+export default async function Page({ searchParams }: { searchParams: Promise<{ thu?: string | string[] }> }) {
+  const { thu } = await searchParams;
+  const valid = typeof thu === "string" && /^[1-9][0-9]*$/.test(thu) && (thu.length < 16 || (thu.length === 16 && thu <= "9007199254740991"));
+  redirect(`/chu-quan/khoan-chi${valid ? `?thu=${thu}` : ""}`);
 }

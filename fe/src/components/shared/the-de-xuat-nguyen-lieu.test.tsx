@@ -10,7 +10,7 @@
 //   POST /supply-day-entries · PUT /supply-day-entries/{supply_day_entry_id} · PUT /supply-items/{supply_item_id}/reminder-ratio; id lấy
 //   từ `path_params`. Thân gửi ĐÚNG BẰNG thân của thẻ: con số (`measure`) và tỉ lệ (`reminder_ratio`) vẫn là CHUỖI như hợp đồng,
 //   không đổi sang số, không làm tròn, không thêm hay bỏ khoá; ngày (`entry_date`) giữ nguyên `YYYY-MM-DD` của thẻ.
-// - Năm cửa chỉ có link màn tay của chủ quán: `{ "/chu-quan": { href: "/chu-quan/nguyen-lieu", ten: "Xem Nguyên liệu" } }` — không có dòng
+// - Năm cửa chỉ có link màn tay của chủ quán: `{ "/chu-quan": { href: "/chu-quan/khoan-chi", ten: "Xem Khoản chi" } }` — không có dòng
 //   `/quay` vì lớp `chu_quan`; khung khác dùng link mặc định của khung (CHAT-09). FE không tự chặn theo khung: quyền là của cửa backend.
 // - Tên nguồn của năm công cụ `them_nguyen_lieu` · `dat_don_vi` · `ghi_so_nguyen_lieu` · `sua_so_nguyen_lieu` · `dat_ti_le_nhac`
 //   → "Nguyên liệu".
@@ -137,7 +137,7 @@ describe("CHAT-17 FE bảng cửa nguyên liệu của bản chạy", () => {
     for (const cua of Object.values(cuaGhiChat)) expect(cua.coDau).toBe(false);
     for (const op of NAM_CUA) {
       expect(cuaGhiChat[op].chonNguoi).toBeUndefined();
-      expect(cuaGhiChat[op].manTay).toEqual({ "/chu-quan": { href: "/chu-quan/nguyen-lieu", ten: "Xem Nguyên liệu" } });
+      expect(cuaGhiChat[op].manTay).toEqual({ "/chu-quan": { href: "/chu-quan/khoan-chi", ten: "Xem Khoản chi" } });
     }
     expect(Object.isFrozen(cuaGhiChat)).toBe(true);
   });
@@ -154,7 +154,7 @@ describe("CHAT-17 FE bảng cửa nguyên liệu của bản chạy", () => {
     expect(within(the()).getByText(dongThe)).toBeTruthy();
     expect(within(the()).getByText("Người bấm: Bà Thanh")).toBeTruthy();
     expect(within(the()).queryByRole("combobox")).toBeNull();
-    coLink("Xem Nguyên liệu", "/chu-quan/nguyen-lieu");
+    coLink("Xem Khoản chi", "/chu-quan/khoan-chi");
     await bamVaChoGhi();
     expect(ghiGoi).toHaveLength(1);
     expect({ method: ghiGoi[0].method, path: ghiGoi[0].path, body: ghiGoi[0].body }).toEqual({ method, path, body: de.body });
@@ -211,7 +211,7 @@ describe("CHAT-17 FE bảng cửa nguyên liệu của bản chạy", () => {
     fireEvent.click(nutGhi()[0]);
     expect((await within(the()).findByRole("alert")).textContent).toContain(CHU_CHUA_RO);
     expect(within(the()).queryAllByRole("button")).toHaveLength(0);
-    coLink("Xem Nguyên liệu", "/chu-quan/nguyen-lieu");
+    coLink("Xem Khoản chi", "/chu-quan/khoan-chi");
     await cho(50);
     expect(ghiGoi).toHaveLength(1);
   });
