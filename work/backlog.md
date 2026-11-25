@@ -198,7 +198,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 
 
-- [ ] T-303 **Thu gọn giá trong bảng Sản phẩm** — L1, chủ repo yêu cầu 2026-11-05; mặc định hiện Thịt · Thường khi có, mở xem đủ các giá còn lại · [chi tiết](#t-303)
+- [x] T-303 **Thu gọn giá trong bảng Sản phẩm** — L1, chủ repo yêu cầu 2026-11-05; mặc định hiện Thịt · Thường khi có, mở xem đủ các giá còn lại · [chi tiết](#t-303)
 
 
 
@@ -2117,6 +2117,13 @@ Acceptance trước sửa: A1 — với món có tổ hợp Thịt · Thường,
 Phạm vi (`work/scope/T-303.txt`): `work/backlog.md`, `fe/src/app/chu-quan/_components/san-pham.tsx`, `fe/src/app/chu-quan/san-pham/san-pham.test.tsx`. Codex làm trên nhánh `P4A-01`; chưa có người duyệt độc lập. Cây chung và `work/backlog.md` đang có thay đổi chưa commit của các việc khác; không đưa chúng vào phần việc này.
 
 Bàn giao 2026-11-05: ô Giá dùng thẻ `details` mặc định thu; khi có tổ hợp Thịt · Thường thì đặt nó trên dòng luôn thấy, giá khác mở/thu tại chỗ. Món một giá không có nút, món ngừng/thiếu/lỗi giữ lời báo. Không đổi API và không tính giá. `npx vitest run src/app/chu-quan/san-pham/san-pham.test.tsx` đạt 40/40; `git diff --check` đạt. Gate trực tiếp lần đầu exit 0, Gate 3/1b/1c/1e/1f/1g/1h/verify đạt, 1d và db SKIP theo điều kiện, backend qua PostgreSQL thật. Chưa commit; khi bàn giao commit phải tách phần T-303 trong `work/backlog.md` khỏi các task khác đã có sẵn.
+
+**Duyệt 2026-11-25** (Codex `gpt-6-astra` kiểm lại trên nền `8b34435` trong `../lean_wt/T-303`, không sửa thêm; Claude duyệt). Từ
+05/11 nền đã thêm T-307 (ảnh món) và T-315 (sửa combo); diff vẫn chỉ chạm `GiaMon` và năm dòng CSS giá. A1 · A2 · A3 — test *thu
+gọn giá, ưu tiên Thịt · Thường…* và các test ngừng bán, thiếu giá, lỗi đọc trong `san-pham.test.tsx`; A4 — `GiaMon` chỉ định dạng
+`unit_price_vnd`; A5 — Claude chạy lại `npx vitest run src/app/chu-quan/san-pham` 43/43; Codex: `tsc` sạch, `vitest src/app/chu-quan`
+434/434, `./scripts/gate.sh` PASS. Ngoài Thịt · Thường, món không có tổ hợp ấy hiện tổ hợp mặc định (`is_default`) — Codex chọn,
+Claude nhận. Hai tệp ở cây chung giống hệt bản đã kiểm.
 
 [↑ đầu file](#top)
 

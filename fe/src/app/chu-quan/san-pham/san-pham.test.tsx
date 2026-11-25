@@ -190,11 +190,44 @@ describe("trang sản phẩm — danh sách", () => {
     expect(oTrung).toMatch(/Chay/);
     expect(oTrung).toMatch(gia("30.000"));
     // Không cộng, không chọn thay: không có số nào ngoài hai giá backend trả.
-    expect(oTrung.match(/\d+(\.\d{3})*/g)).toEqual(["35.000", "30.000"]);
+    expect([...within(dongMon(banhCuon, "Bánh cuốn trứng")).getAllByRole("cell")[3].querySelectorAll(".sp-price")]
+      .map((el) => el.textContent)).toEqual(["35.000đ", "30.000đ"]);
     expect(within(dongMon(banhCuon, "Bánh cuốn thịt")).getAllByRole("cell")[3].textContent).toBe("—");
     const chaQue = within(dongMon(screen.getByRole("region", { name: "Chưa xếp danh mục" }), "Chả quế")).getAllByRole("cell");
     expect(chaQue[3].textContent ?? "").toMatch(gia("10.000"));
     expect(goi.some((g) => g.path === "/price-quotes")).toBe(false);
+  });
+
+  it("thu gọn giá, ưu tiên Thịt · Thường và mở xem đủ các tổ hợp còn lại", async () => {
+    const menu: Menu = { ...menuMau, items: menuMau.items.map((item) => item.menu_item_id !== 11 ? item : {
+      ...item,
+      option_groups: [
+        item.option_groups[0],
+        { option_group_id: 6, option_group_name: "Lượng nhân", prerequisite_option_ids: [], options: [
+          { menu_option_id: 61, option_name: "Thường", is_default: true },
+          { menu_option_id: 62, option_name: "Nhiều nhân", is_default: false },
+        ] },
+      ],
+      prices: [
+        { option_ids: [52], unit_price_vnd: 3000 },
+        { option_ids: [51, 62], unit_price_vnd: 5000 },
+        { option_ids: [51, 61], unit_price_vnd: 4000 },
+      ],
+    }) };
+    moTrang({ menu: () => ({ status: 200, body: menu }) });
+    const banhCuon = await screen.findByRole("region", { name: "Bánh cuốn" });
+    const oGia = within(dongMon(banhCuon, "Bánh cuốn trứng")).getAllByRole("cell")[3];
+    await waitFor(() => expect(oGia.querySelector("summary")?.textContent).toContain("Thịt · Thường 4.000đ"));
+    const chiTiet = oGia.querySelector("details") as HTMLDetailsElement;
+    expect(chiTiet.open).toBe(false);
+    expect(chiTiet.querySelector("summary")?.textContent).toContain("Xem 2 giá khác");
+    fireEvent.click(chiTiet.querySelector("summary")!);
+    expect(chiTiet.open).toBe(true);
+    expect(chiTiet.textContent).toContain("Chay 3.000đ");
+    expect(chiTiet.textContent).toContain("Thịt · Nhiều nhân 5.000đ");
+    fireEvent.click(chiTiet.querySelector("summary")!);
+    expect(chiTiet.open).toBe(false);
+    expect(within(dongMon(screen.getByRole("region", { name: "Chưa xếp danh mục" }), "Chả quế")).getAllByRole("cell")[3].querySelector("details")).toBeNull();
   });
 
   it("món đang bán mà /menu không có: ô giá nói chưa có giá", async () => {

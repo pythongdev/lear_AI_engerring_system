@@ -27,10 +27,23 @@ function GiaMon({ mon, gia }: { mon: Mon; gia: GiaQuery }) {
   const item = gia.data.items.find((i) => i.menu_item_id === mon.menu_item_id);
   if (!item || item.prices.length === 0) return "Chưa có giá";
   const options = new Map(item.option_groups.flatMap((g) => g.options.map((o) => [o.menu_option_id, o.option_name] as const)));
-  return item.prices.map((p, i) => <div key={i}>
-    {p.option_ids.length > 0 && <>{p.option_ids.map((id) => options.get(id)).join(" · ")} </>}
+  const tenGia = (ids: number[]) => ids.map((id) => options.get(id) ?? "").filter(Boolean).join(" · ");
+  const giaUuTien = item.prices.findIndex((p) => {
+    const ten = p.option_ids.map((id) => options.get(id));
+    return ten.length === 2 && ten.includes("Thịt") && ten.includes("Thường");
+  });
+  const giaMacDinh = item.prices.findIndex((p) => p.option_ids.every((id) =>
+    item.option_groups.some((g) => g.options.some((o) => o.menu_option_id === id && o.is_default))));
+  const indexHien = giaUuTien >= 0 ? giaUuTien : giaMacDinh >= 0 ? giaMacDinh : 0;
+  const dongGia = (p: typeof item.prices[number]) => <>
+    {p.option_ids.length > 0 && <>{tenGia(p.option_ids)} </>}
     <span className="sp-price">{tienGia(p.unit_price_vnd)}</span>
-  </div>);
+  </>;
+  if (item.prices.length === 1) return dongGia(item.prices[0]);
+  return <details className="sp-prices">
+    <summary>{dongGia(item.prices[indexHien])}<span className="sp-price-count sp-price-show"> · Xem {item.prices.length - 1} giá khác</span><span className="sp-price-count sp-price-hide"> · Thu giá khác</span></summary>
+    <div className="sp-price-list">{item.prices.map((p, i) => i === indexHien ? null : <div key={i}>{dongGia(p)}</div>)}</div>
+  </details>;
 }
 
 function DongMon({ mon, danhMuc, gia, capNhat, anhVersion }: { mon: Mon; danhMuc: string; gia: GiaQuery; capNhat: (mon: Mon) => void; anhVersion: number }) {
@@ -157,6 +170,11 @@ export function TrangSanPham() {
       .trang-san-pham tr:last-child td { border-bottom:0; }
       .trang-san-pham td:last-child, .trang-san-pham th:last-child { text-align:right; }
       .trang-san-pham .sp-price { color:var(--sp-accent); white-space:nowrap; font-variant-numeric:tabular-nums; }
+      .trang-san-pham .sp-prices summary { cursor:pointer; }
+      .trang-san-pham .sp-price-count { color:var(--sp-muted); white-space:nowrap; }
+      .trang-san-pham .sp-price-hide, .trang-san-pham .sp-prices[open] .sp-price-show { display:none; }
+      .trang-san-pham .sp-prices[open] .sp-price-hide { display:inline; }
+      .trang-san-pham .sp-price-list { margin-top:4px; padding-left:16px; }
       .trang-san-pham button { border:1px solid var(--sp-line); border-radius:7px; background:transparent; color:inherit; font:inherit; padding:6px 10px; box-shadow:none; }
       .trang-san-pham button:hover { filter:brightness(1.15); }
       .trang-san-pham .sp-primary, .trang-san-pham [role="checkbox"][data-state="checked"] { background:var(--sp-accent); border-color:var(--sp-accent); color:var(--sp-on-accent); }
