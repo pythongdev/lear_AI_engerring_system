@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { QrCode } from "lucide-react";
+import { QrCode, ShoppingBag } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { dongGui, giaDong, useGiaCombo } from "@/components/shared/bo-soan-mon";
 import { tien } from "@/components/shared/dong-mon-da-ghi";
@@ -149,25 +149,30 @@ export function PhieuKhach({ ma, nhan, initialMenu, initialDelivery }: {
       </button>
     </form>
     {!web && <Dialog open={xacNhan} onOpenChange={setXacNhan}>
-      <DialogContent showCloseButton={false} className="max-h-[85dvh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Xác nhận đặt món</DialogTitle>
-          <DialogDescription>Vui lòng xem lại món và tổng tiền trước khi gửi cho quán.</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-3 text-sm">
-          <p className="font-semibold">{/^\d+$/.test(nhan?.trim() ?? "") ? `Bàn ${nhan!.trim()}` : nhan}</p>
-          <ul className="divide-y divide-[var(--line)]">{lines.map((dong, i) => <li key={i} className="py-2">
-            <div className="flex justify-between gap-3"><span>{dong.combo ? dong.combo.name : dong.mon.item_name}</span><strong>×{dong.quantity}</strong></div>
+      <DialogContent showCloseButton={false} className="xac-nhan-mon max-h-[88dvh] overflow-y-auto">
+        <div className="xac-nhan-mon__header">
+          <div className="xac-nhan-mon__icon"><ShoppingBag aria-hidden="true" size={24} /></div>
+          <DialogHeader>
+            <p className="xac-nhan-mon__eyebrow">ĐƠN CỦA BẠN</p>
+            <DialogTitle>Xác nhận đặt món</DialogTitle>
+            <DialogDescription>Vui lòng xem lại món và tổng tiền trước khi gửi cho quán.</DialogDescription>
+          </DialogHeader>
+          <p className="xac-nhan-mon__ban">{/^\d+$/.test(nhan?.trim() ?? "") ? `Bàn ${nhan!.trim()}` : nhan}</p>
+        </div>
+        <div className="xac-nhan-mon__body">
+          <p className="xac-nhan-mon__section">Món đã chọn <span>{lines.reduce((n, dong) => n + dong.quantity, 0)} món</span></p>
+          <ul className="xac-nhan-mon__list">{lines.map((dong, i) => <li key={i} className="xac-nhan-mon__item">
+            <div className="xac-nhan-mon__item-heading"><span className="xac-nhan-mon__number" aria-hidden="true">{i + 1}</span><strong>{dong.combo ? dong.combo.name : dong.mon.item_name}</strong><span className="xac-nhan-mon__quantity">×{dong.quantity}</span></div>
             {(dong.combo ? dong.portions : [dong]).map((suat, j) => {
               const chon = suat.mon.option_groups.flatMap((nhom) => nhom.options.filter((o) => suat.option_ids.includes(o.menu_option_id)).map((o) => `${nhom.option_group_name}: ${nhom.option_group_name === "Lượng nhân" && o.option_name === "Thường" ? "Vừa" : nhom.option_group_name === "Lượng nhân" && o.option_name === "Nhiều nhân" ? "Nhiều" : o.option_name}`));
-              return chon.length > 0 && <p key={j} className="text-xs text-[var(--muted)]">{dong.combo ? `${suat.mon.item_name} · ` : ""}{chon.join(" · ")}</p>;
+              return chon.length > 0 && <p key={j} className="xac-nhan-mon__option">{dong.combo ? `${suat.mon.item_name} · ` : ""}{chon.join(" · ")}</p>;
             })}
           </li>)}</ul>
-          <p className="flex justify-between border-t border-[var(--line)] pt-3 font-semibold"><span>Tổng tạm tính</span><span>{tong.isSuccess && !tong.isFetching ? tien(tong.data.total_vnd) : "Đang tính…"}</span></p>
+          <p className="xac-nhan-mon__total"><span>Tổng tạm tính</span><strong>{tong.isSuccess && !tong.isFetching ? tien(tong.data.total_vnd) : "Đang tính…"}</strong></p>
         </div>
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => setXacNhan(false)}>Không đồng ý</Button>
-          <Button type="button" disabled={!hopLe || dangGui} onClick={() => { setXacNhan(false); void gui(); }}>Đồng ý đặt món</Button>
+        <DialogFooter className="xac-nhan-mon__footer">
+          <Button type="button" variant="outline" className="xac-nhan-mon__cancel" onClick={() => setXacNhan(false)}>Không đồng ý</Button>
+          <Button type="button" className="xac-nhan-mon__confirm" disabled={!hopLe || dangGui} onClick={() => { setXacNhan(false); void gui(); }}>Đồng ý đặt món</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>}

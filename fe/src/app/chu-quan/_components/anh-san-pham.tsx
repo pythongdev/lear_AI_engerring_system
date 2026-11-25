@@ -15,15 +15,16 @@ const anhTheoTen: Record<string, string> = {
   "canh banh cuon": "banh-cuon-minh-hoa.jpg",
 };
 const anhCombo: Record<string, string> = {
-  "suat gio": "suat-gio.jpeg",
+  "suat gio": "suat-gio.png",
   "suat trung": "suat-trung.jpeg",
   "suat day du": "suat-day-du.jpeg",
+  "suat day du trung": "suat-day-du-trung-chin.png",
   "day du": "suat-day-du.jpeg",
-  "day du trung": "suat-day-du.jpeg",
+  "day du trung": "suat-day-du-trung-chin.png",
 };
 
-export function AnhSanPham({ ten, combo = false, className = "", imageUrl, anhVersion }: {
-  ten: string; combo?: boolean; className?: string; imageUrl?: string | null; anhVersion?: number;
+export function AnhSanPham({ ten, combo = false, className = "", anhMenu, imageUrl, anhVersion }: {
+  ten: string; combo?: boolean; className?: string; anhMenu?: string; imageUrl?: string | null; anhVersion?: number;
 }) {
   const tenChuan = ten.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d")
     .trim().replace(/\s+/g, " ").replace(/\s*\(ban roi\)$/, "").replace(/\s+(chin|tai|vang)$/, "");
@@ -31,15 +32,16 @@ export function AnhSanPham({ ten, combo = false, className = "", imageUrl, anhVe
     : anhTheoTen[tenChuan];
   const anhTaiLen = (imageUrl?.startsWith("/menu-items/") || imageUrl?.startsWith("/menu-combos/")) ? `/api${imageUrl}${anhVersion ? `?v=${anhVersion}` : ""}` : null;
   const anhMacDinh = tep ? thuMucAnh + tep : null;
-  const [anhLoi, setAnhLoi] = useState<string | null>(null);
-  const src = anhTaiLen && anhLoi !== anhTaiLen ? anhTaiLen : anhMacDinh;
-  const coAnh = src !== null && anhLoi !== src;
+  const [anhLoi, setAnhLoi] = useState<Set<string>>(() => new Set());
+  // Ảnh chủ quán tải lên thắng (T-315 A6); chưa có hoặc hỏng thì về ảnh trình bày chung của menu khách (T-294), rồi ảnh mặc định.
+  const src = [anhTaiLen, anhMenu, anhMacDinh].find((anh): anh is string => !!anh && !anhLoi.has(anh));
+  const coAnh = src !== undefined;
 
   return <span className={`relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted text-muted-foreground ${className}`}>
     {coAnh ? <>
-      <Image src={src} alt={ten} fill sizes="(max-width: 640px) 100vw, 340px"
+      <Image src={src} alt={src === anhMenu ? `Ảnh combo ${ten}` : ten} fill sizes="(max-width: 640px) 100vw, 340px"
         unoptimized={src === anhTaiLen}
-        className="object-cover" onError={() => setAnhLoi(src)} />
+        className="object-cover" onError={() => setAnhLoi((cu) => new Set(cu).add(src))} />
       {src === anhMacDinh && tep === "banh-cuon-minh-hoa.jpg" && <span className="absolute bottom-1 right-1 rounded bg-black/65 px-1.5 py-0.5 text-[9px] text-white">Ảnh minh hoạ</span>}
     </> : <span role="img" aria-label={`Chưa có ảnh ${ten}`} className="flex flex-col items-center gap-1 p-1 text-center">
       <ImageIcon aria-hidden="true" className="size-5 opacity-60" />

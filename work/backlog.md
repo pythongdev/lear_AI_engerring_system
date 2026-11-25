@@ -198,17 +198,18 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 
 
 
+- [x] T-378 **Thay đổi menu khách và hộp xác nhận của mười hai việc đã xong 04–05/11 vẫn chưa vào lịch sử git** — L1 (gom, không viết code mới ngoài hai chỗ sửa khi duyệt), Claude mở 2026-11-25 theo lời chủ repo *"tiếp tục yêu cầu codex làm bạn kiểm tra"*; một commit cho T-289 · T-291 · T-292 · T-293 · T-294 · T-295 · T-297 · T-298 · T-300 · T-301 · T-304 · T-305 · [chi tiết](#t-378)
 - [x] T-303 **Thu gọn giá trong bảng Sản phẩm** — L1, chủ repo yêu cầu 2026-11-05; mặc định hiện Thịt · Thường khi có, mở xem đủ các giá còn lại · [chi tiết](#t-303)
 
 
 
 - [x] T-295 **Canh bánh cuốn hiện ba nút chọn mức rau trên menu khách** — L1, chủ repo yêu cầu 2026-11-05; ba nút chọn trên thẻ món, test 16/16 và gate đạt · [chi tiết](#t-295)
 
-- [ ] T-294 **Dùng ảnh mới cho mọi thẻ combo trên menu khách** — L1, chủ repo giao Codex 2026-11-04; ảnh nguồn trong `docs/private/anh/final/` · [chi tiết](#t-294)
+- [x] T-294 **Dùng ảnh mới cho mọi thẻ combo trên menu khách** — L1, chủ repo giao Codex 2026-11-04; ảnh nguồn trong `docs/private/anh/final/` · [chi tiết](#t-294)
 
-- [ ] T-293 **Dùng ảnh mới cho combo Đầy đủ trứng chín trên menu khách** — L1, chủ repo giao Codex 2026-11-04; ảnh nguồn trong `docs/private/anh/anh-kick-co4-3/` · [chi tiết](#t-293)
+- [x] T-293 **Dùng ảnh mới cho combo Đầy đủ trứng chín trên menu khách** — L1, chủ repo giao Codex 2026-11-04; ảnh nguồn trong `docs/private/anh/anh-kick-co4-3/` · [chi tiết](#t-293)
 
-- [ ] T-292 **Xoay ảnh Suất giò 180 độ trên menu khách** — L1, chủ repo giao Codex 2026-11-04; giữ các ảnh khác nguyên chiều · [chi tiết](#t-292)
+- [x] T-292 **Xoay ảnh Suất giò 180 độ trên menu khách** — L1, chủ repo giao Codex 2026-11-04; giữ các ảnh khác nguyên chiều · [chi tiết](#t-292)
 
 - [ ] T-286 **Chưa có số đo thật để chọn model cho chat** — L1, chủ repo chọn *"Chạy thử qua API cả ba"* 2026-11-03 (`U-112`); Codex dựng bộ thử ngoài repo, Claude duyệt đạt 2026-11-03; chờ chủ repo tạo khoá API và chạy thật · [chi tiết](#t-286)
 - [ ] T-279 **Bản HTML chi tiết món kể chuyện theo cuộn** — L1, chủ repo giao Codex 2026-10-31; dựa trên ý tưởng đầy đủ và mẫu Paris · [chi tiết](#t-279)
@@ -2107,6 +2108,32 @@ Bàn giao 2026-11-06: `TrangVanHanh` dùng `TinHieuProvider` trên `GET /product
 
 [↑ đầu file](#top)
 
+<a id="t-378"></a>
+### T-378 — Gom thay đổi menu khách 04–05/11 thành một commit
+
+Sáu tệp FE (`phieu-khach.tsx`, `thuc-don-khach.tsx` · `.css`, `thuc-don-khach.test.tsx`, `danh-muc-khach.test.tsx`, `anh-san-pham.tsx`)
+và ba ảnh (`combo-menu.png`, `suat-day-du-trung-chin.png`, `suat-gio.png`) mang phần của mười hai việc làm 2026-11-04…05 trên
+`P4A-01`, đã tick hoặc chờ duyệt nhưng chưa ai commit: ảnh Suất giò (T-289), khung ảnh 220 px (T-291), xoay Suất giò (T-292), ảnh Đầy
+đủ trứng chín (T-293), ảnh chung cho combo trên menu khách (T-294), canh bánh cuốn ba mức rau và ẩn thẻ *Canh* trùng (T-295 · T-297 ·
+T-298 · T-300 · T-301), hộp xác nhận đặt món (T-304 · T-305). Việc sau viết đè dòng của việc trước (chuỗi canh T-298 → T-300 → T-301)
+nên không dựng lại được trạng thái giữa của từng việc. *Claude quyết (cách làm, chủ repo có thể bác khi dán):* một commit dưới mã
+gom này, thân commit liệt kê các mã; mỗi mục gốc giữ bằng chứng của nó.
+
+Duyệt 2026-11-25 (thực hiện: Codex `gpt-6-astra` trong `../lean_wt/ANH-menu`, nền `8b34435`; hết hạn mức trước khi lưu báo cáo, bảng
+phân loại lấy từ log; duyệt: Claude). Codex sửa một lỗi thật trong đoạn Claude ghép khi đưa T-315 về: `AnhSanPham` chỉ nhớ **một** ảnh
+lỗi, nên khi ảnh tải lên rồi ảnh chung cùng hỏng thì quay lại tải ảnh đã hỏng mãi — nay nhớ tập ảnh lỗi, đi ảnh tải lên → ảnh chung →
+ảnh mặc định → *Chưa có ảnh*, test *thẻ combo: ảnh lỗi lần lượt…*. **Claude sửa:** phép xoay của T-292 nhắm `alt="Suất giò"` nên sẽ
+xoay ngược ảnh chủ quán tải lên cho combo ấy (T-315) — thu về `[alt="Suất giò"][src*="suat-gio"]`, chỉ tệp ảnh tĩnh. Ảnh:
+`shasum -a 256` `combo-menu.png` `bf225adc…` · `suat-day-du-trung-chin.png` `bcf2992e…` khớp hash ghi ở T-294 · T-293; nguồn của
+`combo-menu.png` không còn ở `docs/private/anh/final/` nên chỉ so được với hash đã ghi. Bằng chứng: `tsc` sạch, `vitest src/app/ban
+src/app/chu-quan src/app/thuc-don src/app/dat-mon src/components` 830/830 (worktree, Claude chạy lại), `./scripts/gate.sh` clone chính
+mọi cổng PASS (log `../lean_wt/_claude_logs/ANH-menu/gate-chinh.log`).
+
+Hệ quả cần biết: trên menu khách, thẻ combo nay dùng ảnh chủ quán tải lên, chưa có thì ảnh chung T-294 — ảnh riêng của T-289 · T-293
+và phép xoay T-292 chỉ còn hiện ở trang chủ quán và trang chi tiết, không còn trên thẻ menu khách.
+
+Phạm vi (`work/scope/T-378.txt`): sáu tệp FE, ba ảnh, `work/backlog.md`.
+
 <a id="t-303"></a>
 ### T-303 — Thu gọn giá trong bảng Sản phẩm
 
@@ -2196,6 +2223,8 @@ Người làm: Codex trên nhánh `P4A-01`; chưa có người duyệt độc l�
 
 **Kết quả:** Codex kiểm ngày 2026-11-05 trên `P4A-01`, base `7de43b2`; chưa được duyệt độc lập, lượt này chỉ bổ sung kết quả trong entry, không sửa FE. A1: `shasum -a 256` nguồn đã chỉ định và `fe/public/images/san-pham/combo-menu.png` đều là `bf225adc29d4d4aa80d45d54c9e776b113389f42a26bbca36ec88b132703777b`; `rg -n 'anhMenu|AnhSanPham' fe/src --glob '*.tsx'` cho thấy vòng lặp combo tại `thuc-don-khach.tsx:188` luôn truyền ảnh này, component ưu tiên `anhMenu` tại `anh-san-pham.tsx:33`. A2: ảnh món lẻ tại dòng 206 và các lời gọi quản trị không truyền `anhMenu`; Node `assert.deepEqual` xác nhận bảng ảnh món lẻ bằng HEAD; `git diff HEAD` trang quản trị combo/sản phẩm và trang/ảnh giới thiệu không có output. Ánh xạ quản trị đổi sẵn do T-289/T-293 được giữ, không quy cho T-294. Bằng chứng là kiểm code và test, chưa kiểm giao diện trong trình duyệt thật. Test `cd fe && npx vitest run src/app/ban/thuc-don-khach.test.tsx`: `Test Files 1 passed (1)`, `Tests 16 passed (16)`; không thêm test vì ngoài scope. A3: đã chạy và đọc `./scripts/gate.sh`: Gate 1 FAIL ở build Turbopack với `binding to a port` / `Operation not permitted (os error 1)` trong môi trường hạn chế; lint, typecheck và toàn bộ 639/639 test FE qua. Một lượt gate chồng nhau còn báo build đang chạy; đã chờ kết thúc để chạy lại tuần tự sau cập nhật entry. Output cuối được bàn giao trong báo cáo. Bảng hunk bàn giao tách T-289/T-293/T-294 trong component ảnh và T-294/T-295 trong menu; Claude duyệt, tách commit và quyết trạng thái tiếp theo.
 
+**Duyệt 2026-11-25 (Claude):** commit cùng T-378 — xem [T-378](#t-378).
+
 [↑ đầu file](#top)
 
 <a id="t-293"></a>
@@ -2211,6 +2240,8 @@ Người làm: Codex trên nhánh `P4A-01`; chưa có người duyệt độc l�
 
 **Kết quả:** Codex kiểm ngày 2026-11-05 trên `P4A-01`, base `7de43b2`; chưa được duyệt độc lập, lượt này chỉ bổ sung kết quả trong entry, không sửa FE. A1: `shasum -a 256` nguồn đã chỉ định và `fe/public/images/san-pham/suat-day-du-trung-chin.png` đều là `bcf2992ecc57630731a22d43022333f5ca51535f282aeee617df72380631cd81`; chạy Node chuẩn hoá hai tên “Đầy đủ trứng chín” và “Suất Đầy Đủ Trứng Chín” rồi kiểm ánh xạ đều PASS tới file này. **Không chứng minh được A1 trên `/ban/3` hiện tại** vì T-294 truyền `anhMenu` ghi đè mọi ảnh combo; ánh xạ riêng vẫn dùng cho quản trị đúng như entry T-294 đã nêu. A2: đối chiếu bảng `anhCombo` với HEAD bằng Node: các khoá khác giữ nguyên, ngoại trừ `suat gio` đổi bởi T-289; bảng ảnh món lẻ bằng HEAD, trang/ảnh giới thiệu quán không có diff. Ảnh chung trên menu là thay đổi của T-294, không coi là bằng chứng A2 toàn cây bằng HEAD. Test `cd fe && npx vitest run src/app/ban/thuc-don-khach.test.tsx`: `Test Files 1 passed (1)`, `Tests 16 passed (16)`; không thêm test vì ngoài scope. A3: đã chạy và đọc `./scripts/gate.sh`: Gate 1 FAIL ở build Turbopack với `binding to a port` / `Operation not permitted (os error 1)` trong môi trường hạn chế; lint, typecheck và toàn bộ 639/639 test FE qua. Một lượt gate chồng nhau còn báo build đang chạy; đã chờ kết thúc để chạy lại tuần tự sau cập nhật entry. Output cuối được bàn giao trong báo cáo. Còn chờ Claude duyệt bằng chứng và xử lý Acceptance cũ bị T-294 thay thế; không đổi trạng thái.
 
+**Duyệt 2026-11-25 (Claude):** commit cùng T-378 — xem [T-378](#t-378).
+
 [↑ đầu file](#top)
 
 <a id="t-292"></a>
@@ -2225,6 +2256,8 @@ Phạm vi (`work/scope/T-292.txt`): `work/backlog.md`, `work/backlog_archive.md`
 Người làm: Codex trên nhánh `P4A-01`; chưa có người duyệt độc lập. Cây có thay đổi chưa commit của T-290, T-291 và các việc khác; giữ riêng thay đổi này.
 
 **Kết quả:** Codex kiểm ngày 2026-11-05 trên `P4A-01`, base `7de43b2`; chưa được duyệt độc lập, lượt này chỉ bổ sung kết quả trong entry, không sửa FE. A1: kiểm tĩnh `thuc-don-khach.css:82–85` có khung 220 px, `object-fit: contain` và xoay 180 độ riêng `alt="Suất giò"`; `/ban/[ma]` và `/dat-mon` cùng dùng `PhieuKhach` → `ThucDonKhach`. Tuy nhiên **không chứng minh được A1 trên cây hiện tại**: T-294 dùng ảnh chung và đổi alt thành `Ảnh combo Suất giò`, không còn khớp selector xoay; không tự xoay ảnh mới vì sẽ tự quyết cách kết hợp hai yêu cầu. A2: selector xoay giới hạn trong `.khach-menu .menu-image` và đúng alt; `git diff HEAD` của trang quản trị combo/sản phẩm và trang/ảnh giới thiệu quán không có output; đối chiếu ánh xạ món lẻ với HEAD bằng Node `assert.deepEqual` PASS. `shasum -a 256` ảnh Suất giò nguồn `docs/private/anh/anh-ngang/suat-gio-anh-ngang.png` và bản công khai cùng `6a06ba00932f61e32cfc27323cd462096e1a8a6ff5f1b4581c984c58564e9fa1` (ảnh thuộc T-289; T-292 không sửa ảnh). Test `cd fe && npx vitest run src/app/ban/thuc-don-khach.test.tsx`: `Test Files 1 passed (1)`, `Tests 16 passed (16)`; không thêm test vì ngoài scope. A3: đã chạy và đọc `./scripts/gate.sh`: Gate 1 FAIL ở build Turbopack với `binding to a port` / `Operation not permitted (os error 1)` trong môi trường hạn chế; lint, typecheck và toàn bộ 639/639 test FE qua. Một lượt gate chồng nhau còn báo build đang chạy; đã chờ kết thúc để chạy lại tuần tự sau cập nhật entry. Output cuối được bàn giao trong báo cáo, không lấy test PASS thay cho gate. Còn chờ Claude xử lý Acceptance cũ bị T-294 thay thế và duyệt trước khi chuyển trạng thái.
+
+**Duyệt 2026-11-25 (Claude):** commit cùng T-378 — xem [T-378](#t-378).
 
 [↑ đầu file](#top)
 

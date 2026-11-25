@@ -79,10 +79,11 @@
 .khach-menu .menu-section-title::after { content: ""; height: 1px; flex: 1; background: var(--line); }
 .khach-menu .menu-card { margin-bottom: 16px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); box-shadow: 0 1px 3px #0000000d; }
 .khach-menu .menu-card:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
-.khach-menu .menu-photo { display: block; position: relative; height: 176px; overflow: hidden; background: var(--field); }
+.khach-menu .menu-photo { display: block; position: relative; height: 220px; overflow: hidden; background: var(--field); }
 .khach-menu .menu-image { width: 100%; height: 100%; border-radius: 0; }
-.khach-menu .menu-image img { transition: transform 300ms ease; }
-.khach-menu .menu-photo:hover img { transform: scale(1.05); }
+.khach-menu .menu-image img { object-fit: contain; }
+/* T-292 chỉ xoay tệp ảnh tĩnh Suất giò; ảnh chủ quán tải lên (T-315, /api/menu-combos/…) không bao giờ bị xoay. */
+.khach-menu .menu-image img[alt="Suất giò"][src*="suat-gio"] { transform: rotate(180deg); }
 .khach-menu .menu-photo-caption { position: absolute; top: 8px; right: 8px; padding: 4px 8px; border-radius: 8px; background: #0009; color: white; font-size: 10px; }
 .khach-menu .menu-card-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 8px; padding: 16px; }
 .khach-menu .menu-card-heading { grid-column: 1 / -1; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
@@ -92,6 +93,14 @@
 .khach-menu .menu-details { justify-self: start; }
 .khach-menu .menu-options { display: contents; }
 .khach-menu .menu-choice { grid-column: 2; justify-self: end; border-color: color-mix(in srgb, var(--accent) 20%, transparent); background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--accent); text-align: left; }
+.khach-menu .menu-canh-so-luong { grid-column: 1 / -1; }
+.khach-menu .menu-canh-so-luong ul { display: grid; gap: 8px; }
+.khach-menu .menu-canh-so-luong li { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 8px 10px; border-radius: 12px; background: var(--card); }
+.khach-menu .menu-canh-ten-rau { font-size: 15px; font-weight: 600; }
+.khach-menu .menu-canh-stepper { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.khach-menu .menu-canh-stepper button { width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 50%; background: var(--bg); color: var(--accent); font-size: 22px; line-height: 1; }
+.khach-menu .menu-canh-stepper button:disabled { color: var(--muted); opacity: .5; }
+.khach-menu .menu-canh-stepper output { min-width: 24px; text-align: center; font-size: 17px; font-weight: 700; }
 .khach-menu .menu-chip svg { flex-shrink: 0; transition: transform 250ms ease; }
 .khach-menu .menu-chip[aria-expanded=true] svg { transform: rotate(180deg); }
 .khach-menu .menu-panel { grid-column: 1 / -1; display: grid; grid-template-rows: 0fr; transition: grid-template-rows 250ms ease; }
@@ -119,3 +128,54 @@
 .khach-menu .tabs button { border: 0; border-radius: 0; background: transparent; color: var(--muted); padding: 10px 0; font-size: 12px; }
 .khach-menu .tabs button[aria-pressed=true] { color: var(--accent); border-bottom: 3px solid var(--accent); }
 @media (max-width: 480px) { .khach-menu .tabs { gap: 14px; } }
+
+/* Hộp xác nhận được Radix đưa ra ngoài .khach-menu, nên tự mang màu sáng/tối. */
+.xac-nhan-mon {
+  --confirm-paper: #fffaf5; --confirm-card: #fff; --confirm-text: #24201c;
+  --confirm-muted: #756b63; --confirm-line: #f3dfca;
+  width: min(440px, calc(100vw - 28px)); max-width: none; padding: 0; gap: 0;
+  overflow-x: hidden; overflow-y: auto; border: 1px solid #f4cda9; border-radius: 24px;
+  background: var(--confirm-paper); color: var(--confirm-text);
+  box-shadow: 0 24px 70px #4d250329, 0 8px 22px #4d25031c;
+}
+.dark .xac-nhan-mon {
+  --confirm-paper: #191512; --confirm-card: #27201b; --confirm-text: #fff6ee;
+  --confirm-muted: #c2aea0; --confirm-line: #493327;
+  border-color: #6d3d24;
+}
+.xac-nhan-mon__header {
+  position: relative; display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 12px;
+  padding: 22px 22px 20px; border-bottom: 1px solid var(--confirm-line);
+  background: var(--confirm-paper); color: var(--confirm-text);
+}
+.xac-nhan-mon__icon { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid var(--confirm-line); border-radius: 16px; background: var(--confirm-card); color: #b65312; }
+.dark .xac-nhan-mon__icon { color: #ffad71; }
+.xac-nhan-mon__header [data-slot="dialog-header"] { gap: 4px; }
+.xac-nhan-mon__eyebrow { margin: 0; color: #b65312; font-size: 10px; font-weight: 800; letter-spacing: .17em; }
+.dark .xac-nhan-mon__eyebrow { color: #ffad71; }
+.xac-nhan-mon__header [data-slot="dialog-title"] { color: var(--confirm-text); font-size: 20px; font-weight: 800; line-height: 1.2; }
+.xac-nhan-mon__header [data-slot="dialog-description"] { color: var(--confirm-muted); font-size: 12px; line-height: 1.45; }
+.xac-nhan-mon__ban { grid-column: 1 / -1; justify-self: start; margin: 5px 0 0; padding: 6px 12px; border: 1px solid var(--confirm-line); border-radius: 999px; background: var(--confirm-card); color: var(--confirm-text); font-size: 12px; font-weight: 700; }
+.xac-nhan-mon__body { display: grid; gap: 12px; padding: 18px 20px 16px; }
+.xac-nhan-mon__section { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0; color: var(--confirm-text); font-size: 13px; font-weight: 800; }
+.xac-nhan-mon__section span { color: #b65312; font-size: 12px; font-weight: 700; }
+.dark .xac-nhan-mon__section span { color: #ffaf72; }
+.xac-nhan-mon__list { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+.xac-nhan-mon__item { min-width: 0; padding: 12px; border: 1px solid var(--confirm-line); border-radius: 14px; background: var(--confirm-card); box-shadow: 0 2px 7px #5d2a060a; }
+.xac-nhan-mon__item-heading { display: flex; align-items: center; gap: 9px; min-width: 0; font-size: 13px; }
+.xac-nhan-mon__item-heading strong { min-width: 0; flex: 1; overflow-wrap: anywhere; }
+.xac-nhan-mon__number { display: grid; flex: 0 0 25px; place-items: center; width: 25px; height: 25px; border-radius: 9px; background: #fff0df; color: #b65312; font-size: 11px; font-weight: 800; }
+.dark .xac-nhan-mon__number { background: #4d2d1c; color: #ffad71; }
+.xac-nhan-mon__quantity { flex: 0 0 auto; padding: 4px 8px; border-radius: 999px; background: #fff0df; color: #b65312; font-size: 12px; font-weight: 800; }
+.dark .xac-nhan-mon__quantity { background: #4d2d1c; color: #ffad71; }
+.xac-nhan-mon__option { margin: 8px 0 0 34px; color: var(--confirm-muted); font-size: 11px; line-height: 1.45; overflow-wrap: anywhere; }
+.xac-nhan-mon__total { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 2px 0 0; padding: 14px 0 0; border-top: 1px solid var(--confirm-line); background: transparent; color: var(--confirm-text); font-size: 13px; font-weight: 700; }
+.xac-nhan-mon__total strong { flex: 0 0 auto; color: #b65312; font-size: 19px; font-weight: 800; }
+.dark .xac-nhan-mon__total strong { color: #ffad71; }
+.xac-nhan-mon__footer { display: grid; grid-template-columns: 1fr 1.35fr; gap: 9px; margin: 0; padding: 14px 20px 18px; border-top: 1px solid var(--confirm-line); border-radius: 0; background: var(--confirm-paper); }
+.xac-nhan-mon .xac-nhan-mon__cancel, .xac-nhan-mon .xac-nhan-mon__confirm { min-height: 44px; height: auto; padding: 9px 12px; border-radius: 12px; font-size: 12px; font-weight: 800; white-space: normal; }
+.xac-nhan-mon .xac-nhan-mon__cancel { border: 1px solid var(--confirm-line); background: var(--confirm-card); color: var(--confirm-text); }
+.xac-nhan-mon .xac-nhan-mon__confirm { background: #e8610d; color: white; box-shadow: 0 5px 12px #b9471333; }
+.xac-nhan-mon .xac-nhan-mon__confirm:hover:not(:disabled) { background: #c74f08; }
+.xac-nhan-mon :focus-visible { outline: 2px solid #ff9a4d; outline-offset: 2px; }
+@media (max-width: 340px) { .xac-nhan-mon__footer { grid-template-columns: 1fr; } }

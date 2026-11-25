@@ -124,7 +124,8 @@ it.each([null, "/menu-combos/99/image"])("T-315 thực đơn khách hiện ảnh
   const menu = menuCoDanhMuc();
   menu.combos[0].image_url = image_url;
   mo(menu);
-  const src = screen.getByRole("img", { name: "Đầy đặn" }).getAttribute("src");
+  // Chưa có ảnh tải lên thì về ảnh trình bày chung của menu khách (T-294), tên "Ảnh combo …".
+  const src = screen.getByRole("img", { name: image_url ? "Đầy đặn" : "Ảnh combo Đầy đặn" }).getAttribute("src");
   if (image_url) expect(new URL(src!, "http://localhost").pathname).toBe("/api/menu-combos/99/image");
-  else expect(src).toContain("banh-cuon-minh-hoa.jpg");
+  else expect(decodeURIComponent(src!)).toContain("combo-menu.png");
 });

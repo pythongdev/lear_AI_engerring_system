@@ -96,6 +96,31 @@ export function ThucDonKhach({ items, combos = [], categories = [], lines, onCha
         return g.option_group_name === "Nhân" ? g.options.filter((o) => o.option_name === "Thịt").map((o) => o.menu_option_id) : selected;
       })) }));
     } } : undefined} />;
+  const chonSoBatCanh = (mon: Mon) => {
+    const rau = mon.option_groups.find((g) => g.option_group_name === "Rau");
+    if (!rau) return null;
+    return <section className="menu-canh-so-luong" aria-label="Số bát canh theo rau">
+      <ul>{rau.options.map((o) => {
+        const khop = (d: DongSoan) => !!d.mon && d.mon.menu_item_id === mon.menu_item_id && d.option_ids.includes(o.menu_option_id);
+        const count = lines.filter(khop).reduce((n, d) => n + so(d), 0);
+        return <li key={o.menu_option_id}>
+          <span className="menu-canh-ten-rau">{o.option_name}</span>
+          <div className="menu-canh-stepper">
+            <button type="button" aria-label={`Bớt canh ${o.option_name}`} disabled={count === 0} onClick={() => {
+              const i = lines.findLastIndex(khop);
+              if (i < 0) return;
+              const quantity = so(lines[i]) - 1;
+              onChange(quantity <= 0 ? lines.filter((_, j) => j !== i) : lines.map((d, j) => j === i ? { ...d, quantity } : d));
+            }}>−</button>
+            <output aria-label={`Số bát canh ${o.option_name}`}>{count}</output>
+            <button type="button" aria-label={`Thêm canh ${o.option_name}`} onClick={() => onChange([...lines, {
+              mon, quantity: 1, is_takeaway: false, option_ids: chonNhom(mon.option_groups, [o.menu_option_id]),
+            }])}>＋</button>
+          </div>
+        </li>;
+      })}</ul>
+    </section>;
+  };
   const sua = (i: number, dong: DongSoan) => onChange(lines.map((d, j) => j === i ? dong : d));
   const coDanhMuc = categories.length > 0;
   const the = [
@@ -105,7 +130,9 @@ export function ThucDonKhach({ items, combos = [], categories = [], lines, onCha
     ...(combos.length ? [{ key: "combo" as const, name: "Combo" }] : []),
   ];
   const dangChon = coDanhMuc && the.some((t) => t.key === danhMuc) ? danhMuc : "all";
-  const monLoc = items.filter((m) => timTen(m.item_name).includes(timTen(tim))).sort((a, b) => cuoiDanhSach(a) - cuoiDanhSach(b));
+  const coCanhBanhCuon = items.some((m) => m.item_name === "Canh bánh cuốn");
+  const monLoc = items.filter((m) => (!coCanhBanhCuon || timTen(m.item_name) !== "canh") && timTen(m.item_name).includes(timTen(tim)))
+    .sort((a, b) => cuoiDanhSach(a) - cuoiDanhSach(b));
   const comboLoc = combos.filter((c) => (dangChon === "all" || dangChon === "combo") && timTen(c.name).includes(timTen(tim)));
   const khoiMon = (coDanhMuc ? [
     ...categories.map((c) => ({ key: c.menu_category_id, name: c.name, items: monLoc.filter((m) => m.menu_category_id === c.menu_category_id) })),
@@ -173,7 +200,7 @@ export function ThucDonKhach({ items, combos = [], categories = [], lines, onCha
       <h2 className="menu-section-title">COMBO</h2>
       {comboLoc.map((combo) => <article className="menu-card" data-component="ComboCard" key={combo.menu_combo_id}>
         <Link href={chiTiet("combo", combo.menu_combo_id)} aria-label={`Xem chi tiết combo ${combo.name}`} className="menu-photo">
-          <AnhSanPham ten={combo.name} imageUrl={combo.image_url} combo className="menu-image" />
+          <AnhSanPham ten={combo.name} imageUrl={combo.image_url} combo anhMenu="/images/san-pham/combo-menu.png" className="menu-image" />
           <span className="menu-photo-caption">Xem chi tiết ảnh</span>
         </Link>
         <div className="menu-card-body">
@@ -198,8 +225,10 @@ export function ThucDonKhach({ items, combos = [], categories = [], lines, onCha
         <div className="menu-card-body">
           <div className="menu-card-heading"><h3>{mon.item_name}</h3><div className="menu-price">{giaMon(mon)}</div></div>
           {maBan === undefined && <NutTim ten={mon.item_name} dong={{ menu_item_id: mon.menu_item_id, option_ids: chonNhom(mon.option_groups, []) }} />}
-          {mon.option_groups.length > 0 && boChon(`mon-${mon.menu_item_id}`, mon.option_groups)}
-          {stepper(mon.item_name, (d) => d.mon?.menu_item_id === mon.menu_item_id, () => onChange([...lines, { mon, quantity: 1, is_takeaway: false, option_ids: daChon(`mon-${mon.menu_item_id}`, mon.option_groups) }]))}
+          {mon.item_name === "Canh bánh cuốn" && mon.option_groups.some((g) => g.option_group_name === "Rau")
+            ? chonSoBatCanh(mon)
+            : <>{mon.option_groups.length > 0 && boChon(`mon-${mon.menu_item_id}`, mon.option_groups)}
+              {stepper(mon.item_name, (d) => d.mon?.menu_item_id === mon.menu_item_id, () => onChange([...lines, { mon, quantity: 1, is_takeaway: false, option_ids: daChon(`mon-${mon.menu_item_id}`, mon.option_groups) }]))}</>}
         </div>
       </article>)}
     </section>)}
@@ -210,7 +239,9 @@ export function ThucDonKhach({ items, combos = [], categories = [], lines, onCha
         <div className="combo-row mt-3 text-[10px] text-[var(--muted)]"><h3 className="text-[12px]">{comboGroup ? "COMBO" : "MÓN LẺ"}</h3><span aria-hidden="true">Nhân</span><span aria-hidden="true">Lượng nhân</span><span aria-hidden="true">Số lượng</span><span aria-hidden="true">Giá</span><span /></div>
         {lines.map((dong, i) => (!!dong.combo === comboGroup) && <section key={i} aria-label={`Dòng ${i + 1}`} className="border-b border-[var(--line)] py-3">
           <div className="combo-row">
-            <h4 className="text-[13px] wrap-anywhere">{dong.combo ? dong.combo.name : dong.mon.item_name}</h4>
+            <div className="wrap-anywhere"><h4 className="text-[13px]">{dong.combo ? dong.combo.name : dong.mon.item_name}</h4>
+              {dong.mon && dong.mon.item_name === "Canh bánh cuốn" && <p className="text-[11px] text-[var(--muted)]" aria-label="Số bát canh và rau">{so(dong)} bát · Rau: {dong.mon.option_groups.find((g) => g.option_group_name === "Rau")?.options.find((o) => dong.option_ids.includes(o.menu_option_id))?.option_name ?? "Chưa chọn"}</p>}
+            </div>
             <span className="text-[11px] wrap-anywhere" aria-label="Nhân">{chonNhan(dong.combo ? dong.portions : [dong], "Nhân")}</span>
             <span className="text-[11px] wrap-anywhere" aria-label="Lượng nhân">{chonNhan(dong.combo ? dong.portions : [dong], "Lượng nhân")}</span>
             {oSoLuong(dong, i)}
