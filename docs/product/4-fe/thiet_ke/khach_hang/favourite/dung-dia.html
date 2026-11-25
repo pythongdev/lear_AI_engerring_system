@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Yêu thích · Quán Bánh Cuốn</title><style>
+:root { color-scheme:dark; --bg:#000000; --card:#1F2937; --line:#2D3748; --muted:#9CA3AF; --accent:#FF7A1A; --field:#374151; --text:#F9FAFB; --page:#0a0a0a; --notch:#0f172a; --banner:#3a2310; --banner-ink:#7c4a23; --badge:#3a2a18}
+:root[data-theme=light] { color-scheme:light; --bg:#FFFFFF; --card:#F3F4F6; --line:#E5E7EB; --muted:#6B7280; --accent:#EA6A0C; --field:#E5E7EB; --text:#111827; --page:#F3F4F6; --notch:#E5E7EB; --banner:#FDE8D4; --banner-ink:#C2702F; --badge:#FDECDC}
+* { box-sizing:border-box}
+body { margin:0; background:var(--page); color:var(--text); font:12px/1.45 'Be Vietnam Pro',system-ui,sans-serif}
+button,input,textarea { font:inherit; color:inherit}
+button { cursor:pointer; border:1px solid var(--line); border-radius:7px; background:transparent; padding:6px 10px}
+button:hover { filter:brightness(1.15)}
+:focus-visible { outline:2px solid var(--accent); outline-offset:3px}
+h1,h2,h3,p { margin:0}
+h1 { font-size:20px; font-weight:600}
+h2,h3 { font-size:14px; font-weight:500}
+.muted { color:var(--muted)}
+.price { color:var(--accent); white-space:nowrap}
+.primary { background:var(--accent); border-color:var(--accent); color:#fff}
+.plain { border:0; padding:0}
+.row { display:flex; align-items:center; justify-content:space-between; gap:8px}
+.phone { max-width:472px; margin:24px auto; background:var(--bg); border:1px solid var(--notch); border-radius:24px; padding:0 15px 16px; overflow:clip}
+.status { height:30px; font-size:11px; position:relative}
+.status:after { content:''; width:150px; height:16px; border-radius:12px; background:var(--notch); position:absolute; top:5px; left:50%; transform:translateX(-50%)}
+.sticky { position:sticky; top:0; z-index:5; background:var(--bg)}
+.header { min-height:58px; border-bottom:1px solid var(--line)}
+.header small { font-size:11px; color:var(--muted)}
+.header-actions { display:flex; gap:6px}
+
+ a{color:inherit;text-decoration:none} .intro{padding:24px 0 18px}.intro p{margin-top:8px;color:var(--muted)}.eyebrow{color:var(--accent);font-size:11px;letter-spacing:2px;margin-bottom:8px}.tabs{display:flex;gap:8px;margin:8px 0 18px}.tabs button{flex:1;color:var(--muted)}.tabs button[aria-pressed=true]{background:var(--badge);border-color:var(--accent);color:var(--accent)}.item{display:flex;gap:12px;padding:16px 12px;border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:10px}.art{display:grid;place-items:center;width:68px;height:76px;flex-shrink:0;border-radius:10px;background:var(--banner);font-size:32px}.copy{flex:1;min-width:0}.copy small{color:var(--muted)}.copy h2{margin:3px 0 5px}.item .row{margin-top:12px}.heart{color:#f87171;padding:2px 6px;border:0;font-size:20px}.stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:7px}.stepper button{border:0}.stepper output{min-width:24px;text-align:center}.footer{background:var(--bg);padding:14px 0 0;border-top:1px solid var(--line);margin-top:24px}.footer .primary{width:100%;margin:12px 0;padding:13px}.bottom-nav{display:flex;justify-content:space-between;gap:8px;font-size:10px;padding:14px 0 4px;color:var(--muted)}.bottom-nav a[aria-current]{color:var(--accent)}.empty{text-align:center;padding:36px 10px;color:var(--muted)}.empty p{margin:10px}.empty a{color:var(--accent)}button:disabled{opacity:.4;cursor:default}dialog{color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:18px;width:calc(100% - 32px);max-width:430px;padding:22px}dialog::backdrop{background:#0009}dialog h2{font-size:20px;margin-bottom:14px}input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px;margin:8px 0 14px}.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}.set{border-bottom:1px solid var(--line);padding:16px 0}.set p{color:var(--muted);margin:8px 0}.notice{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);border-radius:10px;padding:12px 16px;z-index:20;width:max-content;max-width:90vw}.notice:empty{display:none}.demo{font-size:10px;color:var(--muted);text-align:center;margin-top:16px}@media(max-width:500px){.phone{margin:0;min-height:100dvh;border:0;border-radius:0}.status{display:none}}
+
+.customer-demo{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 0;color:var(--muted);font-size:11px}
+.customer-demo select{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;max-width:50%}
+.combo-create{border:1px solid var(--banner-ink);border-radius:16px;padding:18px;margin-bottom:24px;background:var(--banner)}
+.combo-create .eyebrow{letter-spacing:1px}.combo-create h2{font-size:18px;font-weight:600}.combo-create p{color:var(--muted);margin:8px 0 16px}.combo-create button{width:100%;min-height:44px;font-weight:600}
+.combo-heading{margin-bottom:12px}.combo-heading h2{font-weight:600}.own-combo{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:16px;margin-bottom:12px;overflow-wrap:anywhere}
+.own-combo h3{font-size:15px;font-weight:600}.own-combo p{color:var(--muted);margin:8px 0 14px}.combo-tag{display:inline-block;color:var(--accent);font-size:10px;background:var(--badge);padding:4px 8px;border-radius:20px;margin-bottom:8px}
+.own-combo .actions{flex-wrap:wrap;margin-top:14px}.own-combo button{min-height:44px}.combo-empty{border:1px dashed var(--line);border-radius:14px;padding:18px;color:var(--muted);margin-bottom:24px}
+#combo-dialog{max-height:calc(100dvh - 32px);overflow-y:auto}#combo-dialog h2{margin-bottom:8px}.combo-description{color:var(--muted);margin-bottom:18px}
+#combo-dialog fieldset{padding:0;border:0;margin:0;min-width:0}#combo-dialog legend{font-weight:600;margin-bottom:8px}.combo-choice{padding:12px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.combo-choice label{display:flex;align-items:center;gap:10px;flex:1;min-width:0;min-height:44px;cursor:pointer}.combo-choice input{width:18px;height:18px;flex-shrink:0;accent-color:var(--accent);margin:0}.choice-copy{min-width:0;overflow-wrap:anywhere}.choice-copy small{display:block;color:var(--muted);margin-top:3px}.combo-choice .stepper{flex-shrink:0}.combo-choice .stepper button{min-width:36px;min-height:44px}.combo-choice .stepper output{min-width:20px}
+.combo-summary{position:sticky;bottom:-22px;background:var(--bg);border-top:1px solid var(--line);padding:16px 0 8px;margin-top:16px}.combo-summary .actions{margin-top:14px}.combo-summary button{min-height:44px}.form-error{color:#f87171;min-height:18px;margin-top:8px}
+.item-price{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px}.item-price small{overflow-wrap:anywhere}.option-controls{display:grid;gap:6px;margin-top:8px}.option-controls:empty{display:none}.option-controls label{display:grid;gap:3px;color:var(--muted);min-width:0}.option-controls select{width:100%;min-width:0;font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:7px;padding:8px}.quote-note{display:block;color:var(--muted);font-size:10px;font-weight:400;white-space:normal}.combo-choice{display:block}.choice-row{display:flex;align-items:center;gap:10px}.combo-choice .option-controls label{display:grid;min-height:0;cursor:default}.set{overflow-wrap:anywhere}.set>span:first-child{min-width:0}
+
+/* Full-screen plate builder; the original favourite page stays as copied above. */
+body:has(#combo-dialog[open]){overflow:hidden}
+#combo-dialog{position:fixed;inset:0;width:100%;height:100%;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;overflow:hidden;background:var(--bg);font-size:13px}
+#combo-dialog [hidden]{display:none!important}
+#combo-form{height:100%;display:grid;grid-template-rows:auto auto minmax(0,1fr);min-width:0}
+#combo-dialog button{min-height:44px;touch-action:manipulation}
+#combo-dialog h2{margin:0;font-size:23px;font-weight:600;letter-spacing:-.7px}
+.builder-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 32px;border-bottom:1px solid var(--line)}
+.builder-header .eyebrow{margin-bottom:3px;font-size:10px}.builder-header>button{width:44px;border-radius:50%;font-size:18px;flex-shrink:0}
+.builder-steps{display:flex;justify-content:center;gap:12px;padding:16px 24px;border-bottom:1px solid var(--line)}
+.builder-steps button{display:flex;align-items:center;gap:10px;border:0;color:var(--muted);font-weight:500;padding:8px 18px}
+.builder-steps button span{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);font-size:11px}
+.builder-steps button[aria-current]{color:var(--accent);background:var(--badge)}.builder-steps button[aria-current] span{background:var(--accent);color:#fff;border-color:var(--accent)}
+.builder-workspace{display:grid;grid-template-columns:minmax(240px,290px) minmax(0,1fr) minmax(270px,300px);gap:24px;padding:26px 28px 30px;min-height:0;min-width:0}
+.builder-workspace>*{min-width:0;min-height:0}.builder-choices{overflow-y:auto;padding:0 5px 24px 0;scrollbar-width:thin;overscroll-behavior:contain}
+.step-heading{margin-bottom:14px}.step-heading .eyebrow{margin:0;letter-spacing:1px}.step-heading button{font-size:11px;padding:4px 8px}
+#step-title{font-size:30px;font-weight:600;line-height:1.15;letter-spacing:-1px;margin:8px 0 12px}#combo-description{margin-bottom:20px;max-width:35ch}
+.food-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.food-choice{position:relative;background:var(--card);border:1px solid var(--line);padding:9px 9px 12px;border-radius:14px;display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:6px;user-select:none;overflow:hidden;min-width:0}
+.food-choice:hover{border-color:var(--accent)}.food-choice:has(.choice-count){border-color:var(--accent);background:var(--badge)}
+.food-preview{display:block;min-width:0}.food-preview svg{display:block;width:100%;height:78px;pointer-events:none;filter:drop-shadow(0 5px 4px #0001)}
+.choice-text{display:grid;gap:4px;min-width:0}.choice-text strong{font-size:12px;font-weight:600;overflow-wrap:anywhere}.choice-text .price{font-size:12px}.choice-text small{font-size:10px;color:var(--muted)}
+.choice-count,.choice-plus{position:absolute;top:8px;right:8px;min-width:21px;height:21px;display:grid;place-items:center;font-size:11px;border-radius:50%;background:var(--bg);color:var(--accent)}.choice-count{background:var(--accent);color:#fff}
+.combo-subtitle{font-size:13px;font-weight:500;margin:24px 0 12px}.combo-grid{display:grid;gap:8px}.whole-combo{flex-direction:row;align-items:center;gap:12px;padding:7px 25px 7px 8px}.whole-combo .food-preview{width:68px;flex-shrink:0}.whole-combo .food-preview svg{height:54px}
+.filling-card{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:14px;margin:12px 0}.filling-card h4{font-size:13px;margin:0 0 5px}.filling-card p{font-size:11px;margin:8px 0}.filling-heading{display:flex;gap:12px;align-items:center;margin-bottom:8px}.filling-heading .food-preview{width:70px}.filling-heading .food-preview svg{height:54px}
+#combo-dialog .filling-card fieldset{margin:12px 0 0}#combo-dialog .filling-card legend{color:var(--muted);font-size:11px;font-weight:400}.option-pills{display:flex;flex-wrap:wrap;gap:6px}.option-pills button{font-size:11px;padding:7px 10px;background:var(--bg)}.option-pills button[aria-pressed=true]{border-color:var(--accent);color:var(--accent);background:var(--badge)}
+.builder-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;text-align:center;border-radius:50%;background:radial-gradient(ellipse,var(--banner) 0,transparent 69%)}
+.builder-stage>.eyebrow{font-size:10px;letter-spacing:2px;margin:0}.plate-scene{width:100%;max-width:730px;max-height:66dvh;aspect-ratio:600/480;border:1px dashed transparent;border-radius:24px}.plate-scene.drop-ready{border-color:var(--accent);background:var(--badge)}
+#plate-svg{display:block;width:100%;height:100%;overflow:visible}#plate-caption{font-size:11px;max-width:100%;padding:0 14px;line-height:1.7}
+.kitchen-ticket{align-self:start;max-height:100%;display:flex;flex-direction:column;background:var(--card);padding:22px 18px;border:1px solid var(--line);border-radius:3px 3px 12px 12px;box-shadow:0 12px 30px #0001;position:relative}
+.kitchen-ticket:before{content:'';position:absolute;left:0;right:0;top:-5px;height:6px;background:linear-gradient(135deg,transparent 50%,var(--card) 50%) 0 0/12px 6px repeat-x,linear-gradient(225deg,transparent 50%,var(--card) 50%) 0 0/12px 6px repeat-x}
+.ticket-details{min-height:0;overflow:auto;scrollbar-width:thin;overscroll-behavior:contain}.ticket-heading{text-align:center;border-bottom:1px dashed var(--muted);padding:0 0 18px}.ticket-heading .eyebrow{font-size:9px;letter-spacing:1.5px}.ticket-heading h3{font-size:25px;font-weight:600;letter-spacing:-.7px}.ticket-heading p:last-child{font-size:10px;margin-top:6px}.ticket-empty{padding:26px 0;text-align:center}
+.ticket-line{padding:14px 0;border-bottom:1px dashed var(--line);font-size:11px}.ticket-line .row{align-items:flex-start}.ticket-line strong:first-child{min-width:0;overflow-wrap:anywhere}.ticket-line p{margin:6px 0 10px;font-size:10px;overflow-wrap:anywhere}.ticket-line .price{font-size:11px}.ticket-line .row:last-child{align-items:center}
+.ticket-quantity{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px}.ticket-quantity button{border:0;width:38px;padding:3px}.ticket-quantity output{min-width:24px;text-align:center}#combo-dialog .ticket-remove{font-size:10px;color:var(--muted);padding:4px 8px}
+#ticket-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;border:0;border-top:1px dashed var(--muted);border-radius:0;padding:17px 0 8px;width:100%;font-size:12px;margin-top:6px;text-align:left}#ticket-toggle strong{margin-left:auto;font-size:21px;font-weight:600}.fold-arrow{display:none}
+#step-hint,#combo-error{font-size:11px;line-height:1.5;margin:4px 0 9px;min-height:0}#step-hint:empty,#combo-error:empty,.ticket-price-note:empty{display:none}.ticket-price-note{font-size:10px}
+#step-next,#finish-actions button{width:100%;font-weight:600;margin-top:8px}#finish-actions{display:grid;gap:6px}#finish-actions button+button{margin:0}
+#name-panel{margin-top:18px}#name-panel label{font-weight:500}.finished-note{border-top:1px solid var(--line);margin-top:28px;padding-top:24px;display:flex;gap:16px;align-items:center;color:var(--accent)}.finished-note span{font-size:40px}.finished-note p{font-size:20px;letter-spacing:-.6px;line-height:1.4}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+#flight-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:4}.food-flight{position:absolute;left:0;top:0;width:0;height:0;will-change:transform}.held-food{display:block;position:absolute;width:80px;height:64px;left:-40px;top:-22px;filter:drop-shadow(0 8px 6px #0003)}.held-food svg{width:100%;height:100%}.chopstick-hand{position:absolute;width:180px;height:190px;left:-38px;top:-170px;filter:drop-shadow(3px 8px 4px #0003)}.released .held-food{visibility:hidden}.released .chop-one{transform:rotate(5deg);transform-origin:121px 43px}.released .chop-two{transform:rotate(-5deg);transform-origin:143px 53px}
+.leaving-food{animation:leave-plate .32s ease-in forwards;transform-box:fill-box;transform-origin:center}@keyframes leave-plate{to{transform:translate(35px,-38px) rotate(12deg) scale(.5);opacity:0}}
+@media(min-width:1024px){#ticket-toggle{cursor:default}#ticket-toggle:hover{filter:none}}
+@media(max-width:1100px) and (min-width:1024px){.builder-workspace{gap:14px;padding:22px 16px;grid-template-columns:240px minmax(0,1fr) 270px}}
+@media(max-width:1023px){
+ .builder-header{padding:12px 16px}.builder-header .eyebrow{font-size:8px;letter-spacing:1.5px}#combo-dialog h2{font-size:19px}
+ .builder-steps{gap:2px;padding:8px 10px}.builder-steps button{flex:1;min-width:0;justify-content:center;flex-direction:column;gap:4px;font-size:10px;line-height:1.25;padding:4px 0}.builder-steps button span{width:23px;height:23px;font-size:9px}
+ .builder-workspace{padding:0;gap:0;grid-template-columns:minmax(0,1fr);grid-template-rows:clamp(145px,27dvh,275px) minmax(0,1fr) auto;grid-template-areas:'plate' 'choices' 'ticket'}
+ .builder-stage{grid-area:plate;padding-top:8px;border-radius:0}.builder-stage>.eyebrow{font-size:8px;letter-spacing:1.3px}.plate-scene{height:calc(100% - 35px);width:auto;max-width:100%;max-height:none;flex-shrink:1}.builder-stage #plate-caption{font-size:9px;padding:0 6px;margin-top:0}
+ .builder-choices{grid-area:choices;border-top:1px solid var(--line);padding:12px 16px 18px}.step-heading{margin-bottom:2px}#combo-dialog .step-heading button{min-height:32px;font-size:10px}.step-heading .eyebrow{font-size:9px}#step-title{font-size:23px;margin:0 0 8px}#combo-description{font-size:11px;margin-bottom:14px;max-width:none}
+ .food-grid{gap:8px}.food-choice{padding:7px 9px 10px;gap:4px}.food-preview svg{height:65px}.choice-text strong{font-size:12px}.choice-text .price{font-size:11px}.choice-text small{font-size:9px}.combo-subtitle{margin:18px 0 10px}.combo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.whole-combo{padding:8px 10px;flex-direction:column;gap:2px;align-items:stretch}.whole-combo .food-preview{width:70px}.whole-combo .food-preview svg{height:45px}
+ .kitchen-ticket{grid-area:ticket;align-self:stretch;border-radius:18px 18px 0 0;max-height:none;padding:8px 16px max(12px,env(safe-area-inset-bottom));box-shadow:0 -5px 22px #0002;z-index:2;border-bottom:0}.kitchen-ticket:before{display:none}.ticket-details{max-height:32dvh}.ticket-heading{padding:6px 0 12px}.ticket-heading h3{font-size:20px}.ticket-heading .eyebrow{display:none}.ticket-line{padding:10px 0}.ticket-line p{margin:4px 0 8px}.ticket-line .row{gap:18px}.ticket-line strong,.ticket-line .price{font-size:12px}
+ #ticket-toggle{padding:2px 0 5px;margin:0;border:0;min-height:36px}#ticket-toggle strong{font-size:20px}.fold-arrow{display:inline-block}.expanded .fold-arrow{transform:rotate(180deg)}#step-next{margin-top:4px}#step-hint,#combo-error{font-size:10px;margin:2px 0 4px}.ticket-price-note{font-size:9px}#finish-actions{grid-template-columns:1.2fr 1fr;gap:8px}#finish-actions button{font-size:11px;padding:8px;margin:4px 0 0}
+ .filling-card{margin-top:8px;padding:12px}.filling-heading{margin-bottom:4px}.filling-heading .food-preview{width:58px}.finished-note{margin-top:18px;padding-top:14px}.finished-note p{font-size:18px}
+}
+@media(min-width:600px) and (max-width:1023px){.builder-choices{padding-left:calc((100% - 540px)/2);padding-right:calc((100% - 540px)/2)}.food-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.combo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){#flight-layer{display:none}.leaving-food{display:none;animation:none}#combo-dialog *,#combo-dialog *:before,#combo-dialog *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+</style></head><body><main class="phone"><div class="status row"><span>9:41</span><span>📶 🔋</span></div><header class="header row" data-component="FavouritesTopNav"><a href="../menu/menu.html" aria-label="Quay lại thực đơn">← Thực đơn</a><strong>Yêu thích</strong><button id="theme" aria-label="Chuyển sáng tối">☀️</button></header><section class="intro"><div class="eyebrow">MÓN QUEN, LUÔN Ở ĐÂY</div><h1>Hôm nay ăn món mình thích ♥</h1><p>Lưu món ngon, chọn lại thật nhanh cho bữa sau.</p></section>
+<div class="customer-demo"><label for="customer">Hồ sơ khách minh hoạ</label><select id="customer"><option value="guest-01">Khách 01</option><option value="guest-02">Khách 02</option></select></div>
+<section class="combo-create" data-component="CreateFavouriteCombo"><div class="eyebrow">THEO KHẨU VỊ CỦA BẠN</div><h2>Một bộ món, đúng ý mình</h2><p>Tự chọn món quen, đặt tên riêng và lưu lại cho lần sau.</p><button class="primary" id="create-combo">＋ Tạo bộ món riêng</button></section>
+<section aria-labelledby="own-combos-title" data-component="PersonalFavouriteCombos"><div class="row combo-heading"><h2 id="own-combos-title">Bộ món của bạn</h2><span class="muted" id="own-combo-count"></span></div><div id="own-combos"></div></section>
+<div class="row"><span class="muted" id="count"></span><button id="show-sets">Bộ đã lưu <span id="set-count"></span></button></div><nav class="tabs" data-component="FavouriteFilterTabs" aria-label="Lọc món yêu thích"><button data-filter="all" aria-pressed="true">Tất cả</button><button data-filter="product" aria-pressed="false">Món lẻ</button><button data-filter="combo" aria-pressed="false">Combo</button></nav><section id="items" aria-label="Món yêu thích"></section><footer class="footer" data-component="FavouritesFooter"><div class="row"><span id="total-label"></span><strong class="price" id="total"></strong></div><button class="primary" id="add-all">Thêm tất cả vào giỏ</button><div class="row"><span class="muted">Giữ lại lựa chọn cho lần sau</span><button id="save">＋ Lưu thành bộ</button></div><nav class="bottom-nav" data-component="ClientBottomNav" aria-label="Điều hướng"><a href="../menu/menu.html">⌂ Thực đơn</a><span>▤ Đơn</span><a href="favourite.html" aria-current="page">♥ Thích</a><span>◉ Theo dõi</span><span>⚙ Cài đặt</span></nav></footer><p class="demo">Bản thiết kế tương tác · Hai hồ sơ khách minh hoạ, lưu trên trình duyệt này</p></main><dialog id="combo-dialog" aria-labelledby="combo-title" aria-describedby="combo-description">
+<form id="combo-form" novalidate>
+ <header class="builder-header"><div><p class="eyebrow">THEO KHẨU VỊ CỦA BẠN</p><h2 id="combo-title">Tạo món yêu thích</h2></div><button type="button" data-close aria-label="Đóng màn dựng đĩa" autofocus>✕</button></header>
+ <nav class="builder-steps" aria-label="Các bước dựng đĩa">
+  <button type="button" data-step="0"><span>01</span>Chọn bánh</button>
+  <button type="button" data-step="1"><span>02</span>Chọn nhân</button>
+  <button type="button" data-step="2"><span>03</span>Món kèm</button>
+  <button type="button" data-step="3"><span>04</span>Đặt tên và lưu</button>
+ </nav>
+ <div class="builder-workspace">
+  <section class="builder-choices" aria-labelledby="step-title">
+   <div class="row step-heading"><p class="eyebrow" id="step-count"></p><button type="button" id="step-back">← Quay lại</button></div>
+   <h3 id="step-title" tabindex="-1"></h3><p id="combo-description" class="muted"></p>
+   <div id="combo-choices"></div>
+   <div id="name-panel" hidden><label for="combo-name">Tên bộ món</label><input id="combo-name" required maxlength="60" placeholder="Ví dụ: Bữa sáng của mình" autocomplete="off"><p class="muted">Lưu lại trong Bộ món của bạn, để lần sau chọn món nhanh hơn.</p><div class="finished-note"><span aria-hidden="true">♡</span><p>Một đĩa bánh,<br>đúng ý mình.</p></div></div>
+  </section>
+  <section class="builder-stage" aria-label="Đĩa món đã chọn">
+   <p class="eyebrow">TỪNG MÓN, THEO Ý BẠN</p>
+   <div class="plate-scene" id="plate-drop">
+    <svg id="plate-svg" viewBox="0 0 600 480" role="img" aria-labelledby="plate-title plate-desc">
+     <title id="plate-title">Đĩa bánh của bạn</title><desc id="plate-desc">Chưa có món. Chạm một món để đặt lên đĩa.</desc>
+     <defs>
+      <radialGradient id="porcelain"><stop stop-color="#fffdf4"/><stop offset=".78" stop-color="#f0e9d9"/><stop offset=".84" stop-color="#fffdf7"/><stop offset="1" stop-color="#c4c7c1"/></radialGradient>
+      <linearGradient id="rice" x2="0" y2="1"><stop stop-color="#fffdf1"/><stop offset=".5" stop-color="#eee9d9"/><stop offset="1" stop-color="#c8c7b6"/></linearGradient>
+      <linearGradient id="golden-egg" x2="0" y2="1"><stop stop-color="#ffe4a0"/><stop offset="1" stop-color="#dc942f"/></linearGradient>
+      <radialGradient id="soft-yolk"><stop stop-color="#ffbb36"/><stop offset="1" stop-color="#e5681c"/></radialGradient>
+     </defs>
+     <ellipse cx="254" cy="261" rx="202" ry="194" fill="#000" opacity=".16"/>
+     <circle cx="245" cy="239" r="198" fill="url(#porcelain)" stroke="#b9bcb1" stroke-width="2"/>
+     <circle cx="245" cy="239" r="184" fill="none" stroke="var(--accent)" opacity=".45" stroke-width="2"/>
+     <circle cx="245" cy="239" r="170" fill="none" stroke="#c5bfae"/>
+     <path d="M97 157A170 170 0 0 1 341 101" fill="none" stroke="#fff" stroke-width="6" opacity=".65"/>
+     <g id="plate-empty" fill="#82786c" text-anchor="middle"><text x="245" y="233" font-size="17">Đĩa đang chờ bạn</text><text x="245" y="258" font-size="12">Chạm món hoặc kéo vào đây</text></g>
+     <g id="plated-food"></g><g id="plate-outgoing" aria-hidden="true"></g>
+    </svg>
+   </div>
+   <p id="plate-caption" class="muted">Chạm một món, đũa sẽ gắp giúp bạn.</p>
+  </section>
+  <aside class="kitchen-ticket" aria-label="Phiếu bếp">
+   <div class="ticket-details" id="ticket-details">
+    <div class="ticket-heading"><p class="eyebrow">BỘ MÓN CỦA BẠN</p><h3>Phiếu bếp</h3><p id="combo-selection-count" class="muted"></p></div>
+    <div id="ticket-lines"></div>
+   </div>
+   <button type="button" id="ticket-toggle" aria-expanded="false" aria-controls="ticket-details" aria-label="Mở chi tiết phiếu bếp"><span>Tổng</span><strong class="price" id="combo-total">0đ</strong><span class="fold-arrow" aria-hidden="true">⌃</span></button>
+   <p class="muted ticket-price-note" id="ticket-price-note"></p>
+   <p id="step-hint" class="muted"></p><p class="form-error" id="combo-error" role="status" aria-live="polite"></p>
+   <button type="button" class="primary" id="step-next" aria-describedby="step-hint">Chọn nhân →</button>
+   <div id="finish-actions" hidden><button class="primary" id="save-combo" aria-describedby="step-hint">Lưu món yêu thích</button><button type="button" id="builder-cart">Thêm vào giỏ</button></div>
+  </aside>
+ </div>
+ <span class="sr-only" id="builder-live" aria-live="polite" aria-atomic="true"></span>
+ <div id="flight-layer" aria-hidden="true"></div>
+</form></dialog><dialog id="save-dialog" aria-labelledby="save-title"><form id="save-form"><h2 id="save-title">Lưu bộ yêu thích</h2><label for="set-name">Tên bộ</label><input id="set-name" required maxlength="60" placeholder="Ví dụ: Bữa sáng cuối tuần"><div id="summary"></div><div class="actions"><button type="button" data-close>Huỷ</button><button class="primary">Lưu bộ</button></div></form></dialog><dialog id="sets-dialog" aria-labelledby="sets-title"><h2 id="sets-title">Bộ đã lưu</h2><div id="sets"></div><div class="actions"><button data-close>Đóng</button></div></dialog><dialog id="cart-dialog" aria-labelledby="cart-title"><h2 id="cart-title">Giỏ hàng minh hoạ</h2><div id="cart"></div><div class="actions"><button data-close>Tiếp tục chọn món</button></div></dialog><div class="notice" role="status" aria-live="polite"></div><script>
+// Dữ liệu chép từ favourite.html (YT-01, chụp 2026-11-18).
+// Nguồn: GET /menu (menu.json) và POST /price-quotes (combo-quotes.json), Claude chụp 2026-11-18.
+const MENU_SNAPSHOT = {
+ "categories": [
+  {"menu_category_id":1,"name":"Món lẻ"}
+ ],
+ "items": [
+  {"menu_category_id":1,"menu_item_id":1,"item_name":"Bánh cuốn","option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}],"prices":[{"option_ids":[1],"unit_price_vnd":3000},{"option_ids":[2,4],"unit_price_vnd":4000},{"option_ids":[2,5],"unit_price_vnd":5000},{"option_ids":[3,4],"unit_price_vnd":4000},{"option_ids":[3,5],"unit_price_vnd":5000},{"option_ids":[4,9],"unit_price_vnd":4000},{"option_ids":[5,9],"unit_price_vnd":5000}]},
+  {"menu_category_id":1,"menu_item_id":2,"item_name":"Giò bán rời","option_groups":[],"prices":[{"option_ids":[],"unit_price_vnd":9000}]},
+  {"menu_category_id":1,"menu_item_id":3,"item_name":"Canh bánh cuốn","option_groups":[{"option_group_id":3,"option_group_name":"Rau","prerequisite_option_ids":[],"options":[{"menu_option_id":6,"option_name":"Không rau","is_default":false},{"menu_option_id":7,"option_name":"Ít rau","is_default":true},{"menu_option_id":8,"option_name":"Nhiều rau","is_default":false}]}],"prices":[{"option_ids":[6],"unit_price_vnd":0},{"option_ids":[7],"unit_price_vnd":0},{"option_ids":[8],"unit_price_vnd":0}]},
+  {"menu_category_id":1,"menu_item_id":4,"item_name":"Bánh trứng chín","option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}],"prices":[{"option_ids":[1],"unit_price_vnd":8000},{"option_ids":[2,4],"unit_price_vnd":9000},{"option_ids":[2,5],"unit_price_vnd":10000},{"option_ids":[3,4],"unit_price_vnd":9000},{"option_ids":[3,5],"unit_price_vnd":10000},{"option_ids":[4,9],"unit_price_vnd":9000},{"option_ids":[5,9],"unit_price_vnd":10000}]},
+  {"menu_category_id":1,"menu_item_id":5,"item_name":"Bánh trứng tái","option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}],"prices":[{"option_ids":[1],"unit_price_vnd":8000},{"option_ids":[2,4],"unit_price_vnd":9000},{"option_ids":[2,5],"unit_price_vnd":10000},{"option_ids":[3,4],"unit_price_vnd":9000},{"option_ids":[3,5],"unit_price_vnd":10000},{"option_ids":[4,9],"unit_price_vnd":9000},{"option_ids":[5,9],"unit_price_vnd":10000}]},
+  {"menu_category_id":1,"menu_item_id":6,"item_name":"Bánh trứng vàng","option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}],"prices":[{"option_ids":[1],"unit_price_vnd":8000},{"option_ids":[2,4],"unit_price_vnd":9000},{"option_ids":[2,5],"unit_price_vnd":10000},{"option_ids":[3,4],"unit_price_vnd":9000},{"option_ids":[3,5],"unit_price_vnd":10000},{"option_ids":[4,9],"unit_price_vnd":9000},{"option_ids":[5,9],"unit_price_vnd":10000}]},
+  {"menu_category_id":1,"menu_item_id":7,"item_name":"canh","option_groups":[],"prices":[{"option_ids":[],"unit_price_vnd":0}]}
+ ],
+ "combos": [
+  {"menu_combo_id":1,"name":"Đầy đủ trứng chín","items":[{"menu_item_id":1,"quantity":3,"option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}]},{"menu_item_id":4,"quantity":1,"option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}]},{"menu_item_id":2,"quantity":1,"option_groups":[]}],"default_quote_vnd":30000},
+  {"menu_combo_id":2,"name":"Đầy đủ trứng tái","items":[{"menu_item_id":1,"quantity":3,"option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}]},{"menu_item_id":5,"quantity":1,"option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}]},{"menu_item_id":2,"quantity":1,"option_groups":[]}],"default_quote_vnd":30000},
+  {"menu_combo_id":3,"name":"Đầy đủ trứng vàng","items":[{"menu_item_id":1,"quantity":3,"option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}]},{"menu_item_id":6,"quantity":1,"option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}]},{"menu_item_id":2,"quantity":1,"option_groups":[]}],"default_quote_vnd":30000},
+  {"menu_combo_id":4,"name":"Suất giò","items":[{"menu_item_id":2,"quantity":1,"option_groups":[]},{"menu_item_id":1,"quantity":4,"option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}]}],"default_quote_vnd":25000},
+  {"menu_combo_id":5,"name":"Suất trứng chín","items":[{"menu_item_id":4,"quantity":1,"option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}]},{"menu_item_id":1,"quantity":4,"option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}]}],"default_quote_vnd":25000},
+  {"menu_combo_id":6,"name":"Suất trứng tái","items":[{"menu_item_id":5,"quantity":1,"option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}]},{"menu_item_id":1,"quantity":4,"option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}]}],"default_quote_vnd":25000},
+  {"menu_combo_id":7,"name":"Suất trứng vàng","items":[{"menu_item_id":6,"quantity":1,"option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}]},{"menu_item_id":1,"quantity":4,"option_groups":[{"option_group_id":1,"option_group_name":"Nhân","prerequisite_option_ids":[],"options":[{"menu_option_id":1,"option_name":"Chay","is_default":false},{"menu_option_id":2,"option_name":"Thịt","is_default":true},{"menu_option_id":3,"option_name":"Thịt + mộc nhĩ","is_default":false},{"menu_option_id":9,"option_name":"Mộc nhĩ","is_default":false}]},{"option_group_id":2,"option_group_name":"Lượng nhân","prerequisite_option_ids":[2,3,9],"options":[{"menu_option_id":4,"option_name":"Thường","is_default":true},{"menu_option_id":5,"option_name":"Nhiều nhân","is_default":false}]}]}],"default_quote_vnd":25000}
+ ]
+};
+const key='customer-favourite-design-v3';
+const $=s=>document.querySelector(s),money=n=>new Intl.NumberFormat('vi-VN').format(n)+'đ';
+const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const itemById=id=>MENU_SNAPSHOT.items.find(i=>i.menu_item_id===id);
+const comboById=id=>MENU_SNAPSHOT.combos.find(c=>c.menu_combo_id===id);
+const optionKey=ids=>[...new Set(ids)].sort((a,b)=>a-b).join(',');
+const groupVisible=(group,ids)=>!group.prerequisite_option_ids.length||group.prerequisite_option_ids.some(id=>ids.includes(id));
+function selectedOptions(groups,ids=[]){
+ // Resolve prerequisites before dependent groups, including when their order changes.
+ let selected=[];
+ for(let pass=0;pass<=groups.length;pass++){
+  const next=groups.flatMap(group=>{
+   if(!groupVisible(group,selected))return [];
+   const option=group.options.find(o=>ids.includes(o.menu_option_id))||group.options.find(o=>o.is_default);
+   return option?[option.menu_option_id]:[];
+  });
+  if(optionKey(next)===optionKey(selected))return next;
+  selected=next;
+ }
+ return selected;
+}
+function defaultPortions(combo,qty=1){return combo.items.map(i=>({menu_item_id:i.menu_item_id,quantity:i.quantity*qty,option_ids:selectedOptions(i.option_groups)}))}
+function itemLine(id,option_ids,qty=1){return {menu_item_id:id,option_ids:selectedOptions(itemById(id).option_groups,option_ids),qty}}
+function comboLine(id,qty=1){return {menu_combo_id:id,portions:defaultPortions(comboById(id),qty),qty}}
+// PriceLinePortion quantities cover all qty combos, as in PriceLineRequest.
+function copyLine(i){return i.menu_combo_id!==undefined
+ ?{menu_combo_id:i.menu_combo_id,portions:i.portions.map(p=>({menu_item_id:p.menu_item_id,quantity:p.quantity,option_ids:[...p.option_ids]})),qty:i.qty}
+ :{menu_item_id:i.menu_item_id,option_ids:[...i.option_ids],qty:i.qty}}
+function portionKey(portions,qty=1){
+ const counts=new Map();
+ for(const p of portions){const key=p.menu_item_id+':'+optionKey(p.option_ids);counts.set(key,(counts.get(key)||0)+p.quantity)}
+ return JSON.stringify([...counts].sort(([a],[b])=>a.localeCompare(b)).map(([key,count])=>[key,count/qty]));
+}
+function lineKey(i){return i.menu_combo_id!==undefined?'combo:'+i.menu_combo_id+':'+portionKey(i.portions,i.qty):'item:'+i.menu_item_id+':'+optionKey(i.option_ids)}
+function setQuantity(i,qty){if(i.portions)i.portions.forEach(p=>p.quantity=p.quantity/i.qty*qty);i.qty=qty}
+function mergeLines(lines){
+ const merged=[];
+ for(const line of lines){const i=copyLine(line),found=merged.find(c=>lineKey(c)===lineKey(i));if(found)setQuantity(found,found.qty+i.qty);else merged.push(i)}
+ return merged;
+}
+function unitPrice(i){
+ if(i.menu_combo_id!==undefined)return comboById(i.menu_combo_id).default_quote_vnd;
+ return itemById(i.menu_item_id).prices.find(p=>optionKey(p.option_ids)===optionKey(i.option_ids))?.unit_price_vnd;
+}
+function needsQuote(i){return i.menu_combo_id!==undefined&&portionKey(i.portions)!==portionKey(defaultPortions(comboById(i.menu_combo_id),i.qty))}
+function priceNote(i){return needsQuote(i)?'<small class="quote-note">Giá tính lại ở giỏ</small>':''}
+function totalNote(items){return items.some(needsQuote)?'<small class="quote-note">Giá tính lại ở giỏ</small>':''}
+function lineName(i){return i.menu_combo_id!==undefined?comboById(i.menu_combo_id).name:itemById(i.menu_item_id).item_name}
+function lineType(i){return i.menu_combo_id!==undefined?'combo':'product'}
+function lineIcon(i){return i.menu_combo_id!==undefined?'🍱':i.menu_item_id===2?'🍖':[3,7].includes(i.menu_item_id)?'🍲':'🥟'}
+function optionNames(groups,ids){return groups.flatMap(g=>g.options.filter(o=>ids.includes(o.menu_option_id)).map(o=>o.option_name)).join(' · ')}
+function lineOptions(i){
+ if(i.menu_combo_id===undefined)return optionNames(itemById(i.menu_item_id).option_groups,i.option_ids);
+ return i.portions.map(p=>{const item=comboById(i.menu_combo_id).items.find(c=>c.menu_item_id===p.menu_item_id);const names=optionNames(item.option_groups,p.option_ids);return itemById(p.menu_item_id).item_name+' ×'+p.quantity+(names?' ('+names+')':'')}).join(' · ');
+}
+function lineDescription(i){const options=lineOptions(i);return escape(lineName(i))+(options?' — '+escape(options):'')+' ×'+i.qty}
+function sum(items){return items.reduce((n,i)=>n+unitPrice(i)*i.qty,0)}
+function validOptions(groups,ids){return Array.isArray(ids)&&ids.every(Number.isInteger)&&optionKey(selectedOptions(groups,ids))===optionKey(ids)}
+function validLine(i){
+ if(!i||!Number.isInteger(i.qty)||i.qty<1)return false;
+ if(i.menu_combo_id!==undefined){
+  const combo=comboById(i.menu_combo_id);
+  return !!combo&&Array.isArray(i.portions)&&i.portions.length>0&&i.portions.every(p=>{
+   const item=combo.items.find(c=>c.menu_item_id===p.menu_item_id);
+   return item&&Number.isInteger(p.quantity)&&p.quantity>0&&validOptions(item.option_groups,p.option_ids);
+  })&&combo.items.every(c=>i.portions.filter(p=>p.menu_item_id===c.menu_item_id).reduce((n,p)=>n+p.quantity,0)===c.quantity*i.qty);
+ }
+ const item=itemById(i.menu_item_id);
+ return !!item&&validOptions(item.option_groups,i.option_ids)&&unitPrice(i)!==undefined;
+}
+function cleanState(value){
+ const lines=items=>mergeLines(Array.isArray(items)?items.filter(validLine):[]);
+ const sets=items=>(Array.isArray(items)?items:[]).filter(s=>s&&typeof s.name==='string'&&Array.isArray(s.items)).map(s=>({name:s.name,items:lines(s.items)}));
+ return {items:lines(value.items),sets:sets(value.sets),combos:sets(value.combos)};
+}
+const defaults={
+ 'guest-01':[itemLine(1),itemLine(4,[3,5]),comboLine(4),itemLine(3)],
+ 'guest-02':[itemLine(1,[1],2),comboLine(2),itemLine(3,[8])]
+};
+let customer='guest-01';
+try{const savedCustomer=localStorage.getItem(key+'-active-customer');if(Object.hasOwn(defaults,savedCustomer))customer=savedCustomer}catch{}
+function loadCustomer(){
+ try{const saved=JSON.parse(localStorage.getItem(key+'-'+customer));if(saved&&Array.isArray(saved.items)&&Array.isArray(saved.sets))return cleanState(saved)}catch{}
+ return {items:defaults[customer].map(copyLine),sets:[],combos:[]};
+}
+let state=loadCustomer(),filter='all',cart=[],draft=[],editingCombo=null;
+const customerCarts=new Map(),customerStates=new Map();
+let timer;
+function notice(message){$('.notice').textContent=message;clearTimeout(timer);timer=setTimeout(()=>$('.notice').textContent='',2800)}
+function persist(){
+ // Only identifiers, selected options/portions and quantities survive per line.
+ // A set's user-entered name belongs to its wrapper, never to a menu line.
+ state=cleanState(state);customerStates.set(customer,state);
+ try{localStorage.setItem(key+'-'+customer,JSON.stringify(state));return true}catch{notice('Không thể lưu trên trình duyệt này. Thay đổi chỉ giữ trong phiên.');return false}
+}
+function addFavourite(line){if(!validLine(line))return;state.items=mergeLines([...state.items,line]);persist();render()}
+function optionControls(i,index,context){
+ if(i.menu_combo_id!==undefined)return '';
+ return '<div class="option-controls">'+itemById(i.menu_item_id).option_groups.filter(g=>groupVisible(g,i.option_ids)).map(g=>`<label>${escape(g.option_group_name)}<select data-option-line="${index}" data-option-group="${g.option_group_id}" data-option-context="${context}" aria-label="${escape(g.option_group_name+' — '+lineName(i))}">${g.options.map(o=>`<option value="${o.menu_option_id}" ${i.option_ids.includes(o.menu_option_id)?'selected':''}>${escape(o.option_name)}</option>`).join('')}</select></label>`).join('')+'</div>';
+}
+function changeOption(i,groupId,optionId){
+ const groups=itemById(i.menu_item_id).option_groups,group=groups.find(g=>g.option_group_id===groupId);
+ const ids=i.option_ids.filter(id=>!group.options.some(o=>o.menu_option_id===id));
+ i.option_ids=selectedOptions(groups,[...ids,optionId]);
+}
+function summary(items){return items.map(i=>`<div class="row set"><span>${lineDescription(i)}</span><span class="price">${money(unitPrice(i)*i.qty)}${priceNote(i)}</span></div>`).join('')}
+function render(){
+ renderCombos();
+ $('#count').textContent=state.items.length+' món yêu thích';$('#set-count').textContent='('+state.sets.length+')';
+ document.querySelectorAll('[data-filter]').forEach(b=>{const t=b.dataset.filter;b.setAttribute('aria-pressed',t===filter);b.textContent=({all:'Tất cả',product:'Món lẻ',combo:'Combo'}[t])+' ('+state.items.filter(i=>t==='all'||lineType(i)===t).length+')'});
+ const items=state.items.filter(i=>filter==='all'||lineType(i)===filter);
+ $('#items').innerHTML=items.length?items.map(i=>{
+  const index=state.items.indexOf(i),name=escape(lineName(i));
+  return `<article class="item" data-component="FavouriteItemCard" data-line-key="${escape(lineKey(i))}"><div class="art" aria-hidden="true">${lineIcon(i)}</div><div class="copy"><div class="row"><small>${lineType(i)==='combo'?'COMBO':'MÓN LẺ'}</small><button class="heart" data-remove="${index}" aria-label="Bỏ yêu thích ${name}">♥</button></div><h2>${name}</h2><div class="item-price"><strong class="price">${money(unitPrice(i))}</strong><small>${escape(lineOptions(i))}</small></div>${priceNote(i)}${optionControls(i,index,'favourite')}<div class="row"><span class="stepper"><button data-qty="${index}" data-delta="-1" aria-label="Giảm ${name}" ${i.qty<=1?'disabled':''}>−</button><output>${i.qty}</output><button data-qty="${index}" data-delta="1" aria-label="Tăng ${name}">＋</button></span><button data-add="${index}">＋ Giỏ</button></div></div></article>`;
+ }).join(''):'<div class="empty"><span style="font-size:42px">♡</span><p>'+(state.items.length?'Chưa có món trong nhóm này.':'Chưa có món yêu thích. Nhấn ♥ trên thực đơn để thêm món.')+'</p><a href="../menu/menu.html">Khám phá thực đơn →</a></div>';
+ $('#total-label').textContent=state.items.reduce((n,i)=>n+i.qty,0)+' phần đã chọn';$('#total').innerHTML=money(sum(state.items))+totalNote(state.items);$('#save').disabled=$('#add-all').disabled=!state.items.length;
+}
+function renderSets(){$('#sets').innerHTML=state.sets.length?state.sets.map((s,index)=>`<article class="set" data-component="SetCard"><h3>${escape(s.name)}</h3><p>${s.items.map(lineDescription).join(' · ')}</p><strong class="price">${money(sum(s.items))}</strong>${totalNote(s.items)}<div class="actions"><button data-delete="${index}">Xoá</button><button class="primary" data-set="${index}">Thêm vào giỏ</button></div></article>`).join(''):'<div class="empty">Chưa có bộ đã lưu. Lưu các món yêu thích thành bộ để dùng lại.</div>'}
+function add(items){cart=mergeLines([...cart,...items]);$('#cart').innerHTML=summary(cart)+`<div class="row set"><strong>Tổng cộng</strong><strong class="price">${money(sum(cart))}${totalNote(cart)}</strong></div>`;document.querySelectorAll('dialog[open]').forEach(d=>d.close());$('#cart-dialog').showModal()}
+$('#add-all').onclick=()=>add(state.items);
+$('#show-sets').onclick=()=>{renderSets();$('#sets-dialog').showModal()};
+$('#save').onclick=()=>{$('#summary').innerHTML=summary(state.items);$('#save-dialog').showModal()};
+$('#save-form').onsubmit=e=>{
+ e.preventDefault();const name=$('#set-name').value.trim();
+ if(!name){$('#set-name').setCustomValidity('Vui lòng nhập tên bộ.');$('#set-name').reportValidity();return}
+ state.sets.push({name,items:state.items.map(copyLine)});persist();render();$('#save-dialog').close();$('#save-form').reset();renderSets();$('#sets-dialog').showModal();
+};
+$('#set-name').oninput=()=>$('#set-name').setCustomValidity('');
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.hasAttribute('data-close'))b.closest('dialog').close();
+ if(b.dataset.filter){filter=b.dataset.filter;render()}
+ if(b.dataset.remove!==undefined){state.items.splice(Number(b.dataset.remove),1);persist();render();notice('Đã bỏ món khỏi yêu thích.')}
+ if(b.dataset.qty!==undefined){const i=state.items[Number(b.dataset.qty)];setQuantity(i,Math.max(1,i.qty+Number(b.dataset.delta)));persist();render()}
+ if(b.dataset.add!==undefined)add([state.items[Number(b.dataset.add)]]);
+ if(b.dataset.set!==undefined)add(state.sets[Number(b.dataset.set)].items);
+ if(b.dataset.delete!==undefined){state.sets.splice(Number(b.dataset.delete),1);persist();render();renderSets()}
+});
+$('#items').onchange=e=>{
+ const s=e.target;if(s.dataset.optionContext!=='favourite')return;
+ changeOption(state.items[Number(s.dataset.optionLine)],Number(s.dataset.optionGroup),Number(s.value));persist();render();
+};
+function renderCombos(){
+ $('#own-combo-count').textContent=state.combos.length+' bộ món';
+ $('#own-combos').innerHTML=state.combos.length?state.combos.map((c,index)=>`<article class="own-combo" data-component="PersonalComboCard"><span class="combo-tag">♥ Bộ món riêng</span><h3>${escape(c.name)}</h3><p>${c.items.map(lineDescription).join(' · ')}</p><div class="row"><span class="muted">${c.items.reduce((n,i)=>n+i.qty,0)} phần</span><strong class="price">${money(sum(c.items))}</strong></div>${totalNote(c.items)}<div class="actions"><button data-edit-combo="${index}" aria-label="Sửa bộ món ${escape(c.name)}">Sửa</button><button data-delete-combo="${index}" aria-label="Xoá bộ món ${escape(c.name)}">Xoá</button><button class="primary" data-add-combo="${index}">＋ Thêm vào giỏ</button></div></article>`).join(''):'<p class="combo-empty">Chưa có bộ món riêng. Tạo bộ món đầu tiên để lần sau chọn món nhanh hơn.</p>';
+}
+// The builder keeps the original menu, line shape, price lookup and persistence.
+const breadItems=MENU_SNAPSHOT.items.filter(i=>i.option_groups.some(g=>g.option_group_name==='Nhân'));
+const sideItems=MENU_SNAPSHOT.items.filter(i=>!breadItems.includes(i));
+const stepTitles=['Chọn bánh','Chọn nhân','Thêm món kèm','Đặt tên và lưu'];
+const stepDescriptions=['Chạm để thêm một cái. Chạm tiếp để thêm nữa.','Chọn nhân cho từng dòng bánh trên đĩa.','Thêm món bạn thích, hoặc tiếp tục nếu đã đủ.','Đĩa đã sẵn sàng. Đặt một cái tên để dễ tìm lần sau.'];
+const nextLabels=['Chọn nhân →','Thêm món kèm →','Đặt tên bộ →'];
+let builderStep=0,ticketExpanded=false,drag=null,suppressClickUntil=0;
+const pendingPieces=new Set(),motionQuery=matchMedia('(prefers-reduced-motion: reduce)'),wideQuery=matchMedia('(min-width: 1024px)');
+// These checks apply only to the new builder; other original page flows stay intact.
+function builderValidation(lines){
+ if(!lines.length)return 'Vui lòng chọn ít nhất một món.';
+ if(lines.some(i=>!validLine(i)))return 'Vui lòng chọn đủ lựa chọn cho từng món.';
+ const merged=mergeLines(lines);
+ if(merged.length>20)return 'Một bộ món có tối đa 20 dòng. Hãy bỏ bớt một dòng.';
+ if(merged.some(i=>i.qty>99))return 'Mỗi dòng có số lượng từ 1 đến 99. Hãy giảm số lượng.';
+ return '';
+}
+function builderMissing(step=builderStep){
+ const error=builderValidation(draft);if(error)return error;
+ if(step===0&&!draft.some(i=>i.menu_combo_id!==undefined||breadItems.some(b=>b.menu_item_id===i.menu_item_id)))return 'Chọn ít nhất một loại bánh hoặc một combo để tiếp tục.';
+ if(step===3&&!$('#combo-name').value.trim())return 'Nhập tên bộ món để lưu.';
+ return '';
+}
+function foodDrawing(id,ids=[]){
+ const names=optionNames(itemById(id).option_groups,ids),more=names.includes('Nhiều nhân');
+ const meat=names.includes('Thịt'),mushroom=/mộc nhĩ/i.test(names);
+ const filling=`<g opacity=".85">${meat?Array.from({length:more?13:7},(_,n)=>`<ellipse cx="${29+n*5%62}" cy="${46+n*7%16}" rx="3" ry="2" fill="#9b6951"/>`).join(''):''}${mushroom?Array.from({length:more?9:4},(_,n)=>`<path d="M${32+n*7} 47q-5 5 2 11" fill="none" stroke="#494034" stroke-width="2.5"/>`).join(''):''}</g>`;
+ if(id===2)return '<ellipse cx="61" cy="74" rx="44" ry="7" fill="#000" opacity=".13"/><path d="M18 58L59 20 105 59 96 73H29Z" fill="#b69c7d"/><path d="M18 57L59 16 105 57Q63 82 18 57" fill="#eed5b4" stroke="#cab18e" stroke-width="2"/><g fill="#937d65"><circle cx="56" cy="39" r="2"/><circle cx="67" cy="55" r="2"/><circle cx="44" cy="54" r="1.5"/><circle cx="79" cy="49" r="1.5"/></g>';
+ if(id===3||id===7){
+  const greens=names.includes('Không rau')||id===7?0:names.includes('Nhiều rau')?15:5;
+  return `<ellipse cx="60" cy="76" rx="44" ry="6" fill="#000" opacity=".16"/><path d="M14 42Q19 80 60 81Q102 80 107 42" fill="${id===7?'#c7bbae':'#dce5df'}" stroke="#aaa99d"/><ellipse cx="60" cy="40" rx="48" ry="27" fill="#fff9e9" stroke="#bdb9a8" stroke-width="3"/><ellipse cx="60" cy="40" rx="41" ry="21" fill="${id===7?'#b69253':'#d8b86c'}"/><path d="M28 36q10-13 29-13" fill="none" stroke="#f7df99" stroke-width="3"/>${Array.from({length:greens},(_,n)=>`<ellipse cx="${32+n*13%59}" cy="${30+n*11%25}" rx="5" ry="2" transform="rotate(${n*27} ${32+n*13%59} ${30+n*11%25})" fill="#528251"/>`).join('')}`;
+ }
+ if(id===4||id===5)return `<ellipse cx="60" cy="72" rx="49" ry="9" fill="#000" opacity=".13"/><path d="M12 48Q7 30 30 28Q38 9 59 22Q90 12 99 34Q119 42 105 62Q95 80 71 74Q43 85 28 68Q9 68 12 48" fill="url(#rice)" stroke="#c9c6ad"/>${filling}<ellipse cx="66" cy="43" rx="${id===5?24:21}" ry="${id===5?19:16}" fill="${id===5?'url(#soft-yolk)':'#f5c65e'}" stroke="#dd9d36"/><path d="M52 36q7-8 17-5" fill="none" stroke="#fff0b3" stroke-width="${id===5?5:2}" stroke-linecap="round"/>`;
+ if(id===6)return `<ellipse cx="61" cy="73" rx="49" ry="7" fill="#000" opacity=".13"/><path d="M10 53Q31 5 71 22Q102 26 112 53L98 71Q52 86 10 53" fill="url(#golden-egg)" stroke="#bf8f41"/><path d="M12 52q47 19 98 0" fill="none" stroke="#ffecb1" stroke-width="4"/>${filling}<path d="M29 34l7-2m42 2 6 3m-37-7 5-1" stroke="#c88c38" stroke-width="3"/>`;
+ return `<ellipse cx="60" cy="73" rx="49" ry="6" fill="#000" opacity=".13"/><path d="M16 32Q9 33 9 48L13 65Q18 72 33 70L101 65Q114 59 110 42Q108 28 94 29Z" fill="url(#rice)" stroke="#c1c3b2"/>${filling}<path d="M20 34Q32 43 23 64M30 33Q42 41 36 65M16 35L94 32Q104 34 106 43" fill="none" stroke="#fffdf2" stroke-width="4" opacity=".8"/><path d="M97 36q12 12 0 24q-8-11 0-24" fill="#e6e2ce" stroke="#bdbda7"/>`;
+}
+function foodArt(i){
+ if(i.menu_combo_id===undefined)return `<svg viewBox="0 0 120 96" aria-hidden="true">${foodDrawing(i.menu_item_id,i.option_ids)}</svg>`;
+ return `<svg viewBox="0 0 120 96" aria-hidden="true"><ellipse cx="60" cy="52" rx="57" ry="38" fill="#eee9dc" stroke="#bbb9aa"/>${i.portions.map((p,n)=>`<g transform="translate(${8+n%2*37} ${10+Math.floor(n/2)*23}) scale(.58)">${foodDrawing(p.menu_item_id,p.option_ids)}</g>`).join('')}</svg>`;
+}
+function choiceCard(i){
+ const combo=i.menu_combo_id!==undefined,id=combo?i.menu_combo_id:i.menu_item_id;
+ const count=draft.filter(d=>combo?d.menu_combo_id===id:d.menu_item_id===id).reduce((n,d)=>n+d.qty,0);
+ return `<button type="button" class="food-choice ${combo?'whole-combo':''}" data-pick-${combo?'combo':'item'}="${id}" aria-label="Thêm ${escape(lineName(i))}"><span class="food-preview">${foodArt(i)}</span><span class="choice-text"><strong>${escape(lineName(i))}</strong><span class="price">${money(unitPrice(i))}</span>${combo?'':`<small>${escape(lineOptions(i))}</small>`}</span>${count?`<span class="choice-count" aria-label="Đã chọn ${count}">${count}</span>`:'<span class="choice-plus" aria-hidden="true">＋</span>'}</button>`;
+}
+function openCombo(index=null){
+ editingCombo=index;const existing=index===null?null:state.combos[index];
+ draft=(existing?.items||[]).map(copyLine);builderStep=existing?3:0;ticketExpanded=false;
+ $('#combo-form').reset();$('#combo-name').setCustomValidity('');$('#combo-error').textContent='';
+ $('#combo-name').value=existing?.name||'';$('#combo-title').textContent=existing?'Sửa món yêu thích':'Tạo món yêu thích';
+ renderBuilder();$('#combo-dialog').showModal();
+}
+function renderChoices(){
+ $('#step-count').textContent='BƯỚC '+String(builderStep+1).padStart(2,'0')+' / 04';
+ $('#step-title').textContent=stepTitles[builderStep];$('#combo-description').textContent=stepDescriptions[builderStep];
+ $('#name-panel').hidden=builderStep!==3;$('#combo-choices').hidden=builderStep===3;
+ if(builderStep===0){
+  $('#combo-choices').innerHTML=`<div class="food-grid">${breadItems.map(i=>choiceCard(itemLine(i.menu_item_id))).join('')}</div><h4 class="combo-subtitle">Hoặc lấy nguyên combo</h4><div class="combo-grid">${MENU_SNAPSHOT.combos.map(c=>choiceCard(comboLine(c.menu_combo_id))).join('')}</div>`;
+ }else if(builderStep===1){
+  $('#combo-choices').innerHTML=draft.map((i,n)=>{
+   if(i.menu_combo_id!==undefined)return `<article class="filling-card"><h4>${escape(lineName(i))} ×${i.qty}</h4><p class="muted">${escape(lineOptions(i))}</p><small class="muted">Nguyên combo · giữ lựa chọn đã báo giá.</small>${priceNote(i)}</article>`;
+   if(!breadItems.some(b=>b.menu_item_id===i.menu_item_id))return '';
+   return `<article class="filling-card" data-filling-item="${i.menu_item_id}" data-filling-line="${n}"><div class="filling-heading"><span class="food-preview">${foodArt(i)}</span><div><h4>${escape(lineName(i))} ×${i.qty}</h4><strong class="price">${money(unitPrice(i)*i.qty)}</strong></div></div>${itemById(i.menu_item_id).option_groups.filter(g=>groupVisible(g,i.option_ids)).map(g=>`<fieldset><legend>${escape(g.option_group_name)}</legend><div class="option-pills">${g.options.map(o=>`<button type="button" data-filling="${n}" data-group="${g.option_group_id}" data-option="${o.menu_option_id}" aria-pressed="${i.option_ids.includes(o.menu_option_id)}">${escape(o.option_name)}</button>`).join('')}</div></fieldset>`).join('')}</article>`;
+  }).join('')||'<p class="muted">Chọn bánh ở bước 1 để chọn nhân.</p>';
+ }else if(builderStep===2){
+  $('#combo-choices').innerHTML=`<div class="food-grid side-grid">${sideItems.map(i=>choiceCard(itemLine(i.menu_item_id))).join('')}</div>`+draft.map((i,n)=>i.menu_combo_id===undefined&&sideItems.some(b=>b.menu_item_id===i.menu_item_id)&&itemById(i.menu_item_id).option_groups.length?`<article class="filling-card" data-side-line="${n}"><h4>${escape(lineName(i))} ×${i.qty}</h4>${optionControls(i,n,'builder')}</article>`:'').join('');
+ }
+}
+function syncTicketFold(){
+ const expanded=wideQuery.matches||ticketExpanded;
+ $('#ticket-details').hidden=!expanded;
+ $('#ticket-toggle').setAttribute('aria-expanded',String(expanded));
+ $('#ticket-toggle').setAttribute('aria-label',`${expanded?'Gập':'Mở'} chi tiết phiếu bếp, tổng ${money(sum(draft))}`);
+ $('.kitchen-ticket').classList.toggle('expanded',expanded);
+}
+function renderTicket(){
+ $('#ticket-lines').innerHTML=draft.length?draft.map((i,n)=>`<article class="ticket-line" data-ticket-line="${n}"><div class="row"><strong>${escape(lineName(i))}</strong><strong class="price">${money(unitPrice(i)*i.qty)}</strong></div><p class="muted">${escape(lineOptions(i))}</p>${priceNote(i)}<div class="row"><span class="ticket-quantity"><button type="button" data-ticket-qty="${n}" data-delta="-1" aria-label="Giảm ${escape(lineName(i))}" ${i.qty<=1?'disabled':''}>−</button><output aria-label="Số lượng">${i.qty}</output><button type="button" data-ticket-qty="${n}" data-delta="1" aria-label="Tăng ${escape(lineName(i))}" ${i.qty>=99?'disabled':''}>＋</button></span><button type="button" class="ticket-remove" data-ticket-remove="${n}" aria-label="Bỏ ${escape(lineName(i))} khỏi đĩa">Bỏ</button></div></article>`).join(''):'<p class="muted ticket-empty">Đĩa của bạn chưa có món.</p>';
+ $('#combo-selection-count').textContent=draft.length+' dòng · '+draft.reduce((n,i)=>n+i.qty,0)+' phần';
+ const total=money(sum(draft));$('#combo-total').textContent=total;
+ $('#ticket-price-note').innerHTML=totalNote(draft);
+ const announcement='Tổng '+total+'. '+draft.reduce((n,i)=>n+i.qty,0)+' phần đã chọn.';
+ if($('#builder-live').textContent!==announcement)$('#builder-live').textContent=announcement;
+ syncTicketFold();updateBuilderNavigation();
+}
+function updateBuilderNavigation(){
+ const missing=builderMissing();
+ $('#step-hint').textContent=missing;$('#step-next').disabled=!!missing;
+ $('#step-next').textContent=nextLabels[builderStep]||'';$('#step-next').hidden=builderStep===3;
+ $('#step-back').disabled=builderStep===0;$('#finish-actions').hidden=builderStep!==3;
+ $('#save-combo').disabled=!!missing;$('#builder-cart').disabled=!!builderValidation(draft);
+ document.querySelectorAll('[data-step]').forEach(b=>{
+  const step=Number(b.dataset.step);
+  if(step===builderStep)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');
+  b.disabled=step>builderStep&&!!builderMissing(Math.min(builderStep,2));
+ });
+}
+function platePieces(){
+ return draft.flatMap((i,line)=>{
+  const portions=i.portions||[{menu_item_id:i.menu_item_id,option_ids:i.option_ids,quantity:i.qty}];
+  return portions.flatMap((p,part)=>Array.from({length:p.quantity},(_,n)=>({id:p.menu_item_id,ids:p.option_ids,line,key:lineKey(i)+'/'+part+'/'+n})));
+ });
+}
+function renderPlate(){
+ const pieces=platePieces(),solids=pieces.filter(p=>![3,7].includes(p.id)),soups=pieces.filter(p=>[3,7].includes(p.id));
+ $('#plated-food').innerHTML=pieces.map(p=>{
+  const soup=[3,7].includes(p.id),n=(soup?soups:solids).indexOf(p),total=(soup?soups:solids).length;
+  let x,y,width,angle;
+  if(soup){width=Math.max(42,128/Math.sqrt(Math.max(1,total/3)));x=494+(n%2)*13;y=170+(n+.5)*230/(total+1);angle=0}
+  else {const r=total===1?0:Math.sqrt((n+.4)/total)*133;angle=n*137.5; x=245+Math.cos(angle*Math.PI/180)*r;y=239+Math.sin(angle*Math.PI/180)*r;width=Math.max(14,Math.min(143,325/Math.sqrt(total)));angle=(n%3-1)*16}
+  return `<g data-piece="${escape(p.key)}" data-plate-line="${p.line}" data-plate-item="${p.id}" transform="translate(${x-width/2} ${y-width*.4}) rotate(${angle} ${width/2} ${width*.4})" ${pendingPieces.has(p.key)?'style="opacity:0"':''}><g transform="scale(${width/120})">${foodDrawing(p.id,p.ids)}</g></g>`;
+ }).join('');
+ $('#plate-empty').style.display=pieces.length?'none':'';
+ $('#plate-desc').textContent=draft.length?draft.map(i=>lineName(i)+' ×'+i.qty+', '+lineOptions(i)).join('; '):'Chưa có món. Chạm một món để đặt lên đĩa.';
+ $('#plate-caption').textContent=pieces.length?pieces.length+' món trên đĩa và bên cạnh · chạm để thêm':'Chạm một món, đũa sẽ gắp giúp bạn.';
+}
+function renderBuilder(){renderChoices();renderTicket();renderPlate()}
+function goToStep(step){
+ if(step>builderStep&&builderMissing(Math.min(builderStep,2)))return;
+ builderStep=step;$('#combo-error').textContent='';renderChoices();updateBuilderNavigation();$('.builder-choices').scrollTop=0;$('#step-title').focus();
+}
+function gripDrawing(){return `<svg class="chopstick-hand" viewBox="0 0 180 190"><g fill="#dca982" stroke="#9f7055" stroke-width="1.4"><path d="M177 10L139 9Q119 16 115 36L98 57Q91 66 100 73L116 67L107 84Q101 96 112 100L129 86Q144 85 152 67L176 54Z"/><path d="M144 28q-20 1-27 21l-18 27q-3 8 5 10q6 2 11-8l16-20"/><path d="M151 39q-18 8-23 28l-10 22q-3 8 5 11q7 1 10-8l11-20"/></g><path d="M171 7l9 1v52l-15-2Z" fill="var(--accent)"/><g stroke="#b7874d" stroke-width="5" stroke-linecap="round"><path class="chop-one" d="M121 43L32 170"/><path class="chop-two" d="M143 53L45 170"/></g><g stroke="#f4d6a0" stroke-width="1.5" stroke-linecap="round"><path d="M120 44L32 170"/><path d="M142 54L45 170"/></g><path d="M138 39q-14-9-23 2l-10 14q-5 9 3 12q7 2 12-7l10-8" fill="#e8b78e" stroke="#9f7055" stroke-width="1.4"/></svg>`}
+function makeFlight(line,withHand=true){
+ const el=document.createElement('div');el.className='food-flight';
+ el.innerHTML=`<span class="held-food">${foodArt(line)}</span>${withHand?gripDrawing():''}`;
+ $('#flight-layer').append(el);return el;
+}
+function releasePieces(keys){
+ keys.forEach(key=>pendingPieces.delete(key));
+ document.querySelectorAll('[data-piece]').forEach(el=>{if(keys.includes(el.dataset.piece))el.style.opacity=''});
+}
+function flyToPlate(line,source,keys){
+ if(motionQuery.matches||!keys.length)return;
+ const nodes=[...document.querySelectorAll('[data-piece]')].filter(el=>keys.includes(el.dataset.piece));
+ if(!nodes.length)return;
+ const rect=nodes[nodes.length-1].getBoundingClientRect(),end={x:rect.x+rect.width/2,y:rect.y+rect.height/2};
+ keys.forEach(key=>pendingPieces.add(key));nodes.forEach(el=>el.style.opacity='0');
+ const flier=makeFlight(line);flier.classList.add('gripping');
+ const start=source||end;
+ const move=flier.animate([
+  {transform:`translate(${start.x}px,${start.y}px) rotate(-9deg)`,offset:0},
+  {transform:`translate(${start.x}px,${start.y-16}px) rotate(-5deg)`,offset:.15},
+  {transform:`translate(${(start.x+end.x)/2}px,${Math.min(start.y,end.y)-65}px) rotate(5deg)`,offset:.48},
+  {transform:`translate(${end.x}px,${end.y-12}px) rotate(0deg)`,offset:.78},
+  {transform:`translate(${end.x}px,${end.y}px) rotate(0deg)`,offset:1}
+ ],{duration:940,easing:'ease-in-out',fill:'forwards'});
+ move.finished.then(()=>{
+  releasePieces(keys);flier.classList.add('released');
+  return flier.animate([{opacity:1},{opacity:0,translate:'25px -38px'}],{duration:220,fill:'forwards'}).finished;
+ }).catch(()=>releasePieces(keys)).finally(()=>flier.remove());
+}
+function sourcePoint(el){const r=el.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}}
+function addToPlate(line,source){
+ const next=mergeLines([...draft,line]),error=builderValidation(next);
+ if(error){$('#combo-error').textContent=error;return false}
+ const before=new Set(platePieces().map(p=>p.key));draft=next;$('#combo-error').textContent='';
+ renderBuilder();flyToPlate(line,source,platePieces().filter(p=>!before.has(p.key)).map(p=>p.key));return true;
+}
+function animateRemoval(index,all){
+ if(motionQuery.matches)return;
+ const nodes=[...document.querySelectorAll(`[data-plate-line="${index}"]`)];
+ const chosen=all?nodes:nodes.slice(-(draft[index].portions?.reduce((n,p)=>n+p.quantity/draft[index].qty,0)||1));
+ chosen.forEach(node=>{
+  const clone=node.cloneNode(true);clone.removeAttribute('data-piece');clone.removeAttribute('data-plate-line');clone.style.opacity='';
+  const wrapper=document.createElementNS($('#plate-svg').namespaceURI,'g');wrapper.classList.add('leaving-food');wrapper.append(clone);$('#plate-outgoing').append(wrapper);
+  wrapper.addEventListener('animationend',()=>wrapper.remove(),{once:true});
+ });
+}
+function clearFlights(){
+ $('#flight-layer').getAnimations({subtree:true}).forEach(a=>a.cancel());$('#flight-layer').replaceChildren();
+ $('#plate-outgoing').replaceChildren();releasePieces([...pendingPieces]);drag=null;$('#plate-drop').classList.remove('drop-ready');
+}
+function lineFromChoice(button){return button.dataset.pickCombo!==undefined?comboLine(Number(button.dataset.pickCombo)):itemLine(Number(button.dataset.pickItem))}
+$('#create-combo').onclick=()=>openCombo();
+$('#combo-name').oninput=()=>{$('#combo-name').setCustomValidity('');updateBuilderNavigation()};
+$('#combo-dialog').addEventListener('close',clearFlights);
+motionQuery.addEventListener('change',()=>{if(motionQuery.matches)clearFlights()});wideQuery.addEventListener('change',syncTicketFold);
+$('#ticket-toggle').onclick=()=>{if(!wideQuery.matches){ticketExpanded=!ticketExpanded;syncTicketFold()}};
+$('#step-back').onclick=()=>goToStep(Math.max(0,builderStep-1));$('#step-next').onclick=()=>goToStep(Math.min(3,builderStep+1));
+document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>goToStep(Number(b.dataset.step)));
+$('#combo-choices').onclick=e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.matches('[data-pick-item],[data-pick-combo]')){
+  if(e.detail&&performance.now()<suppressClickUntil)return;
+  const selector=b.dataset.pickCombo!==undefined?`[data-pick-combo="${b.dataset.pickCombo}"]`:`[data-pick-item="${b.dataset.pickItem}"]`;
+  addToPlate(lineFromChoice(b),sourcePoint(b.querySelector('.food-preview')));
+  $(selector)?.focus({preventScroll:true});
+ }
+ if(b.dataset.filling!==undefined){
+  const index=Number(b.dataset.filling),next=draft.map(copyLine);changeOption(next[index],Number(b.dataset.group),Number(b.dataset.option));
+  const merged=mergeLines(next),error=builderValidation(merged);if(error){$('#combo-error').textContent=error;return}
+  const key=lineKey(next[index]),group=b.dataset.group,option=b.dataset.option;
+  draft=merged;$('#combo-error').textContent='';renderBuilder();
+  const newIndex=draft.findIndex(i=>lineKey(i)===key);
+  $(`[data-filling-line="${newIndex}"] [data-group="${group}"][data-option="${option}"]`)?.focus({preventScroll:true});
+ }
+};
+$('#combo-choices').onchange=e=>{
+ const s=e.target;if(s.dataset.optionContext!=='builder')return;
+ const index=Number(s.dataset.optionLine),next=draft.map(copyLine);changeOption(next[index],Number(s.dataset.optionGroup),Number(s.value));
+ const merged=mergeLines(next),error=builderValidation(merged);if(error){$('#combo-error').textContent=error;renderChoices();return}
+ const key=lineKey(next[index]);draft=merged;$('#combo-error').textContent='';renderBuilder();
+ const newIndex=draft.findIndex(i=>lineKey(i)===key);$(`[data-option-line="${newIndex}"][data-option-context="builder"]`)?.focus({preventScroll:true});
+};
+$('#ticket-lines').onclick=e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.ticketRemove!==undefined){
+  const index=Number(b.dataset.ticketRemove);animateRemoval(index,true);draft.splice(index,1);renderBuilder();
+  ($(`[data-ticket-remove="${Math.min(index,draft.length-1)}"]`)||$('#ticket-toggle')).focus({preventScroll:true});
+ }
+ if(b.dataset.ticketQty!==undefined){
+  const index=Number(b.dataset.ticketQty),delta=Number(b.dataset.delta),line=draft[index];
+  if(delta>0){const one=copyLine(line);setQuantity(one,1);addToPlate(one,sourcePoint(b))}
+  else if(line.qty>1){animateRemoval(index,false);setQuantity(line,line.qty-1);renderBuilder()}
+  $(`[data-ticket-qty="${index}"][data-delta="${delta}"]`)?.focus({preventScroll:true});
+ }
+};
+// Mouse drag uses Pointer Events; touch keeps native scrolling and tap-to-add.
+$('#combo-choices').addEventListener('pointerdown',e=>{
+ const button=e.target.closest('[data-pick-item],[data-pick-combo]');
+ if(!button||e.pointerType!=='mouse'||e.button!==0)return;
+ drag={pointer:e.pointerId,button,line:lineFromChoice(button),x:e.clientX,y:e.clientY,moved:false,ghost:null};button.setPointerCapture(e.pointerId);
+});
+$('#combo-choices').addEventListener('pointermove',e=>{
+ if(!drag||drag.pointer!==e.pointerId)return;
+ if(!drag.moved&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<6)return;
+ drag.moved=true;e.preventDefault();$('#plate-drop').classList.add('drop-ready');
+ if(!motionQuery.matches){if(!drag.ghost)drag.ghost=makeFlight(drag.line);drag.ghost.style.transform=`translate(${e.clientX}px,${e.clientY}px)`}
+});
+$('#combo-choices').addEventListener('pointerup',e=>{
+ if(!drag||drag.pointer!==e.pointerId)return;
+ const current=drag;drag=null;current.ghost?.remove();$('#plate-drop').classList.remove('drop-ready');
+ if(current.button.hasPointerCapture(e.pointerId))current.button.releasePointerCapture(e.pointerId);
+ if(!current.moved)return;
+ suppressClickUntil=performance.now()+500;
+ const r=$('#plate-drop').getBoundingClientRect();
+ if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom)addToPlate(current.line,{x:e.clientX,y:e.clientY});
+});
+function cancelDrag(){if(drag?.moved)suppressClickUntil=performance.now()+500;drag?.ghost?.remove();drag=null;$('#plate-drop').classList.remove('drop-ready')}
+$('#combo-choices').addEventListener('pointercancel',cancelDrag);$('#combo-choices').addEventListener('lostpointercapture',cancelDrag);
+$('#combo-form').onsubmit=e=>{
+ e.preventDefault();if(builderStep!==3){if(!builderMissing())goToStep(builderStep+1);return}
+ const name=$('#combo-name').value.trim();
+ if(!name){$('#combo-name').setCustomValidity('Vui lòng nhập tên bộ món.');$('#combo-name').reportValidity();return}
+ const items=mergeLines(draft),error=builderValidation(items);
+ if(error){$('#combo-error').textContent=error;return}
+ const combo={name,items};if(editingCombo===null)state.combos.push(combo);else state.combos[editingCombo]=combo;
+ const saved=persist();renderCombos();$('#combo-dialog').close();if(saved)notice('Đã lưu bộ món riêng của bạn.');
+};
+$('#builder-cart').onclick=()=>{const items=mergeLines(draft),error=builderValidation(items);if(error){$('#combo-error').textContent=error;return}add(items)};
+$('#own-combos').onclick=e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.editCombo!==undefined)openCombo(Number(b.dataset.editCombo));
+ if(b.dataset.deleteCombo!==undefined){state.combos.splice(Number(b.dataset.deleteCombo),1);const saved=persist();renderCombos();if(saved)notice('Đã xoá bộ món riêng.')}
+ if(b.dataset.addCombo!==undefined)add(state.combos[Number(b.dataset.addCombo)].items);
+};
+$('#customer').value=customer;
+$('#customer').onchange=e=>{
+ document.querySelectorAll('dialog[open]').forEach(d=>d.close());customerCarts.set(customer,cart);customerStates.set(customer,state);
+ customer=e.target.value;state=customerStates.get(customer)||loadCustomer();cart=customerCarts.get(customer)||[];draft=[];editingCombo=null;filter='all';render();
+ try{localStorage.setItem(key+'-active-customer',customer)}catch{notice('Không thể nhớ hồ sơ minh hoạ trên trình duyệt này.')}
+};
+function theme(t){document.documentElement.dataset.theme=t;$('#theme').textContent=t==='light'?'🌙':'☀️'}
+try{theme(localStorage.getItem('menu-theme')||'dark')}catch{theme('dark')}
+$('#theme').onclick=()=>{const t=document.documentElement.dataset.theme==='light'?'dark':'light';theme(t);try{localStorage.setItem('menu-theme',t)}catch{}};
+render();
+</script></body></html>

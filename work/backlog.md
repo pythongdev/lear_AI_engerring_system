@@ -99,6 +99,7 @@ Mỗi mục có link `↑ đầu file` ở cuối để quay lại bảng này.
 <a id="in-progress"></a>
 ## In Progress
 
+- [x] T-382 **Hộp *Tạo món yêu thích* chỉ là danh sách thẻ để tích; chủ repo muốn khách dựng đĩa từng bước, chạm món thì đũa gắp thả vào đĩa, phiếu cộng tiền ngay bên cạnh như video mẫu** — L1 (tệp HTML mẫu mới, không đổi hành vi app), chủ repo yêu cầu 2026-11-25; Codex làm trong `../lean_wt/T-382`, Claude duyệt; code thật ở `/khach/yeu-thich` để sau khi chủ repo duyệt bản HTML · [chi tiết](#t-382)
 - [x] T-377 **Hộp *Tạo bộ món riêng* ở trang Yêu thích không có ảnh, món và combo trông khác thẻ ở trang đặt món `/ban/[ma]`; tên nút cần đổi thành *Tạo món yêu thích*** — L1 (chỉ FE: chữ và phần nhìn, không đổi dữ liệu, giá hay lời gọi API), chủ repo yêu cầu 2026-11-24 (*"yêu cầu codex làm bạn kiểm tra"*); Codex làm trong `../lean_wt/T-377`, Claude duyệt · [chi tiết](#t-377)
 - [x] KC-14 **Thanh điều hướng chủ quán còn hai trang Kho và Nguyên liệu dù Khoản chi đã làm được hết việc của chúng** — L1 (chỉ FE: menu, chuyển hướng route cũ, mở sẵn nguyên liệu theo `?thu=`), chủ repo yêu cầu 2026-11-24 (*"tiếp tục yêu cầu codex làm các bước tiếp theo bạn kiểm tra"*); Codex làm trong `../lean_wt/KC-14`, Claude duyệt, gate xanh 2026-11-24 · [chi tiết](backlog_KC.md#kc-14)
 - [x] T-376 **Người làm của quán không có chỗ xem mình được giao việc gì và ngày nghỉ của mình** — L1 (chỉ FE, dùng cửa API sẵn có, không đổi dữ liệu hay quyền), chủ repo yêu cầu 2026-11-24; thêm trang Cá nhân ở khung quầy và trạm; Codex làm trong `../lean_wt/T-376`, Claude duyệt · [chi tiết](#t-376)
@@ -687,6 +688,65 @@ Dòng *Done* nguyên văn trước 2026-09-28 và mọi hồ sơ đã xong: [`wo
 
 <a id="chi-tiet-can-lam"></a>
 ## Chi tiết — việc cần làm
+
+<a id="t-382"></a>
+### T-382 — Bản HTML dựng đĩa món yêu thích từng bước, theo video mẫu
+
+Chủ repo yêu cầu 2026-11-25, đang mở `favourite.html`: *"hãy yêu câu codex làm file htm cho khach hàng.
+docs/product/4-fe/thiet_ke/khach_hang/favourite/favourite.html kết hợp html trên với video. video trên sẽ là lúc khách hàng
+chọn món. có làm code trong fe/src/app/khach/yeu-thich luôn không hay làm html trước bạn tụ quết … nhất định phải là dc yêu
+cầu codex làm bạn kiểm tra"*. Video: `docs/private/video/ScreenRecording_11-25-2026 12-03-25_1.MP4` (22 giây, quay màn hình
+một trang web nước ngoài): tô nhìn từ trên xuống ở giữa, bốn bước đánh số trên đầu, cột lựa chọn bên trái có ảnh, chạm hoặc
+kéo một món thì bàn tay cầm đũa gắp món đó thả vào tô, cột phải là phiếu bếp in từng dòng và cộng tổng, nút dưới phiếu đổi
+chữ theo bước.
+
+Claude quyết 2026-11-25 (chủ repo giao *"bạn tự quyết"*): làm **bản HTML trước**, chưa sửa `fe/src/app/khach/yeu-thich`.
+Vì: kiểu tương tác này mới với cả hệ thống (bước, hoạt ảnh, kéo thả), chủ repo cần nhìn và chọn trước khi sửa trang thật
+đang có 122 test; tiền lệ YT-01 → YT-05. Bước sau, khi chủ repo duyệt: một task L1 đưa hộp này vào `HopSuaBo`
+(`fe/src/components/khach/yeu-thich/`), giữ nguyên lời gọi API và luật lưu bộ của ADR-145.
+
+Suy luận của Claude, chưa hỏi lại: video chỉ là mẫu **cách chọn món**, không lấy tên, chữ, màu hay hình của trang trong
+video — nhận diện giữ của `favourite.html`. Tô mì đổi thành đĩa bánh cuốn; bốn bước đổi theo menu thật của quán: chọn bánh
+→ chọn nhân và lượng nhân → thêm món kèm (giò, canh) → đặt tên và lưu. Chỉ dùng món, lựa chọn và giá có trong
+`MENU_SNAPSHOT` của `favourite.html`; không thêm topping, nước chấm hay giá nào ngoài đó.
+
+Acceptance viết trước khi làm:
+- A1 — tệp mới `docs/product/4-fe/thiet_ke/khach_hang/favourite/dung-dia.html`, tự chứa (không tải gì từ mạng), cùng màu sáng
+  /tối, phông và khung điện thoại của `favourite.html`; `favourite.html` không bị sửa.
+- A2 — trang Yêu thích như `favourite.html`, nhưng nút *Tạo món yêu thích* mở màn **dựng đĩa** bốn bước có thanh bước
+  đánh số: (1) chọn bánh — bốn loại bánh của menu, kèm hàng phụ *lấy nguyên combo* với bảy combo và giá báo sẵn trong
+  `favourite.html` (hộp cũ cho chọn combo, bản mới không được bớt); (2) chọn nhân và lượng nhân đúng luật của menu (nhân *Chay* không có
+  lượng nhân); (3) món kèm — giò, canh (canh chọn rau); (4) đặt tên bộ và lưu, hoặc thêm vào giỏ minh hoạ. Đi lùi, đi tới
+  và chọn lại bước được.
+- A3 — chạm (hoặc kéo trên máy có chuột) một lựa chọn thì một đôi đũa vẽ bằng SVG/CSS gắp món ấy vào đĩa nhìn từ trên
+  xuống; mỗi món một hình riêng, chạm thêm thì thêm một cái lên đĩa, bỏ thì món rời khỏi đĩa. Có `prefers-reduced-motion`:
+  bỏ hoạt ảnh, món hiện thẳng trên đĩa.
+- A4 — phiếu bếp hiện từng dòng (tên, lựa chọn, số lượng, thành tiền) và tổng, cập nhật ngay khi chọn; giá tra từ bảng giá
+  của `MENU_SNAPSHOT`, không tự tính hay làm tròn khác. Ở 360/430px phiếu là dải gấp được ở đáy màn; từ 1024px trở lên
+  phiếu là cột bên phải như video.
+- A5 — bộ lưu ra giữ luật của `favourite.html` (tối đa 20 dòng, số lượng 1–99, dòng trùng món và lựa chọn thì gộp) và hiện
+  lại trong *Bộ món của bạn*; mọi nút dùng được bằng bàn phím, có nhãn đọc màn hình.
+- A6 — không tràn ngang ở 360, 430 và 1280px, sáng và tối, kể cả màn dựng đĩa; không lỗi JS. Claude chạy trình duyệt và
+  chụp ảnh (sandbox Codex chặn Chromium); `./scripts/gate.sh` xanh.
+
+Phạm vi (`work/scope/T-382.txt`): `docs/product/4-fe/thiet_ke/khach_hang/favourite/dung-dia.html`, `work/backlog.md`.
+Thi công: Codex trong `../lean_wt/T-382`, nhánh `codex/T-382`; phiếu và log `../lean_wt/_claude_logs/T-382/`.
+
+**Kết quả 2026-11-25** (thực hiện: Codex, `codex exec -m gpt-6-astra` trong `../lean_wt/T-382`, nền `ea23436`, phiên
+`01a21125-6bc3-7992-b224-74d279587e0a`; duyệt: Claude, một lượt, không vòng sửa). Một tệp mới `dung-dia.html` (591 dòng, vẽ đĩa,
+bánh, giò, bát canh, tay và đũa bằng SVG trong tệp); `favourite.html` không đổi. A1 — `rg 'http://|https://|@import|<link'`
+không khớp. A2 · A4 · A5 — Codex trích hàm từ tệp chạy bằng `node` (`kiem.cjs --logic`) `TONG pass=19 fail=0`: 7 món, 7 combo,
+Chay không có lượng nhân ở cả bốn bánh; sáu dòng giá khớp bảng `prices` (Bánh cuốn Thịt Thường ×3 = 12.000đ, Bánh trứng chín
+Chay = 8.000đ, Bánh trứng vàng Mộc nhĩ Nhiều nhân ×2 = 20.000đ, Giò = 9.000đ, Canh Ít rau = 0đ, combo *Đầy đủ trứng chín* =
+30.000đ, tổng 79.000đ); 1–99, gộp 98+1, chặn 21 dòng. A3 · A6 — Claude chạy `kiem.cjs` trên Chromium thật
+(`../_claude_logs/T-382/chay-1.log`): `TONG pass=43 fail=0` ở 360/430/1280 × sáng/tối, gồm đi đủ bốn bước, không tràn ngang,
+lưu bộ hiện trong *Bộ món của bạn*, reduced-motion, kéo thả Pointer Events và bàn phím ở 1280, không lỗi console. Claude xem
+ảnh `../_claude_logs/T-382/anh/`: đũa đang gắp cuốn bánh, đĩa và phiếu bếp đúng bố cục; bát canh thứ hai trong ảnh 1280 tối là
+hoạt ảnh bát vừa bỏ đang rời đĩa — chạy riêng thấy 1,5 giây sau đĩa còn đúng số món của phiếu.
+
+Còn mở, không chặn: (1) câu Codex nêu — *lấy nguyên combo* giữ lựa chọn và giá báo sẵn, chưa cho đổi nhân trong combo; trang
+thật hiện cũng không cho, nên giữ vậy tới khi chủ repo muốn khác. (2) Menu có cả *Canh bánh cuốn* lẫn *canh* (0đ, chữ thường)
+— dữ liệu thật của database, bản mẫu hiện đúng như vậy. (3) Bước sau khi chủ repo duyệt: đưa màn dựng đĩa vào `HopSuaBo`.
 
 <a id="t-377"></a>
 ### T-377 — Hộp tạo món yêu thích có ảnh, thẻ món và combo theo trang đặt món
